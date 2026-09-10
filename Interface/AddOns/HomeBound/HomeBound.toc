@@ -1,0 +1,29 @@
+## Interface: 120100
+
+## Title: Home Bound
+## Author: Bettiold
+## Version: 1.54
+## Notes: Your ultimate companion for collecting housing rewards
+## IconTexture: 7252953
+## SavedVariables: hb_settings, dbHB
+## AddonCompartmentFunc: HomeBound_OnAddonCompartmentClick
+## Category: Housing
+## Category-deDE: Behausung
+## Category-esES: Hogares
+## Category-esMX: Viviendas
+## Category-frFR: Logis
+## Category-itIT: Alloggi
+## Category-koKR: 하우징
+## Category-ptBR: Moradia
+## Category-ruRU: Жилье
+## Category-zhCN: 住宅
+## Category-zhTW: 房屋
+
+Libs\LibStub.lua
+Libs\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0.lua
+localization.lua
+db.lua
+blueprints.lua
+main.lua

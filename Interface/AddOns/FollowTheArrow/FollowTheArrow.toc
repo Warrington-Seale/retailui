@@ -1,0 +1,52 @@
+## Interface: 120001, 120005, 120007, 120100
+## Title: Follow The Arrow
+## Notes: Leveling Guide for Midnight
+## Author: Harldan
+## Version: 0.8.1
+## SavedVariables: FTADB
+## SavedVariablesPerCharacter: FTACharDB
+
+Core\Init.lua
+Core\SavedVariables.lua
+Core\SlashCommands.lua
+Core\QuestState.lua
+Core\StepResolver.lua
+Core\StepEngine.lua
+Core\QuestEvents.lua
+Core\Waypoint.lua
+Core\Text.lua
+Core\GuideArrow.lua
+
+UI\MainWindow.lua
+UI\StepList.lua
+UI\ArrowFrame.lua
+UI\Settings.lua
+UI\MinimapButton.lua
+
+Data\Modules\SunwellIntro.lua
+Data\Modules\EversongWoods.lua
+Data\Modules\Arator.lua
+Data\Modules\Harandar.lua
+Data\Modules\Zulaman.lua
+Data\Modules\Voidstorm.lua
+Data\Modules\CampaignAdventure.lua
+
+Data\Modules\EversongSojourner.lua
+Data\Modules\ZulamanSojourner.lua
+Data\Modules\VoidstormSojourner.lua
+Data\Modules\HarandarSojourner.lua
+
+Data\Modules\Alt8090Delves.lua
+Data\Modules\Alt8090Eversong.lua
+Data\Modules\Alt8090Zulaman.lua
+Data\Modules\Alt8090CraftingEnd.lua
+
+Data\Modules\Alliance1080Intro.lua
+Data\Modules\Horde1080Intro.lua
+Data\Modules\Temporary7080.lua
+Data\Modules\Temporary110.lua
+Data\Modules\Temporary1207.lua
+
+Data\Modules\121WhatsNew.lua
+Data\Modules\121Campaign.lua
+Data\Modules\121Sojourner.lua

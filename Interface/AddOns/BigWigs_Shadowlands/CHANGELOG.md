@@ -1,0 +1,8 @@
+# BigWigs [Shadowlands]
+
+## [v12.0.4](https://github.com/BigWigsMods/BigWigs_Shadowlands/tree/v12.0.4) (2026-06-26)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs_Shadowlands/compare/v12.0.3...v12.0.4) [Previous Releases](https://github.com/BigWigsMods/BigWigs_Shadowlands/releases)
+
+- Bump min version  
+- Bump toc  
+- Update workflow  

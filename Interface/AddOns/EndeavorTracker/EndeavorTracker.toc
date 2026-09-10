@@ -1,0 +1,22 @@
+## Interface: 110207, 120007, 120100
+## Title: Endeavor Tracker
+## Author: OdisseasSimou
+## Contributors: n17r091,zaphon
+## Version: 1.1.9
+## Notes: Shows XP needed for next housing endeavor milestone on hover
+## SavedVariables: EndeavorTrackerDB
+
+# Model - Data layer (API interactions, calculations, caching)
+Model\Core.lua
+Model\Progress.lua
+Model\Tasks.lua
+Model\Neighborhoods.lua
+
+# View - UI layer (display, tooltips, settings panel)
+View\ProgressOverlay.lua
+View\HouseFinderTooltips.lua
+View\TaskTooltips.lua
+View\SettingsPanel.lua
+
+# Controller - Business logic (event handling, commands)
+Controller\EndeavorTracker.lua

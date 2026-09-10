@@ -1,0 +1,113 @@
+VER 3 0100000000000125 "4" "134400"
+#showtooltip Strike of the Windlord
+/stopmacro [channeling:Fists of Fury]
+/stopmacro [channeling:Crackling Jade Lightning]
+/stopmacro [channeling:Spinning Crane Kick]
+/cast Strike of the Windlord
+END
+VER 3 0100000000000126 "amymove" "134400"
+#showtooltip
+/use [@Wiinston]  Tiger's Lust
+/w Wiinston You're free!!!!!!
+END
+VER 3 0100000000000120 "focus" "5868905"
+/focus
+END
+VER 3 010000000000011A "foftrinket" "INV_MISC_QUESTIONMARK"
+#showtooltip Fists of Fury
+/stopmacro [channeling:Fists of Fury]
+/stopmacro [channeling:Crackling Jade Lightning]
+/stopmacro [channeling:Spinning Crane Kick]
+/cast Fists of Fury
+END
+VER 3 0100000000000127 "int focus or els" "134400"
+#showtooltip
+/use [@focus, exists, harm] [] Spear Hand Strike
+END
+VER 3 0100000000000129 "MO Coc" "134400"
+#showtooltip
+/use [@mouseover,help,exists] [] Life Cocoon
+END
+VER 3 0100000000000112 "MO Dispell" "INV_MISC_QUESTIONMARK"
+#showtooltip
+/use [@mouseover,help,exists, nodead] []Detox
+END
+VER 3 010000000000012A "mo env" "134400"
+#showtooltip
+/use [@mouseover,help,exists] [] Enveloping Mist
+END
+VER 3 0100000000000128 "MO Rem" "134400"
+#showtooltip
+/use [@mouseover,help,exists] [] Renewing Mist
+END
+VER 3 010000000000012B "mo serpent" "134400"
+#showtooltip
+/use [@mouseover,help,exists] [] Invoke Yu'lon, the Jade Serpent
+/use Invoke Chi-Ji, the Red Crane
+END
+VER 3 010000000000012C "mo sheilun" "134400"
+#showtooltip
+/use [@mouseover, exists, noharm] [] Sheilun's Gift
+END
+VER 3 0100000000000113 "MO TL" "INV_MISC_QUESTIONMARK"
+#showtooltip
+/use [@mouseover,help,exists] [] Tiger's Lust
+/run SendChatMessage("Speed sponsored by Div.","whisper",nil,GetUnitName("mouseover",1):gsub(" ","",2))
+END
+VER 3 0100000000000117 "MO trink" "INV_MISC_QUESTIONMARK"
+#showtooltip
+/use [@mouseover,help,exists] [] 14
+END
+VER 3 0100000000000115 "MO Viv" "INV_MISC_QUESTIONMARK"
+#showtooltip
+/use [@mouseover,help,exists] [] Vivify
+END
+VER 3 010000000000012D "mw dps" "134400"
+#showtooltip
+/use rising sun kick
+/use blackout kickwwwww 
+END
+VER 3 0100000000000121 "rsk" "134400"
+#showtooltip Rising Sun Kick
+/stopmacro [channeling:Fists of Fury]
+/stopmacro [channeling:Crackling Jade Lightning]
+/stopmacro [channeling:Spinning Crane Kick]
+/cast Rising Sun Kick
+END
+VER 3 0100000000000124 "s4" "988194"
+#showtooltip Whirling Dragon Punch
+/stopmacro [channeling:Fists of Fury]
+/stopmacro [channeling:Crackling Jade Lightning]
+/stopmacro [channeling:Spinning Crane Kick]
+/cast Whirling Dragon Punch
+END
+VER 3 0100000000000123 "sq" "134400"
+#showtooltip blackout kick
+/stopmacro [channeling:Fists of Fury]
+/stopmacro [channeling:Crackling Jade Lightning]
+/stopmacro [channeling:Spinning Crane Kick]
+/cast blackout kick
+END
+VER 3 01000000000000B0 "taunt statue" "INV_MISC_QUESTIONMARK"
+#Showtooltip
+/target black ox statue
+/use provoke
+/targetlasttarget
+END
+VER 3 0100000000000122 "tp" "134400"
+#showtooltip Tiger Palm
+/stopmacro [channeling:Fists of Fury]
+/stopmacro [channeling:Crackling Jade Lightning]
+/stopmacro [channeling:Spinning Crane Kick]
+/cast Tiger Palm
+END
+VER 3 010000000000011C "trinket" "INV_MISC_QUESTIONMARK"
+#showtooltip
+/use 13
+/use 11
+/use weapons of order
+END
+VER 3 010000000000012E "trinks" "134400"
+/use 14
+/use 13
+END

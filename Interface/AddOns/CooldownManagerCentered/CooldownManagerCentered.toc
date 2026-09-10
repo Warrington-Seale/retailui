@@ -1,0 +1,107 @@
+## Interface: 120007, 120100
+## Title: |cff008945Cool|r|cff1e9a4e|r|cff3faa4fdown Ma|r|cff5fb64anag|r|cff7ac243er Ce|r|cff8ccd00ntered|r by Wildu
+## Notes: Cooldown Manager tweaks and styling
+## Author: Wildu
+## Version: 5.2.10
+## X-Wago-ID: b6mvbYKP
+## SavedVariables: CooldownManagerCenteredDB
+## OptionalDeps: Masque
+## IconTexture: Interface\Addons\CooldownManagerCentered\Media\CooldownManagerCenteredIcon
+## Category: Combat
+## Category-deDE: Kampf
+## Category-esES: Combate
+## Category-esMX: Combate
+## Category-frFR: Combat
+## Category-itIT: Combattimento
+## Category-koKR: 전투
+## Category-ptBR: Combate
+## Category-ruRU: Бой
+## Category-zhCN: 战斗
+## Category-zhTW: 戰鬥
+
+loadLibs.xml
+
+libs\LibWhatsNew-1.0\LibWhatsNew-1.0.lua
+
+# Private LibEQOL modules
+libs\LibEQOL-1.0\LibEQOL.lua
+libs\LibEQOL-1.0\LibEQOLSoundPickerMenu.lua
+libs\LibEQOL-1.0\LibEQOLSettingsMode.lua
+libs\LibEQOL-1.0\LibEQOLSettingsMultiDropdown.lua
+libs\LibEQOL-1.0\LibEQOLSettingsScrollDropdown.lua
+libs\LibEQOL-1.0\LibEQOLSettingsInput.lua
+libs\LibEQOL-1.0\LibEQOLCompactFont.lua
+libs\LibEQOL-1.0\LibEQOLSettingsColorOverrides.lua
+libs\LibEQOL-1.0\LibEQOLSettingsSoundDropdown.lua
+libs\LibEQOL-1.0\LibEQOLFontPickerMenu.lua
+libs\LibEQOL-1.0\LibEQOLSettingsSortableList.lua
+libs\LibEQOL-1.0\LibEQOLSettingsTemplates.xml
+libs\LibEQOL-1.0\LibEQOLEditMode.lua
+
+local.xml
+
+# Core Modules
+core/config.lua
+core/profiles.lua
+core/pixelPerfect.lua
+core/api.lua
+core/whatsNew.lua
+core/sizes.lua
+core/spellIdOverrides.lua
+core/anchoring.lua
+core/uiCore.lua
+core/settingsTabs.lua
+core/dragDrop.lua
+
+modules/AuraContainerRuntime.lua
+modules/auraTracking.lua
+
+# Settings System - Centralized Settings Management
+settings/ProfileSettings.lua
+settings/AddonSettings.lua
+settings/EditModeViewerSettings.lua
+
+# Other Modules
+modules/Tracker/TrackerDB.lua
+modules/Tracker/TrackerItemsData.lua
+modules/Tracker/TrackerAuraAutoDurationData.lua
+modules/Tracker/TrackerAuraProcData.lua
+modules/Tracker/TrackerAuraDurationLogic.lua
+modules/Tracker/TrackerUsability.lua
+modules/Tracker/TrackerItemVisuals.lua
+modules/Tracker/TrackerItemSettings.lua
+modules/Tracker/TrackerItemViewer.lua
+modules/Tracker/EssentialCustomTracker.lua
+modules/Tracker/TrackerAssignmentPanel.lua
+
+# Custom Buff Containers
+modules/Buffs/BuffPresetData.lua
+modules/Buffs/BuffPresets.lua
+modules/Buffs/BuffWildcards.lua
+modules/Buffs/BuffData.lua
+modules/Buffs/BuffSounds.lua
+modules/Buffs/CustomAuraProvider.lua
+modules/Buffs/BuffLayout.lua
+modules/Buffs/BuffContainerViewer.lua
+modules/Buffs/BuffAssignmentPanel.lua
+
+modules/cooldownManager.lua
+modules/masque.lua
+modules/editModeHelp.lua
+modules/editModeViewerSettings.lua
+modules/styled.lua
+modules/buffBarStyle.lua
+modules/cooldownStyle.lua
+modules/cooldownFont.lua
+modules/keybinds.lua
+modules/assistant.lua
+modules/readyAlerts.lua
+modules/buttonPress.lua
+modules/visibility.lua
+modules/rangeCheck.lua
+modules/windwalkerComboHelper.lua
+
+# TO NOTE last one to registerCallback is called... first
+modules/runtime.lua
+
+CooldownManagerCentered.lua

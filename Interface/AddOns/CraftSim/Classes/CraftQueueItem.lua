@@ -1,0 +1,390 @@
+---@class CraftSim
+local CraftSim = select(2, ...)
+
+local GUTIL = CraftSim.GUTIL
+
+---@class CraftSim.CraftQueueItem : CraftSim.CraftSimObject
+---@overload fun(options: CraftSim.CraftQueueItem.Options): CraftSim.CraftQueueItem
+CraftSim.CraftQueueItem = CraftSim.CraftSimObject:extend()
+
+local Logger = CraftSim.DEBUG:RegisterLogger("CraftQueueItem")
+
+--- Used by WorkOrderTracker until feat/precraftconditions lands.
+---@enum CraftSim.PRE_CRAFT_CONDITION_IDS
+CraftSim.PRE_CRAFT_CONDITION_IDS = {
+    LEARNED = "LEARNED",
+    COOLDOWN = "COOLDOWN",
+    IS_CRAFTER = "IS_CRAFTER",
+    REAGENTS = "REAGENTS",
+    WORK_ORDER_MIN_QUALITY = "WORK_ORDER_MIN_QUALITY",
+    PROFESSION_OPEN = "PROFESSION_OPEN",
+    PROFESSION_TOOLS = "PROFESSION_TOOLS",
+    PRE_CRAFT_ACTION = "PRE_CRAFT_ACTION",
+}
+
+---@class CraftSim.CraftQueueItem.Options
+---@field recipeData CraftSim.RecipeData
+---@field amount? number
+
+---@param options CraftSim.CraftQueueItem.Options
+function CraftSim.CraftQueueItem:new(options)
+    options = options or {}
+    ---@type CraftSim.RecipeData
+    self.recipeData = options.recipeData
+    ---@type number
+    self.amount = options.amount or 1
+    self.concentrating = self.recipeData.concentrating
+
+    -- canCraft caches
+    self.allowedToCraft = false
+    self.canCraftOnce = false
+    self.gearEquipped = false
+    self.correctProfessionOpen = false
+    --- Pre-craft buff gate (e.g. Midnight / TWW Shattering Essence): cast this before Craft.
+    ---@class CraftSim.CraftQueueItem.PcbgData
+    ---@field gateId CraftSim.PreCraftBuffGateId?
+    ---@field needsStep boolean
+    ---@field canCast boolean
+    ---@field dueToLoginStale boolean
+    ---@field dueToMissingBuff boolean
+    ---@field recipeData CraftSim.RecipeData?
+    ---@type CraftSim.CraftQueueItem.PcbgData
+    self.pcbgData = {
+        gateId = nil,
+        needsStep = false,
+        canCast = false,
+        dueToLoginStale = false,
+        dueToMissingBuff = false,
+        recipeData = nil,
+    }
+    self.craftAbleAmount = 0
+    self.notOnCooldown = true
+    self.isCrafter = false
+    self.learned = false
+    self.hasActiveSubRecipes = false
+
+    --- important if the current character is not the crafter of the recipe
+    self.allDataCached = false
+
+    self.crafterData = options.recipeData:GetCrafterData()
+
+    ---@class CraftSim.CraftQueueItem.PrecraftConditionData
+    ---@field IsAllowedToCraft fun(): boolean
+    local cqi = self
+    ---@type CraftSim.CraftQueueItem.PrecraftConditionData
+    self.precraftConditionData = {
+        IsAllowedToCraft = function()
+            return cqi.allowedToCraft
+        end,
+    }
+end
+
+--- calculates allowedToCraft, canCraftOnce, gearEquipped, correctProfessionOpen, notOnCooldown and craftAbleAmount
+function CraftSim.CraftQueueItem:CalculateCanCraft()
+    CraftSim.DEBUG:StartProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
+    local _, craftAbleAmount = self.recipeData:CanCraft(1)
+    self.craftAbleAmount = craftAbleAmount
+    self.canCraftOnce = craftAbleAmount > 0
+    self.gearEquipped = self.recipeData.professionGearSet:IsEquipped() or false
+    self.correctProfessionOpen = self.recipeData:IsProfessionOpen() or false
+    self.notOnCooldown = not self.recipeData:OnCooldown()
+    self.isCrafter = self:IsCrafter()
+    self.learned = self.recipeData.learned
+
+    self.hasActiveSubRecipes, self.hasActiveSubRecipesFromAlts = CraftSim.CRAFTQ.craftQueue
+        :RecipeHasActiveSubRecipesInQueue(self.recipeData)
+
+    self.pcbgData.gateId = nil
+    self.pcbgData.needsStep = false
+    self.pcbgData.canCast = false
+    self.pcbgData.dueToLoginStale = false
+    self.pcbgData.dueToMissingBuff = false
+    self.pcbgData.recipeData = nil
+
+    -- Pre-craft buff gates: use each recipe's skill line / expansion (from GetProfessionInfoByRecipeID), not
+    -- C_TradeSkillUI.GetProfessionChildSkillLineID().
+    CraftSim.PRE_CRAFT_BUFF_GATE:ApplyGatesToCraftQueueItem(self)
+
+    self.allowedToCraft = self.canCraftOnce and self.gearEquipped and self.correctProfessionOpen and self.notOnCooldown and
+        self.isCrafter and self.learned and not self.pcbgData.needsStep
+    CraftSim.DEBUG:StopProfiling('CraftQueue.CraftQueueItem.CalculateCanCraft')
+end
+
+---@class CraftSim.CraftQueueItem.Serialized
+---@field recipeID number
+---@field amount? number
+---@field craftListID? number
+---@field concentrating? boolean
+---@field crafterData CraftSim.CrafterData
+---@field requiredReagents CraftSim.Reagent.Serialized[]
+---@field requiredSelectableReagent CraftingReagentInfo?
+---@field optionalReagents CraftingReagentInfo[]
+---@field professionGearSet CraftSim.ProfessionGearSet.Serialized
+---@field subRecipeDepth number
+---@field subRecipeCostsEnabled boolean
+---@field serializedSubRecipeData CraftSim.CraftQueueItem.Serialized[]
+---@field parentRecipeInfo CraftSim.RecipeData.ParentRecipeInfo[]
+---@field orderData CraftingOrderInfo?
+
+function CraftSim.CraftQueueItem:Serialize()
+    ---@param recipeData CraftSim.RecipeData
+    local function serializeCraftQueueRecipeData(recipeData)
+        ---@type CraftSim.CraftQueueItem.Serialized
+        local serializedData = {
+            recipeID = recipeData.recipeID,
+            craftListID = recipeData.craftListID,
+            crafterData = recipeData.crafterData,
+            concentrating = recipeData.concentrating,
+            requiredReagents = recipeData.reagentData:SerializeRequiredReagents(),
+            requiredSelectableReagent = recipeData.reagentData:HasRequiredSelectableReagent() and
+                recipeData.reagentData.requiredSelectableReagentSlot:GetCraftingReagentInfo(),
+            optionalReagents = recipeData.reagentData:GetOptionalCraftingReagentInfoTbl(),
+            professionGearSet = recipeData.professionGearSet:Serialize(),
+            subRecipeDepth = recipeData.subRecipeDepth,
+            subRecipeCostsEnabled = recipeData.subRecipeCostsEnabled,
+            serializedSubRecipeData = {},
+            parentRecipeInfo = recipeData.parentRecipeInfo,
+            orderData = recipeData.orderData,
+        }
+
+        -- save correct mapping
+        for itemID, optimizedSubRecipeData in pairs(recipeData.optimizedSubRecipes) do
+            serializedData.serializedSubRecipeData[itemID] = serializeCraftQueueRecipeData(optimizedSubRecipeData)
+        end
+
+        return serializedData
+    end
+
+    local serializedCraftQueueItem = serializeCraftQueueRecipeData(self.recipeData)
+    serializedCraftQueueItem.amount = self.amount
+    serializedCraftQueueItem.concentrating = self.concentrating
+
+    return serializedCraftQueueItem
+end
+
+---@param serializedData CraftSim.CraftQueueItem.Serialized
+---@return CraftSim.CraftQueueItem?
+function CraftSim.CraftQueueItem:Deserialize(serializedData)
+    Logger:LogDebug("Deserialize CraftQueueItem")
+
+    ---@param serializedCraftQueueItem CraftSim.CraftQueueItem.Serialized
+    ---@return CraftSim.RecipeData?
+    local function deserializeCraftQueueRecipeData(serializedCraftQueueItem)
+        -- first create a recipeData
+        local recipeData = CraftSim.RecipeData({
+            recipeID = serializedCraftQueueItem.recipeID,
+            crafterData = serializedCraftQueueItem.crafterData,
+            forceCache = true, -- necessary here due to execution after login
+        })
+        recipeData.craftListID = serializedCraftQueueItem.craftListID or 0
+        recipeData.subRecipeDepth = serializedCraftQueueItem.subRecipeDepth or 0
+        recipeData.concentrating = serializedCraftQueueItem.concentrating
+        recipeData.subRecipeCostsEnabled = serializedCraftQueueItem.subRecipeCostsEnabled
+        recipeData.parentRecipeInfo = serializedCraftQueueItem.parentRecipeInfo or {}
+
+        if serializedCraftQueueItem.orderData then
+            recipeData:SetOrder(serializedCraftQueueItem.orderData)
+        end
+
+
+        if recipeData and recipeData.isCrafterInfoCached then
+            -- deserialize potential subrecipes and restore correct mapping
+            for itemID, serializedSubRecipeData in pairs(serializedCraftQueueItem.serializedSubRecipeData or {}) do
+                recipeData.optimizedSubRecipes[itemID] = deserializeCraftQueueRecipeData(serializedSubRecipeData)
+            end
+
+            local requiredReagentsCraftingReagentInfos = {}
+            for _, serializedReagent in ipairs(serializedData.requiredReagents) do
+                local reagent = CraftSim.Reagent:Deserialize(serializedReagent)
+                tAppendAll(requiredReagentsCraftingReagentInfos, reagent:GetCraftingReagentInfos())
+            end
+
+            recipeData:SetReagentsByCraftingReagentInfoTbl(GUTIL:Concat { requiredReagentsCraftingReagentInfos, serializedCraftQueueItem.optionalReagents })
+
+            if serializedCraftQueueItem.requiredSelectableReagent then
+                if serializedCraftQueueItem.requiredSelectableReagent.reagent.currencyID then
+                    recipeData.reagentData.requiredSelectableReagentSlot:SetCurrencyReagent(
+                        serializedCraftQueueItem.requiredSelectableReagent.reagent.currencyID)
+                elseif serializedCraftQueueItem.requiredSelectableReagent.reagent.itemID then
+                    recipeData.reagentData:SetRequiredSelectableReagent(
+                        serializedCraftQueueItem.requiredSelectableReagent.reagent.itemID)
+                end
+            end
+
+            recipeData:SetNonQualityReagentsMax()
+
+            recipeData.professionGearSet:LoadSerialized(serializedCraftQueueItem.professionGearSet)
+
+            recipeData:Update() -- should also update pricedata which uses the optimizedsubrecipes
+
+
+            return recipeData
+        end
+    end
+
+    -- update price data to update self crafted reagents?
+    local recipeData = deserializeCraftQueueRecipeData(serializedData)
+
+
+    if recipeData then
+        Logger:LogDebug("recipeInfo: " .. tostring(recipeData.recipeInfoCached))
+        Logger:LogDebug("isCrafterInfoCached: " .. tostring(recipeData.isCrafterInfoCached))
+        Logger:LogDebug("professionGearCached: " .. tostring(recipeData.professionGearCached))
+        Logger:LogDebug("operationInfoCached: " .. tostring(recipeData.operationInfoCached))
+        Logger:LogDebug("specializationDataCached: " .. tostring(recipeData.specializationDataCached))
+        return CraftSim.CraftQueueItem({
+            recipeData = recipeData,
+            amount = serializedData.amount,
+        })
+    end
+    -- if necessary recipeData could not be loaded from cache or is not fully cached return nil
+    -- should only really happen if somehow it could not cache the recipe on crafter side due to a bug
+    -- or if the player deleted the cache saved var during character switch
+    return nil
+end
+
+function CraftSim.CraftQueueItem:IsCrafter()
+    return self.recipeData:IsCrafter()
+end
+
+function CraftSim.CraftQueueItem:UpdateCountByParentRecipes()
+    if self.recipeData.subRecipeDepth == 0 then return end
+
+    local parentCraftQueueItems = GUTIL:Map(self.recipeData.parentRecipeInfo, function(prI)
+        return CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(prI)
+    end)
+
+    local itemID = self.recipeData.resultData.expectedItem:GetItemID()
+    local totalCount = GUTIL:Fold(parentCraftQueueItems, 0, function(foldValue, cqi)
+        if not cqi then return foldValue end
+        local itemCount = cqi.recipeData.reagentData:GetReagentQuantityByItemID(itemID) * cqi.amount
+
+        return itemCount + foldValue
+    end)
+
+    -- if I am the crafter also use warbank count otherwise not
+    local inventoryCount = CraftSim.DB.ITEM_COUNT:Get(self.recipeData:GetCrafterUID(), itemID, true, self.isCrafter)
+
+    local restCount = math.max(0, totalCount - inventoryCount)
+
+    local minimumCrafts = math.max(0, restCount / self.recipeData.baseItemAmount)
+
+    self.amount = minimumCrafts
+
+    Logger:LogDebug("Updated amount for " .. tostring(self.recipeData.resultData.expectedItem:GetItemLink()) .. ": " .. self
+        .amount)
+    Logger:LogDebug("parentCraftQueueItems: " .. #parentCraftQueueItems)
+    Logger:LogDebug("totalCount: " .. totalCount)
+    Logger:LogDebug("inventoryCount: " .. inventoryCount)
+    Logger:LogDebug("restCount: " .. restCount)
+    Logger:LogDebug("minimumCrafts: " .. minimumCrafts)
+end
+
+function CraftSim.CraftQueueItem:UpdateSubRecipesInQueue()
+    if not self.recipeData:HasActiveSubRecipes() then return end
+
+    Logger:LogDebug("UpdateSubRecipesInQueue for " .. self.recipeData.recipeName, false, true)
+
+    -- fetch cqis or add them if not existing
+    local subCraftQueueItems = GUTIL:Map(self.recipeData.priceData.selfCraftedReagents, function(itemID)
+        local subRecipeData = self.recipeData.optimizedSubRecipes[itemID]
+        -- only if parent recipe has quantity set for this itemID
+        if subRecipeData then
+            if self.recipeData:GetReagentQuantityByItemID(itemID) > 0 then
+                local cqi = CraftSim.CRAFTQ.craftQueue:FindRecipe(subRecipeData)
+                Logger:LogDebug(" - Searching in queue for " ..
+                    subRecipeData.recipeName .. "\n" .. subRecipeData:GetRecipeCraftQueueUID())
+                if not cqi then
+                    Logger:LogDebug(" - Not Found, Adding to queue")
+                    cqi = CraftSim.CRAFTQ.craftQueue:AddRecipe({ recipeData = subRecipeData, amount = 1, })
+                else
+                    Logger:LogDebug(" - Subrecipe already in queue")
+                end
+
+                return cqi
+            end
+        end
+
+        return nil
+    end)
+
+    Logger:LogDebug("#subCraftQueueItems: " .. #subCraftQueueItems)
+end
+
+function CraftSim.CraftQueueItem:GetNumParentRecipesInQueue()
+    local count = 0
+    for _, prI in ipairs(self.recipeData.parentRecipeInfo) do
+        if CraftSim.CRAFTQ.craftQueue:FindRecipeByParentRecipeInfo(prI) then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+---@class CraftSim.PrecraftCondition
+---@field id CraftSim.PRE_CRAFT_CONDITION_IDS
+---@field reason string?
+---@field isMet boolean
+---@field priority number
+
+---@return CraftSim.PrecraftCondition[]
+function CraftSim.CraftQueueItem:GetPrecraftConditions()
+    local IDS = CraftSim.PRE_CRAFT_CONDITION_IDS
+    local orderData = self.recipeData.orderData
+    local meetsMinQuality = true
+    if orderData and orderData.minQuality and orderData.minQuality > 0 then
+        meetsMinQuality = self.recipeData.resultData.expectedQuality >= orderData.minQuality
+    end
+
+    return {
+        { id = IDS.IS_CRAFTER, isMet = self.isCrafter, reason = "Alt Character", priority = 1000 },
+        { id = IDS.LEARNED, isMet = self.learned, reason = "Not Learned", priority = 900 },
+        { id = IDS.COOLDOWN, isMet = self.notOnCooldown, reason = "On Cooldown", priority = 800 },
+        {
+            id = IDS.WORK_ORDER_MIN_QUALITY,
+            isMet = meetsMinQuality,
+            reason = "Below minimum quality",
+            priority = 99,
+        },
+        { id = IDS.REAGENTS, isMet = self.canCraftOnce, reason = "Missing Reagents", priority = 90 },
+        { id = IDS.PROFESSION_OPEN, isMet = self.correctProfessionOpen, reason = "Wrong Profession", priority = 50 },
+        { id = IDS.PROFESSION_TOOLS, isMet = self.gearEquipped, reason = "Wrong Profession Tools", priority = 40 },
+        {
+            id = IDS.PRE_CRAFT_ACTION,
+            isMet = not self.pcbgData.needsStep,
+            reason = "Pre-craft action required",
+            priority = 30,
+        },
+    }
+end
+
+---@return CraftSim.PrecraftCondition?
+function CraftSim.CraftQueueItem:GetTopFailedCondition()
+    local topFailed, topPriority = nil, nil
+    for _, condition in ipairs(self:GetPrecraftConditions()) do
+        if not condition.isMet then
+            if not topPriority or condition.priority > topPriority then
+                topFailed = condition
+                topPriority = condition.priority
+            end
+        end
+    end
+    return topFailed
+end
+
+--- Whether a work order can be claimed (reagents, recipe, cooldown, quality — not profession window/tools).
+---@return boolean
+function CraftSim.CraftQueueItem:CanClaimWorkOrder()
+    local IDS = CraftSim.PRE_CRAFT_CONDITION_IDS
+    for _, condition in ipairs(self:GetPrecraftConditions()) do
+        if condition.id == IDS.LEARNED
+            or condition.id == IDS.COOLDOWN
+            or condition.id == IDS.REAGENTS
+            or condition.id == IDS.WORK_ORDER_MIN_QUALITY then
+            if not condition.isMet then
+                return false
+            end
+        end
+    end
+    return true
+end

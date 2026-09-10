@@ -1,0 +1,326 @@
+---@class CraftSim
+local CraftSim = select(2, ...)
+
+local GGUI = CraftSim.GGUI
+
+---@class CraftSim.TOP_GEAR : CraftSim.Module
+CraftSim.TOPGEAR = CraftSim.TOPGEAR
+
+---@class CraftSim.TOPGEAR.UI : CraftSim.Module.UI
+CraftSim.TOPGEAR.UI = {}
+
+local Logger = CraftSim.DEBUG:RegisterLogger("TopGear.UI")
+
+function CraftSim.TOPGEAR.UI:Init()
+    local sizeX = 270
+    local sizeY = 320
+    local offsetX = -5
+    local offsetY = 3
+
+    local frameLevel = CraftSim.UTIL:NextFrameLevel()
+    local onClose, onMinimize, onMaximize = CraftSim.MODULES:GetModuleFrameStateCallbacks(self.module)
+
+    CraftSim.TOPGEAR.frame = CraftSim.GGUI.Frame({
+        parent = ProfessionsFrame,
+        anchorParent = ProfessionsFrame,
+        sizeX = sizeX,
+        sizeY = sizeY,
+        frameID = CraftSim.CONST.FRAMES.TOP_GEAR,
+        title = CraftSim.LOCAL:GetText("TOP_GEAR_TITLE"),
+        collapseable = true,
+        closeable = true,
+        moveable = true,
+        anchorA = "TOPLEFT",
+        anchorB = "TOPRIGHT",
+        offsetX = offsetX,
+        offsetY = offsetY,
+        backdropOptions = CraftSim.CONST.DEFAULT_BACKDROP_OPTIONS,
+        onCloseCallback = onClose,
+        onCollapseCallback = onMinimize,
+        onCollapseOpenCallback = onMaximize,
+        frameTable = CraftSim.INIT.FRAMES,
+        frameConfigTable = CraftSim.DB.OPTIONS:Get("GGUI_CONFIG"),
+        frameStrata = CraftSim.CONST.MODULES_FRAME_STRATA,
+        raiseOnInteraction = true,
+        frameLevel = frameLevel
+    })
+
+    self.module.frame = CraftSim.TOPGEAR.frame
+
+    local function createContent(frame)
+        local contentOffsetY = -40
+        local iconsOffsetY = 90
+        frame.content.autoUpdateCB = GGUI.Checkbox {
+            label = CraftSim.LOCAL:GetText("TOP_GEAR_AUTOMATIC"),
+            tooltip = CraftSim.LOCAL:GetText("TOP_GEAR_AUTOMATIC_TOOLTIP"),
+            parent = frame.content, anchorParent = frame.content, anchorA = "TOP", anchorB = "TOP", offsetX = -40, offsetY = -33,
+            initialValue = CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE"),
+            clickCallback = function(_, checked)
+                CraftSim.DB.OPTIONS:Save("TOP_GEAR_AUTO_UPDATE", checked)
+            end
+        }
+        frame.content.gear1Icon = CraftSim.GGUI.Icon({
+            parent = frame.content,
+            anchorParent = frame.content,
+            sizeX = 40,
+            sizeY = 40,
+            offsetX = -45,
+            offsetY = contentOffsetY + iconsOffsetY,
+        })
+        frame.content.gear2Icon = CraftSim.GGUI.Icon({
+            parent = frame.content,
+            anchorParent = frame.content,
+            sizeX = 40,
+            sizeY = 40,
+            offsetX = 0,
+            offsetY = contentOffsetY + iconsOffsetY,
+        })
+        frame.content.toolIcon = CraftSim.GGUI.Icon({
+            parent = frame.content,
+            anchorParent = frame.content,
+            sizeX = 40,
+            sizeY = 40,
+            offsetX = 50,
+            offsetY = contentOffsetY + iconsOffsetY,
+        })
+
+        frame.content.equipButton = CraftSim.GGUI.Button({
+            parent = frame.content,
+            anchorParent = frame.content,
+            offsetY = contentOffsetY + 50,
+            label = CraftSim.LOCAL:GetText("TOP_GEAR_EQUIP"),
+            sizeX = 15,
+            sizeY = 25,
+            adjustWidth = true,
+            clickCallback = function()
+                CraftSim.TOPGEAR:EquipTopGear()
+            end
+        })
+
+        frame.content.simulateButton = CraftSim.GGUI.Button({
+            parent = frame.content,
+            anchorParent = frame.content.equipButton.frame,
+            label = CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE"),
+            sizeX = 20,
+            sizeY = 25,
+            adjustWidth = true,
+            clickCallback = function()
+                CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MODULES.recipeData)
+            end
+        })
+
+        frame.content.simModeDropdown = CraftSim.GGUI.Dropdown({
+            parent = frame.content,
+            anchorParent = frame.title.frame,
+            anchorA = "TOP",
+            anchorB = "TOP",
+            offsetY = contentOffsetY,
+            width = 120,
+            clickCallback = function(_, _, value)
+                CraftSim.DB.OPTIONS:Save("TOP_GEAR_MODE", value)
+                CraftSim.TOPGEAR:OptimizeAndDisplay(CraftSim.MODULES.recipeData)
+            end
+        })
+
+        frame.content.profitText = frame.content:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.profitText:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY + 10)
+
+        frame.content.statDiff = CreateFrame("frame", nil, frame.content)
+        frame.content.statDiff:SetSize(200, 100)
+        frame.content.statDiff:SetPoint("CENTER", frame.content, "CENTER", 0, contentOffsetY - 50)
+
+        local statTxtSpacingY = -15
+
+        frame.content.statDiff.multicraft = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.multicraft:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY * 2)
+        frame.content.statDiff.multicraft:SetText(CraftSim.LOCAL:GetText("MULTICRAFT_LABEL"))
+
+        frame.content.statDiff.resourcefulness = frame.content.statDiff:CreateFontString(nil, "OVERLAY",
+            "GameFontHighlight")
+        frame.content.statDiff.resourcefulness:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY * 3)
+        frame.content.statDiff.resourcefulness:SetText(CraftSim.LOCAL:GetText("RESOURCEFULNESS_LABEL"))
+
+        frame.content.statDiff.craftingspeed = frame.content.statDiff:CreateFontString(nil, "OVERLAY",
+            "GameFontHighlight")
+        frame.content.statDiff.craftingspeed:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY * 4)
+        frame.content.statDiff.craftingspeed:SetText(CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED") ..
+            ": ")
+
+        frame.content.statDiff.skill = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.skill:SetPoint("TOP", frame.content.statDiff, "TOP", 0, statTxtSpacingY * 5)
+        frame.content.statDiff.skill:SetText(CraftSim.LOCAL:GetText("STAT_SKILL") .. ": ")
+
+        frame.content.statDiff.quality = frame.content.statDiff:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        frame.content.statDiff.quality:SetPoint("TOP", frame.content.statDiff, "TOP", -5, statTxtSpacingY * 6)
+        frame.content.statDiff.quality:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_QUALITY") ..
+            ": ")
+
+        frame.content.statDiff.qualityIcon = CraftSim.GGUI.QualityIcon({
+            parent = frame.content,
+            anchorParent = frame.content.statDiff.quality,
+            anchorA = "LEFT",
+            anchorB = "RIGHT",
+            offsetX = 3,
+            sizeX = 20,
+            sizeY = 20,
+        })
+
+        frame:Hide()
+    end
+
+    createContent(CraftSim.TOPGEAR.frame)
+end
+
+---@param recipeData CraftSim.RecipeData
+function CraftSim.TOPGEAR.UI:Update(recipeData)
+    if not recipeData or not recipeData.supportsCraftingStats then
+        return
+    end
+    local exportMode = CraftSim.UTIL:GetExportModeByVisibility()
+    self:UpdateModeDropdown(recipeData, exportMode)
+    if CraftSim.DB.OPTIONS:Get("TOP_GEAR_AUTO_UPDATE") then
+        CraftSim.TOPGEAR:OptimizeAndDisplay(recipeData)
+    else
+        self:ClearTopGearDisplay(recipeData, true, exportMode)
+    end
+end
+
+function CraftSim.TOPGEAR.UI:ClearTopGearDisplay(recipeData, isClear, exportMode)
+    local topGearFrame = self.module.frame
+
+    local emptyProfessionGearSet = CraftSim.ProfessionGearSet(recipeData)
+    CraftSim.TOPGEAR.UI:UpdateCombinationIcons(emptyProfessionGearSet, exportMode)
+
+    topGearFrame.content.equipButton:SetEnabled(false)
+    topGearFrame.content.profitText:SetText(isClear and "" or
+        CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_EQUIPPED"))
+
+    CraftSim.FRAME:ToggleFrame(topGearFrame.content.simulateButton, isClear)
+    CraftSim.FRAME:ToggleFrame(topGearFrame.content.equipButton, not isClear)
+
+    topGearFrame.content.statDiff.multicraft:SetText("")
+    topGearFrame.content.statDiff.resourcefulness:SetText("")
+    topGearFrame.content.statDiff.craftingspeed:SetText("")
+    topGearFrame.content.statDiff.skill:SetText("")
+    topGearFrame.content.statDiff.quality:Hide()
+    topGearFrame.content.statDiff.qualityIcon:Hide()
+end
+
+---@param professionGearSet CraftSim.ProfessionGearSet
+---@param exportMode number
+---@param gIconsOverride? table
+function CraftSim.TOPGEAR.UI:UpdateCombinationIcons(professionGearSet, exportMode, gIconsOverride)
+    local topGearFrame = self.module.frame
+    local gIcons = gIconsOverride or
+        { topGearFrame.content.toolIcon, topGearFrame.content.gear1Icon, topGearFrame.content.gear2Icon }
+
+    for _, button in pairs(gIcons) do
+        button:Hide() -- only to consider cooking ...
+    end
+    if professionGearSet.isCooking and not gIconsOverride then
+        gIcons = { gIcons[1], gIcons[3] }
+    end
+
+    local professionGearList = professionGearSet:GetProfessionGearList()
+
+    for index, gIcon in pairs(gIcons) do
+        gIcon:Show()
+        local professionGear = professionGearList[index]
+        gIcon:SetItem(professionGear.item)
+    end
+end
+
+---@param results CraftSim.TopGearResult[]
+---@param topGearMode string
+---@param exportMode number
+function CraftSim.TOPGEAR.UI:UpdateTopGearDisplay(results, topGearMode, exportMode)
+    local topGearFrame = self.module.frame
+    local topResult = results[1] -- as they are already sorted
+    CraftSim.TOPGEAR.UI:UpdateCombinationIcons(topResult.professionGearSet, exportMode)
+    if not CraftSim.TOPGEAR.IsEquipping then
+        topGearFrame.currentTopResult = topResult
+    end
+
+    if topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.PROFIT) then
+        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_PROFIT_DIFFERENCE") ..
+            CraftSim.UTIL:FormatMoney(topResult.relativeProfit, true))
+    elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.MULTICRAFT) then
+        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_NEW_MUTLICRAFT") ..
+            CraftSim.GUTIL:Round(topResult.relativeStats.multicraft:GetPercent(), 2) .. "%")
+    elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.CRAFTING_SPEED) then
+        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_NEW_CRAFTING_SPEED") ..
+            CraftSim.GUTIL:Round(topResult.relativeStats.craftingspeed:GetPercent(), 2) .. "%")
+    elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.RESOURCEFULNESS) then
+        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_NEW_RESOURCEFULNESS") ..
+            CraftSim.GUTIL:Round(topResult.relativeStats.resourcefulness:GetPercent(), 2) .. "%")
+    elseif topGearMode == CraftSim.TOPGEAR:GetSimMode(CraftSim.TOPGEAR.SIM_MODES.SKILL) then
+        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_NEW_SKILL") ..
+            topResult.relativeStats.skill.value)
+    else
+        topGearFrame.content.profitText:SetText(CraftSim.LOCAL:GetText("TOP_GEAR_SIMULATE_UNHANDLED"))
+    end
+    topGearFrame.content.equipButton:SetEnabled(true)
+    topGearFrame.content.equipButton:Show()
+    topGearFrame.content.simulateButton:Hide()
+
+    topGearFrame.content.statDiff.multicraft:SetText(CraftSim.LOCAL:GetText("MULTICRAFT_LABEL") ..
+        CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.multicraft:GetPercent(), 2, "%"))
+    topGearFrame.content.statDiff.resourcefulness:SetText(CraftSim.LOCAL:GetText("RESOURCEFULNESS_LABEL") ..
+        CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.resourcefulness:GetPercent(), 2, "%"))
+    topGearFrame.content.statDiff.craftingspeed:SetText(CraftSim.LOCAL:GetText("STAT_CRAFTINGSPEED") ..
+        ": " .. CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.craftingspeed:GetPercent(), 2, "%"))
+    topGearFrame.content.statDiff.skill:SetText(CraftSim.LOCAL:GetText("STAT_SKILL") ..
+        ": " .. CraftSim.FRAME:FormatStatDiffpercentText(topResult.relativeStats.skill.value, 0))
+
+    if CraftSim.MODULES.recipeData.supportsQualities then
+        topGearFrame.content.statDiff.qualityIcon:SetQuality(topResult.expectedQuality)
+        topGearFrame.content.statDiff.quality:Show()
+        topGearFrame.content.statDiff.qualityIcon:Show()
+    else
+        topGearFrame.content.statDiff.quality:Hide()
+        topGearFrame.content.statDiff.qualityIcon:Hide()
+    end
+end
+
+---@param recipeData CraftSim.RecipeData
+---@param exportMode number
+function CraftSim.TOPGEAR.UI:UpdateModeDropdown(recipeData, exportMode)
+    local topGearFrame = self.module.frame
+
+    local topGearMode = CraftSim.DB.OPTIONS:Get("TOP_GEAR_MODE")
+    local availableModes = CraftSim.TOPGEAR:GetAvailableTopGearModesByRecipeDataAndType(recipeData)
+    if #availableModes > 0 and not tContains(availableModes, topGearMode) then
+        topGearMode = availableModes[1]
+        CraftSim.DB.OPTIONS:Save("TOP_GEAR_MODE", topGearMode)
+    end
+
+    availableModes = CraftSim.GUTIL:Map(availableModes, function(mode) return { label = mode, value = mode } end)
+
+    local topGearMode = CraftSim.DB.OPTIONS:Get("TOP_GEAR_MODE")
+
+    topGearFrame.content.simModeDropdown:SetData({
+        data = availableModes,
+        initialValue = topGearMode,
+        initialLabel = topGearMode
+    })
+end
+
+function CraftSim.TOPGEAR.UI:RestoreFrameConfig()
+    CraftSim.TOPGEAR.frame:RestoreSavedConfig(ProfessionsFrame)
+end
+
+function CraftSim.TOPGEAR.UI:VisibleByContext()
+    if not CraftSim.DB.OPTIONS:IsModuleEnabled(self.module.moduleID) then
+        return false
+    end
+
+    if not CraftSim.UTIL:GetSchematicFormByContext() then
+        return false
+    end
+
+    local selectedTab = CraftSim.UTIL:GetSelectedProfessionTab()
+    local isRecipeTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.RECIPE
+    local isCraftingOrderTab = selectedTab == CraftSim.CONST.PROFESSIONS_TAB.CRAFTING_ORDERS
+    return (isRecipeTab or isCraftingOrderTab) and
+        CraftSim.MODULES.recipeData and CraftSim.MODULES.recipeData.supportsCraftingStats
+end

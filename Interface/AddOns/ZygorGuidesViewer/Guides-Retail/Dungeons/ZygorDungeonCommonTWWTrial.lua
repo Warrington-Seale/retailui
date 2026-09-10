@@ -1,0 +1,28 @@
+local ZygorGuidesViewer=ZygorGuidesViewer
+if not ZygorGuidesViewer then return end
+if ZGV:DoMutex("DungeonsCTWW") then return end
+ZygorGuidesViewer.GuideMenuTier = "TRI"
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\Ara-kara, City of Echoes")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\City of Threads")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\The Dawnbreaker")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\Cinderbrew Meadery")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\Darkflame Cleft")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\Priory of the Sacred Flame")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\The Rookery")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\The Stonevault")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Raids\\Nerub-Ar Palace")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Raids\\Liberation of Undermine")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\Operation: Floodgate")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\Fungal Folly Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\Kriegval's Rest Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\The Dread Pit Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\The Waterworks Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\The Sinkhole Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\Mycomancer Cavern Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\Nightfall Sanctum Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\Skittering Breach Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\The Spiral Weave Treasures")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Delves\\Overcharged Delves")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\Eco-Dome Al'dani")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Dungeons\\Tazavesh, the Veiled Market")
+ZygorGuidesViewer:RegisterGuidePlaceholder("Dungeon Guides\\The War Within Raids\\Manaforge Omega")

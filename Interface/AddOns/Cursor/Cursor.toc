@@ -1,0 +1,10 @@
+## Interface: 120000, 120001
+## Title: Cursor
+## Notes: Cursor Mods
+## Author: NoM0Re
+## Version: 1.0
+## SavedVariables: CursorDB
+## OptionalDeps: Ace3
+
+Libs/libs.xml
+Cursor.lua

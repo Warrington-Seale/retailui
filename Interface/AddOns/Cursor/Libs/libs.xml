@@ -1,0 +1,10 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="LibStub\LibStub.lua"/>
+    <Include file="CallbackHandler-1.0\CallbackHandler-1.0.xml"/>
+    <Include file="Ace3\AceAddon-3.0\AceAddon-3.0.xml"/>
+    <Include file="Ace3\AceGUI-3.0\AceGUI-3.0.xml"/>
+    <Include file="Ace3\AceConfig-3.0\AceConfig-3.0.xml"/>
+    <Include file="Ace3\AceDBOptions-3.0\AceDBOptions-3.0.xml"/>
+    <Include file="Ace3\AceDB-3.0\AceDB-3.0.xml"/>
+    <Include file="LibVersionCheck-1.0\LibVersionCheck-1.0.xml"/>
+</Ui>

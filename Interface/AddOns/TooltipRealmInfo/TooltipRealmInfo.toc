@@ -1,0 +1,34 @@
+## Interface: 120007
+## Title: Tooltip RealmInfo
+## Notes: Append realm infos to some tooltips which containing player names with realm names
+## IconTexture: 437310
+## Author: Hizuro
+## Version: 1.4.19-release
+## SavedVariables: TooltipRealmInfoDB
+## OptionalDeps: LibStub, CallbackHandler-1.0, Ace3, LibRealmInfo, LibColors-1.0
+
+## Category-enUS: Dungeons & Raids
+## Category-deDE: Dungeons & Schlachtzüge
+## Category-esES: Mazmorras y bandas
+## Category-esMX: Calabozos y bandas
+## Category-frFR: Donjons et raids
+## Category-itIT: Spedizioni e incursioni
+## Category-koKR: 던전 및 공격대
+## Category-ptBR: Masmorras e Raides
+## Category-ruRU: Подземелья и рейды
+## Category-zhCN: 地下城和团队副本
+## Category-zhTW: 地城與團隊
+
+## X-Curse-Project-ID: 99492
+## X-Wago-ID: 0mNwOBNo
+
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\LibRealmInfo\LibRealmInfo.lua
+libs\LibColors-1.0\LibColors-1.0.xml
+libs\HizurosSharedTools\HizurosSharedTools.lua
+
+localizations.lua
+TooltipRealmInfo.lua

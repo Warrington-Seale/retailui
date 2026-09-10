@@ -1,0 +1,47 @@
+## Interface: 120100
+## Title: DelveSpeedTracker
+## Notes: Track and display delve difficulty rankings with time estimates. Localization: Zwosh.
+## Author: Bloom
+## Version: 1.2.0
+## IconTexture: Interface\AddOns\DelveSpeedTracker\DSTlogo
+## SavedVariables: DelveSpeedTrackerDB
+## RequiredDeps: AbstractFramework
+## OptionalDeps: TomTom
+
+# Initialization
+Init.lua
+
+# Localization (load before Data and Core)
+Locales\enUS.lua
+Locales\deDE.lua
+Locales\esES.lua
+Locales\frFR.lua
+Locales\itIT.lua
+Locales\ptBR.lua
+Locales\ruRU.lua
+Locales\koKR.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+Locales\InitLocales.lua
+
+# Data (delve list, config, DB defaults)
+Data.lua
+
+# Shared utilities and layout
+Helpers.lua
+Layout.lua
+
+# Variant detection (POI/widget/achievement parsing)
+VariantDetection.lua
+
+# Map ripple and TomTom integration
+Ripple.lua
+
+# UI (frames, rows, minimap button)
+UI.lua
+
+# Debug tools
+Debug.lua
+
+# Core (events, DB init, slash commands)
+core.lua

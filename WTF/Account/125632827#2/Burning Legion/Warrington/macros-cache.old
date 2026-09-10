@@ -1,0 +1,10 @@
+VER 3 0100000000000013 "bear" "134400"
+#showtooltip
+/use [nostance:1] Bear Form
+/use mangle
+END
+VER 3 0100000000000014 "sprintcat" "134400"
+#showtooltip
+/use !cat form
+/use dash
+END

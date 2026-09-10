@@ -1,0 +1,73 @@
+## Interface: 40402
+## Title: |cff4beb2cMerfinUI|r Cataclysm
+## Author: Merfin
+## Version: 7.80
+## Notes: Contains layouts from Merfin
+## X-Website: discord.gg/merfin
+## X-Flavor: Mists
+## Notes: Contains User Interface layouts from Merfin
+## Notes-deDE: Enthält Benutzerinterface Layouts von Merfin
+## Notes-esES: Contiene diseños de interfaz de usuario de Merfin
+## Notes-esMX: Contiene diseños de interfaz de usuario de Merfin
+## Notes-frFR: Contient les dispositions d’interface utilisateur de Merfin
+## Notes-itIT: Contiene layout dell'interfaccia utente di Merfin
+## Notes-koKR: Merfin의 사용자 인터페이스 레이아웃을 포함합니다
+## Notes-ptBR: Contém layouts de interface do usuário do Merfin
+## Notes-ruRU: Содержит макеты пользовательского интерфейса от Merfin
+## Notes-zhCN: 包含 Merfin 的用户界面布局
+## Notes-zhTW: 包含 Merfin 的使用者介面配置
+## Category: User Interface
+## Category-deDE: Benutzerinterface
+## Category-esES: Interfaz de usuario
+## Category-esMX: Interfaz de usuario
+## Category-frFR: Interface utilisateur
+## Category-itIT: Interfaccia utente
+## Category-koKR: 사용자 인터페이스
+## Category-ptBR: Interface do usuário
+## Category-ruRU: Интерфейс пользователя
+## Category-zhCN: 用户界面
+## Category-zhTW: 使用者介面
+## IconTexture: Interface\AddOns\MerfinUI\Media\Icons\logo_classic1
+## OptionalDeps: MerfinPlus
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## Dependencies: ElvUI
+## X-Required-ElvUI: 15.04
+## AllowLoadGameType: cata
+
+Locales\enUS.lua
+Locales\deDE.lua
+Locales\esES.lua
+Locales\esMX.lua
+Locales\frFR.lua
+Locales\itIT.lua
+Locales\koKR.lua
+Locales\ptBR.lua
+Locales\ruRU.lua
+Locales\zhTW.lua
+Locales\zhCN.lua
+MerfinUI.lua
+Defaults.lua
+Functions.lua
+AceGUIWidgets\Links.lua
+OptionsTable.lua
+Profiles\System\Chat.lua
+Profiles\System\CVar.lua
+Installer\Installer_Cata.lua
+Profiles\ElvUI\ProjectAzilroka.lua
+Profiles\ElvUI\WrathArmory.lua
+Profiles\ElvUI\AddOnSkins.lua
+Profiles\ElvUI\global.lua
+Profiles\ElvUI\private.lua
+Profiles\ElvUI\Nameplates.lua
+Profiles\ElvUI\ElvUI.lua
+Profiles\AddOns\RaidFrames.lua
+Profiles\AddOns\!ClassColors.lua
+Profiles\AddOns\DBM.lua
+Profiles\AddOns\BigWigs.lua
+Profiles\AddOns\Details.lua
+Profiles\AddOns\Plater.lua
+Profiles\AddOns\xCT.lua
+Profiles\AddOns\MethodRaidTools.lua
+Profiles\AddOns\OmniCD.lua
+Profiles\AddOns\WeakAuras_Cata.lua

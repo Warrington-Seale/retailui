@@ -1,0 +1,1838 @@
+## [1.19.0] - 2026-07-25 (July 2026)
+
+FIXED:
+- Large activity logs no longer stutter the game. The Activity feed and the
+  Leaderboard built one real frame per entry and repainted every one of them
+  on each refresh, so a busy neighborhood's log meant hundreds of frames and a
+  full repaint every few seconds. Both lists now recycle a small pool of rows
+  and only paint what's on screen, so they cost the same whether the log holds
+  20 entries or 2,000.
+- Exporting a large activity log to CSV no longer causes a momentary freeze.
+- Opening the addon for the first time each session is faster: the
+  Leaderboard, Activity, Info and Config panels are now built the first time
+  you actually open them instead of all five being built at login.
+
+- House level, XP and coupons no longer read zero for the first couple of
+  seconds after login. Your last-known values are remembered per character and
+  shown straight away, then replaced as soon as the live data arrives. Each
+  character remembers its own house, so an alt never shows another
+  character's numbers.
+- Fixed a slow memory leak: completed tasks waiting to be matched against a
+  coupon gain were only cleaned up when a coupon actually arrived, so tasks
+  that award no coupons left entries behind for the rest of the session.
+- Switching house no longer leaves the previous neighborhood's entries on
+  screen. The Activity feed and Leaderboard skip redundant redraws by checking
+  when the activity log last changed, and that marker wasn't being cleared on a
+  house switch -- so both tabs decided they were already up to date and kept
+  showing the old house's rows (credited to the newly selected house) until
+  fresh data happened to arrive.
+- Fixed a second frame leak, in the house dropdown: its rows were thrown away
+  and rebuilt every time the window opened. They're now reused.
+- The tab strip and the dropdown menu now size themselves correctly the first
+  time they're built. Text was being measured before it had been drawn, which
+  reads as zero width, so tabs could come up collapsed and the dropdown menu
+  too narrow for its longest entry.
+- Turning on "Show During Combat" while the window was already hidden by combat
+  no longer keeps it hidden -- it now reappears when you leave combat.
+
+ADDED:
+- The progress bar now has a tooltip explaining the cycle progress and, when
+  your completion chest is ready, says so and tells you where to collect it.
+  Once the chest is claimed the tooltip stops appearing entirely -- there's
+  nothing left to say, so the bar goes quiet for the rest of the cycle.
+- Right-click the progress bar to mark the chest as already claimed -- the same
+  as /ve claimed, for when you collected it somewhere the addon couldn't see.
+  The tooltip only offers this while a chest is actually waiting.
+
+- Task rows no longer cut off the progress count. Tasks that count to a large
+  number showed "0/250..." with the real total clipped, because the progress
+  column was a fixed width. It now sizes to the number, and the task name gives
+  up the space instead of being overlapped.
+
+CHANGED:
+- The "chest ready to claim" icon on the progress bar now grows and shrinks as
+  it pulses instead of only fading, so it's far harder to miss on the thin bar.
+- Leaderboard: the "My Total" summary row now stays pinned above the list
+  instead of scrolling away with the rankings.
+
+ADDED:
+- New "Show During Combat" setting (Config tab). When enabled, the window
+  stays visible in combat instead of auto-hiding -- handy for watching task
+  counters tick up mid-fight (thanks Tuulani from WOWKEA for the request).
+  Off by default, so the auto-hide behaviour is unchanged unless you opt in.
+
+## [1.18.4] - 2026-06-19 (June 2026)
+
+ADDED:
+- The House XP tooltip now shows your current house XP and a projected
+  total. The projected total adds your remaining task XP and the unclaimed
+  completion chest to your current house XP, so you can see where your
+  house favor lands if you finish the cycle.
+
+## [1.18.3] - 2026-06-13 (June 2026)
+
+FIXED:
+- Removed the duplicate Addon Compartment entry (the second one was named
+  "VamoosesEndeavors" with a stray "Drag: Move button" tooltip line --
+  thanks ladysilverwolf01 for the report). One tidy entry remains, now
+  registered the standard way through the TOC.
+- The addon list and compartment icon now use the Endeavors icon instead
+  of the generic storehouse icon.
+
+## [1.18.2] - 2026-06-07 (June 2026)
+
+CHANGED:
+- Updated for WoW 12.0.7. Dropped 12.0.1 from the supported game versions.
+
+FIXED:
+- Defensive: preemptive guard against Midnight secret-value taint inside
+  player housing. C_NeighborhoodInitiative.GetAvailableHouseXP and the
+  HOUSE_LEVEL_FAVOR_UPDATED event payload fields (.houseFavor, .houseLevel)
+  may return secret-restricted values in housing interior; previously VE fed
+  these directly into arithmetic, %d formatting, tostring, and table-key
+  writes -- all of which crash on secret values, and the cache write would
+  also persistently contaminate state. GetHouseXP now returns nil on a secret
+  return; the Dashboard XP display renders "--" instead of crashing; the
+  chest-claim favor-delta detector bails on secret currentXP/lastXP rather
+  than subtracting; _OnHouseLevelFavorUpdated guards both fields and the
+  payload table itself before caching. Pattern library cribbed from
+  DandersFrames v4.3.8 (see Reference/MIDNIGHT_SECRET_VALUES.md "Production
+  guard library" + Case 4). Zero perf overhead on clients without secret
+  restrictions enabled.
+
+## [1.18.1] - 2026-05-11
+
+CHANGED:
+- Login chest-READY message now prints a follow-up hint:
+  "(type /ve claimed if you have already claimed chest for this house)".
+  Helps when claim detection misfires (e.g. claimed on an alt, or before
+  the addon was loaded) so you can mark it manually instead of being
+  told to claim again. Only prints when the chest is in the READY state.
+
+## [1.18.0] - 2026-04-29
+
+VERIFIED (live claim, Vamoose-Khaz'goroth, cycle 7, 2026-04-29):
+- Chest XP is ADDITIVE: lands directly on house favor (15798→16048) on
+  claim. The "available bucket" (GetAvailableHouseXP) is unaffected
+  (3232→3232). The "(additivity unverified)" hedge is removed from
+  /ve status; the line now reads "tasks: N in available bucket + chest:
+  250 direct to favor = total cycle XP".
+- HOUSE_LEVEL_FAVOR_UPDATED delta=+chest.xp is the ONLY working detection
+  path. QUEST_TURNED_IN(rewardQuestID 93262) was observed NOT to fire on
+  a real claim — the chest reward "quest" is implicit (no log entry, no
+  turn-in NPC). The QUEST_TURNED_IN handler is kept as belt-and-braces
+  but is annotated as known-dead; load-bearing logic is in
+  _DetectChestClaimViaFavorDelta.
+- Two HOUSE_LEVEL_FAVOR_UPDATED events fire on each claim (~420ms apart):
+  a reconciliation event with no delta, then the actual +chest.xp event.
+  The `delta <= 0` guard in the favor-delta detector exists specifically
+  to skip the dupe; banner comment added so it can't be "optimized" away.
+- InitiativeMilestoneRewardInfo.favor still returns 0 on 12.0.5; the
+  hardcoded 250 fallback is correct. Chest currency reward = 30 Community
+  Coupons via gainSource=67 (CURRENCY_DISPLAY_UPDATE fires ~700ms BEFORE
+  the favor event).
+
+ADDED:
+- Login active-endeavor message now appends chest status inline:
+  "...10 days remaining -- chest READY (+250 XP + 30 coupons)" when
+  claimable, or "...10 days remaining -- chest claimed" if already done.
+  Silent when the chest is still locked (below 100%) so the message
+  stays signal-only.
+- /ve armchest [seconds] — opens a raw event-capture window (default 120s,
+  max 1800s) so a once-a-month completion-chest claim leaves full forensic
+  data in VE_DB.chestObservations even if both detection paths misfire.
+  Captures BEFORE the existing OnEvent dispatcher runs, plus baseline +
+  final snapshots of: GetAvailableHouseXP, coupon balance, active
+  neighborhoodGUID, full initiative info, finalMilestone struct (real
+  Blizzard field names: milestoneOrderIndex, requiredContributionAmount,
+  rewards[]), and current chest cache state. Pairs with /ve disarmchest
+  (close window early) and /ve dumpchest (opens the existing CSV-export
+  copy window with a Lua-ish serialization of baseline + every captured
+  event + final snapshot, so the full blob is selectable / Ctrl-A +
+  Ctrl-C-able rather than chat-truncated).
+- Completion-chest awareness. The 100% milestone reward (House XP + coupons)
+  is now read live from Blizzard's 12.0.5 InitiativeMilestoneRewardInfo struct
+  (favor field + rewardQuestID currency rewards) instead of being hardcoded.
+  Surfaces in the House XP tooltip as "From tasks / Completion chest /
+  Projected total", and the Info tab line updates with the live values.
+- Initiative-bar chest icon pulses when the completion chest is ready to
+  claim, freezes (desaturated) once claimed.
+- Per-house chest claim history (account-wide). The chest is per-house
+  (each house runs its own initiative + chest, claiming on one alt locks
+  the chest for the whole account on that house until next cycle). Claim
+  is detected via QUEST_TURNED_IN (rewardQuestID match) and persisted
+  keyed by neighborhoodGUID + cycleID. Drives the "claimed" state across
+  initiative cycles (IsQuestFlaggedCompleted clears each cycle and was
+  unreliable). rewardQuestID 93262 is shared across all initiatives so
+  the active neighborhood (not the viewed one) is used to disambiguate
+  which house's chest was claimed.
+- /ve status reports the ACTIVE house (where XP is earned), not whatever
+  the addon UI happens to be viewing. House XP line marked "additivity
+  unverified" until we observe a real claim -- debug mode now samples
+  GetAvailableHouseXP before/after claim to determine empirically
+  whether chest XP is additive or comes out of the available bucket.
+
+FIXED:
+- _RecordChestClaim called VE.EventBus:Fire (doesn't exist) instead of
+  VE.EventBus:Trigger, causing /ve claimed and the auto-detection path
+  to throw "attempt to call a nil value" on a real claim. Pre-existing
+  typo, only surfaced when an actual claim happened.
+- QUEST_TURNED_IN handler corrupted the viewed-house chest cache by
+  mutating its neighborhoodGUID in place when the active house had no
+  cached snapshot. Now shallow-clones before mutating.
+- Stored cycleID = 0 (when the API hadn't yet returned a real cycle)
+  could false-match every future ProcessInitiativeInfo and mark the chest
+  permanently claimed. cycleID is now nil-or-positive and never persisted
+  as 0.
+- Removed leftover IsQuestFlaggedCompleted call in chest derivation that
+  could set claimed=true between cycle rollover and DB write. VE_DB is
+  the sole source of truth.
+- BuildGuide function-form lines now run inside pcall with a nil-safe
+  text fallback, so a tracker error can't abort the whole guide render.
+- Progress bar chest pulse: SetProgress no longer recurses into
+  SetChestState with stale cached state (pulse + visibility now share a
+  single _ApplyChestVisuals reconciler).
+- /ve unclaimed cancels the in-flight post-claim sample timer and clears
+  the per-house cached chest snapshot to avoid stale-state writes.
+- Combat-deferred SetChestState (PLAYER_REGEN_ENABLED queue) -- belt-and-
+  braces guard against any future taint regression even though the
+  rewardIcon is addon-owned.
+- Replaced unicode arrows/delta in debug print() with ASCII equivalents
+  (WoW font renderer doesn't handle them reliably).
+- History trim uses ipairs-counted iteration instead of # on a persisted
+  table.
+- /ve status (alias /ve chest, /ve progress) prints initiative progress,
+  XP breakdown, chest state, and claim history.
+- Fallback: when Blizzard's API still returns favor=0 on
+  InitiativeMilestoneRewardInfo (the 12.0.5 tooltip patch is incomplete
+  for some initiatives), we fall back to the observed 250 XP value and
+  flag it with a footnote.
+
+## [1.17.0] - 2026-04-25
+
+ADDED:
+- Diminishing-returns step coloring on each task row. Repeatable initiative
+  tasks show next-completion XP and coupon values tinted by where the next
+  rep lands on Blizzard's authoritative DR curve (curve 87592, decoded from
+  DB2): #1 (100%) pale yellow → #2 (90%) → #3 (80%) → #4 (70%) → #5 (60%) →
+  #6+ (50%) bright red floor. Single tasks have no DR coloring.
+- Tooltip DR breakdown for repeatable tasks: hover any task to see base
+  reward and a per-step list of all 6 dampening rungs (XP and coupons),
+  with the current step marked. Coloring matches the row tint.
+- Coupon forecast: each row's coupon badge now shows the dampened forecast
+  for the next completion, computed from the same DR curve. Blizzard's
+  GetQuestRewardCurrencyInfo returns BASE only — VE multiplies by the
+  appropriate DR factor so the displayed value matches what you'll
+  actually receive.
+
+CHANGED:
+- `EndeavorTracker:CalculateNextContribution` is now deterministic: trusts
+  Blizzard's `task.progressContributionAmount` (already the dampened
+  forecast) instead of waiting for an empirical floor to be observed.
+- Schema migration v4 clears the now-orphaned `VE_DB.taskActualCoupons`
+  table from existing saves.
+- Live-refresh listener for the Endeavors tab now filters on the correct
+  Store action names (`SET_TASKS`, `SET_ENDEAVOR_INFO`, `SET_HOUSE_LEVEL`).
+  Previous code referenced two non-existent action names so endeavor-info
+  updates never refreshed the visible tab.
+
+FIXED:
+- Tasks now refresh visibly within ~0.3s of completing one. Previously the
+  Endeavors tab stayed stuck on the prior completion's values until you
+  switched tabs, /reloaded, or zoned out and back. Three layered bugs all
+  contributed (missing INITIATIVE_TASK_COMPLETED refetch, incomplete
+  cache hash, broken live-refresh listener); all three now fixed.
+- DR colors on dark themes are readable. The earlier dark-red floor step
+  (L*≈42) failed WCAG body-text contrast; switched to a luminance-lifted
+  YlOrRd ramp ending in bright red rather than deep red.
+
+REMOVED (dead code now that the DR curve is authoritative):
+- `buildTaskRules` + `self.taskRules` — ~60 lines of empirical floor-detection
+  scaffolding that watched the activity log to learn each task's floor.
+- `COMPLETIONS_TO_FLOOR` constant.
+- The `actual or base` branch in `GetTaskCouponReward` and the
+  `taskActualCoupons` per-task coupon history.
+- `Tracker:GetAccountCompletionCount` + `self.accountCompletions` +
+  `buildAccountCompletions` helper — only callers fed the now-redundant
+  `_completions` arg of `CalculateNextContribution`.
+- `_completions` arg on `CalculateNextContribution`.
+
+## [1.16.0] - 2026-04-23
+
+FIXED:
+- AltSharing was registered for the wrong neighborhood-change event
+  (VE_NEIGHBORHOOD_CHANGED instead of VE_ACTIVE_NEIGHBORHOOD_CHANGED).
+  Long-standing latent bug surfaced by post-1.15.0 audit — its handler had
+  been silently never firing. Cross-faction channels now actually re-join
+  when you switch active neighborhoods.
+
+CHANGED:
+- Removed `/ve scale`, `/ve validate`, `/ve rules`, `/ve observer` debug
+  commands and their stale entries in `/ve` help — all relics of the old
+  scale-derivation/Observer architecture deleted in 1.15.0.
+- Schema migration v3 now also clears legacy `learnedFormula`, `taskRules`,
+  and `formulaCheckpoint` SavedVars keys (was being done unconditionally on
+  every login).
+- Trimmed `VE_XPEngine` context: dropped unread `taskXPCache`,
+  `taskXPByPlayer`, `playerCompletions`, and `_ptc` fields (and the dedup
+  work that built them). Per-rebuild allocation roughly halved.
+- Removed `VE_XPEngine` public methods with zero callers:
+  `GetDecayMultiplier`, `HasContext`, `ClearContext`,
+  `GetPlayerCompletionCount`. Public surface now only exposes what the UI
+  actually reads.
+- `EndeavorTracker:GetActivityLogData` no longer falls back to
+  `self.cachedActivityLog` — the fallback was unreachable since both paths
+  are populated together.
+- Fixed: `INITIATIVE_TASK_COMPLETED` 30-second activity-log fallback timer was
+  fire-and-forget — five rapid task completions stacked five separate
+  fallback timers instead of debouncing. Now cancel-and-replace, single
+  fallback in flight at a time.
+- Fixed: `SetAsActiveEndeavor` spawned two un-cancellable timers per click
+  (1.5s + 3s). Two rapid "Set Active" clicks meant four orphaned timers
+  doing duplicate work. Now stored on cancellable handles.
+- Fixed: defensive nil-guard on `pending.taskName` in coupon correlation —
+  would have errored on `VE_DB.taskActualCoupons[nil]` if the task name
+  was ever missing from the pending queue.
+- Removed dead `Tracker:GetCouponGainsThisSession` (zero callers) and the
+  `VE_FETCH_STATUS_CHANGED` event trigger (no listeners).
+- v3 schema migration now also clears `houseXP` from per-guid `houseData`
+  entries (pre-1.15.0 wrote it; v1.15.0+ doesn't).
+- Cleaned up vestigial XP FORMULA comment block in Constants.lua and the
+  duplicate "5." section heading.
+- Misc unused-local cleanup across HousingTracker, AltSharing, and
+  Endeavors.lua (LSP nits).
+- Fixed: `houseInfo.houseName` is `0` (number, truthy) for unnamed houses
+  per Blizzard API — the `or` fallback was rendering "0" instead of
+  "House N" / "Select House" / "Unknown" in the dropdown and active-
+  endeavor display. Both call sites now type-check the string.
+- Fixed: `showLoginActiveEndeavor` config setting was in defaults and
+  read by EndeavorTracker but never written to SavedVariables — toggling
+  it off in the Config tab silently reset to ON every reload.
+- Fixed: HousingTracker `Initialize()` and `PLAYER_ENTERING_WORLD` 1.5s
+  startup timers were fire-and-forget — could stack if both fired in the
+  same load sequence. Now share a single cancellable handle.
+- Fixed: EndeavorTracker had three more orphan timers in `OnEvent`
+  (PLAYER_ENTERING_WORLD house-list fetch, login-msg announcer, coupon
+  retry). All converted to cancellable `NewTimer` with cancel-replace.
+  Dropped the now-redundant `_couponRetryScheduled` flag.
+- Fixed: `UpdateCoupons` lacked the `if C_CurrencyInfo` guard every other
+  call site uses. Coupon icon now also loads for players with 0 coupons
+  (was previously gated behind `quantity > 0`).
+- Fixed: theme switch on the Activity and Leaderboard tabs left rows
+  rendered in the previous theme's colors when the activity log
+  timestamp hadn't changed. Both now pass `forceUpdate=true`.
+- Fixed: mini favourites panel rows in the header used inline
+  `SetBackdropColor` and weren't registered with the theme engine — theme
+  switch left their backdrop in the previous color. Now registered as
+  Panel widgets so ThemeEngine re-skins them.
+- `maxLevel` fallback (HousingTracker + Store default) lowered from 50 to
+  9 so it matches the current Midnight S2 cap and doesn't ping as a
+  "magic number" — the API is still authoritative when available; the
+  fallback only fires if the C call errors.
+- Removed dead `CHANNEL_UI_UPDATE` event registration in AltSharing — no
+  handler had ever existed for it.
+- Fixed (real root cause): the header's contribution was computed by
+  matching log entries against the CURRENT character's name, so playing on
+  an alt with no contributions to the active initiative showed 0 even
+  though the account had earned plenty. Now sums entries across all
+  characters that have logged in with VE (the same set the leaderboard's
+  account-grouped row shows), matching Blizzard's per-character API value
+  only when you have one character.
+- Removed 18 debug slash commands. `/ve` (toggle window), `/ve debug`
+  (toggle debug mode), and `/ve reset` (factory reset, asks for confirmation)
+  are the only ones left. The rest were XP debugging scaffolding from
+  the pre-12.0.5 architecture (xpdump, coupons, tasks, questreward,
+  currencies, allcurrencies, activity, broadcast, roster, apis, house,
+  initiatives, relearn, dumplog, decorinfo, coffer, quote, refresh,
+  heal, dump, couponstore). Init.lua dropped from 816 lines to ~250.
+- EndeavorTracker simplification pass:
+  - Deleted `pendingRetryTimer` field and 3 cancellation blocks — was set
+    nowhere, retry mechanism it backed had been removed long ago.
+  - Dropped `attempt` parameter from `FetchEndeavorData` — no caller passed
+    a real value, the `attempt > 0` branches (retry logging, "retrying"
+    state) were unreachable.
+  - Replaced two inline "clear endeavor data" duplicates with calls to the
+    pre-existing `ClearEndeavorData` helper, parameterized to accept the
+    season-name string.
+  - Trimmed `fetchStatus` from 4 fields to 2 — removed `attempt` (write-
+    only) and `nextRetry` (write-only).
+  - `UpdateFetchStatus` signature reduced from `(state, attempt, nextRetry)`
+    to just `(state)`. All ~7 call sites simplified.
+  - Removed unreachable `"retrying"` state from the 3 tab fetchState checks.
+- Renamed Rankings tab section header "Leaderboard" -> "Initiative
+  Contribution" so the column unambiguously reads as contribution (matches
+  Blizzard's `playerTotalContribution` API field), not as XP. Discord
+  feedback flagged the ambiguity.
+- Folded `Modules/HousingTracker.lua` into `EndeavorTracker.lua` and deleted
+  the module (~330 lines absorbed). Same rationale as the v1.16 XPEngine
+  fold-in: HousingTracker had one feeder (Blizzard housing events) and one
+  consumer pattern, which made the separate module pure indirection. Public
+  methods moved: `RequestHouseInfo`, `UpdateCoupons`. Two redundant methods
+  deleted (zero callers): `GetHouseLevel`, `GetCoupons`. Duplicate
+  `PLAYER_HOUSE_LIST_UPDATED` registration + debounce timer collapsed.
+  Duplicate startup timer (1.5s vs 2s) collapsed into the existing
+  `_initFetchTimer`. UI consumers swap `VE.HousingTracker.X` ->
+  `VE.EndeavorTracker.X`. No behaviour change.
+- Removed the `/ve memory` chart — moveable bar-chart window that sampled
+  VE's addon memory once per second. Useful during the memory-leak hunts
+  of v1.10-ish, no longer earning its 200 lines. Use stock `/dump
+  GetAddOnMemoryUsage("VamoosesEndeavors")` if you want a one-off number.
+- Removed three now-redundant timers: `_setActiveRefreshTimer` (3s in
+  SetAsActiveEndeavor), `pendingSelectTimer` (1.5s in SelectHouse), and
+  `_loginMsgTimer` (12s login-msg fallback in _ProcessHouseListUpdate).
+  All three were doing manual "wait + RefreshActivityLogCache" or "wait +
+  print" work that the new INITIATIVE_ACTIVITY_LOG_UPDATED listener +
+  reliable NEIGHBORHOOD_INITIATIVE_UPDATED firing makes obsolete. Net:
+  three fewer timer handles to track and cancel.
+- Restored: per-character breakdown tooltip on the contribution display.
+  Hover the contribution number to see how much each of your characters
+  contributed this cycle, sorted by amount.
+- Fixed: header `playerContribution` could stay 0 when the panel opened
+  before `PLAYER_HOUSE_LIST_UPDATED` fired. Root cause was layered:
+  `RefreshActivityLogCache` early-returned at an `IsViewingActiveNeighborhood`
+  gate whenever `viewingGUID` wasn't loaded yet, AND `_RebuildXPIndexes`
+  bailed out on a `currentHouseGUID` check. Both gates removed. The
+  activity log now drives the display directly: when valid log data
+  arrives, indexes rebuild and the header updates. Per-house caching in
+  `VE_DB.houseData` and the `_RestoreCachedXP` wipe/restore dance were
+  also dropped — house switch triggers a new activity log which triggers
+  a fresh rebuild. Header shows 0 briefly on first login until the log
+  arrives, which is fine.
+- Subscribed to `INITIATIVE_ACTIVITY_LOG_UPDATED` (Blizzard event we'd been
+  working around). Activity log refreshes are now event-driven with a 5s
+  debounce instead of polling — server tells us when fresh data lands and
+  we render once. The 30-second post-completion fallback timer is gone
+  entirely (the new event covers it). The event can fire ~50/min on an
+  active neighborhood, hence the 5s debounce — no need to re-render that
+  fast.
+- Removed `nextXPCache` in Endeavors tab — was an in-sort memoization for
+  `CalculateNextContribution` that's now fast enough to call directly.
+  Saves a table allocation, two cache-management loops, and the
+  staleness-on-house-switch class of bugs we kept worrying about.
+- VE_Health.lua cleanup: removed two no-op stub migrations (v1 → v1 and
+  v1 → v2 were placeholders with no body), removed CONFIG_TYPE_DEFAULTS
+  type-check loop (was paranoid coverage of one bool we own), refactored
+  v3 migration with a `dropKey` helper to remove the repetitive
+  if-exists-then-log-then-nil pattern, added an early-out when schema is
+  already current so the loop is skipped entirely on every load past the
+  first one.
+- Slimmed task row tooltip to just task name + description + click hints.
+  Cut "Current House XP reward", "Base reward: +N coupons", "Next House
+  XP", "Next Endeavor Contribution" lines — all redundant with the badges
+  already on the row itself.
+- Folded `VE_XPEngine` into `EndeavorTracker` and deleted the module.
+  XPEngine had a single feeder (EndeavorTracker) and one feeder feeding
+  itself via `IngestActivityLog`/`IngestLiveTasks` was paying for the
+  abstraction zero times. The four UI-facing methods
+  (`GetHouseXP`, `GetPlayerContribution`, `GetAccountCompletionCount`,
+  `CalculateNextContribution`, `GetTaskRankings`) and the activity-log
+  helpers now live directly on `EndeavorTracker`. UI consumers swap
+  `VE.XPEngine` → `VE.EndeavorTracker`. No behaviour change.
+- Removed initiative-completion loot icon machinery from the progress bar
+  factory (Framework: ~50 lines). Was Observer-mode-only and already
+  retired in 1.15.0; the implementation followed.
+- Deleted obsolete `plans/OBSERVER_REDESIGN_PLAN.md`,
+  `plans/HOUSE_XP_FIX_PLAN.md`, `plans/xp_calculation_flow.md` — all
+  described architectures that no longer exist.
+
+## [1.15.0] - 2026-04-23
+
+CHANGED:
+- House XP now reads directly from C_NeighborhoodInitiative.GetAvailableHouseXP
+  (12.0.5 native API) — same number Blizzard's "House XP Available" tooltip
+  shows. Replaces the old activity-log scale derivation and the Observer
+  delta-tracking mode entirely. Display is now a clean integer matching the
+  game's own value.
+- House XP icon swapped to housing-dashboard-icon-xp (matches Blizzard's
+  Endeavor XP badge in the housing dashboard).
+- Header tooltip simplified: single "Available: N" line, no more pre/post
+  split or Observer/Classic mode explanation. Cap concept removed entirely
+  to match Blizzard's UI (the API surfaces no cap and houses can carry
+  values higher than the old hardcoded 2,250).
+
+REMOVED:
+- XP Tracking Mode setting (Classic vs Observer) and the "Seed Observer from
+  Classic" button. Both modes superseded by the native API.
+- 12.0.1 client support — TOC now targets 12.0.5 only.
+- Observer SavedVariables (xpObserver baselines, observation log) and
+  per-neighborhood scale calibrations. Cleaned up automatically by schema
+  migration on first load.
+- /ve scale, /ve observer, /ve obslog debug commands.
+- Initiative-completion chest indicator (was Observer-mode only).
+
+ADDED:
+- Self-healing health check. Runs 5 seconds after the VE window opens and
+  quietly fixes three common failure modes: no house list loaded despite no
+  request in flight, a saved house GUID that doesn't match any current-session
+  house (houseGUIDs are session-scoped and reset on relog), and the
+  contradiction of the player having initiative contribution recorded but the
+  house list being empty. Each heal action re-requests the house list from
+  Blizzard. Silent unless debug is on.
+- SavedVariables schema migration on addon load. Each VE upgrade bumps a
+  schema version number; malformed or orphan xpObserver entries get pruned
+  automatically, and config values that end up with the wrong type are reset
+  to sensible defaults. User gets a yellow chat notification listing anything
+  that was healed.
+- /ve reset -- factory reset command. Shows a confirmation dialog before
+  wiping VE_DB entirely, then re-requests fresh data. If Observer XP mode was
+  active, auto-switches to Classic because Observer would show 0 until task
+  completions rebuild a baseline; Classic reads the server activity log and
+  is accurate immediately.
+
+Version 1.14.6 (2026-04-18)
+--------------------------------------------------------------------------------
+
+COMPATIBILITY:
+- TOC updated for patch 12.0.5 (compatible with 12.0.1 and 12.0.5)
+
+FIXED:
+- XPObserver crash "attempt to compare number with nil" at VE_XPObserver.lua:104
+  when decor was learned for a house whose saved xpObserver entry predated the
+  totalCleanXP field. GetHouseData now backfills missing totalCleanXP /
+  decorCount / observations fields non-destructively on read, preserving the
+  existing originBaseline. Any legitimate season change is still handled by the
+  seasonEndTime-based reset in OnFavorUpdated. The previous version wiped the
+  baseline along with the missing field, which incorrectly reset baselines for
+  current-season entries that merely predated the schema addition.
+
+CHANGED:
+- Silenced "VE loaded" login chat message (shown only when debug mode is on)
+- "Active endeavor on login" chat message is now optional via Settings tab
+  (checkbox: "Announce Active Endeavor on Login"). Default remains ON.
+
+ADDED:
+- Buy Me a Coffee link in Settings tab, below the Discord row
+- Per-character coupon balances in the Community Coupons tooltip: lists each
+  alt with class-colored name, current balance, and per-character cap status
+  (yellow >=80%, red >=95%). Includes a "Total" row summing across all alts.
+  Populates on every CURRENCY_DISPLAY_UPDATE, so alts refresh on each login.
+
+Version 1.14.5 (2026-04-08)
+--------------------------------------------------------------------------------
+
+FIXED:
+- XP Observer: Fixed XP display showing wrong house's value after switching
+  houses in the dropdown. The Store could hold stale XP from the previous house,
+  contaminating the Observer's per-house tracking. Observer now uses session-
+  tracked favor only, never the shared Store.
+- XP Observer: Season detection now catches transitions even when the client
+  clock hasn't quite passed the predicted end time
+
+Version 1.14.4 (2026-04-08)
+--------------------------------------------------------------------------------
+
+FIXED:
+- XP Observer: Season reset now triggers reliably on endeavor transitions,
+  even when the season ends slightly before the predicted time or when a
+  house has no active initiative (seasonEndTime=0). Three detection paths:
+  clock-based expiry, unknown/missing end time, and new initiative loaded
+  with a different end time.
+
+Version 1.14.3 (2026-04-07)
+--------------------------------------------------------------------------------
+
+FIXED:
+- Login Reminder: Fixed silent failure when Blizzard returns neighborhoodName as
+  a non-string value (e.g. number 0). The Lua falsy-zero trap meant the fallback
+  to houseName never kicked in, permanently silencing the login message.
+- Login Reminder: Days remaining now matches Blizzard's Housing Dashboard (was
+  showing 1 extra day due to math.ceil rounding)
+- Login Reminder: Simplified house name resolution — uses already-resolved house
+  info from FindBestHouseIndex instead of redundant GetActiveNeighborhood() call
+  that could fail independently
+- Login Reminder: First initiative data retry now fires after 3s instead of 10s
+  for faster login message display
+- XP Observer: Fixed multi-house decor XP never applied (wrong namespace
+  reference meant house list was always empty, falling back to active house only)
+- XP Observer: Season end time no longer drifts on each periodic refresh (only
+  updates when Blizzard returns a valid duration, preserves stored value otherwise)
+- Store: Numeric fields (seasonEndTime, initiativeID, daysRemaining, progress,
+  house level/XP) now use nil-aware coalescing instead of Lua `or` fallback,
+  preventing stale values surviving clears when the intended value is 0
+- Activity Log: Cache now validates isLoaded before marking as loaded, preventing
+  a nil/unloaded response from suppressing future retry attempts
+- Set Active Endeavor: API requests now delayed 1.5s after SetActiveNeighborhood
+  to avoid reading stale data during Blizzard's async context switch
+- Alt Sharing: Character keys now use GetNormalizedRealmName() consistently,
+  fixing silent alt-grouping failures on multi-word realm names
+- Task Tracking: Toggle tracking calls now guarded against combat lockdown
+  (AddTrackedInitiativeTask / RemoveTrackedInitiativeTask are protected APIs)
+- Talking Head: Hide timer now properly cancelled when a new quote arrives,
+  preventing a stale hide callback from closing a freshly-shown talking head
+
+IMPROVED:
+- Combat Safety: Added InCombatLockdown() guards to all C_Timer callbacks that
+  touch UI (mascot animation, refresh button, theme change, data refresh)
+- Store: Tracked task dispatch now skips when no values actually changed
+- Activity Tab: Removed dead duplicate OnClick handler; currency icon now retries
+  via CURRENCY_DISPLAY_UPDATE event instead of blind 2s timer
+- Hex color formatting now uses math.floor consistently (prevents float-to-int
+  format errors on strict Lua 5.1 builds)
+- Progress bar milestone positioning falls back to estimated width when frame
+  has not yet been laid out (prevents pips clustering at left edge)
+- Theme switcher tooltip no longer errors on unrecognized legacy theme keys
+
+Version 1.14.2 (2026-04-04)
+--------------------------------------------------------------------------------
+
+NEW:
+- Login Reminder: Now shows days remaining in the current endeavor season
+
+FIXED:
+- Login Reminder: House name showing as "0" for unnamed houses (Blizzard returns
+  non-string value; now validates houseName is a real string before displaying)
+- Login Reminder: Active house info sometimes missing due to race condition between
+  initiative data loading and house list. Now defers until initiative data arrives,
+  with a 12s fallback if data never loads.
+
+Version 1.14.1 (2026-03-31)
+--------------------------------------------------------------------------------
+
+NEW:
+- Login Reminder: Chat message now shows which house your active endeavor is set
+  to, with faction tag (Alliance/Horde), so you remember to switch when it caps
+
+IMPROVED:
+- Slash command registration moved inside initialization to avoid file-scope
+  taint chain
+
+Version 1.14.0 (March 2026)
+--------------------------------------------------------------------------------
+
+NEW:
+- Decor Duplicate Detection: Observer mode now only counts first-learns toward
+  decor XP. Duplicate acquisitions (items you already own) are detected via the
+  Blizzard catalog API and skipped, preventing inflated XP totals
+- Auto-Repair: On login, Observer automatically fixes inflated decor counts from
+  older versions that didn't have duplicate detection. Repair actions are logged
+  in the observation audit trail
+- Manual Repair: `/ve repairdecor` command to manually fix inflated decor counts
+  using drift analysis
+
+IMPROVED:
+- Minimap Button: Replaced hand-rolled minimap button with embedded LibDBIcon.
+  Proper compatibility with ElvUI, SexyMap, Bazooka, Titan Panel, and other
+  minimap addons out of the box
+- Event Debouncing: PLAYER_HOUSE_LIST_UPDATED is now debounced (0.3s) in both
+  trackers -- Blizzard fires this multiple times on login/reload, which could
+  cause redundant processing and UI flicker
+- Favor Update Deduplication: Redundant HOUSE_LEVEL_FAVOR_UPDATED events with
+  the same favor and level for the same house are now skipped
+- Initiative Reward Detection: Chest indicator now also recognizes any single
+  250 XP observation as an initiative reward, catching cases where the reward
+  wasn't properly tagged
+- House Info Requests: Full refresh now requests house list first and lets the
+  callback handle favor data, avoiding double-requests
+
+DEBUG:
+- `/ve obslog` -- dumps all XP Observer observations for the current house
+- `/ve decorinfo <itemID>` -- dumps Blizzard catalog info for a decor item
+- Chest indicator state transitions now logged in debug mode
+
+================================================================================
+
+Version 1.13.0 (March 2026)
+--------------------------------------------------------------------------------
+
+NEW:
+- Initiative Chest Indicator: Observer mode now shows a loot icon on the
+  progress bar when the initiative is complete. Flashing animation when the
+  chest is ready to collect, green checkmark once collected (+250 XP detected)
+
+IMPROVED:
+- Theme button icon: switched to the dye palette atlas for better visual clarity
+
+FIXED:
+- House dropdown no longer resets to blank when opening/closing the Blizzard
+  house menu. Replaced fragile time-based guard with persistent selection state
+  that survives Blizzard UI interactions
+- Rapid house switching (including via Vamoose's Neighbors) no longer causes
+  stale data from a previous neighborhood to flash or wipe the display
+- Orphaned refresh timers from rapid switching are now properly cancelled
+- Tab widths no longer corrupt when switching themes (deferred layout until
+  font metrics are ready)
+
+================================================================================
+
+Version 1.12.0 (March 2026)
+--------------------------------------------------------------------------------
+
+NEW:
+- Seed Observer from Classic: new button in Config tab lets you backfill Observer
+  XP with whatever Classic has already calculated. Useful if you recently switched
+  to Observer mode or upgraded from an older version and Observer shows 0 XP.
+- Observer mode tooltip now hints about the Seed button if XP doesn't look right
+
+IMPROVED:
+- Observer XP values are now rounded to whole numbers (no more 748.547... display)
+- Clicking the Seed button immediately refreshes the UI (no need to toggle tabs)
+
+================================================================================
+
+Version 1.11.2 (March 2026)
+--------------------------------------------------------------------------------
+
+FIXED:
+- XP Observer: false season reset each login showed 0 XP until next session
+  (race condition: favor update fired before season data loaded, triggering a
+  bogus season change that reset the in-memory baseline). Saved data was not
+  affected. Now requires all four conditions before resetting.
+- XP Observer: first baseline deferred until season end time is available
+- XP Observer: stale seasonEndTime=0 self-heals on next login
+
+================================================================================
+
+Version 1.11.1 (March 2026)
+--------------------------------------------------------------------------------
+
+FIXED:
+- Task progress now updates in real-time as you complete activities (previously
+  only refreshed when the VE window was open, or after the activity log updated)
+
+================================================================================
+
+Version 1.11.0 (March 2026)
+--------------------------------------------------------------------------------
+
+NEW:
+- XP Observer is now the default XP tracking mode for new installs
+- /ve observer command to dump Observer state (baseline, favor, observations)
+- Community Coupon cap increased from 500 to 2000 for Season 2
+
+FIXED:
+- XP Observer: season-change baseline now captured correctly from current favor
+  (previously could miss XP earned before Observer initialized)
+- XP Observer: delta=0 "echo" favor updates no longer close active measurements
+  (the first HOUSE_LEVEL_FAVOR_UPDATED after task completion is an echo of the
+  current value; Observer now waits for the real XP update)
+- XP Observer: GetEndeavorXP falls back to Store's persisted favor after reload
+  instead of returning 0 (transient _lastFavor was lost on /reload)
+- XP Observer: IsTracking now checks for valid baseline instead of requiring a
+  recorded observation (switching to Observer mode no longer shows 0 XP)
+- Header display now updates immediately when switching XP tracking mode in Config
+- Activity log retry: replaced broken 4-timer retry cascade with single 30s
+  fallback (old system read stale cache, wasting all retry slots)
+- Non-active neighborhood activity tab now shows "Waiting for activity data..."
+  instead of empty state with no explanation
+- FetchEndeavorData no longer silently reverts manual dropdown selection when
+  async Blizzard data arrives (added selection timing guard)
+- XP Observer queues task completions during initialization instead of dropping
+  them (replayed when first HOUSE_LEVEL_FAVOR_UPDATED arrives)
+- Double Store dispatch in SelectHouse consolidated (SET_HOUSE_GUID now uses
+  suppressNotify to avoid redundant VE_STATE_CHANGED)
+- Set as Active Endeavor button removed from Activity and Leaderboard tabs
+  (only shown on Endeavors tab where it's relevant)
+- Leaderboard CSV export now sorts by numeric rank instead of lexicographic
+- Expired coupon correlation entries now cleaned up properly
+- Fresh Season 2+ installs now use correct default XP caps
+- AltSharing no longer calls nonexistent method on initiative ID lookup
+- /ve dump character count now shows actual count instead of hardcoded 0
+- Minimap button no longer overlaps the minimap on non-default minimap sizes
+  (now uses dynamic radius based on actual minimap dimensions)
+
+IMPROVED:
+- Task highlighting no longer flashes red on /reload (IngestLiveTasks now runs
+  before SET_TASKS dispatch so XP calculations have data when UI renders)
+- Store:Dispatch supports suppressNotify flag to batch state changes
+- Removed dead code: RebuildUI, /ve testxp, ColorsDark/ColorsLight, self.db
+- Consolidated 3 redundant config reducers into SET_CONFIG
+- Deduplicated house-selection priority logic into FindBestHouseIndex helper
+- Removed 6 thin XPEngine wrapper functions from EndeavorTracker
+- Info tab FontString/Texture elements now use pools instead of leaking on refresh
+
+================================================================================
+Vamoose's Endeavors - Changelog
+================================================================================
+
+Version 1.10.0 (February 2026)
+--------------------------------------------------------------------------------
+
+NEW:
+- XPObserver: alternative XP tracking engine using favor-delta measurement
+  with independent per-house baselines and automatic season change detection
+- Season helper (VE_Season): centralized season-aware XP cap config for both
+  XPEngine and XPObserver; Season 2+ uses single flat cap (no pre/post split)
+- Auto-activate on selection: config toggle to automatically set the active
+  endeavor when selecting a house from the dropdown (no extra button click)
+- Pin window button: pin icon in title bar keeps VE open through Escape key
+  and auto-opens on reload
+
+FIXED:
+- Housing and Accessibility HC themes now default to Expressway font on Latin
+  locales to prevent text overrun (Game Default's wider glyphs exceeded layout
+  bounds); explicit user font choice is still respected
+
+IMPROVED:
+- Font system: Added "Game Default" font option using WoW's locale-appropriate
+  font (STANDARD_TEXT_FONT) for proper CJK/Korean glyph coverage
+- Non-Latin locale auto-detection: CJK locales (zhCN/zhTW/koKR) default to
+  Game Default font, Cyrillic locales (ruRU/ukUA) default to Friz Quadrata
+- Changed default font from Arial Narrow to Game Default for better
+  international support
+- Escape key now closes the VE window from anywhere (standard WoW behavior),
+  no longer requires mouse to be over the window
+
+--------------------------------------------------------------------------------
+
+Version 1.9.8 (February 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed crash on open/refresh when scale is unavailable: calcHouseXP now returns
+  nil breakdown (not empty table) when scale is 0 or missing, preventing nil
+  field access in UpdateHeader and the house XP tooltip
+
+--------------------------------------------------------------------------------
+
+Version 1.9.7 (February 2026)
+--------------------------------------------------------------------------------
+
+XP ENGINE:
+- Simplified to single-scale model: xp = amount / scale for all log entries
+- Removed hardcoded per-task base XP tables (PRE_TASK_BASE_XP,
+  PRE_AMOUNT_MULTIPLIER, POST_FLAT_BASE)
+- Restored deriveLiveScale as primary scale source: compares floor task log amounts
+  to live API progressContributionAmount (no hardcoded values)
+- Floor detection now uses log-based completion counts instead of unreliable
+  Blizzard timesCompleted API field
+- Scale derivation priority: live-derived (level 1) > saved fallback (level 2)
+- Added /ve scale diagnostic showing per-task floor amounts and derived scales
+
+TOOLS:
+- Deleted superseded house_xp_analyzer.py (replaced by current XP engine model)
+
+--------------------------------------------------------------------------------
+
+Version 1.9.6 (February 2026)
+--------------------------------------------------------------------------------
+
+XP ENGINE:
+- Added VE_XPEngine module: standalone XP calculation engine with strict per-GUID
+  isolation. Each neighborhood GUID gets its own context -- no cross-contamination
+  of scale, XP totals, or completion counts between houses.
+- Rewrote XP calculation with validated two-era model (pre/post Jan 29 hotfix):
+  - Pre-Jan29: task-specific base XP (Major=50, Standard=25, Minor=10), scale
+    derived from first completions via sliding median
+  - Post-Jan29: flat base (all tasks = 50 XP undecayed), scale derived from max
+    observed repeatable amount in activity log
+  - Non-repeatable tasks (Profession Rare, Weekly Quests, Faction Envoy) excluded
+    from XP calculation entirely
+  - Disabled L1 live API scale (progressContributionAmount units unvalidated,
+    produced 2x incorrect values); log-derived scale is primary source
+- Wired XPEngine into EndeavorTracker for automatic scale derivation and XP
+  recalculation on activity log and task data updates
+
+CODE CLEANUP:
+- EndeavorTracker rewritten: removed ~1200 lines of XP calculation code (now owned
+  by VE_XPEngine), removed placeholder data, removed dead debug commands
+- XP delegation wrappers route to VE.XPEngine
+- File reduced from 2227 lines to ~970 lines
+
+BUG FIXES:
+- Fixed house XP cross-contamination when switching houses (per-GUID isolation)
+- Fixed XP fallback for capped (amount=0) log entries: uses any neighbor's
+  non-zero contribution for the same task
+- Rewrote "Set as Active" async coordination: replaced timer chains with
+  synchronous local state and event-driven data processing
+
+--------------------------------------------------------------------------------
+
+Version 1.9.4 (February 2026)
+--------------------------------------------------------------------------------
+
+UI IMPROVEMENTS:
+- Close button now uses XMarksTheSpot atlas (matching HDG style)
+- Theme switcher now uses alterations atlas with pressed state (matching HDG)
+- Theme switcher moved to left side of title bar (right of refresh button)
+- Right-click theme switcher to cycle backwards through themes
+- Tooltip now shows both next (green) and previous (red) theme names
+
+BUG FIXES:
+- Fixed XP fallback using wrong era's scale when capped entries cross the
+  Jan 29 hotfix boundary (could inflate XP in edge cases)
+- Fixed cold-start scale fallback showing wildly wrong XP for new neighborhoods
+  (hardcoded 0.04 was wrong post-Jan29; now returns 0 until real scale is derived)
+- Fixed house switch contaminating XP display with data from previous neighborhood
+  (activity log cache and neighborhood tag now cleared on switch)
+- Fixed XP being persisted to wrong house GUID when cache belonged to a different
+  neighborhood (persistence now guarded by neighborhood tag verification)
+- Fixed invalid scale values (0, NaN, infinity) being saved to SavedVariables
+  and permanently corrupting XP calculations
+- Fixed task completion losing taskID/isRepeatable when state hadn't refreshed
+  yet -- now falls back to fresh API query
+- Fixed activity log cache refreshing for non-active neighborhoods, which could
+  contaminate XP calculations with wrong neighborhood data
+- Fixed rapid multi-task completions losing coupon correlation (second task's
+  coupon went uncorrelated because pending slot was already consumed)
+
+FEATURES:
+- LibDataBroker support: VE now registers as an LDB launcher -- appears
+  automatically in Bazooka, Titan Panel, ChocolateBar, and other LDB bars
+  (no embedded libraries; uses LDB if already loaded by another addon)
+
+PERFORMANCE:
+- Player and account completion counts now use O(1) index lookups instead of
+  iterating the full activity log (5000+ entries) on every call
+
+================================================================================
+
+Version 1.9.2 (February 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed House XP display frozen or falsely showing as capped after task completion
+  - Root cause: stale neighborhood scale cached from SavedVariables blocked
+    re-derivation from fresh floor task data after house switch
+  - Scale is now always computed fresh from current state (no in-memory caching)
+- Fixed non-repeatable tasks (Kill a Profession Rare, Daily Quests, etc.)
+  being counted once per alt instead of once per task name
+- Fixed debounce timer not cancelled when switching to non-active house
+
+PERFORMANCE:
+- Removed INITIATIVE_ACTIVITY_LOG_UPDATED event listener entirely
+  - This event fires once/second in busy neighborhoods for other players' completions
+  - VE only needs own character data, which only changes on INITIATIVE_TASK_COMPLETED
+- Task completion now retries activity log refresh at 30s, 1m, 2m, 5m intervals
+  - Stops as soon as the new entry appears for the current player
+  - Handles Blizzard API lag (up to 2 min) without constant polling
+
+DEBUG:
+- Added diagnostic logging for non-active neighborhood activity log queries
+  - Shows entry count when viewing non-active house with /ve debug enabled
+
+Version 1.9.1 (February 2026)
+--------------------------------------------------------------------------------
+
+IMPROVEMENTS:
+- Favourites are now per-endeavor: each endeavor tracks its own favourites
+  independently, so switching endeavors no longer loses your pinned tasks
+- Increased max favourites from 5 to 7 per endeavor
+- Old global favourites are automatically cleared on first load (migration)
+
+--------------------------------------------------------------------------------
+
+Version 1.9.0 (February 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed House XP not persisting per-house: switching houses or factions now
+  correctly tracks XP cap (2250) and contribution independently for each house
+- Fixed house selection using wrong priority: active neighborhood (the one
+  earning XP) is now Priority 1, not the player's current physical location
+- Fixed house selection stored as fragile index instead of stable GUID, causing
+  wrong house after faction switch
+- Fixed activity log not refreshing after completing a task: now uses debounced
+  INITIATIVE_ACTIVITY_LOG_UPDATED event instead of reading stale client cache
+- Fixed Activity tab not showing new completions when switching tabs: OnShow
+  now forces a data rebuild instead of relying on stale-check optimization
+
+IMPROVEMENTS:
+- Added memory monitor chart (/ve memory) - real-time bar graph showing addon
+  memory usage with auto-scaling, 5-minute rolling window, and peak tracking
+- House XP tooltip now explains that values are calculated from the server
+  activity feed, which may take a few minutes to update
+
+--------------------------------------------------------------------------------
+
+Version 1.8.9 (Released February 2026)
+--------------------------------------------------------------------------------
+
+COMPATIBILITY:
+- Updated for WoW 12.0.1 (Midnight Patch 1)
+
+--------------------------------------------------------------------------------
+
+Version 1.8.8 (Released February 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed house level showing wrong data after reload/login
+  - Both HousingTracker and EndeavorTracker now respect saved house selection
+  - Previously auto-detected active neighborhood, ignoring user's persisted choice
+- Fixed Squirrel Quotes settings not persisting across reload/logout
+  - "Enable Squirrel Quotes" and "Chat Only Mode" were missing from SavedVariables save list
+- Fixed square minimap detection for ElvUI and similar addons
+  - Added Minimap:GetShape() check (ElvUI, VelUI, and forks)
+  - Improved mask texture heuristic (non-default mask = square)
+
+IMPROVEMENTS:
+- Frame strata lowered from HIGH to MEDIUM to reduce taint propagation surface
+
+--------------------------------------------------------------------------------
+
+Version 1.8.7 (Released February 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed bloated warband display showing all character names instead of main character
+  - battleTagMains accumulated every logged-in character name across sessions (persisted to SavedVariables)
+  - Now correctly replaces with single configured main (or current character fallback)
+  - Fixed on both local player and broadcast receiver paths
+- Fixed warband characters splitting into multiple rank entries on leaderboard
+  - Characters resolved via alt list were grouped separately from BattleTag-mapped characters
+  - GroupContributions now bridges altToMainLookup into battleTagLookup for consistent grouping
+- Fixed characters with 0 contribution appearing in grouped warband tooltips on leaderboard
+  - Blizzard API returns activity entries with 0 amount; these are now filtered out before grouping
+- Compact warband display: tooltip now shows top 5 characters + "N more" instead of listing all
+  - Leaderboard row shows character count: "Main's Warband (N)"
+  - CSV export Warband Group column shows "Main's Warband (N chars)"
+
+THANKS:
+- Big thank you to Discomanco for helping debug the warband grouping issues!
+
+IMPROVEMENTS:
+- Escape key now only closes VE window when mouse is hovering over it
+  - Previously closed on any Escape press while visible, even when interacting with other UI
+- Window frame strata raised from MEDIUM to HIGH (matches HDG)
+- Squirrel quotes toggle now also shows/hides the squirrel mascot in the title bar
+
+--------------------------------------------------------------------------------
+
+Version 1.8.6 (Released February 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Info tab rewritten as a "How to Use" guide organized by player goals
+  - Sections: Getting Started, Tasks, Progress, Rankings, Activity, Multi-Character, Multi-Account Sync, Customization
+- Contribution display dims when initiative progress is maxed (no more contribution possible)
+
+BUG FIXES:
+- Fixed BT:hash appearing in leaderboard instead of character name for deactivated accounts
+- Alt sharing channel now always swapped to last position in channel list
+  - Uses C_ChatInfo.SwapChatChannelsByChannelIndex to avoid displacing General/Trade
+
+IMPROVEMENTS:
+- Removed font size controls from Settings (UI scale covers this)
+- Replaced "weekly cap" references with correct "endeavor cap" terminology
+
+--------------------------------------------------------------------------------
+
+Version 1.8.5 (Released February 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed alt sharing channel appearing as Channel #1 in Chat Channel settings
+  - Old permanent channel (JoinChannelByName) now properly cleaned up on login
+  - Switched to JoinTemporaryChannel (auto-leaves on logout)
+  - Event-driven cleanup: waits for CHAT_MSG_CHANNEL_NOTICE confirmation before re-joining
+  - Channel only created when alt sharing is enabled (not for all users)
+  - Channel properly removed when alt sharing is disabled
+- Fixed channel cleanup race condition where leave and re-join happened on same frame
+
+--------------------------------------------------------------------------------
+
+Version 1.8.4 (Released February 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Task Favourites: Pin important tasks for quick access
+  - Shift-click any task to favourite/unfavourite it
+  - Gold star icon appears on favourited tasks
+  - Maximum 5 favourites (matches minimized view capacity)
+  - Favourites persist across sessions
+- Minimized Favourites Panel: See favourite tasks in compact view
+  - Shows up to 5 favourite tasks with status icons and progress
+  - Shift-click to unfavourite from mini view
+  - Empty state shows "Shift-click tasks to add favourites" hint
+- Nestor the Squirrel Mascot: Your endeavor cheerleader!
+  - Animated squirrel appears in the title bar
+  - Left-click for a random quote with bounce animation
+  - Right-click to toggle between Nestor and Robo-Nestor
+  - Talking head quotes appear on task completion and progress
+  - 500+ unique squirrel quotes
+  - Use /ve quote to test quote display
+- Cross-Faction Warband Grouping: BattleTag-based account linking now works across factions
+  - Same BattleTag characters group together even on Alliance/Horde
+  - Distributed database approach: SavedVariables bridge faction data
+  - Works for multi-account setups sharing the same Battle.net account
+- Privacy-Safe BattleTag Sharing: BattleTags are hashed before broadcast
+  - One-way hash ensures your BattleTag is never shared in plain text
+  - Characters still group correctly using hashed identifiers
+- Neighborhood-Scoped Channels: Alt sharing channels now scoped per neighborhood
+  - Reduces channel traffic by limiting to relevant players
+  - Channel names derived from hashed neighborhood GUIDs
+- CSV Export for Leaderboard: Export rankings data for external analysis
+  - Export button (magnifying glass icon) left of "Leaderboard" title
+  - Includes "Warband Group" column for pivot table grouping
+  - Columns: Rank, Character, Warband Group, Character Contribution, Warband Total
+
+UI IMPROVEMENTS:
+- Escape key now closes the VE window (standard WoW addon behavior)
+- Minimized view now hides tab bar for more compact display
+- Right-click on tasks now adds to tracking (was shift-click)
+
+--------------------------------------------------------------------------------
+
+Version 1.8.2 (Released February 2026)
+--------------------------------------------------------------------------------
+
+UI IMPROVEMENTS:
+- Added addon indicator to Rankings tab (green vertical line on left of row)
+  - Shows which players have VE installed and are sharing alt data
+  - Indicator appears for your own characters and guildmates who have broadcasted
+- Added tooltip on warband rows showing all grouped character names
+  - Hover over any "Name's Warband" entry to see the list of characters
+
+BUG FIXES:
+- Fixed XP/contribution display not updating when switching active endeavor
+  - Selecting a house and clicking "Set as Active" now properly refreshes all tabs
+  - Activity, Endeavors, and Leaderboard tabs now respond to active house changes
+- Fixed fetch status timing so "Loading..." state shows correctly during house switch
+
+--------------------------------------------------------------------------------
+
+Version 1.8.1 (Released February 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed house XP calculation overcounting by ~300 XP for users with pre-Jan29 data
+  - Pre-Jan29 zeros (e.g., raid bosses) no longer incorrectly use fallback values
+  - Fallback logic now only applies to post-Jan29 entries where amount=0 means DR cap
+  - Fallback contributions now use their original timestamp's scale (prevents cross-era contamination)
+- Tooltip text changed from "Weekly cap reached" to "Endeavor cap reached"
+
+DEBUG IMPROVEMENTS:
+- /ve validate now shows full house XP calculation breakdown:
+  - Pre-Jan29 and Post-Jan29 scales with source indicators
+  - Raw vs capped XP for each era
+  - Total vs cap status
+
+UTILITIES:
+- Added Python test harness (utilities/house_xp_analyzer.py) for external XP analysis
+  - Mirrors VE's GetTotalHouseXPEarned() logic exactly
+  - Use --compare flag to compare old buggy vs fixed logic
+  - Use --debug flag to see per-entry calculations
+
+--------------------------------------------------------------------------------
+
+Version 1.8.0 (Released February 2026)
+--------------------------------------------------------------------------------
+
+🚀 MAJOR PERFORMANCE FIX
+Users reported game freezes and choppiness in busy neighborhoods (especially
+Horde/Grummle endeavor with 20K+ activity log entries). This release eliminates
+those freezes with intelligent caching.
+
+PERFORMANCE:
+- Activity log now cached instead of fetching from Blizzard API every frame
+- Pre-calculate expensive values (player contribution, house XP) once on refresh
+- Removed INITIATIVE_ACTIVITY_LOG_UPDATED processing (fired 50+ times/min)
+- Result: Smooth gameplay even with addon window open in busy neighborhoods
+
+REFRESH BEHAVIOR (New):
+- Activity data refreshes automatically when opening the VE window
+- Activity data refreshes when YOU complete a task
+- Manual refresh buttons added to Leaderboard and Activity tabs
+- Other players' activity no longer triggers expensive recalculations
+
+UI IMPROVEMENTS:
+- Refresh button with atlas icon on Leaderboard tab (left of title)
+- Refresh button with atlas icon on Activity tab (left of "Top 5 Tasks")
+- Last update timestamp shown next to refresh buttons (HH:MM format)
+
+BUG FIXES:
+- House XP Earned tooltip now shows correct values after window opens
+- Fixed race condition where cached data wasn't populated on first tooltip hover
+
+DEBUG IMPROVEMENTS:
+- House XP calculation now logs character matches when debug mode enabled
+- Helps diagnose "0 XP" issues for users with activity log edge cases
+
+--------------------------------------------------------------------------------
+
+Version 1.7.0 (Released February 2026)
+--------------------------------------------------------------------------------
+
+⭐ ALT SHARING & LEADERBOARD GROUPING (Most Requested Feature!)
+Your #1 requested feature is here! Group contributions by player account in the
+leaderboard, so all your alts show as one combined entry.
+
+NEW FEATURES:
+- Alt Sharing System: Share your alt list with guildmates via hidden addon communication
+  - Opt-in consent: Enable "Share my alts" in Config to participate
+  - Main Character selection: Choose which character represents your account
+  - Privacy-focused: Uses invisible addon messages (not visible in guild chat)
+  - Works across accounts: Guildmates running VE can see your grouped contributions
+
+- Leaderboard Grouping: View rankings by player instead of individual characters
+  - Toggle button in Rankings tab header (friend icon)
+  - "Group by account" checkbox in Config for easy access
+  - Your own alts always group together (even without sharing enabled)
+  - Guildmates who share their alts also appear grouped
+  - Clean display: Shows main character name with combined total
+
+CONFIG TAB IMPROVEMENTS:
+- New "Alt Sharing" section with clear privacy controls
+- Redesigned layout: Alt Sharing → Appearance (Theme, Scale, etc.)
+- Removed House XP Formula section (no longer needed)
+
+BUG FIXES:
+- Fixed task sort state not persisting between sessions (Sort by XP, Coupons, Next XP)
+  - Bug existed since v1.5.0: Store was overwriting VE_DB.ui instead of merging
+
+--------------------------------------------------------------------------------
+
+Version 1.6.9 (Released January 2026)
+--------------------------------------------------------------------------------
+
+COUPON TRACKING:
+- Tracks actual post-diminishing returns coupon rewards via CURRENCY_DISPLAY_UPDATE
+- Correlates coupon gains with completed tasks using INITIATIVE_TASK_COMPLETED event
+- Coupon column displays tracked values when available (shows actual 5 instead of base 10)
+- Stores history of coupon values per task (last 20 entries) for DR analysis
+- Persists tracked coupon data in SavedVariables for future sessions
+
+UI IMPROVEMENTS:
+- Coupon earnings toggle in Activity tab - view tracked coupon gains with currency icon button
+- Endeavor progress bar shows currency reward icon when progress is maxed
+
+PERFORMANCE:
+- Consolidated event handling with proper debouncing (0.3s) to reduce redundant API calls
+- VE_COUPON_GAINED now routes through QueueDataRefresh instead of direct fetch
+- Removed redundant RefreshTrackedTasks call from INITIATIVE_TASKS_TRACKED_UPDATED
+- Debounced expensive activity log processing (BuildTaskXPCache, BuildTaskRulesFromLog)
+- Removed duplicate SaveCurrentCharacterProgress call (state listener handles it)
+- MainFrame OnShow now uses debounced refresh instead of direct API calls
+- Reduced debug noise: prints only show when work is actually done, not per-event
+
+BUG FIXES:
+- Coupon tracking now only stores task-correlated gains (ignores currency transfers, weekly rewards)
+- Fixed coupon store to include taskName/taskID in saved data for Activity tab display
+
+DEBUG:
+- Added /ve couponstore command to dump tracked coupon gains data
+
+--------------------------------------------------------------------------------
+
+Version 1.6.8 (Released January 2026)
+--------------------------------------------------------------------------------
+
+HOUSE XP CALCULATION:
+- Dynamic scale: Uses live API scale for post-hotfix (no hardcoded fallback)
+- Two-period cap system:
+  - Pre cap increase: 1000 XP cap (historical, won't change)
+  - Post cap increase: 2250 XP season cap
+- Non-repeatable tasks use fixed XP values:
+  - Kill a Profession Rare: 150 XP (2x multiplier)
+  - Daily Quests: 50 XP
+  - Champion a Faction Envoy: 10 XP
+- House XP tooltip shows breakdown of pre/post cap increase earnings
+
+UI IMPROVEMENTS:
+- House XP display only dims when weekly cap (2250) is reached
+- Contribution display now has tooltip: "Neighborhood Contribution (this character)"
+
+BUG FIXES:
+- Coupon column now auto-retries if quest API isn't ready at login
+
+--------------------------------------------------------------------------------
+
+Version 1.6.7 (Released January 2026)
+--------------------------------------------------------------------------------
+
+CODE SIMPLIFICATION:
+- Simplified floor XP learning system (~90 lines removed)
+  - Now uses most recent activity log entry for floor tasks
+  - Trusts API timesCompleted >= 5 to determine floor status
+  - Removed complex two-value floor detection algorithm
+  - Removed LearnTaskRules() function (archived to Utilities/)
+- Scale derivation remains accurate: floorXP / progressContributionAmount
+
+--------------------------------------------------------------------------------
+
+Version 1.6.6 (Released January 2026)
+--------------------------------------------------------------------------------
+
+TOOLTIP IMPROVEMENTS:
+- "Next House XP" now shows raw progressContributionAmount (what player receives)
+- "Next Endeavor Contribution" shows calculated neighborhood contribution
+
+--------------------------------------------------------------------------------
+
+Version 1.6.5 (Released January 2026)
+--------------------------------------------------------------------------------
+
+TOOLTIP IMPROVEMENTS:
+- Renamed "Next XP" to "Next House XP" for clarity
+- Added "House XP (API)" line showing raw progressContributionAmount from API
+
+--------------------------------------------------------------------------------
+
+Version 1.6.4 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW DEBUG COMMAND:
+- Added /ve scale - Shows current scale factor, roster size, and floor tasks
+  used for scale derivation
+
+BUG FIXES:
+- Fixed floor XP learning to prefer most recent observation
+  - Previously, older player data could overwrite newer observations
+  - Now tracks observation timestamps and uses the most recent floor value
+  - Handles Blizzard mid-season value changes correctly
+
+--------------------------------------------------------------------------------
+
+Version 1.6.3 (Released January 2026)
+--------------------------------------------------------------------------------
+
+SIMPLIFIED XP FORMULA:
+- Formula reduced to: nextXP = progressContributionAmount × scale
+- API already handles decay (progressContributionAmount changes: 50→40→25→20)
+- Scale derived from floor tasks: scale = floorXP / progressContrib
+- Each house derives its own scale from its activity log
+
+REMOVED (~160 lines):
+- LearnRelativeScales() - decay is in API, not needed
+- GetRelativeScale() - not needed
+- ShowRelativeScales() - not needed
+- /ve scales command - removed
+
+BUG FIXES:
+- Fixed scale not clearing when switching houses via dropdown
+- Scale cache and taskRules now reset on house switch
+- House 1 (~0.037 scale) and House 2 (~0.029 scale) now calculate correctly
+
+--------------------------------------------------------------------------------
+
+Version 1.6.2 (Released January 2026)
+--------------------------------------------------------------------------------
+
+ARCHITECTURE:
+- Ultra-minimal config: Only ONE hardcoded value (COMPLETIONS_TO_FLOOR = 5)
+- All other values derived from API or activity log observations
+- Base XP comes ONLY from API progressContributionAmount (no fallback defaults)
+- Decay rate and floor% derived mathematically from COMPLETIONS_TO_FLOOR
+
+SIMPLIFIED:
+- LearnTaskRules() now only observes: atFloor, floorXP, scale
+- Removed learned values: decayRate, floor%, firstRunXP (all derived now)
+- GetTaskInfo() simplified: returns only { base } from API
+- Removed TASK_DATA pattern matching table (~40 lines)
+- Removed legacy config: DECAY table, MULTIPLIERS table, legacy aliases
+
+REMOVED FROM CONSTANTS:
+- VE.Constants.XP_FORMULA.DECAY (standard, accelerated, raidboss, onetime)
+- VE.Constants.XP_FORMULA.MULTIPLIERS (standard, raidboss, profession)
+- VE.Constants.ROSTER_SCALE, VE.Constants.TASK_MULTIPLIERS aliases
+
+BUG FIXES:
+- Fixed incorrect firstRunXP calculation (was back-calculating from unknown floor%)
+- "Find Treasures from Sealed Scrolls" no longer shows inflated 3.096 firstRunXP
+- "Home: Complete Weekly Neighborhood Quests" no longer shows 24% decay
+
+--------------------------------------------------------------------------------
+
+Version 1.6.1 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Per-task decay learning: Each task now learns its own decay rate and floor
+  - More accurate than previous decay-type clustering approach
+  - Works backwards from most recent activity log entries (freshest data)
+  - Detects "flat_drop" pattern for raid bosses (100% → 0%)
+- New /ve rules command: Shows learned decay rules per task
+  - /ve rules - Show all learned task rules
+  - /ve rules [taskname] - Filter by task name
+
+TECHNICAL:
+- Simplified decay system architecture:
+  - taskRules storage: Per-task { decayRate, floor, atFloor, floorXP }
+  - BuildTaskRulesFromLog(): Analyzes last 2 completions per player per task
+  - LearnTaskRules(): Learns from consecutive XP values
+  - GetTaskDecayMultiplier(): Returns multiplier using per-task rules
+  - CalculateDecayMultiplier() now tries per-task rules first, falls back to config
+- Prediction formula verified: actualXP = baseXP × rosterScale × decayMultiplier
+  - Cross-checked against API progressContributionAmount (baseXP)
+  - Confirmed decay=20%, floor=20% for standard tasks
+- Floor data now preserved (not overwritten by decay-derived calculations)
+
+--------------------------------------------------------------------------------
+
+Version 1.6.0 (Released January 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed floor calculation returning 0.09 instead of 0.20 when roster size changed
+  - Root cause: Activity log spanned a 10x scale change (roster grew from small to large)
+  - Algorithm was mixing data from different scale periods, causing incorrect normalization
+  - Fix: Added scale period detection to normalize historical data to current scale
+- Fixed inactive house being viewed on login instead of active endeavor house
+  - Now prioritizes active neighborhood over saved selection on login
+  - User's manual dropdown selections during a session are still respected
+
+TECHNICAL:
+- Added DetectScalePeriods() to identify roster scale changes over time
+- Added GetScalePeriodForEntry() to map entries to their scale period
+- Updated LearnDecayFromActivity() with scale normalization before clustering
+- House selection on login checks if saved selection matches active neighborhood
+
+--------------------------------------------------------------------------------
+
+Version 1.5.9 (Released January 2026)
+--------------------------------------------------------------------------------
+
+TECHNICAL:
+- Refactored decay system: Consolidated duplicate code into single source of truth
+  - TASK_DATA table now holds base XP, decay type, and multiplier per task
+  - GetTaskInfo() returns { base, decay, multiplier } for any task
+  - CalculateDecayMultiplier() handles all decay types: onetime, accelerated, standard, raidboss
+  - Removed redundant functions: GetTaskMultiplier, GetTaskBaseValue, IsRaidBossTask, IsOneTimeTask, CalculateDRMultiplier
+  - Removed duplicate local TASK_BASE_VALUES table
+- CalculateNextContribution() now uses unified decay system (reduced from 8 to 4 lines)
+
+--------------------------------------------------------------------------------
+
+Version 1.5.8 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Next Best Task Highlighting: Gold/silver/bronze tints show top 3 tasks by XP
+  - Ranks incomplete repeatable tasks by predicted next XP reward
+  - Medal icons (gold/silver/bronze) on XP badge for ranked tasks
+  - Background tint persists on hover (restores on mouse leave)
+  - Tooltip shows "Best/2nd Best/3rd Best Next Endeavor: +X.XXX XP"
+  - Toggle button in section header to show/hide highlighting
+  - Sort by Next XP button to order tasks by predicted contribution
+
+- Zero XP Warning: Red highlight for tasks that give no XP
+  - Shows when API reports 0 XP or DR reduces next completion to 0
+  - Theme-aware error color (uses theme's error palette)
+  - Red background tint and red XP text for visual warning
+
+- House XP Formula Info: Config tab now explains the decay system
+  - Base values, Standard Decay (20%), Accelerated Decay (25%)
+  - Exceptions for Raid Bosses and One-Time tasks
+  - Note about 1000 XP cap per endeavor
+
+- Endeavor XP Formula Implementation:
+  - Full formula: Reward = Base × Roster_Scale × Task_Multiplier × DR_Multiplier
+  - Roster Scale detection from activity log (4 tiers: 1-2, 3-5, 6-10, 11+ chars)
+  - Task multipliers: Standard=1.0, Raid Boss=2.0, Profession Rare=1.2
+  - Standard DR: max(0.20, 1 - 0.20 × (N - 1))
+  - Raid Boss DR: Step-down (100% for N≤2, 50% for N=3-5, 0% for N≥6)
+
+UI IMPROVEMENTS:
+- House dropdown menu auto-sizes to fit long house names
+- Task tooltip: Renamed "Base XP" to "Current House XP reward" for clarity
+- XP text now uses theme's success color (green) for all themes
+- ThemeEngine respects warning state when applying colors
+
+TECHNICAL:
+- Added ROSTER_SCALE constants with tier detection thresholds
+- Added TASK_MULTIPLIERS and TASK_BASE_VALUES lookup tables
+- DetectRosterScale() analyzes activity log to determine current tier (5min cache)
+- GetTaskMultiplier() returns task-specific bonus multiplier
+- CalculateDRMultiplier() handles standard vs raid boss DR curves
+- GetTaskRankings() returns top 3 tasks sorted by predicted next XP
+- Added _isNoXPWarning flag for ThemeEngine to preserve warning colors
+
+--------------------------------------------------------------------------------
+
+Version 1.5.7 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Activity Tab Filters: Three new filters for Recent Activity feed
+  - "Me Only" button: Show only your current character's contributions
+  - "My Chars" button: Show all your alts' contributions (uses rankings data)
+  - Task dropdown: Filter by specific task type
+  - Filters are combinable (e.g., My Chars + specific task)
+  - "Me Only" and "My Chars" are mutually exclusive
+- CSV Export: Export activity log data for external analysis
+  - Export button in Recent Activity header (housing invite icon)
+  - Opens popup window with CSV-formatted data (Player, Task, XP, Time)
+  - Select all and copy to paste into Excel or text file
+- Task XP Cache: Backend support for task XP lookup from activity log
+  - BuildTaskXPCache() builds map of taskID -> XP amount
+  - GetTaskXP() returns actual earned XP for completed tasks
+  - Cache rebuilds on INITIATIVE_ACTIVITY_LOG_UPDATED event
+- Task Tooltip XP Display: Hover over tasks to see contribution values
+  - "Base Contribution" shows the task's XP point value
+  - "Last Contribution" shows your character's personal XP earned
+  - Per-player filtering ensures only your data is shown
+  - Shows "0 - not completed" for tasks you haven't done yet
+
+UI IMPROVEMENTS:
+- Filter buttons use atlas icons (friend icon for Me Only, friends icon for My Chars)
+- Active filters show colored highlights (green for Me Only, accent for My Chars/Task)
+- Task dropdown built from task list (not activity log) for better performance
+- "No activity matches your filters" message when filters exclude all entries
+
+--------------------------------------------------------------------------------
+
+Version 1.5.6 (Released January 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed housing and endeavor data not loading on login
+  - Housing APIs now called with 1.5s delay to wait for server data
+  - Added PLAYER_ENTERING_WORLD handler for reliable initialization
+  - SetViewingNeighborhood() now called before requesting initiative info
+
+NEW FEATURES:
+- Initiative Name Collection: Tracks discovered initiative types over time
+  - Run /ve initiatives to see all initiative types you've encountered
+  - Data persists across sessions and builds as initiatives rotate
+  - Useful for discovering the full list of housing endeavor types
+- Info Tab: Browse collected initiative types with collapsible details
+  - Shows title, description, ID, and first/last seen dates
+  - Encourages community contribution to expand the database
+
+UI IMPROVEMENTS:
+- Updated minimize button icon (Map-Filter-Button atlas)
+- Updated theme toggle button icon (Crosshair_Transmogrify_32 atlas)
+- Consistent 18x18 size and 0.85 brightness for title bar icons
+- Polished tab bar layout with improved button sizing and spacing
+
+--------------------------------------------------------------------------------
+
+Version 1.5.5 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Active Neighborhood Display: Shows which house is your active endeavor destination
+  - House icon with neighborhood name below the dropdown
+  - Updates automatically when changed via VE or Blizzard's dashboard
+
+BUG FIXES:
+- Fixed neighborhood switching bugs where VE would override Blizzard dashboard
+  - Removed SetViewingNeighborhood from auto-refresh paths
+  - VE no longer forces dashboard to switch back to active house
+- Fixed "Set as Active" button incorrectly showing "Fetching..." state
+  - Simplified empty state logic by removing complex flag-based tracking
+  - Now purely based on whether viewing the active neighborhood
+
+CODE CLEANUP:
+- Removed dead SetupNeighborhoodContext function
+- Removed unused setActiveClicked flag and related logic
+- Cleaned up unused local variables in Endeavors.lua
+
+--------------------------------------------------------------------------------
+
+Version 1.5.4 (Released January 2026)
+--------------------------------------------------------------------------------
+
+PERFORMANCE:
+- Removed QUEST_LOG_UPDATE and CRITERIA_UPDATE event handlers that caused game
+  choppiness during herb/lumber gathering (events fire dozens per second)
+
+BUG FIXES:
+- Task progress now updates in real-time without needing to refresh or reopen
+  - Root cause: UI cache key only checked task count, not progress values
+  - Fix: Added progress hash to cache key so UI rebuilds when any task changes
+
+TECHNICAL:
+- Optimized Endeavors.lua with file-level caching and reusable sort array
+- Progress hash includes task index to detect reordering
+
+--------------------------------------------------------------------------------
+
+Version 1.5.3 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Housing Dashboard Integration: "Endeavor Tracker" button in Blizzard's native Housing Dashboard
+  - Click to toggle the VE window directly from the dashboard
+  - Toggle visibility via "Show Dashboard Button" in Config tab
+- Decimal precision control: arrows to adjust contribution decimal places (1-3) in Activity tab
+- Theme tooltip now shows current theme name in addition to next theme
+
+HOUSING THEME ENHANCEMENTS:
+- Custom logo texture in title bar (replaces text for Housing Theme)
+- Wood frame border around window (atlas-based)
+- Section headers use housing-woodsign atlas background
+- Decorative foliage on section header corners (left and right)
+- Scrollbar handles use decor-abilitybar-divider atlas
+- Section headers now full-width (removed horizontal padding)
+- Refresh button now icon-only (sync icon)
+
+UI IMPROVEMENTS:
+- Sort icons now centered over their XP/Coupon boxes in Endeavors tab
+- Removed pip icon from Leaderboard section header
+- Added sectionHeaderYOffset constant for consistent vertical positioning
+- Correct frame layer order: background → foliage → text/icons
+- Title bar buttons (theme, minimize) now dimmed when not hovered (matches close)
+- House level/XP text right-aligned in header
+- Refined header element positioning and spacing
+
+BUG FIXES:
+- Fixed house level/XP not updating when switching between houses
+
+--------------------------------------------------------------------------------
+
+Version 1.5.2 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Multi-house dropdown now matches Blizzard's Housing Dashboard behavior
+  - Switching houses only changes viewing context (not active endeavor)
+  - "Set as Active" button appears when viewing non-active house
+  - Click button to set house as your active endeavor destination
+
+BUG FIXES:
+- Fixed Endeavors tab showing "Fetching..." instead of Set as Active button
+- Fixed setActiveClicked flag not resetting on house switch
+
+--------------------------------------------------------------------------------
+
+Version 1.5.1 (Released January 2026)
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Fixed memory leak: countdown ticker now stops when window is hidden
+- Fixed race condition with retry timer cleanup
+- Fixed dropdown selection resetting when house list updates
+- Added GUID validation to prevent empty string API calls
+- Added type safety check for house level favor data
+- Added defensive nil check for character tracking
+
+IMPROVEMENTS:
+- Fetch status now displays below dropdown (house level always visible)
+- House selection now persists across sessions and reloads
+- Removed aggressive 60-second auto-refresh (data updates via events)
+- Coupon rewards now show base value with "(Decreases with completions)" note
+- Added /ve coupons debug command to inspect reward API data
+- Currency ID now uses Constants for maintainability
+
+TECHNICAL:
+- OnHide handler cancels timers and cleans up tooltips
+- OnShow recreates ticker only when needed
+- GUID checks now verify against empty strings
+- Coupon calculation simplified to use API totalRewardAmount directly
+
+--------------------------------------------------------------------------------
+
+Version 1.5.0 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Multi-House Support: House dropdown lets you switch between owned houses
+  - Automatically selects current/active neighborhood on login
+  - House selection persists across sessions
+- House Level Display: Shows "Lv X" with XP progress (current/next level)
+  - Visual indicator of house progression
+- Fetch Status Display: Shows data loading state in header
+  - "Fetching..." / "Retrying..." / "Data loaded" states
+  - "Last updated" timestamp for activity log
+- Leaderboard "My Total" Row: Shows combined contributions across all your alts
+  - Tracks all characters automatically
+  - Shows character count "(X chars)"
+- House XP Earned: Shows estimated total House XP from completed endeavors
+  - Progressive diminishing returns formula: factor = 0.96 - 0.10 * n
+  - Known base values for each task type (50, 25, 150, 10)
+  - Tooltip explains the formula and progression
+- Task Sorting: Sort task list by XP or Coupons (ascending/descending)
+  - Sort state persists across sessions
+  - Completed tasks always sort to bottom
+- Discord Link: Improved display with Discord icon, auto-select, copy hint
+- Debug Command: /ve xpdump shows task XP data for analysis
+
+BUG FIXES:
+- Automatic Data Loading: Endeavor data now loads on login without opening
+  Blizzard's Housing Dashboard (SetViewingNeighborhood API fix)
+- Non-repeatable tasks now show base coupon reward (no DR applied)
+- Coupon badge no longer cut off on right side
+
+UI IMPROVEMENTS:
+- House dropdown in header for multi-house selection
+- House level badge next to house dropdown
+- Fetch status indicator with loading/error states
+- House XP Formula section in Config tab with base value reference
+- Coupon badge slightly taller for better text fit
+
+TECHNICAL:
+- SetViewingNeighborhood() called before RequestNeighborhoodInitiativeInfo()
+- Multi-house selection via C_Housing.GetPlayerOwnedHouses()
+- GetTaskTotalHouseXPEarned() calculates XP with progressive DR
+- TASK_BASE_VALUES lookup table for known base values by task pattern
+- Sort state saved to VE_DB.ui.taskSort
+- myCharacters tracking for cross-alt leaderboard aggregation
+
+--------------------------------------------------------------------------------
+
+Version 1.4.0 (Released January 2026)
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Housing Theme: New theme mimicking native WoW Housing Dashboard aesthetic
+  - Uses Blizzard Atlas textures for authentic look
+  - Dark charcoal background with bronze/wood trim
+  - Blizzard Gold accents and header text
+  - 3-part tab rendering (left cap, center, right cap) for native tab appearance
+
+UI IMPROVEMENTS:
+- Equal-width tab buttons that fill the window width (4px padding)
+- Renamed tabs: "Leaderboard" → "Rankings", "Settings" → "Config"
+- Removed bottom highlight line from tabs for cleaner look
+- Added padding above season name header
+
+TECHNICAL:
+- Atlas texture support in ThemeEngine with vertical flip for Blizzard tab textures
+- Tab width calculated dynamically based on window width
+- SetTexCoord(0, 1, 1, 0) for proper tab orientation
+
+--------------------------------------------------------------------------------
+
+Version 1.3.0
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- 10 Theme Options: Solarized Dark/Light, Gruvbox Dark/Light, Everforest Dark/Light,
+  Everforest Access, Kanagawa Dark/Light, and Accessibility High Contrast
+- Theme Toggle Button: "T" button in title bar cycles through all themes
+- Live Theme Switching: All UI elements update instantly when changing themes
+- Font Size Adjustment: Scale all fonts from -4 to +8 in Settings
+- UI Scale: Resize entire window from 80% to 140%
+- Background Transparency: Adjust opacity from 30% to 100%
+- Font Family Selection: Choose from Arial Narrow, Friz Quadrata, Skurri,
+  Morpheus, or Expressway
+
+BUG FIXES:
+- House level now displays correctly on addon open (was showing stale data)
+- Fixed house selection to prefer current/active neighborhood
+
+UI IMPROVEMENTS:
+- Consistent font sizing across all tabs (Activity, Leaderboard, Endeavors)
+- Settings controls aligned with dropdown edges for cleaner layout
+- Task rows use consistent body font sizing
+
+TECHNICAL:
+- Smart house selection matching Blizzard's dashboard logic
+- Background opacity applied via theme skinners
+- Font family stored in SavedVariables
+
+--------------------------------------------------------------------------------
+
+Version 1.2.0
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- 5 Theme Options: Solarized Dark, Solarized Light, Gruvbox Dark, Gruvbox Light,
+  and Everforest
+- Theme Toggle Button: Quick access "T" button in title bar cycles through themes
+- Live Theme Switching: All UI elements update instantly when changing themes
+
+UI IMPROVEMENTS:
+- Borderless title bar for cleaner appearance
+- Centered title text
+- Improved button spacing and alignment
+- Refresh button properly themed across all color schemes
+- Theme button shows accent color indicator
+
+TECHNICAL:
+- Theme Engine with widget registry for live updates
+- ThemeDisplayNames for user-friendly tooltip labels
+- All buttons and panels now respond to theme changes
+
+--------------------------------------------------------------------------------
+
+Version 1.1.1
+--------------------------------------------------------------------------------
+
+BUG FIXES:
+- Activity log now loads automatically on login (fixes inconsistent leaderboard
+  data across characters)
+- Previously, activity data only loaded when opening Activity/Leaderboard tabs
+
+--------------------------------------------------------------------------------
+
+Version 1.1.0
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Leaderboard Tab: See contribution rankings for all neighborhood members
+  - Gold/Silver/Bronze colors for top 3 contributors
+  - Current player highlighted in cyan
+- Activity Tab: Track recent neighborhood activity
+  - Top 5 Tasks: Most completed tasks by count
+  - Activity Feed: Recent completions sorted by time (newest first)
+  - Shows player name, task name, XP earned, and time ago
+
+UI IMPROVEMENTS:
+- Coupons display moved to title bar (always visible)
+- Title text left-aligned after Refresh button
+- Loading state for activity data ("Loading activity data...")
+- Auto-refresh when activity log updates from server
+
+TECHNICAL:
+- Added VE_ACTIVITY_LOG_UPDATED event for reactive UI updates
+- Activity log loaded flag to distinguish loading vs empty states
+- Hover states properly maintain player highlight colors
+
+--------------------------------------------------------------------------------
+
+Version 1.0.2
+--------------------------------------------------------------------------------
+
+IMPROVEMENTS:
+- Enhanced /ve tasks debug command: now searches for lumber, harvest, rare tasks
+- Improved debug output: shows progressContributionAmount and all currency rewards
+
+VERIFIED BEHAVIOR:
+- Coupon rewards: correctly displays "next reward" value (base - timesCompleted)
+- XP/Points: API progressContributionAmount shows diminished value (next reward)
+- Both values represent what you'll earn on next completion, not base values
+
+--------------------------------------------------------------------------------
+
+Version 1.0.1
+--------------------------------------------------------------------------------
+
+NEW FEATURES:
+- Community Coupons Display: Shows total coupons in header (currency ID 3363)
+- Per-Task Coupon Rewards: Cyan badge shows coupon reward for each task
+- Auto-Refresh: UI updates automatically when coupons are earned
+
+UI IMPROVEMENTS:
+- Reduced window width from 388px to 338px for cleaner layout
+- Reorganized header: season name/days on row 1, full-width progress bar below
+- Total Coupons moved to Endeavor Tasks header row (right-aligned)
+- Changed frame strata to MEDIUM (no longer always on top)
+
+TECHNICAL:
+- Added GetTaskCouponReward() to query quest rewards via rewardQuestID
+- Registered CURRENCY_DISPLAY_UPDATE event for live updates
+
+--------------------------------------------------------------------------------
+
+Version 1.0.0
+--------------------------------------------------------------------------------
+
+INITIAL RELEASE
+
+NEW FEATURES:
+- Endeavor Task List: View all housing endeavor tasks from C_NeighborhoodInitiative API
+- Completion Tracking: Green/gray indicators show task completion status
+- Repeatable Task Icons: Green refresh icon (UI-RefreshButton) for repeatable tasks
+- Progress Display: Shows X/Y progress for multi-step tasks (e.g., "47/100")
+- Point Values: Gold badge showing endeavor points awarded per task
+- Progress Bar: Visual season progress with diamond milestone markers
+- Season Info: Shows endeavor name and days remaining
+- Solarized Theme: Dark and Light theme support with toggle
+- Minimap Button: Quick access to open/close the window
+- Config Tab: Settings for debug mode, minimap button visibility, theme
+
+ARCHITECTURE:
+- Redux-lite state management (Store with actions/reducers)
+- Event bus for component communication
+- Modular UI framework with reusable components
+- C_NeighborhoodInitiative API integration
+- Placeholder data fallback when API unavailable
+
+COMMANDS:
+- /ve - Toggle main window
+- /ve debug - Toggle debug mode
+- /ve refresh - Force refresh endeavor data
+- /ve theme - Toggle dark/light theme
+- /ve dump - Show current state
+
+---
+
+Future Plans:
+- Multi-character progress tracking
+- Character comparison grid
+- Activity log display
+- Task tracking (pin to objectives)
+
+================================================================================

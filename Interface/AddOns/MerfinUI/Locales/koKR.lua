@@ -1,0 +1,201 @@
+local addonName, Private = ...
+local L = Private.L or {}
+Private.L = L
+
+if (GAME_LOCALE or GetLocale()) ~= 'koKR' then
+  return
+end
+
+L['Welcome to the installation for %s.'] = '%s 설치에 오신 것을 환영합니다.'
+L['Skip Process'] = '프로세스 건너뛰기'
+L['Importance: |cff4beb2cOptional|r'] = '우선도: |cff4beb2c선택|r'
+L['Importance: |cff4beb2cHigh|r'] = '우선도: |cff4beb2c높음|r'
+L['Click the button to adjust the settings.'] = '버튼을 클릭하여 설정을 조정하세요.'
+L['Welcome'] = '환영합니다'
+L['Account Settings'] = '계정 설정'
+L['Chat Settings'] = '채팅 설정'
+L['Installation Complete'] = '설치 완료'
+L['This installer contains profiles for various addons in MerfinUI.'] =
+  '이 설치 프로그램에는 MerfinUI의 다양한 애드온에 대한 프로필이 포함되어 있습니다.'
+L['Before starting the installation process, I highly recommend backing up your current WTF folder to preserve your existing settings, just in case.'] =
+  '만약을 대비해 설치 프로세스를 시작하기 전에 기존 설정을 보존하기 위해 현재 WTF 폴더를 백업하는 것이 좋습니다.'
+L["Don't forget to click Finished in the final step. This will reload your UI and apply all the settings."] =
+  '마지막 단계에서 완료를 클릭하는 것을 잊지 마세요. 그러면 UI가 다시 로드되고 모든 설정이 적용됩니다.'
+L['The World of Warcraft game client stores all its configurations in console variables (CVars). These variables control various aspects of the game, including graphics, sound, and the user interface.'] =
+  'World of Warcraft 게임 클라이언트는 모든 구성을 콘솔 변수(CVars)에 저장합니다. 이러한 변수는 그래픽, 사운드, 사용자 인터페이스 등 게임의 다양한 측면을 제어합니다.'
+L['This step also includes settings for addons like Questie and Leatrix.'] = '이 단계에는 Questie 및 Leatrix와 같은 애드온에 대한 설정도 포함됩니다.'
+L['Load CVars'] = 'CVars 로드'
+L['This will set up the chat windows to look like this:\n\nGNL - Clog - LT - /W - LFG.'] =
+  '그러면 채팅 창이 다음과 같이 설정됩니다.\n\nGNL - Clog - LT - /W - LFG.'
+L['Setup Chat'] = '채팅 설정'
+L["Click the button below to apply the layout of your choice, depending on your role: DPS/Tank or Healer. Use Healer-H if you prefer horizontal party frames (similar to your raid frames). Choose Healer-V if you'd like your party frames to grow vertically. I personally prefer the vertical layout, but it's up to you!"] =
+  '역할에 따라 DPS/Tank 또는 Healer 중 원하는 레이아웃을 적용하려면 아래 버튼을 클릭하세요. 수평 파티 프레임(레이드 프레임과 유사)을 선호하는 경우 Healer-H를 사용하세요. 파티 프레임을 수직으로 늘리려면 Healer-V를 선택하세요. 저는 개인적으로 수직 레이아웃을 선호하지만 그것은 여러분에게 달려 있습니다!'
+L['You must have these plugins downloaded and enabled:\nAddOnSkins, ProjectAzilroka'] =
+  '다음 플러그인을 다운로드하고 활성화해야 합니다.\nAddOnSkins, ProjectAzilroka'
+L['Normal Theme'] = '일반 테마'
+L['Dark Theme'] = '어두운 테마'
+L['Here you can choose how to display Combat Text (damage, healing numbers, etc.). If you prefer the normal numbers above the mobs, click on Blizzard. If you prefer damage numbers to be stacked in one place, use xCT — either xCT DPS/Tank or xCT Healer, depending on your spec.'] =
+  '여기서 전투 텍스트 표시 방법(피해, 치유 수치 등)을 선택할 수 있습니다. 몹보다 일반 숫자를 선호한다면 Blizzard를 클릭하세요. 손상 수치를 한 곳에 쌓고 싶다면 사양에 따라 xCT(xCT DPS/Tank 또는 xCT Healer)를 사용하세요.'
+L['You have completed the installation process.'] = '설치 프로세스가 완료되었습니다.'
+L['You must click the button below to finalize the process and automatically reload your UI.'] =
+  '프로세스를 완료하고 자동으로 UI를 다시 로드하려면 아래 버튼을 클릭해야 합니다.'
+L['Finished'] = '완료'
+L['Install'] = '설치'
+L['Re-run the installation process.'] = '설치 프로세스를 다시 실행하십시오.'
+L['Action Bars'] = '액션 바'
+L['Show Grid'] = '그리드 표시'
+L['Show Empty cells'] = '빈 셀 표시'
+L['Show Mouseover'] = '마우스 오버 표시'
+L['Fonts and Textures'] = '글꼴 및 질감'
+L['Shortcut to general media settings.'] = '일반 미디어 설정 바로가기.'
+L['Action Bar Settings'] = '액션 바 설정'
+L['Click the button below to open the Action Bars options, where you can configure additional settings.'] =
+  '추가 설정을 구성할 수 있는 작업 표시줄 옵션을 열려면 아래 버튼을 클릭하세요.'
+L['Shortcut to action bars settings.'] = '액션바 설정 바로가기.'
+L['Media'] = '미디어'
+L['Default Font'] = '기본 글꼴'
+L['The font that the core of the UI will use.'] = 'UI의 핵심이 사용할 글꼴입니다.'
+L['Apply Font To All'] = '모두에 글꼴 적용'
+L['Applies the font and font size settings throughout the entire user interface. Note: Some font size settings may be skipped, as they use a smaller font size by default.'] =
+  '전체 사용자 인터페이스에 걸쳐 글꼴 및 글꼴 크기 설정을 적용합니다. 참고: 일부 글꼴 크기 설정은 기본적으로 더 작은 글꼴 크기를 사용하므로 건너뛸 수 있습니다.'
+L['Default Texture'] = '기본 텍스처'
+L['The texture that the core of the UI will use.'] = 'UI의 코어가 사용할 텍스처입니다.'
+L['Apply Texture To All'] = '모두에 텍스처 적용'
+L['Applies the texture across the entire user interface.'] = '전체 사용자 인터페이스에 텍스처를 적용합니다.'
+L['Color Theme'] = '색상 테마'
+L['Click on the button below to set color theme of ElvUI unit frames.\n- Normal Theme would enable class colorized frames;\n- Dark Theme would darken them and put Unit Names texts class colorized'] =
+  '아래 버튼을 클릭하면 ElvUI 단위 프레임의 색상 테마를 설정할 수 있습니다.\n- 일반 테마는 클래스 색상 프레임을 활성화합니다.\n- 어두운 테마는 이를 어둡게 하고 유닛 이름 텍스트 클래스에 색상을 입힙니다.'
+L['Links'] = '링크'
+L['Nameplates (Plater)'] = '명판(Plater)'
+L['Combat Text (xCT+)'] = '전투 텍스트(xCT+)'
+L['Profiles (ElvUI)'] = '프로필(ElvUI)'
+L['Profile contains settings for Raid Cooldowns and Notes'] = '프로필에는 Raid Cooldown 및 Notes에 대한 설정이 포함되어 있습니다.'
+L['OmniCD is used to display the cooldowns of your party, divided into several categories: Self Defensives, CC, Interrupts, and Raid Defensives. Depending on the layout you choose, the placement of the panels will vary. Use the same layout that you selected in ElvUI.'] =
+  'OmniCD는 파티의 쿨다운을 표시하는 데 사용되며, 자기 방어, CC, 방해, 습격 방어 등 여러 범주로 나뉩니다. 선택한 레이아웃에 따라 패널 배치가 달라집니다. ElvUI에서 선택한 것과 동일한 레이아웃을 사용합니다.'
+L["Choose DBM if you prefer to play with DBM, or BigWigs if you're a fan of that addon. You can skip this step if you're using my Raid Auras, as they already include everything needed for raids."] =
+  'DBM로 플레이하고 싶다면 DBM를 선택하고 해당 애드온의 팬이라면 BigWigs를 선택하세요. 내 Raid Aura를 사용하고 있다면 이 단계를 건너뛸 수 있습니다. 이미 Raid Aura에 필요한 모든 것이 포함되어 있기 때문입니다.'
+L['Profile Settings'] = '프로필 설정'
+L['Set Actual Version'] = '실제 버전 설정'
+L['Actualize Profile Version'] = '프로필 버전 구현'
+L['Damage Meter (Details)'] = '데미지 측정기(Details)'
+L['Boss Mods'] = '보스 모드'
+L['Action Bars Visibility'] = '작업 표시줄 가시성'
+L['Click on the button to set action bars visibility.'] = '버튼을 클릭하면 작업 표시줄 표시 여부를 설정할 수 있습니다.'
+L['Click on the button to set color theme.'] = '색상 테마를 설정하려면 버튼을 클릭하세요.'
+L['Cell is a standalone addon included in my AddOns pack. It’s a powerful raid frame addon inspired by some of the best—CompactRaid, Grid2, Aptechka, and VuhDo. With its user-friendly interface, Cell offers a smoother and more intuitive experience than ever before.'] =
+  'Cell는 내 애드온 팩에 포함된 독립형 애드온입니다. CompactRaid, Grid2, Aptechka 및 VuhDo와 같은 최고의 게임에서 영감을 얻은 강력한 공격대 프레임 애드온입니다. 사용자 친화적인 인터페이스를 통해 Cell는 이전보다 더 부드럽고 직관적인 경험을 제공합니다.'
+L['Apply a clean and minimalistic Details! profile for tracking damage, healing, and more.'] =
+  '손상, 치유 등을 추적하려면 깔끔하고 최소한의 Details! 프로필을 적용하세요.'
+L['Apply my ElvUI layouts for DPS/Tank or Healer roles. Includes both horizontal and vertical layouts for party frames.'] =
+  'DPS/Tank 또는 Healer 역할에 내 ElvUI 레이아웃을 적용합니다. 파티 프레임의 가로 및 세로 레이아웃이 모두 포함됩니다.'
+L['Apply my MRT profile with raid cooldowns and notes preconfigured.'] = '미리 구성된 공격대 쿨다운 및 메모를 사용하여 내 MRT 프로필을 적용하세요.'
+L['Apply my Plater profile to improve nameplate visibility, customization, and performance.'] =
+  '명판 가시성, 사용자 정의 및 성능을 향상하려면 내 Plater 프로필을 적용하십시오.'
+L['Backdrop'] = '배경화면'
+L['Choose Blizzard default combat text or xCT profiles for more compact and customizable numbers.'] =
+  '보다 간결하고 사용자 정의 가능한 숫자를 얻으려면 Blizzard 기본 전투 텍스트 또는 xCT 프로필을 선택하십시오.'
+L['Choose DBM or BigWigs profiles made for raiding. Recommended if not using my Raid Auras.'] =
+  '습격용으로 제작된 DBM 또는 BigWigs 프로필을 선택하세요. Raid Aura를 사용하지 않는 경우 권장됩니다.'
+L['Choose between Cell or ElvUI raid frames and apply optimized layouts for raids and dungeons.'] =
+  'Cell 또는 ElvUI 레이드 프레임 중에서 선택하고 레이드 및 던전에 최적화된 레이아웃을 적용하세요.'
+L['Combat Text'] = '전투 텍스트'
+L['Dead'] = '죽은'
+L['Details'] = 'Details'
+L['Ignore Modules'] = '모듈 무시'
+L['Installation Settings'] = '설치 설정'
+L['Main'] = '주요'
+L['Movers'] = '이동 프레임'
+L['Player Castbar'] = '플레이어 시전바'
+L['Preferable Resolution'] = '선호하는 해상도'
+L['Profiles'] = '프로필'
+L['Raid Frames'] = '공격대 프레임'
+L['Re quick installation process.'] = '빠른 설치 과정을 다시 수행하세요.'
+L['Reset to Defaults'] = '기본값으로 재설정'
+L['Set Default MerfinUI settings'] = '기본 MerfinUI 설정 지정'
+L['Set important game and addon CVars to recommended values for better visuals, performance, and usability.'] =
+  '더 나은 비주얼, 성능, 유용성을 위해 중요한 게임과 애드온 CVars를 권장 값으로 설정하세요.'
+L['Set up OmniCD to display party cooldowns (defensives, interrupts, raid CDs) with layouts matching your UI.'] =
+  'UI와 일치하는 레이아웃으로 파티 쿨다운(방어, 방해, 레이드 CD)을 표시하려면 OmniCD를 설정하세요.'
+L['Set up your chat windows with preconfigured tabs for general, combat log, whispers, and group content.'] =
+  '일반, 전투 기록, 귓속말, 그룹 콘텐츠에 대해 미리 구성된 탭으로 채팅 창을 설정하세요.'
+L['Set your action bars to always show or appear on mouseover.'] = '마우스 오버 시 항상 표시되거나 나타나도록 작업 표시줄을 설정하세요.'
+L['Show Always'] = '항상 표시'
+L['Show the Player Cast Bar provided by ElvUI.'] = 'ElvUI에서 제공하는 플레이어 캐스트 바를 표시합니다.'
+L['Switch between Normal and Dark color themes for the UI.'] = 'UI의 일반 색상 테마와 어두운 색상 테마 간에 전환합니다.'
+L['UI Install'] = 'UI 설치'
+L['UI Quick Install'] = 'UI 빠른 설치'
+L['Unit Frames'] = '단위 프레임'
+L['You can install the profile from this section as an alternative to the installer.'] = '설치 프로그램 대신 이 섹션에서 프로필을 설치할 수 있습니다.'
+L['Target Debuffs'] = '대상 디버프'
+L['Enable or disable debuffs on the target frame.'] = '대상 프레임에서 디버프를 활성화 또는 비활성화합니다.'
+L['Profile contains settings for Cooldown Manager Centered.'] = '프로필에는 Cooldown Manager Centered에 대한 설정이 포함되어 있습니다.'
+L['Profile contains settings for SenseiClassResourceBar.'] = '프로필에는 SenseiClassResourceBar에 대한 설정이 포함되어 있습니다.'
+L['Applies the Skyriding Bar profile for your selected layout.'] = '선택한 레이아웃에 스카이라이딩 바 프로필을 적용합니다.'
+L['Profile contains settings for Simple Assisted Combat Icon.'] = '프로필에는 Simple Assisted Combat Icon에 대한 설정이 포함되어 있습니다.'
+L['Shows the same suggestions as the Single-Button-Assistant. Due to Blizzard changes, this is currently the only rotation helper possible (RIP Hekili). Helpful for learning your class/spec.'] =
+  'Single-Button-Assistant와 동일한 제안을 표시합니다. Blizzard 변경으로 인해 현재 가능한 유일한 회전 도우미(RIP Hekili)입니다. 클래스/스펙 학습에 도움이 됩니다.'
+L['%s import failed: %s'] = '%s 가져오기 실패: %s'
+L['%s installed.'] = '%s가 설치되었습니다.'
+L['%s is not available. Please enable it and reload your UI.'] = '%s를 사용할 수 없습니다. 활성화하고 UI를 다시 로드하세요.'
+L['%s profile installed.'] = '%s 프로필이 설치되었습니다.'
+L['%s profile installed: %s'] = '%s 프로필이 설치됨: %s'
+L['%s profiles installed.'] = '%s 프로필이 설치되었습니다.'
+L["ATM Classic Era/SoD doesn't support xCT."] = 'ATM Classic Era/SoD는 xCT를 지원하지 않습니다.'
+L["ATM Classic Vanilla doesn't support xCT."] = 'ATM Classic Vanilla는 xCT를 지원하지 않습니다.'
+L['Cell (DPS/Tank)'] = 'Cell (DPS/Tank)'
+L['Cell (Healer)'] = 'Cell (Healer)'
+L['Cell is a standalone addon included in my AddOns pack. It is a powerful raid frame addon inspired by CompactRaid, Grid2, Aptechka, and VuhDo. With its user-friendly interface, Cell offers a smooth and intuitive experience.'] =
+  'Cell는 내 애드온 팩에 포함된 독립형 애드온입니다. CompactRaid, Grid2, Aptechka 및 VuhDo에서 영감을 얻은 강력한 공격대 프레임 애드온입니다. 사용자 친화적인 인터페이스를 갖춘 Cell는 부드럽고 직관적인 경험을 제공합니다.'
+L['Choose how combat text is displayed. Use Blizzard for default floating numbers, or xCT if you prefer compact scrolling damage and healing text.'] =
+  '전투 텍스트 표시 방법을 선택합니다. 기본 부동 숫자에는 Blizzard를 사용하고, 컴팩트한 스크롤 손상 및 치유 텍스트를 선호하는 경우에는 xCT를 사용하세요.'
+L['Cooldown Manager'] = 'Cooldown Manager'
+L['Cooldown Manager Centered'] = 'Cooldown Manager Centered'
+L['Copied!'] = '복사되었습니다!'
+L['Current Layout: |cff00c0ff%s|r'] = '현재 레이아웃: |cff00c0ff%s|r'
+L['Current Layout: |cff00ff00%s|r'] = '현재 레이아웃: |cff00ff00%s|r'
+L['DPS/Tank'] = 'DPS/Tank'
+L['Edit Mode'] = '편집 모드'
+L['Edit Mode is not available.'] = '편집 모드를 사용할 수 없습니다.'
+L['ElvUI Frames'] = 'ElvUI 프레임'
+L['Healer'] = 'Healer'
+L['Import or select the correct Edit Mode layout so chat and UI elements are positioned correctly.'] =
+  '채팅 및 UI 요소가 올바르게 배치되도록 올바른 편집 모드 레이아웃을 가져오거나 선택하세요.'
+L['Method Raid Tools'] = 'Method Raid Tools'
+L['Open Edit Mode'] = '편집 모드 열기'
+L['Please make sure the correct profile is selected, or parts of the UI may be misplaced.'] =
+  '올바른 프로필이 선택되었는지 확인하십시오. 그렇지 않으면 UI의 일부가 잘못 배치될 수 있습니다.'
+L['Profile version was updated to v%s.'] = '프로필 버전이 v%s로 업데이트되었습니다.'
+L['Quick Install'] = '빠른 설치'
+L['Reload required. Continue?'] = '새로고침이 필요합니다. 계속하다?'
+L['Sensei Class Resource Bar'] = 'Sensei Class Resource Bar'
+L['Settings are applied directly to your Edit Mode profile.'] = '설정은 편집 모드 프로필에 직접 적용됩니다.'
+L['Show Import Buttons'] = '가져오기 버튼 표시'
+L['Game Menu'] = '게임 메뉴'
+L['Show MerfinUI Button'] = 'MerfinUI 버튼 표시'
+L['Shows the MerfinUI button in the Game Menu.'] = '게임 메뉴에 MerfinUI 버튼을 표시합니다.'
+L['Shows import buttons next to the Cooldown Manager import window.'] = 'Cooldown Manager 가져오기 창 옆에 가져오기 버튼을 표시합니다.'
+L['Shows import buttons next to the Edit Mode import window.'] = '편집 모드 가져오기 창 옆에 가져오기 버튼을 표시합니다.'
+L['Skyriding Falcon'] = 'Skyriding Falcon'
+L["This installer will quickly set up all addons and profiles (except for WeakAuras, as neither the full installer currently handles WeakAuras). With just one click, everything will be configured, followed by a reload at the end. If you're unsure, consider using the standard installer instead."] =
+  '이 설치 프로그램은 모든 애드온과 프로필을 신속하게 설정합니다(현재 전체 설치 프로그램은 WeakAuras를 처리하지 않으므로 WeakAuras 제외). 한 번의 클릭만으로 모든 것이 구성되고 마지막에 다시 로드됩니다. 확실하지 않은 경우 대신 표준 설치 프로그램을 사용해 보세요.'
+L['Unknown'] = '알 수 없음'
+L['Welcome to the Quick installation for %s.'] = '%s의 빠른 설치에 오신 것을 환영합니다.'
+L['You need to enable %s first.'] = '먼저 %s를 활성화해야 합니다.'
+L['You need to enable %s to apply profile settings.'] = '프로필 설정을 적용하려면 %s를 활성화해야 합니다.'
+L['You need to enable %s.'] = '%s를 활성화해야 합니다.'
+L['Edit Mode layout imported and saved as %s.'] = '편집 모드 레이아웃을 가져오고 %s로 저장했습니다.'
+L['Failed to import Edit Mode layout.'] = '편집 모드 레이아웃을 가져오지 못했습니다.'
+L['Class'] = '수업'
+L['Class Theme'] = '직업 테마'
+L['Dark'] = '어둠'
+L['Installation'] = '설치'
+L['Quick Installation'] = '빠른 설치'
+L['Dark Theme Applied'] = '어두운 테마 적용'
+L['Normal Theme Applied'] = '일반 테마 적용'
+L['Blizzard Combat Text'] = 'Blizzard 전투 텍스트'
+L['Socials'] = '소셜'
+L['AddOns'] = '애드온'
+L['SUB CONTENT'] = '구독 콘텐츠'
+L['WeakAuras Package'] = 'WeakAuras 패키지'
+L['Class Auras, General Auras, Raid Packs, and more.'] =
+  '직업 오라, 일반 오라, 공격대 패키지 등.'

@@ -1,0 +1,762 @@
+local _, FTA = ...
+FTA.Modules = FTA.Modules or {}
+
+local M = {}
+M.id = "ZULAMAN_SOJOURNER"
+M.title = "Zul'Aman"
+M.defaultRadius = 5
+
+M.routeId    = "MIDNIGHT_SOJOURNER"
+M.routeTitle = "Midnight Sojourner"
+M.routeOrder = 20
+
+M.moduleOrder = 30
+M.nextModuleId = "TBD" 
+
+M.steps = {
+    {
+    mapID = {2437},
+    title = "Beyond the Walls Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "Butchery Basics", questIDs = {93047}, x = 45.58, y = 69.42 },
+      { kind = "OBJECTIVE", questName = "Butchery Basics", radius = 120, objectiveIndex=1, questIDs = {93047}, x = 46.48, y = 74.55, text = "Kill and loot boars {progress}." },
+      { kind = "OBJECTIVE", questName = "Butchery Basics", questIDs = {93047}, showAfter = 2, objectiveIndex = 2, x = 45.53, y = 69.53, text = "Place the boar carcass {progress}."},
+      { kind = "TURNIN", questName = "Butchery Basics", questIDs = {93047}, x = 45.58, y = 69.42 },
+      { kind = "NOTE", text = "'Beyond the Walls' is not a continuous questline, it's a collection of multiple individual quests in Amani'Zar Village which can be completed in any order. This guide contains all five of them, placed in an arbitrary order, but you may have completed some already." },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Beyond the Walls Part 2",
+    segments = {
+      { kind = "PICKUP", questName = "Got No Rhythm", questIDs = {93048}, x = 46.79, y = 66.20 },
+      { kind = "OBJECTIVE", questName = "Got No Rhythm", objectiveIndex=1, radius = 8, questIDs = {93048}, x = 46.89, y = 66.81, text = "Walk up to Kovu and type /dance in chat to dance for him." },
+      { kind = "OBJECTIVE", questName = "Got No Rhythm", objectiveIndex=2, showAfter = 2, questIDs = {93048}, x = 46.88, y = 66.75, text = "Speak to Kovu {progress}." },
+      { kind = "OBJECTIVE", questName = "Got No Rhythm", objectiveIndex=3, radius = 13, showAfter = 3, questIDs = {93048}, x = 46.80, y = 66.42, text = "Walk into the tent and type /dance again within the circle." },
+      { kind = "TURNIN", questName = "Got No Rhythm", questIDs = {93048}, x = 46.79, y = 66.20},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Beyond the Walls Part 3",
+    segments = {
+      { kind = "PICKUP", questName = "The Final Exam", questIDs = {93051}, x = 43.14, y = 67.13 },
+      { kind = "OBJECTIVE", questName = "The Final Exam", objectiveIndex=1, questIDs = {93051}, x = 43.85, y = 64.70, text = "Speak to Ri'kari {progress}." },
+      { kind = "OBJECTIVE", questName = "The Final Exam", objectiveIndex=2, radius = 10, showAfter = 2, questIDs = {93051}, x = 43.80, y = 64.94, text = "Defeat Dar'rak {progress}." },
+      { kind = "TURNIN", questName = "The Final Exam", questIDs = {93051}, x = 43.85, y = 64.70},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Beyond the Walls Part 4",
+    segments = {
+      { kind = "PICKUP", questName = "Homework Support", questIDs = {93049}, x = 46.66, y = 67.96 },
+      { kind = "OBJECTIVE", questName = "Homework Support", objectiveIndex=1, radius = 55, questIDs = {93049}, x = 45.68, y = 65.52, text = "Collect shade lilies {progress}." },
+      { kind = "OBJECTIVE", questName = "Homework Support", objectiveIndex=2, radius = 250, questIDs = {93049}, x = 44.81, y = 67.98, text = "Collect dragonhawk fern {progress}." },
+      { kind = "TURNIN", questName = "Homework Support", questIDs = {93049}, x = 46.66, y = 67.96},
+      { kind = "NOTE", text = "Shade lilies are found underneath larger buildings, like the quartermaster/innkeeper room. Dragonhawk ferns are found all over Amani'Zar Village." },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Beyond the Walls Part 5",
+    segments = {
+      { kind = "PICKUP", questName = "Altar History", questIDs = {93050}, x = 43.48, y = 68.87 },
+      { kind = "OBJECTIVE", questName = "Altar History", objectiveIndex=2, radius = 5, questIDs = {93050}, x = 43.08, y = 68.00, text = "Activate Jan'alai's Altar {progress}." },
+      { kind = "OBJECTIVE", questName = "Altar History", objectiveIndex=3, radius = 5, questIDs = {93050}, x = 43.09, y = 68.39, text = "Activate Halazzi's Altar {progress}." },
+      { kind = "OBJECTIVE", questName = "Altar History", objectiveIndex=1, radius = 5, questIDs = {93050}, x = 43.90, y = 69.37, text = "Activate Nalorakk's Altar {progress}." },
+      { kind = "OBJECTIVE", questName = "Altar History", objectiveIndex=4, radius = 5, questIDs = {93050}, x = 43.34, y = 69.04, text = "Activate Akil'zon's Altar {progress}." },
+      { kind = "TURNIN", questName = "Altar History", questIDs = {93050}, x = 43.37, y = 69.04},
+      { kind = "NOTE", text = "This quest seems to be gated behind later sections of the Zul'Aman campaign, though I couldn't find concrete information on what is required to unlock it. If it's not up, do other quests in the zone and check back later." },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "No Fear Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "Growing Up is Hard", questIDs = {92450}, x = 45.19, y = 69.78 },
+      { kind = "OBJECTIVE", questName = "Growing Up is Hard", objectiveIndex=1, radius = 10, questIDs = {92450}, x = 48.11, y = 67.61, text = "Follow the arrow {progress}." },
+      { kind = "TURNIN", questName = "Growing Up is Hard", questIDs = {92450}, x = 48.11, y = 67.61},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "No Fear Part 2",
+    segments = {
+      { kind = "PICKUP", questName = "I Think I Can", questIDs = {92451}, x = 48.11, y = 67.61 },
+      { kind = "OBJECTIVE", questName = "I Think I Can", objectiveIndex=1, radius = 8, questIDs = {92451}, x = 48.11, y = 67.61, text = "Wait for the roleplay to finish, then use the extra action button to cheer on Ani {progress}." },
+      { kind = "OBJECTIVE", questName = "I Think I Can", showAfter = 2, objectiveIndex=2, radius = 8, questIDs = {92451}, x = 48.11, y = 67.61, text = "Return to Ani and use the extra action button to cheer for her again {progress}." },
+      { kind = "OBJECTIVE", questName = "I Think I Can", showAfter = 3, objectiveIndex=3, radius = 8, questIDs = {92451}, x = 48.11, y = 67.61, text = "Wait for the roleplay to finish {progress}." },
+      { kind = "TURNIN", questName = "I Think I Can", questIDs = {92451}, x = 48.70, y = 66.07},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "No Fear Part 3",
+    arrow = { mode = "SEQUENCE_CHAIN", radius = 8, key = "nofear:part3", debounce = 0.75,
+      nodes = {
+            --{ advance = "PROXIMITY", radius = 5, x = 48.70, y = 66.07, gate = { questID = {92452}, objectiveIndex = 1, atLeast = 33 } },
+            { advance = "PROXIMITY", radius = 5, x = 47.45, y = 63.45, gate = { questID = {92452}, objectiveIndex = 1, progressAtLeast = 33 } },
+            { advance = "PROXIMITY", radius = 5, x = 45.98, y = 62.00, gate = { questID = {92452}, objectiveIndex = 1, progressAtLeast = 66 } },
+            --{ advance = "OBJECTIVE", objectiveIndex=1, questIDs = {92452}, x = 45.26, y = 61.07 },
+            { advance = "PROXIMITY", radius = 5, x = 45.26, y = 61.07, gate = { questID = {92452}, objectiveIndex = 1, progressAtLeast = 99 } },
+        },
+      fallback = {
+          x = 47.71, y = 69.77,
+          radius = 10,
+        },
+      },
+    segments = {
+      { kind = "PICKUP", questName = "Not According to Plan", questIDs = {92452}, x = 48.70, y = 66.07},
+      { kind = "CHAIN_START" },
+      { kind = "OBJECTIVE", questName = "Not According to Plan", radius = 200, objectiveIndex=1, questIDs = {92452}, x = 34.54, y = 71.18, text = "Collect Ani's belongings." },
+      { kind = "TURNIN", questName = "Not According to Plan", questIDs = {92452}, x = 44.61, y = 60.53},
+      { kind = "NOTE", text = "The arrow will behave strangely here, since the info from the quest log is EXTREMELY bad on this quest. Use your personal judgement to find the quest objectives if you think the arrow is wrong." },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "No Fear Part 4",
+    segments = {
+      { kind = "PICKUP", questName = "Fearless", questIDs = {92453}, x = 44.61, y = 60.53},
+      { kind = "OBJECTIVE", questName = "Fearless", questIDs = {92453}, x = 45.19, y = 69.78, text = "Follow the arrow {progress}."},
+      { kind = "TURNIN", questName = "Fearless", questIDs = {92453}, x = 45.19, y = 69.78},
+      { kind = "NOTE", text = "You'll have to wait for some roleplay to finish before the turn-in is available." },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "The Loa of Murlocs Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "The Loa of Murlocs", questIDs = {92163}, x = 46.02, y = 65.06 },
+      { kind = "OBJECTIVE", questName = "The Loa of Murlocs", questIDs = {92163}, x = 52.88, y = 60.22, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "The Loa of Murlocs", questIDs = {92163}, x = 52.88, y = 60.22},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "The Loa of Murlocs Part 2",
+    segments = {
+      { kind = "PICKUP", questName = "Following Suit", questIDs = {92166}, x = 52.88, y = 60.22},
+      { kind = "PICKUP", questName = "Fish are Food, Not Friends", questIDs = {92165}, x = 52.88, y = 60.22},
+      { kind = "PICKUP", questName = "Murloc Madness", questIDs = {92164}, x = 52.88, y = 60.22},
+      { kind = "OBJECTIVE", questName = "Following Suit", radius = 8, objectiveIndex=1, questIDs = {92166}, x = 50.54, y = 62.65, text = "Find the first clue {progress}." },
+      { kind = "OBJECTIVE", questName = "Following Suit", radius = 8, objectiveIndex=2, showAfter = 4, questIDs = {92166}, x = 49.84, y = 59.86, text = "Find the second clue {progress}." },
+      { kind = "OBJECTIVE", questName = "Following Suit", radius = 8, objectiveIndex=3, showAfter = 5, questIDs = {92166}, x = 47.81, y = 56.20, text = "Find the priestess {progress}." },
+      { kind = "OBJECTIVE", questName = "Following Suit", radius = 8, objectiveIndex=4, showAfter = 6, questIDs = {92166}, x = 47.81, y = 56.20, text = "Speak to Assistant Grgl-Grgl {progress}." },
+      { kind = "OBJECTIVE", questName = "Fish are Food, Not Friends", radius = 300, objectiveIndex=1, questIDs = {92165}, x = 50.22, y = 59.95, text = "Gather Lynxfish Skewers {progress}." },
+      { kind = "OBJECTIVE", questName = "Murloc Madness", radius = 300, objectiveIndex=1, questIDs = {92164}, x = 50.22, y = 59.95, text = "Kill Deepfin Murlocs {progress}." },
+      { kind = "TURNIN", questName = "Following Suit", questIDs = {92166}, x = 52.88, y = 60.22},
+      { kind = "TURNIN", questName = "Fish are Food, Not Friends", questIDs = {92165}, x = 52.88, y = 60.22},
+      { kind = "TURNIN", questName = "Murloc Madness", questIDs = {92164}, x = 52.88, y = 60.22},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "The Loa of Murlocs Part 3",
+    segments = {
+      { kind = "PICKUP", questName = "There Can Be Only One", questIDs = {92167}, x = 52.93, y = 60.14},
+      { kind = "OBJECTIVE", questName = "There Can Be Only One", objectiveIndex=3, radius = 20, questIDs = {92167}, x = 57.37, y = 59.64, text = "Put on the murloc suit, swim underwater, place the tribute, and kill the leader {progress}." },
+      { kind = "TURNIN", questName = "There Can Be Only One", questIDs = {92167}, x = 52.88, y = 60.22},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Vengeance for Tolbani Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "Lost in Atal'Abasi", questIDs = {94867}, x = 45.05, y = 68.25 },
+      { kind = "OBJECTIVE", questName = "Lost in Atal'Abasi", questIDs = {94867}, x = 53.12, y = 62.82, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "Lost in Atal'Abasi", questIDs = {94867}, x = 53.12, y = 62.82},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Vengeance for Tolbani Part 2",
+    arrow = { mode = "SEQUENCE_CHAIN", radius = 8, key = "vengeance:tolbani", debounce = 0.75,
+      nodes = {
+            { advance = "PROXIMITY", x = 52.59, y = 62.27, gate = { questID = {91070}, objectiveIndex = 1, atLeast = 1 } },
+            { advance = "PROXIMITY", x = 53.99, y = 66.32, gate = { questID = {91070}, objectiveIndex = 1, atLeast = 2 } },
+            { advance = "OBJECTIVE", radius = 10, objectiveIndex=1, questIDs = {91071}, x = 52.34, y = 65.94 },
+            { advance = "PROXIMITY", x = 50.55, y = 64.37, gate = { questID = {91070}, objectiveIndex = 1, atLeast = 3 } },
+            { advance = "PROXIMITY", x = 50.30, y = 66.59, gate = { questID = {91070}, objectiveIndex = 1, atLeast = 4 } },
+            { advance = "PROXIMITY", x = 48.44, y = 67.18, gate = { questID = {91070}, objectiveIndex = 1, atLeast = 5 } },
+            { advance = "PROXIMITY", x = 48.79, y = 64.01, gate = { questID = {91070}, objectiveIndex = 1, atLeast = 6 } },
+        },
+      fallback = {
+          x = 47.71, y = 69.77,
+          radius = 10,
+        },
+      },
+    segments = {
+      { kind = "PICKUP", questName = "Reclaim the Goods", questIDs = {91070}, x = 53.12, y = 62.82},
+      { kind = "PICKUP", questName = "The Menace of Atal'Abasi", questIDs = {91071}, x = 53.12, y = 62.82},
+      { kind = "PICKUP", questName = "Vengeance for Tolbani", questIDs = {91069}, x = 53.12, y = 62.82},
+      { kind = "CHAIN_START" },
+      { kind = "OBJECTIVE", questName = "Reclaim the Goods", radius = 200, objectiveIndex=1, questIDs = {91070}, x = 34.68, y = 78.97, text = "Collect provisions {progress}." },
+      { kind = "OBJECTIVE", questName = "The Menace of Atal'Abasi", radius = 15, objectiveIndex=1, questIDs = {91071}, x = 34.54, y = 71.18, text = "Kill Mrruk the Musclefin {progress}." },
+      { kind = "OBJECTIVE", questName = "Vengeance for Tolbani", radius = 200, objectiveIndex=1, questIDs = {91069}, x = 50.51, y = 65.10, text = "Kill murlocs {progress}." },
+      { kind = "TURNIN", questName = "Reclaim the Goods", questIDs = {91070}, x = 53.12, y = 62.82},
+      { kind = "TURNIN", questName = "The Menace of Atal'Abasi", questIDs = {91071}, x = 53.12, y = 62.82},
+      { kind = "TURNIN", questName = "Vengeance for Tolbani", questIDs = {91069}, x = 53.12, y = 62.82},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Vengeance for Tolbani Part 3",
+    segments = {
+      { kind = "PICKUP", questName = "Loa's Flame", questIDs = {91556}, x = 53.12, y = 62.82 },
+      { kind = "OBJECTIVE", questName = "Loa's Flame", objectiveIndex=1, radius = 8, questIDs = {91556}, x = 53.12, y = 62.75, text = "Salvage the boat {progress}." },
+      { kind = "OBJECTIVE", questName = "Loa's Flame", objectiveIndex=2, showAfter = 2, radius = 8, questIDs = {91556}, x = 53.03, y = 62.74, text = "Build the bonfire {progress}." },
+      { kind = "TURNIN", questName = "Loa's Flame", questIDs = {91556}, x = 53.12, y = 62.82},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Between Two Trolls Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "A Fighter Not a Lover", questIDs = {89231}, x = 43.89, y = 65.96 },
+      { kind = "PICKUP", questName = "A Lover Not a Fighter", questIDs = {89230}, x = 44.04, y = 66.24 },
+      { kind = "OBJECTIVE", questName = "A Fighter Not a Lover", radius = 200, objectiveIndex=1, questIDs = {89231},  x = 54.23, y = 72.86, text = "Pick up feathers {progress}." },
+      { kind = "OBJECTIVE", questName = "A Lover Not a Fighter", radius = 200, objectiveIndex=1, questIDs = {89230},  x = 54.23, y = 72.86, text = "Kill and loot Gnarldin until you get the Threshadon necklace {progress}." },
+      { kind = "OBJECTIVE", questName = "A Fighter Not a Lover", radius = 200, objectiveIndex=2, showAfter = 3, questIDs = {89231},  x = 54.23, y = 72.86, text = "Right click the feathers to combine them into a Headdress {progress}." },
+      { kind = "TURNIN", questName = "A Fighter Not a Lover", questIDs = {89231}, x = 44.44, y = 65.74 },
+      { kind = "TURNIN", questName = "A Lover Not a Fighter", questIDs = {89230}, x = 44.44, y = 65.74 },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Between Two Trolls Part 2",
+    segments = {
+      { kind = "PICKUP", questName = "Love Triangle", showAfter = 8, questIDs = {89233}, x = 44.44, y = 65.74 },
+      { kind = "OBJECTIVE", questName = "Love Triangle", questIDs = {89233}, x = 44.44, y = 65.74, text = "Select either dialogue choice {progress}."},
+      { kind = "TURNIN", questName = "Love Triangle", questIDs = {89233}, x = 44.44, y = 65.74 },
+      { kind = "NOTE", text = "Your choice is purely cosmetic here." },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Sorrowing Kin Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "The Path of Mourning", questIDs = {89565}, x = 45.36, y = 69.74 },
+      { kind = "OBJECTIVE", questName = "The Path of Mourning", questIDs = {89565}, x = 45.87, y = 72.43, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "The Path of Mourning", questIDs = {89565}, x = 45.87, y = 72.43},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Sorrowing Kin Part 2",
+    segments = {
+      { kind = "PICKUP", questName = "Somber Siblings", questIDs = {89503}, x = 45.87, y = 72.43 },
+      { kind = "OBJECTIVE", questName = "Somber Siblings", radius = 120, objectiveIndex=1, questIDs = {89503}, x = 46.48, y = 74.55, text = "Collect weeping spores {progress}." },
+      { kind = "TURNIN", questName = "Somber Siblings", radius = 120, questIDs = {89503}, x = 46.48, y = 74.55},
+      { kind = "NOTE", text = "The boars also drop spores, so it's usually faster to do a large pull and kill + loot them." },
+      { kind = "NOTE", text = "The questgiver during this chain will follow you around, so there's no fixed turn-in location. Just speak with the NPC and pick up the next quest." },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Sorrowing Kin Part 2",
+    segments = {
+      { kind = "PICKUP", questName = "Somber Siblings", questIDs = {89503}, x = 45.87, y = 72.43 },
+      { kind = "OBJECTIVE", questName = "Somber Siblings", radius = 120, objectiveIndex=1, questIDs = {89503}, x = 46.48, y = 74.55, text = "Collect weeping spores {progress}." },
+      { kind = "TURNIN", questName = "Somber Siblings", radius = 120, questIDs = {89503}, x = 46.48, y = 74.55},
+      { kind = "NOTE", text = "The boars also drop spores, so it's usually faster to do a large pull and kill + loot them." },
+      { kind = "NOTE", text = "The questgiver during this chain will follow you around, so there's no fixed turn-in location. Just speak with the NPC and pick up the next quest." },
+    },
+  },
+  {
+    title = "Sorrowing Kin Part 3",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Strong Ties", radius = 120, questIDs = {89506}, x = 46.48, y = 74.55},
+      { kind = "OBJECTIVE", questName = "Strong Ties", radius = 130, objectiveIndex=1, questIDs = {89506}, x = 47.15, y = 78.97, text = "Kill and loot valley giants {progress}." },
+      { kind = "TURNIN", questName = "Strong Ties", radius = 130, questIDs = {89506}, x = 47.15, y = 78.97},
+    },
+  },
+  {
+    title = "Sorrowing Kin Part 4",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Kindling Aplenty", radius = 130, questIDs = {89513}, x = 47.15, y = 78.97},
+      { kind = "OBJECTIVE", questName = "Kindling Aplenty", radius = 50, objectiveIndex=1, questIDs = {89513}, x = 48.43, y = 84.84, text = "Pick up branches {progress}." },
+      { kind = "TURNIN", questName = "Kindling Aplenty", radius = 50, questIDs = {89513}, x = 48.43, y = 84.84},
+    },
+  },
+  {
+    title = "Sorrowing Kin Part 5",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Reasonless Worship", radius = 50, questIDs = {89559}, x = 48.43, y = 84.84},
+      { kind = "OBJECTIVE", questName = "Reasonless Worship", radius = 15, objectiveIndex=1, questIDs = {89559}, x = 47.29, y = 87.64, text = "Pick up a shrine piece {progress}." },
+      { kind = "TURNIN", questName = "Reasonless Worship", questIDs = {89559}, radius = 12, x = 46.33, y = 91.18},
+      { kind = "NOTE", text = "The bear will attack you when you gather the shrine piece, but you can ignore it and run towards the turn-in point." },
+    },
+  },
+  {
+    title = "Sorrowing Kin Part 6",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "A Quiet Farewell", radius = 12, questIDs = {89560}, x = 46.33, y = 91.18},
+      { kind = "OBJECTIVE", questName = "A Quiet Farewell", objectiveIndex=1, questIDs = {89560}, x = 46.29, y = 91.30, text = "Place the shrine piece {progress}." },
+      { kind = "OBJECTIVE", questName = "A Quiet Farewell", objectiveIndex=2, showAfter = 2, radius = 6, questIDs = {89560}, x = 46.29, y = 91.30, text = "Place the sinew {progress}." },
+      { kind = "OBJECTIVE", questName = "A Quiet Farewell", objectiveIndex=3, showAfter = 3, radius = 6, questIDs = {89560}, x = 46.29, y = 91.30, text = "Place the branches {progress}." },
+      { kind = "OBJECTIVE", questName = "A Quiet Farewell", objectiveIndex=4, showAfter = 4, radius = 7, questIDs = {89560}, x = 46.29, y = 91.30, text = "Light the fire {progress}." },
+      { kind = "OBJECTIVE", questName = "A Quiet Farewell", objectiveIndex=5, showAfter = 5, radius = 7, questIDs = {89560}, x = 46.29, y = 91.30, text = "Right click the fire {progress}." },
+      { kind = "TURNIN", questName = "A Quiet Farewell", questIDs = {89560}, x = 46.31, y = 91.18},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Healing the Spirit Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "Loa Disturbance", questIDs = {91206}, x = 43.12, y = 67.94 },
+      { kind = "OBJECTIVE", questName = "Loa Disturbance", questIDs = {91206}, x = 40.46, y = 49.38, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "Loa Disturbance", questIDs = {91206}, x = 40.46, y = 49.38},
+    },
+  },
+  {
+    title = "Healing the Spirit Part 2",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Curse Cleanse", questIDs = {87254}, x = 40.46, y = 49.38 },
+      { kind = "PICKUP", questName = "Alternative Medicine", questIDs = {87256}, x = 40.46, y = 49.38 },
+      { kind = "OBJECTIVE", questName = "Curse Cleanse", objectiveIndex=1, radius = 100, questIDs = {87254}, x = 40.06, y = 51.44, text = "Kill and loot pangos {progress}." },
+      { kind = "OBJECTIVE", questName = "Alternative Medicine", objectiveIndex=1, radius = 100, questIDs = {87256}, x = 40.06, y = 51.44, text = "Collect bloodweed branches {progress}." },
+      { kind = "OBJECTIVE", questName = "Curse Cleanse", objectiveIndex=2, showAfter = 3, questIDs = {87254}, x = 40.44, y = 49.31, text = "Interact with Warlord Akutu {progress}." },
+      { kind = "TURNIN", questName = "Curse Cleanse", questIDs = {87254}, x = 40.46, y = 49.38},
+      { kind = "TURNIN", questName = "Alternative Medicine", questIDs = {87256}, x = 40.46, y = 49.38},
+    },
+  },
+  {
+    title = "Healing the Spirit Part 3",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Demands Unmet", questIDs = {87267}, x = 40.46, y = 49.38 },
+      { kind = "OBJECTIVE", questName = "Demands Unmet", objectiveIndex=1, questIDs = {87267}, x = 38.92, y = 44.81, text = "Burn the incense {progress}." },
+      { kind = "OBJECTIVE", questName = "Demands Unmet", objectiveIndex=2, showAfter = 2, questIDs = {87267}, x = 38.78, y = 44.85, text = "Speak to Kulzi {progress}." },
+      { kind = "OBJECTIVE", questName = "Demands Unmet", objectiveIndex=3, showAfter = 3, questIDs = {87267}, x = 39.42, y = 44.88, text = "Collect the staff {progress}." },
+      { kind = "TURNIN", questName = "Demands Unmet", questIDs = {87267}, x = 40.46, y = 49.38},
+    },
+  },
+  {
+    title = "Healing the Spirit Part 4",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Required Repentance", questIDs = {87268}, x = 40.46, y = 49.38 },
+      { kind = "OBJECTIVE", questName = "Required Repentance", objectiveIndex=1, radius = 50, questIDs = {87268}, x = 40.66, y = 48.08, text = "Interact with and defeat ghosts {progress}." },
+      { kind = "TURNIN", questName = "Required Repentance", questIDs = {87268}, x = 40.46, y = 49.38},
+      { kind = "NOTE", text = "There are multiple clusters of ghosts spread out over a large area. The arrow only points to one cluster area, if you run out of ghosts, just fly around a little until you spot another cluster." },
+    },
+  },
+  {
+    title = "Healing the Spirit Part 5",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Denial Denied", questIDs = {87317}, x = 40.46, y = 49.38 },
+      { kind = "OBJECTIVE", questName = "Denial Denied", objectiveIndex=1, questIDs = {87317}, x = 40.44, y = 49.31, text = "Interact with Warlord Akutu {progress}." },
+      { kind = "OBJECTIVE", questName = "Denial Denied", objectiveIndex=2, radius = 10, showAfter = 2, questIDs = {87317}, x = 38.78, y = 44.85, text = "Speak to Kulzi {progress}." },
+      { kind = "OBJECTIVE", questName = "Denial Denied", objectiveIndex=3, showAfter = 3, questIDs = {87317}, x = 38.92, y = 44.76, text = "Interact with Sij'ta {progress}." },
+      { kind = "TURNIN", questName = "Denial Denied", questIDs = {87317}, x = 38.82, y = 44.93},
+      { kind = "NOTE", text = "There's unskippable roleplay before the turn-in is available." },
+    },
+  },
+  {
+    title = "Healing the Spirit Part 6",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "The Medicine Loa's Shrine", questIDs = {92531}, x = 38.78, y = 44.85 },
+      { kind = "OBJECTIVE", questName = "The Medicine Loa's Shrine", objectiveIndex=1, questIDs = {92531}, x = 43.12, y = 67.94, text = "Turn in {progress}." },
+      { kind = "TURNIN", questName = "The Medicine Loa's Shrine", questIDs = {92531}, x = 43.12, y = 67.94},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "River-Walkers of the Prowl Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "Revantusk at Risk", questIDs = {93257}, x = 45.90, y = 70.77 },
+      { kind = "OBJECTIVE", questName = "Revantusk at Risk", questIDs = {93257}, x = 40.23, y = 79.16, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "Revantusk at Risk", questIDs = {93257}, x = 40.23, y = 79.16},
+    },
+  },
+  {
+    title = "River-Walkers of the Prowl Part 2",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Crab Clues", questIDs = {93258}, x = 40.23, y = 79.16 },
+      { kind = "OBJECTIVE", questName = "Crab Clues", objectiveIndex=1, questIDs = {93258}, x = 39.64, y = 80.09, text = "Interact with the debris {progress}." },
+      { kind = "OBJECTIVE", questName = "Crab Clues", objectiveIndex=3, questIDs = {93258}, x = 38.33, y = 79.34, text = "Interact with the basket {progress}." },
+      { kind = "OBJECTIVE", questName = "Crab Clues", objectiveIndex=2, questIDs = {93258}, x = 38.77, y = 81.72, text = "Interact with the remains {progress}." },
+      { kind = "TURNIN", questName = "Crab Clues", questIDs = {93258}, x = 40.23, y = 79.16 },
+    },
+  },
+  {
+    title = "River-Walkers of the Prowl Part 3",
+    mapID = {2437},
+    arrow = { mode = "SEQUENCE_CHAIN", radius = 8, key = "caging:crawlers", debounce = 0.75,
+      nodes = {
+            { advance = "PROXIMITY", x = 37.49, y = 81.20, gate = { questID = {93260}, objectiveIndex = 1, atLeast = 1 } },
+            { advance = "PROXIMITY", x = 36.31, y = 81.15, gate = { questID = {93260}, objectiveIndex = 1, atLeast = 2 } },
+            { advance = "PROXIMITY", x = 35.62, y = 81.69, gate = { questID = {93260}, objectiveIndex = 1, atLeast = 3 } },
+            { advance = "PROXIMITY", x = 34.76, y = 82.22, gate = { questID = {93260}, objectiveIndex = 1, atLeast = 4 } },
+            { advance = "PROXIMITY", x = 33.71, y = 83.27, gate = { questID = {93260}, objectiveIndex = 1, atLeast = 5 } },
+            { advance = "PROXIMITY", x = 32.25, y = 84.22, gate = { questID = {93260}, objectiveIndex = 1, atLeast = 6 } },
+        },
+      fallback = {
+          x = 47.71, y = 69.77,
+          radius = 10,
+        },
+      },
+    segments = {
+      { kind = "PICKUP", questName = "Clobbering Crawlers", questIDs = {93259}, x = 40.23, y = 79.16 },
+      { kind = "PICKUP", questName = "Caging Crawlers", questIDs = {93260}, x = 40.23, y = 79.16 },
+      { kind = "CHAIN_START" },
+      { kind = "OBJECTIVE", questName = "Clobbering Crawlers", objectiveIndex=1, radius = 285, questIDs = {93259}, x = 35.26, y = 82.36, text = "Kill and loot crabs {progress}." },
+      { kind = "OBJECTIVE", questName = "Caging Crawlers", objectiveIndex=1, radius = 150, questIDs = {93260}, x = 35.26, y = 82.36, text = "Click on crab traps {progress}." },
+      { kind = "TURNIN", questName = "Clobbering Crawlers", questIDs = {93259}, x = 32.22, y = 83.84},
+      { kind = "TURNIN", questName = "Caging Crawlers", questIDs = {93260}, x = 32.22, y = 83.84},
+    },
+  },
+  {
+    title = "River-Walkers of the Prowl Part 4",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "A Crab of Unusual Size", questIDs = {93261}, x = 32.22, y = 83.84 },
+      { kind = "OBJECTIVE", questName = "A Crab of Unusual Size", objectiveIndex=1, questIDs = {93261}, x = 33.51, y = 86.01, text = "Kill and loot the Mania-Crab {progress}." },
+      { kind = "OBJECTIVE", questName = "A Crab of Unusual Size", objectiveIndex=2, showAfter = 2, questIDs = {93261}, x = 33.51, y = 86.01, text = "Kill and loot the Mania-Crab {progress}." },
+      { kind = "TURNIN", questName = "A Crab of Unusual Size", questIDs = {93261}, x = 33.10, y = 79.03 },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "The Voice of Nalorakk Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "The Spiritpaw", questIDs = {91813}, x = 33.61, y = 78.85 },
+      { kind = "OBJECTIVE", questName = "The Spiritpaw", questIDs = {91813}, x = 41.36, y = 80.09, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "The Spiritpaw", questIDs = {91813}, x = 41.36, y = 80.09},
+    },
+  },
+  {
+    title = "The Voice of Nalorakk Part 2",
+    mapID = {2437},
+    arrow = { mode = "SEQUENCE_CHAIN", radius = 8, key = "hidden:corruption", debounce = 0.75,
+      nodes = {
+            { advance = "PROXIMITY", x = 42.40, y = 78.97, gate = { questID = {91748}, objectiveIndex = 1, atLeast = 1 } },
+            { advance = "PROXIMITY", x = 42.90, y = 80.11, gate = { questID = {91748}, objectiveIndex = 1, atLeast = 2 } },
+            { advance = "PROXIMITY", x = 42.96, y = 82.82, gate = { questID = {91748}, objectiveIndex = 1, atLeast = 3 } },
+            { advance = "PROXIMITY", x = 41.69, y = 80.96, gate = { questID = {91748}, objectiveIndex = 1, atLeast = 4 } },
+        },
+      fallback = {
+          x = 47.71, y = 69.77,
+          radius = 10,
+        },
+      },
+    segments = {
+      { kind = "PICKUP", questName = "Not Quite Nalorakk", questIDs = {91747}, x = 41.36, y = 80.09 },
+      { kind = "PICKUP", questName = "Too Much Twilight", questIDs = {91748}, x = 41.30, y = 80.10 },
+      { kind = "CHAIN_START" },
+      { kind = "OBJECTIVE", questName = "Not Quite Nalorakk", objectiveIndex=1, radius = 150, questIDs = {91747}, x = 42.77, y = 80.85, text = "Kill and loot hostile furbolg {progress}." },
+      { kind = "OBJECTIVE", questName = "Too Much Twilight", objectiveIndex=1, radius = 100, questIDs = {91748}, x = 40.06, y = 51.44, text = "Destroy hidden corruption {progress}." },
+      { kind = "TURNIN", questName = "Not Quite Nalorakk", questIDs = {91747}, x = 41.36, y = 80.09},
+      { kind = "TURNIN", questName = "Too Much Twilight", questIDs = {91748}, x = 41.30, y = 80.10},
+    },
+  },
+  {
+    title = "The Voice of Nalorakk Part 3",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "It's Just Not Right", questIDs = {91749}, x = 41.36, y = 80.09 },
+      { kind = "OBJECTIVE", questName = "It's Just Not Right", objectiveIndex=1, radius = 15, questIDs = {91749}, x = 44.34, y = 79.48, text = "Kill Groffa the Guzzler {progress}." },
+      { kind = "OBJECTIVE", questName = "It's Just Not Right", objectiveIndex=2, questIDs = {91749}, x = 44.50, y = 79.31, text = "Loot Groffa's Treasures {progress}." },
+      { kind = "TURNIN", questName = "It's Just Not Right", questIDs = {91749}, x = 41.36, y = 80.09 },
+    },
+  },
+  {
+    title = "The Voice of Nalorakk Part 4",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Precious Trinkets", questIDs = {93734}, x = 41.36, y = 80.09 },
+      { kind = "OBJECTIVE", questName = "Precious Trinkets", objectiveIndex=1, questIDs = {93734}, x = 41.28, y = 79.90, text = "Wait for the roleplay to finish {progress}." },
+      { kind = "OBJECTIVE", questName = "Precious Trinkets", objectiveIndex=2, showAfter = 2, questIDs = {93734}, x = 41.28, y = 79.90, text = "Click on the treasures {progress}." },
+      { kind = "TURNIN", questName = "Precious Trinkets", questIDs = {93734}, x = 41.36, y = 80.09 },
+    },
+  },
+  {
+    title = "The Voice of Nalorakk Part 5",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Perils of Trust", questIDs = {91750}, x = 41.30, y = 80.10 },
+      { kind = "OBJECTIVE", questName = "Perils of Trust", objectiveIndex=1, radius = 8, questIDs = {91750}, x = 43.94, y = 82.28, text = "Kill the Voice of Nalorakk {progress}." },
+      { kind = "TURNIN", questName = "Perils of Trust", questIDs = {91750}, x = 41.30, y = 80.10 },
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Reclaiming De Honor Part 1",
+    segments = {
+      { kind = "PICKUP", questName = "Honorin' de Sacrifice", questIDs = {92492}, x = 33.59, y = 78.82 },
+      { kind = "OBJECTIVE", questName = "Honorin' de Sacrifice", questIDs = {92492}, x = 26.08, y = 64.55, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "Honorin' de Sacrifice", questIDs = {92492}, x = 26.08, y = 64.55},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Reclaiming De Honor Part 2",
+    segments = {
+      { kind = "PICKUP", questName = "What Remains of Idago", questIDs = {92493}, x = 26.08, y = 64.55 },
+      { kind = "PICKUP", questName = "Disruptin' de Blade", questIDs = {92495}, x = 26.08, y = 64.55 },
+      { kind = "OBJECTIVE", questName = "What Remains of Idago", objectiveIndex=1, questIDs = {92493}, x = 25.01, y = 63.24, text = "Collect Idago's Warspear {progress}." },
+      { kind = "OBJECTIVE", questName = "What Remains of Idago", objectiveIndex=2, questIDs = {92493}, x = 23.35, y = 60.41, text = "Collect Idago's Banner {progress}." },
+      { kind = "OBJECTIVE", questName = "What Remains of Idago", objectiveIndex=3, questIDs = {92493}, x = 24.05, y = 59.72, text = "Collect Idago's Letter {progress}." },
+      { kind = "OBJECTIVE", questName = "Disruptin' de Blade", objectiveIndex=1, radius = 180, questIDs = {92495}, x = 24.74, y = 61.87, text = "Kill Twilight Enforcers {progress}." },
+      { kind = "OBJECTIVE", questName = "Disruptin' de Blade", objectiveIndex=2, radius = 180, questIDs = {92495}, x = 24.74, y = 61.87, text = "Kill Twilight Shadowmages {progress}." },
+      { kind = "OBJECTIVE", questName = "Disruptin' de Blade", objectiveIndex=3, radius = 180, questIDs = {92495}, x = 24.74, y = 61.87, text = "Kill Baleful Darkspawn {progress}." },
+      { kind = "TURNIN", questName = "What Remains of Idago", questIDs = {92493}, x = 22.56, y = 63.91},
+      { kind = "TURNIN", questName = "Disruptin' de Blade", questIDs = {92495}, x = 22.56, y = 63.91},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Reclaiming De Honor Part 3",
+    segments = {
+      { kind = "PICKUP", questName = "Spears Against de Shadow", questIDs = {92496}, x = 22.56, y = 63.91 },
+      { kind = "PICKUP", questName = "Simply Magical", mapID = 2584, questIDs = {92497}, x = 61.09, y = 39.89 },
+      { kind = "OBJECTIVE", questName = "Simply Magical", objectiveIndex=2, mapID = 2584, questIDs = {92497}, x = 35.91, y = 39.11, text = "Click on the Tome of Pain {progress}." },
+      { kind = "OBJECTIVE", questName = "Simply Magical", objectiveIndex=1, mapID = 2584, questIDs = {92497}, x = 46.78, y = 75.69, text = "Click on the Tome of Binding {progress}." },
+      { kind = "OBJECTIVE", questName = "Spears Against de Shadow", objectiveIndex=1, mapID = 2584, questIDs = {92496}, x = 55.35, y = 68.78, text = "Kill Deathchanter Mish'mosh {progress}." },
+      { kind = "OBJECTIVE", questName = "Simply Magical", objectiveIndex=3, showAfter = 4, mapID = 2584, radius = 8, questIDs = {92497}, x = 61.09, y = 39.89, text = "Click on the bindings {progress}." },
+      { kind = "TURNIN", questName = "Simply Magical", questIDs = {92497}, x = 22.54, y = 63.95},
+      { kind = "TURNIN", questName = "Spears Against de Shadow", questIDs = {92496}, x = 22.56, y = 63.91},
+    },
+  },
+  {
+    mapID = {2437},
+    title = "Reclaiming De Honor Part 4",
+    segments = {
+      { kind = "PICKUP", questName = "The Wisest Leaders Follow", questIDs = {92499}, x = 22.56, y = 63.91 },
+      { kind = "OBJECTIVE", questName = "The Wisest Leaders Follow", questIDs = {92499}, x = 33.59, y = 78.82, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "The Wisest Leaders Follow", questIDs = {92499}, x = 33.59, y = 78.82},
+    },
+  },
+  {
+    title = "Bitter Honor Part 1",
+    mapID = {2437},
+    arrow = { mode = "SEQUENCE_CHAIN", radius = 8, key = "scavenged:victory", debounce = 0.75,
+      nodes = {
+            { advance = "PROXIMITY", x = 28.41, y = 35.04, gate = { questID = {93094}, objectiveIndex = 1, atLeast = 1 } },
+            { advance = "PROXIMITY", x = 28.97, y = 36.42, gate = { questID = {93094}, objectiveIndex = 1, atLeast = 2 } },
+            { advance = "PROXIMITY", x = 28.53, y = 38.26, gate = { questID = {93094}, objectiveIndex = 1, atLeast = 3 } },
+            { advance = "PROXIMITY", x = 28.10, y = 36.97, gate = { questID = {93094}, objectiveIndex = 1, atLeast = 4 } },
+            { advance = "PROXIMITY", x = 26.79, y = 36.20, gate = { questID = {93094}, objectiveIndex = 1, atLeast = 5 } },
+            { advance = "PROXIMITY", x = 27.57, y = 35.06, gate = { questID = {93094}, objectiveIndex = 1, atLeast = 6 } },
+        },
+      fallback = {
+          x = 47.71, y = 69.77,
+          radius = 10,
+        },
+      },
+    segments = {
+      { kind = "PICKUP", questName = "Gnarldin Trophies", questIDs = {93093}, x = 28.93, y = 33.52 },
+      { kind = "PICKUP", questName = "Scavenged Victory", questIDs = {93094}, x = 28.93, y = 33.52 },
+      { kind = "CHAIN_START" },
+      { kind = "OBJECTIVE", questName = "Gnarldin Trophies", objectiveIndex=1, radius = 100, questIDs = {93093}, x = 28.07, y = 36.54, text = "Kill and loot enemies for trophies {progress}." },
+      { kind = "OBJECTIVE", questName = "Scavenged Victory", objectiveIndex=1, radius = 10, questIDs = {93094}, x = 55.00, y = 18.33, text = "Collect tablets {progress}." },
+      { kind = "TURNIN", questName = "Gnarldin Trophies", questIDs = {93093}, x = 28.93, y = 33.52},
+      { kind = "TURNIN", questName = "Scavenged Victory", questIDs = {93094}, x = 28.93, y = 33.52},
+    },
+  },
+  {
+    title = "Bitter Honor Part 2",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Bitter Fury", questIDs = {93095}, x = 28.93, y = 33.52 },
+      { kind = "OBJECTIVE", questName = "Bitter Fury", objectiveIndex=2, radius = 10, questIDs = {93095}, x = 25.61, y = 37.48, text = "Interact with the trophy, defeat waves of enemies, then kill Tusk Taker {progress}." },
+      { kind = "TURNIN", questName = "Bitter Fury", questIDs = {93095}, x = 28.93, y = 33.52},
+      { kind = "NOTE", text = "The roleplay here is unskippable. Tusk Taker spawns after 2 waves of enemies." },
+    },
+  },
+  {
+    title = "Bitter Honor Part 3",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Amani Honor", questIDs = {93096}, x = 28.93, y = 33.52 },
+      { kind = "OBJECTIVE", questName = "Amani Honor", objectiveIndex=2, radius = 10, questIDs = {93096}, x = 29.33, y = 41.68, text = "Speak with Kel'vujo and defeat him {progress}." },
+      { kind = "TURNIN", questName = "Amani Honor", questIDs = {93096}, x = 44.27, y = 66.58 },
+    },
+  },
+  {
+    title = "Sawdust to Sawdust Part 1",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Recuperating Returns", questIDs = {88985}, x = 45.71, y = 65.45 },
+      { kind = "OBJECTIVE", questName = "Recuperating Returns", questIDs = {88985}, x = 28.37, y = 27.30, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "Recuperating Returns", questIDs = {88985}, x = 28.37, y = 27.30 },
+    },
+  },
+  {
+    title = "Sawdust to Sawdust Part 2",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Salvaged Sabotage", questIDs = {88987}, x = 28.37, y = 27.30 },
+      { kind = "PICKUP", questName = "Blind the Bandits", questIDs = {88986}, x = 28.37, y = 27.30 },
+      { kind = "OBJECTIVE", questName = "Salvaged Sabotage", objectiveIndex=1, radius = 140, questIDs = {88987}, x = 30.32, y = 29.21, text = "Collect Stolen Equipment {progress}." },
+      { kind = "OBJECTIVE", questName = "Blind the Bandits", objectiveIndex=2, radius = 140, questIDs = {88986}, x = 30.32, y = 29.21, text = "Kill Twilight's Blade Cultists {progress}." },
+      { kind = "TURNIN", questName = "Salvaged Sabotage", questIDs = {88987}, x = 28.44, y = 27.52},
+      { kind = "TURNIN", questName = "Blind the Bandits", questIDs = {88986}, x = 28.44, y = 27.52},
+      { kind = "NOTE", text = "The quest item here doesn't do much damage, don't bother using it." },
+    },
+  },
+  {
+    title = "Sawdust to Sawdust Part 3",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "The Artisan's Apprentice", questIDs = {88988}, x = 28.44, y = 27.52 },
+      { kind = "OBJECTIVE", questName = "The Artisan's Apprentice", objectiveIndex=1, radius = 8, questIDs = {88988}, x = 28.58, y = 27.61, text = "Click on the lightwood {progress}." },
+      { kind = "OBJECTIVE", questName = "The Artisan's Apprentice", objectiveIndex=2, showAfter = 2, radius = 8, questIDs = {88988}, x = 28.54, y = 27.53, text = "Click on the sanding wheel {progress}." },
+      { kind = "OBJECTIVE", questName = "The Artisan's Apprentice", objectiveIndex=3, showAfter = 3, radius = 8, questIDs = {88988}, x = 28.48, y = 27.55, text = "Click on the javelin {progress}." },
+      { kind = "OBJECTIVE", questName = "The Artisan's Apprentice", objectiveIndex=4, showAfter = 4, radius = 8, questIDs = {88988}, x = 28.48, y = 27.55, text = "Use the extra action button and aim your targeting reticule at the javelin {progress}." },
+      { kind = "TURNIN", questName = "The Artisan's Apprentice", questIDs = {88988}, x = 28.44, y = 27.52},
+    },
+  },
+  {
+    title = "Sawdust to Sawdust Part 4",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Another One Bites the Sawdust", questIDs = {88989}, x = 28.44, y = 27.52 },
+      { kind = "OBJECTIVE", questName = "Another One Bites the Sawdust", objectiveIndex=1, radius = 8, questIDs = {88989}, x = 28.48, y = 27.55, text = "Take the javelin {progress}." },
+      { kind = "OBJECTIVE", questName = "Another One Bites the Sawdust", objectiveIndex=3, showAfter = 2, radius = 10, questIDs = {88989}, x = 31.76, y = 29.92, text = "Kill Commander Tofir {progress}." },
+      { kind = "TURNIN", questName = "Another One Bites the Sawdust", questIDs = {88989}, x = 28.44, y = 27.52},
+      { kind = "NOTE", text = "Use the javelin on the commander to make him take extra damage." },
+    },
+  },
+  {
+    title = "The Sound of Her Voice Part 1",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "A Quiet Walk Interrupted", questIDs = {93178}, x = 36.78, y = 25.11 },
+      { kind = "OBJECTIVE", questName = "A Quiet Walk Interrupted", objectiveIndex=1, questIDs = {93178}, x = 38.37, y = 26.65, text = "Speak to Haz'kel {progress}." },
+      { kind = "OBJECTIVE", questName = "A Quiet Walk Interrupted", objectiveIndex=2, showAfter = 2, radius = 8, questIDs = {93178}, x = 41.00, y = 30.19, text = "Follow the arrow {progress}." },
+      { kind = "OBJECTIVE", questName = "A Quiet Walk Interrupted", objectiveIndex=3, showAfter = 3, questIDs = {93178}, x = 41.48, y = 31.61, text = "Click on the dagger {progress}." },
+      { kind = "OBJECTIVE", questName = "A Quiet Walk Interrupted", objectiveIndex=4, showAfter = 4, questIDs = {93178}, x = 43.20, y = 32.45, text = "Click on the basket {progress}." },
+      { kind = "OBJECTIVE", questName = "A Quiet Walk Interrupted", objectiveIndex=5, showAfter = 5, questIDs = {93178}, x = 45.83, y = 33.95, text = "Click on the teapot {progress}." },
+      { kind = "TURNIN", questName = "A Quiet Walk Interrupted", questIDs = {93178}, x = 36.78, y = 25.11},
+    },
+  },
+  {
+    title = "The Sound of Her Voice Part 2",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Childlike Devotion", questIDs = {93179}, x = 36.78, y = 25.11 },
+      { kind = "OBJECTIVE", questName = "Childlike Devotion", objectiveIndex=2, questIDs = {93179}, x = 52.30, y = 32.16, text = "Speak to Kanza {progress}." },
+      { kind = "TURNIN", questName = "Childlike Devotion", questIDs = {93179}, x = 52.30, y = 32.16},
+    },
+  },
+  {
+    title = "The Sound of Her Voice Part 3",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Shrine Preparations", questIDs = {93180}, x = 52.30, y = 32.16 },
+      { kind = "OBJECTIVE", questName = "Shrine Preparations", objectiveIndex=1, questIDs = {93180}, x = 50.77, y = 31.36, text = "Follow and speak to Kanza {progress}." },
+      { kind = "OBJECTIVE", questName = "Shrine Preparations", objectiveIndex=2, showAfter=2, questIDs = {93180}, x = 51.45, y = 30.63, text = "Follow and speak to Kanza again {progress}." },
+      { kind = "OBJECTIVE", questName = "Shrine Preparations", objectiveIndex=3, radius = 200, showAfter=3, questIDs = {93180}, x = 52.19, y = 31.97, text = "Kill Stinger Hatchlings {progress}." },
+      { kind = "OBJECTIVE", questName = "Shrine Preparations", objectiveIndex=4, radius = 200, showAfter=3, questIDs = {93180}, x = 52.19, y = 31.97, text = "Kill Stinger Matriarchs {progress}." },
+      { kind = "OBJECTIVE", questName = "Shrine Preparations", objectiveIndex=5, radius = 200, showAfter=3, questIDs = {93180}, x = 52.19, y = 31.97, text = "Collect Thorncaps {progress}." },
+      { kind = "TURNIN", questName = "Shrine Preparations", questIDs = {93180}, x = 51.45, y = 30.63},
+    },
+  },
+  {
+    title = "The Sound of Her Voice Part 4",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Temple and a Teapot", questIDs = {93181}, x = 51.45, y = 30.63 },
+      { kind = "OBJECTIVE", questName = "Temple and a Teapot", objectiveIndex=1, questIDs = {93181}, x = 47.18, y = 24.47, text = "Buy an Antique Tuskarr Teapot from Honnu {progress}." },
+      { kind = "OBJECTIVE", questName = "Temple and a Teapot", objectiveIndex=2, showAfter=2, questIDs = {93181}, x = 52.33, y = 32.15, text = "Speak to Kanza {progress}." },
+      { kind = "OBJECTIVE", questName = "Temple and a Teapot", objectiveIndex=3, showAfter=3, questIDs = {93181}, x = 52.29, y = 32.05, text = "Place the teapot {progress}." },
+      { kind = "TURNIN", questName = "Temple and a Teapot", questIDs = {93181}, x = 52.33, y = 32.15},
+    },
+  },
+  {
+    title = "The Sound of Her Voice Part 5",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Healing Homeward", questIDs = {93182}, x = 52.33, y = 32.15 },
+      { kind = "OBJECTIVE", questName = "Healing Homeward", questIDs = {93182}, x = 36.78, y = 25.11, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "Healing Homeward", questIDs = {93182}, x = 36.78, y = 25.11 },
+    },
+  },
+  {
+    title = "Unlikely Friends Part 1",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Camp Stonewash", questIDs = {93667}, x = 44.18, y = 33.61 },
+      { kind = "OBJECTIVE", questName = "Camp Stonewash", questIDs = {93667}, x = 46.26, y = 26.16, text = "Turn in {progress}."},
+      { kind = "TURNIN", questName = "Camp Stonewash", questIDs = {93667}, x = 46.26, y = 26.16 },
+    },
+  },
+  {
+    title = "Unlikely Friends Part 2",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "I Have a Permit", questIDs = {90481}, x = 46.28, y = 26.10 },
+      { kind = "OBJECTIVE", questName = "I Have a Permit", objectiveIndex=1, questIDs = {90481}, x = 38.30, y = 20.92, text = "Speak to Elder Ren'zen {progress}." },
+      { kind = "TURNIN", questName = "I Have a Permit", questIDs = {90481}, x = 46.28, y = 26.10},
+    },
+  },
+  {
+    title = "Unlikely Friends Part 3",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Sightseeing Stegadon", questIDs = {90484}, x = 47.28, y = 26.14 },
+      { kind = "OBJECTIVE", questName = "Sightseeing Stegadon", radius = 8, objectiveIndex=1, questIDs = {90484}, x = 45.47, y = 23.87, text = "Kill Hidegorger the Everburning {progress}." },
+      { kind = "OBJECTIVE", questName = "Sightseeing Stegadon", objectiveIndex=2, questIDs = {90484}, x = 45.36, y = 23.96, text = "Reassure Steggy {progress}." },
+      { kind = "PICKUP", questName = "A Witherbark Story", questIDs = {90483}, x = 47.25, y = 24.43 },
+      { kind = "PICKUP", questName = "Afterthought Artifacts", questIDs = {90485}, x = 47.25, y = 24.43 },
+      { kind = "PICKUP", questName = "Cuisine Connection", questIDs = {90482}, x = 47.16, y = 24.63 },
+      { kind = "OBJECTIVE", questName = "A Witherbark Story", objectiveIndex=1, radius = 25, questIDs = {90483}, x = 47.47, y = 25.76, text = "Interact with and defeat Witherbark Visitors {progress}." },
+      { kind = "OBJECTIVE", questName = "Afterthought Artifacts", objectiveIndex=3, questIDs = {90485}, x = 49.52, y = 27.74, text = "Collect the trinket {progress}." },
+      { kind = "OBJECTIVE", questName = "Afterthought Artifacts", objectiveIndex=1, questIDs = {90485}, x = 48.90, y = 28.39, text = "Collect the bolt {progress}." },
+      { kind = "OBJECTIVE", questName = "Afterthought Artifacts", objectiveIndex=2, questIDs = {90485}, x = 48.37, y = 28.33, text = "Collect the oar {progress}." },
+      { kind = "OBJECTIVE", questName = "Afterthought Artifacts", objectiveIndex=4, radius = 8, showAfter = 10, questIDs = {90485}, x = 48.66, y = 28.70, text = "Clear the rubble {progress}." },
+      { kind = "OBJECTIVE", questName = "Afterthought Artifacts", objectiveIndex=5, showAfter = 11, questIDs = {90485}, x = 48.66, y = 28.70, text = "Collect the pot {progress}." },
+      { kind = "OBJECTIVE", questName = "Cuisine Connection", objectiveIndex=2, radius = 150, questIDs = {90482}, x = 49.24, y = 28.08, text = "Kill and loot Zapgut Eels {progress}." },
+      { kind = "OBJECTIVE", questName = "Cuisine Connection", objectiveIndex=3, radius = 150, questIDs = {90482}, x = 49.24, y = 28.08, text = "Collect Blisterskin Kelp {progress}." },
+      { kind = "TURNIN", questName = "Sightseeing Stegadon", questIDs = {90484}, x = 47.28, y = 26.14},
+      { kind = "TURNIN", questName = "Cuisine Connection", questIDs = {90482}, x = 47.16, y = 24.63},
+      { kind = "TURNIN", questName = "A Witherbark Story", questIDs = {90483}, x = 47.25, y = 24.43},
+      { kind = "TURNIN", questName = "Afterthought Artifacts", questIDs = {90485}, x = 47.25, y = 24.43},
+      { kind = "NOTE", text = "Some lengthy roleplay occurs before most quests are available to be picked up." },
+    },
+  },
+  {
+    title = "Unlikely Friends Part 4",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Dangerous Delicacies", questIDs = {90486}, x = 47.16, y = 24.63 },
+      { kind = "OBJECTIVE", questName = "Dangerous Delicacies", objectiveIndex=1, radius = 6, questIDs = {90486}, x = 47.10, y = 24.51, text = "Click on the eels {progress}." },
+      { kind = "OBJECTIVE", questName = "Dangerous Delicacies", objectiveIndex=2, showAfter = 2, questIDs = {90486}, x = 47.04, y = 24.64, text = "Jump on the kelp {progress}." },
+      { kind = "OBJECTIVE", questName = "Dangerous Delicacies", objectiveIndex=3, radius = 7, showAfter = 3, questIDs = {90486}, x = 47.13, y = 24.79, text = "Click on the boars {progress}." },
+      { kind = "OBJECTIVE", questName = "Dangerous Delicacies", objectiveIndex=4, radius = 5, showAfter = 4, questIDs = {90486}, x = 47.14, y = 24.68, text = "Click on the skewer {progress}." },
+      { kind = "TURNIN", questName = "Dangerous Delicacies", questIDs = {90486}, x = 47.14, y = 24.57},
+    },
+  },
+  {
+    title = "Unlikely Friends Part 5",
+    mapID = {2437},
+    segments = {
+      { kind = "PICKUP", questName = "Unlikely Friends", questIDs = {90568}, x = 47.25, y = 24.43 },
+      { kind = "OBJECTIVE", questName = "Unlikely Friends", objectiveIndex=1, questIDs = {90568}, x = 38.30, y = 20.92, text = "Speak to Elder Ren'zen {progress}." },
+      { kind = "TURNIN", questName = "Unlikely Friends", questIDs = {90568}, x = 38.30, y = 20.92},
+    },
+  },
+  {
+    title = "Work In Progress!",
+    segments = {
+      { kind = "OBJECTIVE", questName = "Intro", text = "Most of the Zul'Aman Sojourner questlines have been added, but a handful are still missing and will be added in a future update. For now I wanted to prioritize any chains that had actual use for leveling, and then focus on Sojourner for the other zones." },
+      { kind = "OBJECTIVE", questName = "Intro", text = "One of the missing chains, Venomous History, starts up north and is EXTREMELY long. It even requires you to enter Maisara Caverns midway through." },
+      { kind = "OBJECTIVE", questName = "Intro", text = "The questline for Bloodstains starts in Amani'zar Village from Zul'jarra, but it requires completion of the entire Zul'Aman campaign. This means virtually nobody will complete it for alt leveling (and it's very slow regardless)." },
+      { kind = "OBJECTIVE", questName = "Intro", text = "Something Vile This Way Comes also starts up north, but it requires Level 90 to begin, as most quests take place around the entrance of Maisara Caverns." },
+      { kind = "OBJECTIVE", questName = "Intro", text = "Finally, I'll be including the second part of the Valeera questline, A Favor for the Lion, in this module, as it takes place primarily in Zul'Aman. However, that chain also requires Level 90, so it will be finished later." },
+    },
+  },
+}
+
+FTA.Modules[M.id] = M

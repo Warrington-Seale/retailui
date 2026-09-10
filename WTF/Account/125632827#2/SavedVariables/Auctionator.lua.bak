@@ -1,0 +1,281 @@
+
+AUCTIONATOR_CONFIG = {
+["show_selling_bag_2"] = true,
+["no_price_database"] = false,
+["crafting_info_show_cheapest_qualities_cost"] = false,
+["hide_splash_screen"] = false,
+["enchant_tooltips"] = false,
+["debug"] = false,
+["vendor_tooltips"] = true,
+["selling_favourites_sort_owned"] = false,
+["auctions_history_length"] = 10,
+["selling_icon_size_2"] = 42,
+["auction_duration"] = 24,
+["price_history_days"] = 21,
+["selling_prev_shortcut"] = "BACKSPACE",
+["selling_skip_shortcut"] = "SHIFT-SPACE",
+["shopping_list_missing_terms"] = false,
+["columns_shopping_buy_item"] = {
+["Item Level"] = false,
+["Bid Price"] = false,
+["Available"] = false,
+["Buyout Price"] = false,
+["Owned?"] = true,
+["Seller(s)"] = true,
+},
+["selling_cancel_shortcut"] = "right click",
+["selling_ignored_keys"] = {
+},
+["default_tab"] = 0,
+["shopping_always_confirm_commodity_quantity"] = false,
+["undercut_items_ahead"] = 0,
+["undercut_scan_not_lifo"] = true,
+["undercut_percentage"] = 0,
+["columns_posting_history"] = {
+["Date"] = false,
+["Unit Price"] = false,
+["Bid Price"] = false,
+["Quantity"] = false,
+},
+["pet_tooltips"] = true,
+["selling_missing_favourites"] = true,
+["selling_item_matching"] = "item name and level",
+["gear_vendor_price_multiplier"] = 0,
+["selling_post_shortcut"] = "SPACE",
+["shift_stack_tooltips"] = true,
+["selling_favourite_keys_2"] = {
+},
+["selling_bag_select_shortcut"] = "alt left click",
+["auction_tooltips"] = true,
+["auction_age_tooltips"] = false,
+["replicate_scan_3"] = false,
+["small_tabs"] = false,
+["selling_buy_shortcut"] = "alt right click",
+["selling_confirm_low_price"] = true,
+["columns_selling_search_3"] = {
+["Item Level"] = false,
+["Bid Price"] = false,
+["Available"] = false,
+["Buyout Price"] = false,
+["Time Left"] = true,
+["Owned?"] = false,
+["Seller(s)"] = true,
+},
+["selling_split_panels"] = false,
+["cancel_undercut_shortcut"] = "SPACE",
+["historical_prices"] = {
+["Date"] = false,
+["Unit Price"] = false,
+["Upper Unit Price"] = true,
+["Available"] = false,
+},
+["columns_shopping"] = {
+["Item Level"] = true,
+["Name"] = false,
+["Available"] = false,
+["Price"] = false,
+["Owned?"] = true,
+},
+["autoscan_2"] = false,
+["save_last_duration_as_default"] = false,
+["auction_mean_tooltips"] = false,
+["crafting_info_show_cost"] = true,
+["selling_auto_select_next"] = false,
+["show_selling_bid_price"] = false,
+["default_list_2"] = "",
+["columns_shopping_historical_prices"] = {
+["Date"] = false,
+["Unit Price"] = false,
+["Upper Unit Price"] = true,
+["Available"] = false,
+},
+["default_quantities"] = {
+0,
+1,
+0,
+1,
+nil,
+nil,
+0,
+0,
+0,
+[0] = 0,
+[17] = 1,
+[15] = 0,
+[12] = 0,
+[19] = 0,
+[16] = 0,
+},
+["undercut_static_value"] = 0,
+["auto_list_search"] = true,
+["crafting_info_show_profit"] = true,
+["auction_chat_log"] = true,
+["mailbox_tooltips"] = true,
+["auction_mean_days_limit"] = 21,
+["selling_bag_collapsed"] = false,
+["columns_cancelling"] = {
+["Items Ahead"] = false,
+["Bidder"] = true,
+["Undercut Price"] = true,
+["Quantity"] = false,
+["Bid Price"] = true,
+["Name"] = false,
+["Unit Price"] = false,
+["Time Left"] = false,
+["Undercut?"] = false,
+},
+["columns_shopping_buy_commodity"] = {
+["Buyout Price"] = false,
+["Seller(s)"] = true,
+["Available"] = false,
+},
+["auction_sales_preference"] = "percentage",
+["autoscan_interval"] = 15,
+["splash_screen_version"] = "anything",
+["crafting_info_show"] = true,
+["selling_should_reselect_item"] = false,
+["shopping_last_container_view"] = 1,
+}
+AUCTIONATOR_SAVEDVARS = {
+}
+AUCTIONATOR_SHOPPING_LISTS = {
+}
+AUCTIONATOR_PRICE_DATABASE = {
+["__dbversion"] = 8,
+["Al'Akir"] = "¸kF194018¤Aa¡D2444Al€Ah¡D2444ÉÃAmÉÃD1685¤Aa¡D2444Al€Ah¡D2444\000š1ÔAm\000š1ÔF271020¤Aa¡D2444Al€Ah¡D2444\000Cq Am\000Cq F271025¤Aa¡D2444Al€Ah¡D2444f@Amf@F271016¤Aa¡D2444	Al€Ah¡D2444\000½ølAm\000½ølF274811¤Aa¡D2444\nAl€Ah¡D2444{ÊAm{ÊF271027¤Aa¡D2444Al€Ah¡D2444\000Æ]@Am\000Æ]@F274816¤Aa¡D2444Al€Ah¡D2444LV AmLV F271030¤Aa¡D2444Al€Ah¡D2444E¹(AmE¹(F276300¤Aa¡D2444Al€Ah¡D2444\000%ä\000Am\000%ä\000E54443¤Aa¡D2444Al€Ah¡D2444Í=€AmÍ=€D2657¤Aa¡D2444Al€Ah¡D2444\000Ô°Am\000Ô°F143898¤Aa¡D2444Al€Ah¡D2444Ä´dAmÄ´dF222856¤Aa¡D2444,Al€Ah¡D2444®¥@Am®¥@F266384¤Aa¡D2444Al€Ah¡D2444\000…üAm\000…üF258924¤Aa¡D2444Al€Ah¡D2444ú¢`Amú¢`E14155¤Aa¡D2444Al€Ah¡D2444×\\€Am×\\€F271033¤Aa¡D2444Al€Ah¡D2444\000—|Am\000—|F258957¤Aa¡D2444Al€Ah¡D2444ßÒ@AmßÒ@D1725¤Aa¡D2444Al€Ah¡D2444\000o”Am\000o”F276296¤Aa¡D2444Al€Ah¡D2444\000\000\000fÁNœAm\000\000\000fÁNœF274809¤Aa¡D2444\nAl€Ah¡D2444¦W\000Am¦W\000F260904¤Aa¡D2444Al€Ah¡D2444\000=	\000Am\000=	\000F258920¤Aa¡D2444Al€Ah¡D2444ao Amao F276302¤Aa¡D2444Al€Ah¡D2444•ù\000Am•ù\000F274883¤Aa¡D2444Al€Ah¡D2444Å$AmÅ$F114821¤Aa¡D2444Al€Ah¡D2444\000Am\000F271028¤Aa¡D2444Al€Ah¡D2444\000äáÀAm\000äáÀF258925¤Aa¡D2444Al€Ah¡D2444ßÒ@AmßÒ@F258922¤Aa¡D2444\nAl€Ah¡D2444aöÈAmaöÈF271032¤Aa¡D2444Al€Ah¡D2444\000˜s¼Am\000˜s¼F274806¤Aa¡D2444Al€Ah¡D2444/\n Am/\n F274880¤Aa¡D2444Al€Ah¡D2444»`Am»`F240161¤Aa¡D2444#Al€Ah¡D24444E Am4E F246784¤Aa¡D2444Al€Ah¡D2444ÚÂÀAmÚÂÀF258927¤Aa¡D2444Al€Ah¡D2444a½ÀAma½ÀF258950¤Aa¡D2444Al€Ah¡D2444a½ÀAma½ÀF260900¤Aa¡D2444Al€Ah¡D2444\0005s4Am\0005s4F271013¤Aa¡D2444Al€Ah¡D2444É×lAmÉ×lF258948¤Aa¡D2444Al€Ah¡D2444[êğAm[êğF187442¤Aa¡D2444Al€Ah¡D2444Í=€AmÍ=€F271035¤Aa¡D2444Al€Ah¡D2444âë¼Amâë¼F222853¤Aa¡D2444sAl€Ah¡D2444\000GLAm\000GLF184480¤Aa¡D2444	Al€Ah¡D2444\000Dª Am\000Dª F258955¤Aa¡D2444Al€Ah¡D2444Ï<AmÏ<F265562¤Aa¡D2444Al€Ah¡D2444\000‰,Am\000‰,C828¤Aa¡D2444Al€Ah¡D2444ˆTAmˆTF274878¤Aa¡D2444Al€Ah¡D2444\000˜–Am\000˜–F271018¤Aa¡D2444Al€Ah¡D2444LUàAmLUàF271022¤Aa¡D2444Al€Ah¡D2444\000äº°Am\000äº°F260902¤Aa¡D2444Al€Ah¡D2444\000ÇAm\000ÇF271011¤Aa¡D2444Al€Ah¡D2444µdAmµdF127035¤Aa¡D2444Al€Ah¡D2444Í=€AmÍ=€E21841¤Aa¡D2444Al€Ah¡D2444\000!Am\000!F274814¤Aa¡D2444	Al€Ah¡D2444½a\000Am½a\000F274884¤Aa¡D2444Al€Ah¡D2444ÄĞ”AmÄĞ”F271008¤Aa¡D2444Al€Ah¡D2444\000˜–Am\000˜–F222854¤Aa¡D2444,Al€Ah¡D2444\000·œAm\000·œF271019¤Aa¡D2444Al€Ah¡D2444\000[€Am\000[€F274807¤Aa¡D2444\rAl€Ah¡D2444]( Am]( F258954¤Aa¡D2444\nAl€Ah¡D2444aäĞAmaäĞF274812¤Aa¡D2444Al€Ah¡D2444\rÈeˆAm\rÈeˆF258923¤Aa¡D2444Al€Ah¡D2444\n¢ìAm\n¢ìC932¤Aa¡D2444Al€Ah¡D2444ô dAmô dF276330¤Aa¡D2444Al€Ah¡D2444¥@Am¥@F258947¤Aa¡D2444Al€Ah¡D2444ß«0Amß«0F260901¤Aa¡D2444Al€Ah¡D2444ØÌAmØÌF271031¤Aa¡D2444Al€Ah¡D24441-\000Am1-\000F271034¤Aa¡D2444Al€Ah¡D2444!êÀAm!êÀGversionF281567¤Aa¡D2444Al€Ah¡D2444üAmüF194020¤Aa¡D2444Al€Ah¡D2444õºTAmõºTF271012¤Aa¡D2444Al€Ah¡D2444\000˜–€Am\000˜–€F272144¤Aa¡D2444Al€Ah¡D2444\000˜—¬Am\000˜—¬F271029¤Aa¡D2444Al€Ah¡D24441-\000Am1-\000F271015¤Aa¡D2444Al€Ah¡D2444À¿°AmÀ¿°F274879¤Aa¡D2444Al€Ah¡D2444S\rDAmS\rDF276298¤Aa¡D2444Al€Ah¡D2444úñ¬Amúñ¬F274802¤Aa¡D2444Al€Ah¡D2444u÷ÀAmu÷ÀF258926¤Aa¡D2444	Al€Ah¡D2444úzìAmúzìE82446¤Aa¡D2444Al€Ah¡D2444õíAmõíF271009¤Aa¡D2444Al€Ah¡D2444ÉéÈAmÉéÈF271021¤Aa¡D2444Al€Ah¡D2444\000˜–€Am\000˜–€F222855¤Aa¡D2444Al€Ah¡D2444\0003á@Am\0003á@F194019¤Aa¡D24445Al€Ah¡D2444\000„Am\000„F258921¤Aa¡D2444Al€Ah¡D2444ú{PAmú{PF184479¤Aa¡D2444Al€Ah¡D2444}x@Am}x@F240158¤Aa¡D2444:Al€Ah¡D2444	0Am	0F281568¤Aa¡D2444Al€Ah¡D2444\000šƒAm\000šƒE30744¤Aa¡D2444Al€Ah¡D2444Í=€AmÍ=€F240160¤Aa¡D2444+Al€Ah¡D2444\000ÕQ`Am\000ÕQ`F274813¤Aa¡D2444Al€Ah¡D2444«IàAm«IàF154695¤Aa¡D2444	Al€Ah¡D2444\000˜opAm\000˜opF117379¤Aa¡D2444IAl€Ah¡D2444Ü“€AmÜ“€E41599¤Aa¡D2444Al€Ah¡D2444\000øAm\000øF258956¤Aa¡D2444Al€Ah¡D2444úÉpAmúÉpD3914¤Aa¡D2444Al€Ah¡D2444\000føAm\000føF271007¤Aa¡D2444Al€Ah¡D2444é‚tAmé‚tF240159¤Aa¡D2444Al€Ah¡D2444\000¨ÁAm\000¨ÁD4499¤Aa¡D2444Al€Ah¡D2444’àAm’àF258949¤Aa¡D2444Al€Ah¡D2444ß„ Amß„ D4500¤Aa¡D2444Al€Ah¡D2444\000¿ Am\000¿ C805¤Aa¡D2444Al€Ah¡D24440Am0F266386¤Aa¡D2444Al€Ah¡D2444\000\nÃxAm\000\nÃxF281570¤Aa¡D2444Al€Ah¡D2444\000ºŒAm\000ºŒF194017¤Aa¡D2444<Al€Ah¡D2444\000ÔôAm\000ÔôF271010¤Aa¡D2444Al€Ah¡D2444\000-ŸLAm\000-ŸL",
+}
+AUCTIONATOR_POSTING_HISTORY = {
+["__dbversion"] = 1,
+}
+AUCTIONATOR_VENDOR_PRICE_CACHE = {
+["81920"] = 4608,
+["3371"] = 20,
+["197752"] = 12500,
+["211806"] = 27500,
+["10290"] = 2500,
+["180059"] = 500000,
+["3771"] = 180,
+["159"] = 1,
+["20815"] = 800,
+["58268"] = 3240,
+["192833"] = 20000,
+["191474"] = 50000,
+["180057"] = 50000,
+["194784"] = 10000,
+["4599"] = 360,
+["6261"] = 1000,
+["247873"] = 5000,
+["245443"] = 1900000,
+["184201"] = 5000,
+["4470"] = 38,
+["188152"] = 1425000,
+["228368"] = 1500000,
+["2325"] = 1000,
+["81414"] = 5200,
+["38682"] = 1000,
+["81406"] = 4800,
+["197749"] = 1000,
+["27854"] = 1008,
+["245438"] = 2850000,
+["197750"] = 3000,
+["81401"] = 4800,
+["2287"] = 22.6,
+["39505"] = 750,
+["81407"] = 22400,
+["74636"] = 5200,
+["35948"] = 2880,
+["58264"] = 3240,
+["81409"] = 5200,
+["2324"] = 25,
+["4536"] = 4.6,
+["35953"] = 2880,
+["45585"] = 1000,
+["197858"] = 5000,
+["64914"] = 103,
+["85663"] = 158,
+["247835"] = 5000,
+["198487"] = 10000,
+["247864"] = 5000,
+["4537"] = 22.6,
+["194680"] = 7500,
+["2604"] = 50,
+["6218"] = 10000,
+["244320"] = 475000,
+["8952"] = 720,
+["4539"] = 180,
+["184202"] = 5000,
+["81918"] = 4608,
+["180055"] = 15000,
+["8953"] = 720,
+["5956"] = 1,
+["4341"] = 500,
+["180058"] = 150000,
+["81400"] = 4800,
+["58274"] = 2200,
+["200860"] = 50000,
+["10498"] = 14000,
+["__dbversion"] = 1,
+["81917"] = 4032,
+["2605"] = 100,
+["247867"] = 5000,
+["197857"] = 5000,
+["64670"] = 800,
+["64916"] = 104,
+["4342"] = 2500,
+["117"] = 4.6,
+["6260"] = 50,
+["197856"] = 5000,
+["4538"] = 90,
+["197751"] = 5000,
+["67535"] = 20000,
+["81919"] = 4032,
+["240991"] = 27500,
+["247811"] = 125000,
+["138293"] = 2000000,
+["247872"] = 5000,
+["180060"] = 1000000,
+["197855"] = 7500,
+["247871"] = 5000,
+["247866"] = 5000,
+["244316"] = 1900000,
+["60335"] = 120000,
+["58269"] = 3600,
+["35949"] = 1530,
+["33454"] = 1530,
+["251665"] = 700,
+["4340"] = 350,
+["52188"] = 15000,
+["190452"] = 150000,
+["6219"] = 947,
+["39354"] = 4,
+["247870"] = 5000,
+["244653"] = 1900000,
+["247869"] = 5000,
+["3770"] = 90,
+["27856"] = 1008,
+["251691"] = 700,
+["2901"] = 123,
+["7005"] = 124,
+["4602"] = 360,
+["81415"] = 25600,
+["247865"] = 5000,
+["6256"] = 1,
+["58265"] = 3600,
+["197753"] = 30000,
+}
+AUCTIONATOR_RECENT_SEARCHES = {
+}
+AUCTIONATOR_SELLING_GROUPS = {
+["CustomGroups"] = {
+{
+["name"] = "FAVOURITES",
+["type"] = 1,
+["hidden"] = false,
+["list"] = {
+},
+},
+},
+["Version"] = 1,
+["HiddenItems"] = {
+},
+}

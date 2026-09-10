@@ -1,0 +1,6 @@
+VER 3 0000000000000001 "Extrabutton" "134400"
+#showtooltip
+/click ExtraActionButton1
+/cast Zone Ability
+/cast Garrison Ability
+END

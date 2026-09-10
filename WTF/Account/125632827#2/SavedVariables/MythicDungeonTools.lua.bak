@@ -1,0 +1,33 @@
+
+MythicDungeonToolsDB = {
+["global"] = {
+["announceDungeonReset"] = false,
+["enemyForcesTooltip"] = 1,
+["muteXalatathVoiceLines"] = false,
+["focusMarker"] = {
+["announceReadyCheck"] = false,
+["suppressNotifications"] = false,
+["useMacro"] = false,
+["disableTargetMarkerInRaid"] = false,
+["preserveExistingTargetMarkers"] = true,
+["assignments"] = {
+},
+},
+["combatLogging"] = {
+["enabled"] = false,
+["content"] = {
+["normal"] = false,
+["mythic_dungeon"] = false,
+["mythic"] = false,
+["lfr"] = false,
+["mythic_plus"] = false,
+["heroic"] = false,
+},
+},
+["minimap"] = {
+["showInCompartment"] = true,
+["compartmentHide"] = false,
+["hide"] = false,
+},
+},
+}

@@ -1,0 +1,44 @@
+## Interface: 120007, 120100
+## Title: Vamoose's Endeavors
+## Notes: Track Housing Endeavor progress across all your characters
+## Author: Vamoose
+## Version: 1.19.0
+## SavedVariables: VE_DB
+## IconTexture: Interface\AddOns\VamoosesEndeavors\Textures\ve_icon
+## AddonCompartmentFunc: VE_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: VE_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: VE_OnAddonCompartmentLeave
+## Category-enUS: Housing
+
+# Embedded Libraries
+Libs\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+
+# Core
+Core/SchemeConstants.lua
+Core/Constants.lua
+Core/EventBus.lua
+Core/Store.lua
+Core/Init.lua
+
+# Data
+Data/VE_EndeavorQuotes.lua
+
+# Modules
+Modules/EndeavorTracker.lua
+Modules/AltSharing.lua
+Modules/VE_Health.lua
+
+# UI
+UI/ThemeEngine.lua
+UI/Framework.lua
+UI/MainFrame.lua
+UI/Minimap.lua
+UI/Vamoose.lua
+UI/Tabs/Endeavors.lua
+UI/Tabs/Leaderboard.lua
+UI/Tabs/Activity.lua
+UI/Tabs/Info.lua
+UI/Tabs/Config.lua

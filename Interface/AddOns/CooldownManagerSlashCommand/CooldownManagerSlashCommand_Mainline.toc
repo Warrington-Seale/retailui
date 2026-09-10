@@ -1,0 +1,11 @@
+## Title: Cooldown Manager Slash Command
+## Notes: Use /cd and /wa to open Blizzard's Cooldown Manager
+## OptionalDeps: M33kAuras, WeakAuras
+
+## DefaultState: enabled
+## Author: Luckyone
+## Version: 1.05
+
+## Interface: 120100
+
+CooldownManagerSlashCommand.lua

@@ -1,0 +1,8 @@
+## Interface: 120000
+## Title: Auto Accept Role Check
+## Notes: Automatically accepts role check popups with your current or preferred role.
+## Author: Converted from WeakAura
+## Version: 1.0.0
+## SavedVariables: AutoAcceptRoleCheckDB
+
+AutoAcceptRoleCheck.lua
