@@ -19,9 +19,9 @@ AUCTIONATOR_CONFIG = {
 ["Item Level"] = false,
 ["Bid Price"] = false,
 ["Available"] = false,
-["Buyout Price"] = false,
-["Owned?"] = true,
 ["Seller(s)"] = true,
+["Owned?"] = true,
+["Buyout Price"] = false,
 },
 ["selling_cancel_shortcut"] = "right click",
 ["selling_ignored_keys"] = {
@@ -52,22 +52,14 @@ AUCTIONATOR_CONFIG = {
 ["small_tabs"] = false,
 ["selling_buy_shortcut"] = "alt right click",
 ["selling_confirm_low_price"] = true,
-["columns_selling_search_3"] = {
-["Item Level"] = false,
-["Bid Price"] = false,
-["Available"] = false,
-["Buyout Price"] = false,
-["Time Left"] = true,
-["Owned?"] = false,
-["Seller(s)"] = true,
-},
-["selling_split_panels"] = false,
+["shopping_last_container_view"] = 1,
+["selling_should_reselect_item"] = false,
 ["cancel_undercut_shortcut"] = "SPACE",
 ["historical_prices"] = {
 ["Date"] = false,
 ["Unit Price"] = false,
-["Upper Unit Price"] = true,
 ["Available"] = false,
+["Upper Unit Price"] = true,
 },
 ["columns_shopping"] = {
 ["Item Level"] = true,
@@ -76,18 +68,32 @@ AUCTIONATOR_CONFIG = {
 ["Price"] = false,
 ["Owned?"] = true,
 },
-["autoscan_2"] = false,
+["autoscan_interval"] = 15,
 ["save_last_duration_as_default"] = false,
-["auction_mean_tooltips"] = false,
 ["crafting_info_show_cost"] = true,
-["selling_auto_select_next"] = false,
+["auction_mean_tooltips"] = false,
+["columns_shopping_buy_commodity"] = {
+["Seller(s)"] = true,
+["Buyout Price"] = false,
+["Available"] = false,
+},
 ["show_selling_bid_price"] = false,
-["default_list_2"] = "",
+["columns_cancelling"] = {
+["Items Ahead"] = false,
+["Bidder"] = true,
+["Undercut Price"] = true,
+["Quantity"] = false,
+["Bid Price"] = true,
+["Undercut?"] = false,
+["Unit Price"] = false,
+["Time Left"] = false,
+["Name"] = false,
+},
 ["columns_shopping_historical_prices"] = {
 ["Date"] = false,
 ["Unit Price"] = false,
-["Upper Unit Price"] = true,
 ["Available"] = false,
+["Upper Unit Price"] = true,
 },
 ["default_quantities"] = {
 0,
@@ -106,35 +112,29 @@ nil,
 [19] = 0,
 [16] = 0,
 },
-["undercut_static_value"] = 0,
-["auto_list_search"] = true,
-["crafting_info_show_profit"] = true,
-["auction_chat_log"] = true,
-["mailbox_tooltips"] = true,
 ["auction_mean_days_limit"] = 21,
+["auto_list_search"] = true,
+["auction_chat_log"] = true,
+["crafting_info_show_profit"] = true,
+["mailbox_tooltips"] = true,
+["undercut_static_value"] = 0,
 ["selling_bag_collapsed"] = false,
-["columns_cancelling"] = {
-["Items Ahead"] = false,
-["Bidder"] = true,
-["Undercut Price"] = true,
-["Quantity"] = false,
-["Bid Price"] = true,
-["Name"] = false,
-["Unit Price"] = false,
-["Time Left"] = false,
-["Undercut?"] = false,
-},
-["columns_shopping_buy_commodity"] = {
-["Buyout Price"] = false,
-["Seller(s)"] = true,
-["Available"] = false,
-},
+["default_list_2"] = "",
+["selling_auto_select_next"] = false,
 ["auction_sales_preference"] = "percentage",
-["autoscan_interval"] = 15,
+["autoscan_2"] = false,
 ["splash_screen_version"] = "anything",
 ["crafting_info_show"] = true,
-["selling_should_reselect_item"] = false,
-["shopping_last_container_view"] = 1,
+["selling_split_panels"] = false,
+["columns_selling_search_3"] = {
+["Item Level"] = false,
+["Bid Price"] = false,
+["Available"] = false,
+["Seller(s)"] = true,
+["Owned?"] = false,
+["Time Left"] = true,
+["Buyout Price"] = false,
+},
 }
 AUCTIONATOR_SAVEDVARS = {
 }
@@ -142,7 +142,7 @@ AUCTIONATOR_SHOPPING_LISTS = {
 }
 AUCTIONATOR_PRICE_DATABASE = {
 ["__dbversion"] = 8,
-["Al'Akir"] = "¸kF194018¤Aa¡D2444Al€Ah¡D2444ÉÃAmÉÃD1685¤Aa¡D2444Al€Ah¡D2444\000š1ÔAm\000š1ÔF271020¤Aa¡D2444Al€Ah¡D2444\000Cq Am\000Cq F271025¤Aa¡D2444Al€Ah¡D2444f@Amf@F271016¤Aa¡D2444	Al€Ah¡D2444\000½ølAm\000½ølF274811¤Aa¡D2444\nAl€Ah¡D2444{ÊAm{ÊF271027¤Aa¡D2444Al€Ah¡D2444\000Æ]@Am\000Æ]@F274816¤Aa¡D2444Al€Ah¡D2444LV AmLV F271030¤Aa¡D2444Al€Ah¡D2444E¹(AmE¹(F276300¤Aa¡D2444Al€Ah¡D2444\000%ä\000Am\000%ä\000E54443¤Aa¡D2444Al€Ah¡D2444Í=€AmÍ=€D2657¤Aa¡D2444Al€Ah¡D2444\000Ô°Am\000Ô°F143898¤Aa¡D2444Al€Ah¡D2444Ä´dAmÄ´dF222856¤Aa¡D2444,Al€Ah¡D2444®¥@Am®¥@F266384¤Aa¡D2444Al€Ah¡D2444\000…üAm\000…üF258924¤Aa¡D2444Al€Ah¡D2444ú¢`Amú¢`E14155¤Aa¡D2444Al€Ah¡D2444×\\€Am×\\€F271033¤Aa¡D2444Al€Ah¡D2444\000—|Am\000—|F258957¤Aa¡D2444Al€Ah¡D2444ßÒ@AmßÒ@D1725¤Aa¡D2444Al€Ah¡D2444\000o”Am\000o”F276296¤Aa¡D2444Al€Ah¡D2444\000\000\000fÁNœAm\000\000\000fÁNœF274809¤Aa¡D2444\nAl€Ah¡D2444¦W\000Am¦W\000F260904¤Aa¡D2444Al€Ah¡D2444\000=	\000Am\000=	\000F258920¤Aa¡D2444Al€Ah¡D2444ao Amao F276302¤Aa¡D2444Al€Ah¡D2444•ù\000Am•ù\000F274883¤Aa¡D2444Al€Ah¡D2444Å$AmÅ$F114821¤Aa¡D2444Al€Ah¡D2444\000Am\000F271028¤Aa¡D2444Al€Ah¡D2444\000äáÀAm\000äáÀF258925¤Aa¡D2444Al€Ah¡D2444ßÒ@AmßÒ@F258922¤Aa¡D2444\nAl€Ah¡D2444aöÈAmaöÈF271032¤Aa¡D2444Al€Ah¡D2444\000˜s¼Am\000˜s¼F274806¤Aa¡D2444Al€Ah¡D2444/\n Am/\n F274880¤Aa¡D2444Al€Ah¡D2444»`Am»`F240161¤Aa¡D2444#Al€Ah¡D24444E Am4E F246784¤Aa¡D2444Al€Ah¡D2444ÚÂÀAmÚÂÀF258927¤Aa¡D2444Al€Ah¡D2444a½ÀAma½ÀF258950¤Aa¡D2444Al€Ah¡D2444a½ÀAma½ÀF260900¤Aa¡D2444Al€Ah¡D2444\0005s4Am\0005s4F271013¤Aa¡D2444Al€Ah¡D2444É×lAmÉ×lF258948¤Aa¡D2444Al€Ah¡D2444[êğAm[êğF187442¤Aa¡D2444Al€Ah¡D2444Í=€AmÍ=€F271035¤Aa¡D2444Al€Ah¡D2444âë¼Amâë¼F222853¤Aa¡D2444sAl€Ah¡D2444\000GLAm\000GLF184480¤Aa¡D2444	Al€Ah¡D2444\000Dª Am\000Dª F258955¤Aa¡D2444Al€Ah¡D2444Ï<AmÏ<F265562¤Aa¡D2444Al€Ah¡D2444\000‰,Am\000‰,C828¤Aa¡D2444Al€Ah¡D2444ˆTAmˆTF274878¤Aa¡D2444Al€Ah¡D2444\000˜–Am\000˜–F271018¤Aa¡D2444Al€Ah¡D2444LUàAmLUàF271022¤Aa¡D2444Al€Ah¡D2444\000äº°Am\000äº°F260902¤Aa¡D2444Al€Ah¡D2444\000ÇAm\000ÇF271011¤Aa¡D2444Al€Ah¡D2444µdAmµdF127035¤Aa¡D2444Al€Ah¡D2444Í=€AmÍ=€E21841¤Aa¡D2444Al€Ah¡D2444\000!Am\000!F274814¤Aa¡D2444	Al€Ah¡D2444½a\000Am½a\000F274884¤Aa¡D2444Al€Ah¡D2444ÄĞ”AmÄĞ”F271008¤Aa¡D2444Al€Ah¡D2444\000˜–Am\000˜–F222854¤Aa¡D2444,Al€Ah¡D2444\000·œAm\000·œF271019¤Aa¡D2444Al€Ah¡D2444\000[€Am\000[€F274807¤Aa¡D2444\rAl€Ah¡D2444]( Am]( F258954¤Aa¡D2444\nAl€Ah¡D2444aäĞAmaäĞF274812¤Aa¡D2444Al€Ah¡D2444\rÈeˆAm\rÈeˆF258923¤Aa¡D2444Al€Ah¡D2444\n¢ìAm\n¢ìC932¤Aa¡D2444Al€Ah¡D2444ô dAmô dF276330¤Aa¡D2444Al€Ah¡D2444¥@Am¥@F258947¤Aa¡D2444Al€Ah¡D2444ß«0Amß«0F260901¤Aa¡D2444Al€Ah¡D2444ØÌAmØÌF271031¤Aa¡D2444Al€Ah¡D24441-\000Am1-\000F271034¤Aa¡D2444Al€Ah¡D2444!êÀAm!êÀGversionF281567¤Aa¡D2444Al€Ah¡D2444üAmüF194020¤Aa¡D2444Al€Ah¡D2444õºTAmõºTF271012¤Aa¡D2444Al€Ah¡D2444\000˜–€Am\000˜–€F272144¤Aa¡D2444Al€Ah¡D2444\000˜—¬Am\000˜—¬F271029¤Aa¡D2444Al€Ah¡D24441-\000Am1-\000F271015¤Aa¡D2444Al€Ah¡D2444À¿°AmÀ¿°F274879¤Aa¡D2444Al€Ah¡D2444S\rDAmS\rDF276298¤Aa¡D2444Al€Ah¡D2444úñ¬Amúñ¬F274802¤Aa¡D2444Al€Ah¡D2444u÷ÀAmu÷ÀF258926¤Aa¡D2444	Al€Ah¡D2444úzìAmúzìE82446¤Aa¡D2444Al€Ah¡D2444õíAmõíF271009¤Aa¡D2444Al€Ah¡D2444ÉéÈAmÉéÈF271021¤Aa¡D2444Al€Ah¡D2444\000˜–€Am\000˜–€F222855¤Aa¡D2444Al€Ah¡D2444\0003á@Am\0003á@F194019¤Aa¡D24445Al€Ah¡D2444\000„Am\000„F258921¤Aa¡D2444Al€Ah¡D2444ú{PAmú{PF184479¤Aa¡D2444Al€Ah¡D2444}x@Am}x@F240158¤Aa¡D2444:Al€Ah¡D2444	0Am	0F281568¤Aa¡D2444Al€Ah¡D2444\000šƒAm\000šƒE30744¤Aa¡D2444Al€Ah¡D2444Í=€AmÍ=€F240160¤Aa¡D2444+Al€Ah¡D2444\000ÕQ`Am\000ÕQ`F274813¤Aa¡D2444Al€Ah¡D2444«IàAm«IàF154695¤Aa¡D2444	Al€Ah¡D2444\000˜opAm\000˜opF117379¤Aa¡D2444IAl€Ah¡D2444Ü“€AmÜ“€E41599¤Aa¡D2444Al€Ah¡D2444\000øAm\000øF258956¤Aa¡D2444Al€Ah¡D2444úÉpAmúÉpD3914¤Aa¡D2444Al€Ah¡D2444\000føAm\000føF271007¤Aa¡D2444Al€Ah¡D2444é‚tAmé‚tF240159¤Aa¡D2444Al€Ah¡D2444\000¨ÁAm\000¨ÁD4499¤Aa¡D2444Al€Ah¡D2444’àAm’àF258949¤Aa¡D2444Al€Ah¡D2444ß„ Amß„ D4500¤Aa¡D2444Al€Ah¡D2444\000¿ Am\000¿ C805¤Aa¡D2444Al€Ah¡D24440Am0F266386¤Aa¡D2444Al€Ah¡D2444\000\nÃxAm\000\nÃxF281570¤Aa¡D2444Al€Ah¡D2444\000ºŒAm\000ºŒF194017¤Aa¡D2444<Al€Ah¡D2444\000ÔôAm\000ÔôF271010¤Aa¡D2444Al€Ah¡D2444\000-ŸLAm\000-ŸL",
+["Al'Akir"] = "¸kF194018¤Aa¡D2444Al€AmÉÃAh¡D2444ÉÃD1685¤Aa¡D2444Al€Am\000š1ÔAh¡D2444\000š1ÔF271020¤Aa¡D2444Al€Am\000Cq Ah¡D2444\000Cq F271025¤Aa¡D2444Al€Amf@Ah¡D2444f@F271016¤Aa¡D2444	Al€Am\000½ølAh¡D2444\000½ølF274811¤Aa¡D2444\nAl€Am{ÊAh¡D2444{ÊF271027¤Aa¡D2444Al€Am\000Æ]@Ah¡D2444\000Æ]@F274816¤Aa¡D2444Al€AmLV Ah¡D2444LV F271030¤Aa¡D2444Al€AmE¹(Ah¡D2444E¹(F276300¤Aa¡D2444Al€Am\000%ä\000Ah¡D2444\000%ä\000E54443¤Aa¡D2444Al€AmÍ=€Ah¡D2444Í=€D2657¤Aa¡D2444Al€Am\000Ô°Ah¡D2444\000Ô°F143898¤Aa¡D2444Al€AmÄ´dAh¡D2444Ä´dF222856¤Aa¡D2444,Al€Am®¥@Ah¡D2444®¥@F266384¤Aa¡D2444Al€Am\000…üAh¡D2444\000…üF258924¤Aa¡D2444Al€Amú¢`Ah¡D2444ú¢`E14155¤Aa¡D2444Al€Am×\\€Ah¡D2444×\\€F271033¤Aa¡D2444Al€Am\000—|Ah¡D2444\000—|F258957¤Aa¡D2444Al€AmßÒ@Ah¡D2444ßÒ@D1725¤Aa¡D2444Al€Am\000o”Ah¡D2444\000o”F276296¤Aa¡D2444Al€Am\000\000\000fÁNœAh¡D2444\000\000\000fÁNœF274809¤Aa¡D2444\nAl€Am¦W\000Ah¡D2444¦W\000F260904¤Aa¡D2444Al€Am\000=	\000Ah¡D2444\000=	\000F258920¤Aa¡D2444Al€Amao Ah¡D2444ao F276302¤Aa¡D2444Al€Am•ù\000Ah¡D2444•ù\000F271010¤Aa¡D2444Al€Am\000-ŸLAh¡D2444\000-ŸLF114821¤Aa¡D2444Al€Am\000Ah¡D2444\000F271028¤Aa¡D2444Al€Am\000äáÀAh¡D2444\000äáÀF194017¤Aa¡D2444<Al€Am\000ÔôAh¡D2444\000ÔôF260900¤Aa¡D2444Al€Am\0005s4Ah¡D2444\0005s4F271032¤Aa¡D2444Al€Am\000˜s¼Ah¡D2444\000˜s¼F266386¤Aa¡D2444Al€Am\000\nÃxAh¡D2444\000\nÃxF274880¤Aa¡D2444Al€Am»`Ah¡D2444»`F271018¤Aa¡D2444Al€AmLUàAh¡D2444LUàD4500¤Aa¡D2444Al€Am\000¿ Ah¡D2444\000¿ F258927¤Aa¡D2444Al€Ama½ÀAh¡D2444a½ÀF258950¤Aa¡D2444Al€Ama½ÀAh¡D2444a½ÀF258949¤Aa¡D2444Al€Amß„ Ah¡D2444ß„ F271013¤Aa¡D2444Al€AmÉ×lAh¡D2444É×lF258948¤Aa¡D2444Al€Am[êğAh¡D2444[êğF187442¤Aa¡D2444Al€AmÍ=€Ah¡D2444Í=€D4499¤Aa¡D2444Al€Am’àAh¡D2444’àF258922¤Aa¡D2444\nAl€AmaöÈAh¡D2444aöÈF184480¤Aa¡D2444	Al€Am\000Dª Ah¡D2444\000Dª F240159¤Aa¡D2444Al€Am\000¨ÁAh¡D2444\000¨ÁF271007¤Aa¡D2444Al€Amé‚tAh¡D2444é‚tC828¤Aa¡D2444Al€AmˆTAh¡D2444ˆTD3914¤Aa¡D2444Al€Am\000føAh¡D2444\000føF271008¤Aa¡D2444Al€Am\000˜–Ah¡D2444\000˜–F271022¤Aa¡D2444Al€Am\000äº°Ah¡D2444\000äº°E41599¤Aa¡D2444Al€Am\000øAh¡D2444\000øF271011¤Aa¡D2444Al€AmµdAh¡D2444µdF117379¤Aa¡D2444IAl€AmÜ“€Ah¡D2444Ü“€E21841¤Aa¡D2444Al€Am\000!Ah¡D2444\000!F274814¤Aa¡D2444	Al€Am½a\000Ah¡D2444½a\000F274884¤Aa¡D2444Al€AmÄĞ”Ah¡D2444ÄĞ”F154695¤Aa¡D2444	Al€Am\000˜opAh¡D2444\000˜opF246784¤Aa¡D2444Al€AmÚÂÀAh¡D2444ÚÂÀF274813¤Aa¡D2444Al€Am«IàAh¡D2444«IàF240160¤Aa¡D2444+Al€Am\000ÕQ`Ah¡D2444\000ÕQ`F258954¤Aa¡D2444\nAl€AmaäĞAh¡D2444aäĞF274812¤Aa¡D2444Al€Am\rÈeˆAh¡D2444\rÈeˆE30744¤Aa¡D2444Al€AmÍ=€Ah¡D2444Í=€C932¤Aa¡D2444Al€Amô dAh¡D2444ô dF276330¤Aa¡D2444Al€Am¥@Ah¡D2444¥@F260901¤Aa¡D2444Al€AmØÌAh¡D2444ØÌF240158¤Aa¡D2444:Al€Am	0Ah¡D2444	0F184479¤Aa¡D2444Al€Am}x@Ah¡D2444}x@F271034¤Aa¡D2444Al€Am!êÀAh¡D2444!êÀGversionF274878¤Aa¡D2444Al€Am\000˜–Ah¡D2444\000˜–F194020¤Aa¡D2444Al€AmõºTAh¡D2444õºTF271012¤Aa¡D2444Al€Am\000˜–€Ah¡D2444\000˜–€F272144¤Aa¡D2444Al€Am\000˜—¬Ah¡D2444\000˜—¬F271029¤Aa¡D2444Al€Am1-\000Ah¡D24441-\000F258921¤Aa¡D2444Al€Amú{PAh¡D2444ú{PF271015¤Aa¡D2444Al€AmÀ¿°Ah¡D2444À¿°F276298¤Aa¡D2444Al€Amúñ¬Ah¡D2444úñ¬F222855¤Aa¡D2444Al€Am\0003á@Ah¡D2444\0003á@E82446¤Aa¡D2444Al€AmõíAh¡D2444õíF258926¤Aa¡D2444	Al€AmúzìAh¡D2444úzìF271009¤Aa¡D2444Al€AmÉéÈAh¡D2444ÉéÈF271021¤Aa¡D2444Al€Am\000˜–€Ah¡D2444\000˜–€F274802¤Aa¡D2444Al€Amu÷ÀAh¡D2444u÷ÀF194019¤Aa¡D24445Al€Am\000„Ah¡D2444\000„F274879¤Aa¡D2444Al€AmS\rDAh¡D2444S\rDF281567¤Aa¡D2444Al€AmüAh¡D2444üF271031¤Aa¡D2444Al€Am1-\000Ah¡D24441-\000F281568¤Aa¡D2444Al€Am\000šƒAh¡D2444\000šƒF258947¤Aa¡D2444Al€Amß«0Ah¡D2444ß«0F258923¤Aa¡D2444Al€Am\n¢ìAh¡D2444\n¢ìF274807¤Aa¡D2444\rAl€Am]( Ah¡D2444]( F271019¤Aa¡D2444Al€Am\000[€Ah¡D2444\000[€F274806¤Aa¡D2444Al€Am/\n Ah¡D2444/\n F222854¤Aa¡D2444,Al€Am\000·œAh¡D2444\000·œF258956¤Aa¡D2444Al€AmúÉpAh¡D2444úÉpF127035¤Aa¡D2444Al€AmÍ=€Ah¡D2444Í=€F265562¤Aa¡D2444Al€Am\000‰,Ah¡D2444\000‰,F258955¤Aa¡D2444Al€AmÏ<Ah¡D2444Ï<F271035¤Aa¡D2444Al€Amâë¼Ah¡D2444âë¼F240161¤Aa¡D2444#Al€Am4E Ah¡D24444E F260902¤Aa¡D2444Al€Am\000ÇAh¡D2444\000ÇC805¤Aa¡D2444Al€Am0Ah¡D24440F222853¤Aa¡D2444sAl€Am\000GLAh¡D2444\000GLF281570¤Aa¡D2444Al€Am\000ºŒAh¡D2444\000ºŒF258925¤Aa¡D2444Al€AmßÒ@Ah¡D2444ßÒ@F274883¤Aa¡D2444Al€AmÅ$Ah¡D2444Å$",
 }
 AUCTIONATOR_POSTING_HISTORY = {
 ["__dbversion"] = 1,
@@ -153,18 +153,27 @@ AUCTIONATOR_VENDOR_PRICE_CACHE = {
 ["197752"] = 12500,
 ["211806"] = 27500,
 ["10290"] = 2500,
+["264985"] = 7000,
 ["180059"] = 500000,
+["264984"] = 7000,
 ["3771"] = 180,
+["247673"] = 35000,
+["4537"] = 22.6,
+["140344"] = 52000,
 ["159"] = 1,
+["197855"] = 7500,
 ["20815"] = 800,
 ["58268"] = 3240,
 ["192833"] = 20000,
 ["191474"] = 50000,
 ["180057"] = 50000,
+["39354"] = 4,
 ["194784"] = 10000,
+["140341"] = 40000,
 ["4599"] = 360,
 ["6261"] = 1000,
 ["247873"] = 5000,
+["140337"] = 2000,
 ["245443"] = 1900000,
 ["184201"] = 5000,
 ["4470"] = 38,
@@ -173,58 +182,58 @@ AUCTIONATOR_VENDOR_PRICE_CACHE = {
 ["2325"] = 1000,
 ["81414"] = 5200,
 ["38682"] = 1000,
-["81406"] = 4800,
+["58265"] = 3600,
 ["197749"] = 1000,
 ["27854"] = 1008,
-["245438"] = 2850000,
-["197750"] = 3000,
-["81401"] = 4800,
+["6256"] = 1,
+["247865"] = 5000,
+["81415"] = 25600,
 ["2287"] = 22.6,
 ["39505"] = 750,
-["81407"] = 22400,
+["4602"] = 360,
 ["74636"] = 5200,
 ["35948"] = 2880,
 ["58264"] = 3240,
 ["81409"] = 5200,
 ["2324"] = 25,
 ["4536"] = 4.6,
-["35953"] = 2880,
+["2901"] = 123,
 ["45585"] = 1000,
-["197858"] = 5000,
+["251691"] = 700,
 ["64914"] = 103,
-["85663"] = 158,
+["27856"] = 1008,
 ["247835"] = 5000,
 ["198487"] = 10000,
 ["247864"] = 5000,
-["4537"] = 22.6,
-["194680"] = 7500,
-["2604"] = 50,
-["6218"] = 10000,
+["3770"] = 90,
+["247869"] = 5000,
+["244653"] = 1900000,
+["8953"] = 720,
 ["244320"] = 475000,
 ["8952"] = 720,
 ["4539"] = 180,
-["184202"] = 5000,
-["81918"] = 4608,
-["180055"] = 15000,
-["8953"] = 720,
+["140343"] = 185965,
+["6219"] = 947,
+["2604"] = 50,
+["190452"] = 150000,
 ["5956"] = 1,
-["4341"] = 500,
-["180058"] = 150000,
-["81400"] = 4800,
-["58274"] = 2200,
 ["200860"] = 50000,
-["10498"] = 14000,
-["__dbversion"] = 1,
 ["81917"] = 4032,
-["2605"] = 100,
+["251665"] = 700,
+["58274"] = 2200,
 ["247867"] = 5000,
+["35949"] = 1530,
+["__dbversion"] = 1,
+["58269"] = 3600,
+["2605"] = 100,
+["60335"] = 120000,
 ["197857"] = 5000,
-["64670"] = 800,
-["64916"] = 104,
-["4342"] = 2500,
-["117"] = 4.6,
+["244316"] = 1900000,
+["247866"] = 5000,
 ["6260"] = 50,
-["197856"] = 5000,
+["140338"] = 40000,
+["197858"] = 5000,
+["194680"] = 7500,
 ["4538"] = 90,
 ["197751"] = 5000,
 ["67535"] = 20000,
@@ -234,33 +243,33 @@ AUCTIONATOR_VENDOR_PRICE_CACHE = {
 ["138293"] = 2000000,
 ["247872"] = 5000,
 ["180060"] = 1000000,
-["197855"] = 7500,
+["197856"] = 5000,
 ["247871"] = 5000,
-["247866"] = 5000,
-["244316"] = 1900000,
-["60335"] = 120000,
-["58269"] = 3600,
-["35949"] = 1530,
+["64670"] = 800,
+["117"] = 4.6,
+["4342"] = 2500,
+["10498"] = 14000,
+["64916"] = 104,
 ["33454"] = 1530,
-["251665"] = 700,
+["85663"] = 158,
 ["4340"] = 350,
 ["52188"] = 15000,
-["190452"] = 150000,
-["6219"] = 947,
-["39354"] = 4,
+["81400"] = 4800,
+["180058"] = 150000,
+["4341"] = 500,
 ["247870"] = 5000,
-["244653"] = 1900000,
-["247869"] = 5000,
-["3770"] = 90,
-["27856"] = 1008,
-["251691"] = 700,
-["2901"] = 123,
+["180055"] = 15000,
+["81918"] = 4608,
+["184202"] = 5000,
+["6218"] = 10000,
+["264983"] = 7000,
+["35953"] = 2880,
 ["7005"] = 124,
-["4602"] = 360,
-["81415"] = 25600,
-["247865"] = 5000,
-["6256"] = 1,
-["58265"] = 3600,
+["81407"] = 22400,
+["245438"] = 2850000,
+["197750"] = 3000,
+["81401"] = 4800,
+["81406"] = 4800,
 ["197753"] = 30000,
 }
 AUCTIONATOR_RECENT_SEARCHES = {
@@ -268,9 +277,9 @@ AUCTIONATOR_RECENT_SEARCHES = {
 AUCTIONATOR_SELLING_GROUPS = {
 ["CustomGroups"] = {
 {
-["name"] = "FAVOURITES",
-["type"] = 1,
 ["hidden"] = false,
+["type"] = 1,
+["name"] = "FAVOURITES",
 ["list"] = {
 },
 },

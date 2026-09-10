@@ -8,15 +8,15 @@ VE_DB = {
 ["couponsIcon"] = 134495,
 ["level"] = 0,
 ["xp"] = 0,
-["savedAt"] = 1789059136,
+["savedAt"] = 1789077594,
 },
 ["Divthediv-BurningLegion"] = {
-["xp"] = 0,
-["maxLevel"] = 9,
 ["xpForNextLevel"] = 0,
+["maxLevel"] = 9,
+["coupons"] = 0,
 ["couponsIcon"] = 134495,
 ["level"] = 0,
-["coupons"] = 0,
+["xp"] = 0,
 ["savedAt"] = 1788950886,
 },
 },
@@ -26,7 +26,7 @@ VE_DB = {
 ["tasks"] = {
 },
 ["class"] = "DRUID",
-["lastUpdated"] = 1789057658,
+["lastUpdated"] = 1789075195,
 ["realm"] = "BurningLegion",
 },
 ["Divthediv-BurningLegion"] = {
@@ -42,6 +42,10 @@ VE_DB = {
 ["battleTagLookup"] = {
 ["Warrington"] = "egj8mjaa",
 ["Divthediv"] = "egj8mjaa",
+},
+["myCharacters"] = {
+["Warrington"] = true,
+["Divthediv"] = true,
 },
 ["config"] = {
 ["debug"] = false,
@@ -59,25 +63,14 @@ VE_DB = {
 ["theme"] = "housingtheme",
 ["fontFamily"] = "ARIALN",
 },
-["altSharing"] = {
-["enabled"] = false,
-["lastBroadcast"] = 0,
-["groupingMode"] = "individual",
-["receivedMappings"] = {
+["battleTagMains"] = {
+["egj8mjaa"] = {
+"Warrington",
 },
-},
-["knownInitiatives"] = {
-},
-["ui"] = {
-},
-["minimap"] = {
-["minimapPos"] = 200,
-["lock"] = false,
-["hide"] = false,
 },
 ["characterCoupons"] = {
 ["Warrington-BurningLegion"] = {
-["lastSeen"] = 1789059042,
+["lastSeen"] = 1789077383,
 ["name"] = "Warrington",
 ["faction"] = "Horde",
 ["cap"] = 2000,
@@ -86,22 +79,29 @@ VE_DB = {
 ["realm"] = "BurningLegion",
 },
 ["Divthediv-BurningLegion"] = {
-["faction"] = "Horde",
-["name"] = "Divthediv",
 ["lastSeen"] = 1788950846,
+["name"] = "Divthediv",
+["faction"] = "Horde",
 ["cap"] = 2000,
 ["class"] = "MONK",
 ["coupons"] = 0,
 ["realm"] = "BurningLegion",
 },
 },
-["battleTagMains"] = {
-["egj8mjaa"] = {
-"Warrington",
+["minimap"] = {
+["minimapPos"] = 200,
+["hide"] = false,
+["lock"] = false,
 },
+["ui"] = {
 },
-["myCharacters"] = {
-["Warrington"] = true,
-["Divthediv"] = true,
+["knownInitiatives"] = {
+},
+["altSharing"] = {
+["enabled"] = false,
+["lastBroadcast"] = 0,
+["groupingMode"] = "individual",
+["receivedMappings"] = {
+},
 },
 }

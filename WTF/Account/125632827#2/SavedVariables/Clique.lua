@@ -1,11 +1,11 @@
 
 CliqueDB = nil
 CliqueDB3 = {
-["global"] = {
-["lastSeenChangelogVersion"] = "5.0.13",
-},
 ["profileKeys"] = {
 ["Warrington - Burning Legion"] = "Warrington - Burning Legion",
+},
+["global"] = {
+["lastSeenChangelogVersion"] = "5.0.13",
 },
 ["profiles"] = {
 ["Warrington - Burning Legion"] = {
@@ -30,19 +30,28 @@ CliqueDB3 = {
 ["type"] = "spell",
 },
 {
-["sets"] = {
-["default"] = true,
-},
-["type"] = "target",
-["key"] = "BUTTON1",
-["unit"] = "mouseover",
-},
-{
 ["type"] = "menu",
 ["key"] = "BUTTON2",
 ["sets"] = {
 ["default"] = true,
 },
+},
+{
+["spell"] = "Innervate",
+["key"] = "ALT-BUTTON1",
+["type"] = "spell",
+["sets"] = {
+["default"] = true,
+},
+["icon"] = 136048,
+},
+{
+["type"] = "target",
+["sets"] = {
+["default"] = true,
+},
+["key"] = "BUTTON1",
+["unit"] = "mouseover",
 },
 {
 ["spell"] = "Soothe",

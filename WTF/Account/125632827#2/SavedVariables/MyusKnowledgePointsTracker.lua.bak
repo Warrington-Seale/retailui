@@ -1,6 +1,13 @@
 
 MKPT_Config = {
+["profileKeys"] = {
+["Warrington - Burning Legion"] = "Warrington - Burning Legion",
+["Divthediv - Burning Legion"] = "Divthediv - Burning Legion",
+},
 ["global"] = {
+["state"] = {
+["firstTimeLoaded"] = false,
+},
 ["position"] = {
 ["y"] = 0,
 ["x"] = 4,
@@ -16,12 +23,5 @@ MKPT_Config = {
 ["a"] = 0,
 },
 },
-["state"] = {
-["firstTimeLoaded"] = false,
-},
-},
-["profileKeys"] = {
-["Divthediv - Burning Legion"] = "Divthediv - Burning Legion",
-["Warrington - Burning Legion"] = "Warrington - Burning Legion",
 },
 }

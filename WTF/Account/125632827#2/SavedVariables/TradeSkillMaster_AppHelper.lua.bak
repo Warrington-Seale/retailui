@@ -8,11 +8,6 @@ TradeSkillMaster_AppHelperDB = {
 },
 ["updateTime"] = 0,
 },
-["fullScan"] = {
-["data"] = {
-},
-["updateTime"] = 0,
-},
 ["analytics"] = {
 ["data"] = {
 "[\"AC\",\"v4.14.76\",1788952554541,0,1,\"ADDON_INITIALIZE\",0]",
@@ -136,7 +131,27 @@ TradeSkillMaster_AppHelperDB = {
 "[\"AC\",\"v4.14.76\",1789051203141,0,56,\"UI_NAVIGATION\",\"vendoring\",\"vendoring/buy\"]",
 "[\"AC\",\"v4.14.76\",1789052774973,0,1,\"ADDON_INITIALIZE\",0]",
 "[\"AC\",\"v4.14.76\",1789052802475,0,2,\"ADDON_ENABLE\",0]",
+"[\"AC\",\"v4.14.76\",1789052868956,0,1,\"ADDON_INITIALIZE\",0]",
+"[\"AC\",\"v4.14.76\",1789052883604,0,2,\"ADDON_ENABLE\",0]",
+"[\"AC\",\"v4.14.76\",1789053913880,0,3,\"UI_NAVIGATION\",\"\",\"mailing\"]",
+"[\"AC\",\"v4.14.76\",1789053913892,0,4,\"UI_NAVIGATION\",\"mailing\",\"mailing/inbox\"]",
+"[\"AC\",\"v4.14.76\",1789053914885,0,5,\"UI_NAVIGATION\",\"mailing/inbox\",\"\"]",
+"[\"AC\",\"v4.14.76\",1789057000322,0,6,\"UI_NAVIGATION\",\"\",\"vendoring\"]",
+"[\"AC\",\"v4.14.76\",1789057000328,0,7,\"UI_NAVIGATION\",\"vendoring\",\"vendoring/buy\"]",
+"[\"AC\",\"v4.14.76\",1789057677235,0,8,\"UI_NAVIGATION\",\"vendoring/buy\",\"vendoring\"]",
+"[\"AC\",\"v4.14.76\",1789057677240,0,9,\"UI_NAVIGATION\",\"vendoring\",\"vendoring/buy\"]",
+"[\"AC\",\"v4.14.76\",1789057738719,0,10,\"UI_NAVIGATION\",\"vendoring/buy\",\"vendoring\"]",
+"[\"AC\",\"v4.14.76\",1789057738724,0,11,\"UI_NAVIGATION\",\"vendoring\",\"vendoring/buy\"]",
+"[\"AC\",\"v4.14.76\",1789057758787,0,12,\"UI_NAVIGATION\",\"vendoring/buy\",\"vendoring\"]",
+"[\"AC\",\"v4.14.76\",1789057758791,0,13,\"UI_NAVIGATION\",\"vendoring\",\"vendoring/buy\"]",
+"[\"AC\",\"v4.14.76\",1789057765576,0,14,\"UI_NAVIGATION\",\"vendoring/buy\",\"vendoring\"]",
+"[\"AC\",\"v4.14.76\",1789057765580,0,15,\"UI_NAVIGATION\",\"vendoring\",\"vendoring/buy\"]",
 },
-["updateTime"] = 1789052802.475286,
+["updateTime"] = 1789057765.580704,
+},
+["fullScan"] = {
+["data"] = {
+},
+["updateTime"] = 0,
 },
 }

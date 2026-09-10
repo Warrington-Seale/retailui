@@ -13,13 +13,13 @@ CityGuideConfig = {
 ["cityLabelSizes"] = {
 },
 ["useTooltips"] = false,
-["tutorialSeen"] = true,
+["cityIconSizes"] = {
+},
 ["condenseProfessions"] = {
 },
 ["filterByProfession"] = true,
 ["factionPOIsOnly"] = {
 },
 ["showDecorPOIs"] = true,
-["cityIconSizes"] = {
-},
+["tutorialSeen"] = true,
 }
