@@ -10,3 +10,7 @@
 
 # WoW mirrors every saved variable as a .bak on login; not needed
 WTF/**/*.bak
+
+# RaiderIO China database files and addons (not used on EU realms)
+Interface/AddOns/RaiderIO/db/*_cn_*
+Interface/AddOns/RaiderIO_DB_CN_*/
