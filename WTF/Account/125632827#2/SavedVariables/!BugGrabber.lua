@@ -1,7 +1,7 @@
 
 BugGrabberDB = {
+["session"] = 44,
 ["lastSanitation"] = 3,
-["session"] = 43,
 ["errors"] = {
 {
 ["message"] = "...erface/AddOns/Details/Libs/DF/unitframe_midnight.lua:2525: attempt to call a nil value",
@@ -45,8 +45,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: Interface/AddOns/!BugGrabber/BugGrabber.lua:-1: insecure scripts exceeded execution limit for addon !BugGrabber",
-["time"] = 1788957522,
 ["session"] = 17,
+["time"] = 1788957522,
 ["counter"] = 10,
 },
 {
@@ -67,8 +67,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'SenseiClassResourceBar')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:108: in function 'HideSystemSelections'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:115: in function 'ExitEditMode'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:137: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:135>\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: in function 'Hide'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:440: in function 'SetUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:471: in function 'MoveUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:525: in function 'HideUIPanelImplementation'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:484: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:132: in function <...UIParentPanelManager/Shared/UIParentPanelManager.lua:123>\n[C]: in function 'SetAttribute'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:867: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:53: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_SharedXML/Mainline/SharedUIPanelTemplates.lua]:149: in function <...izzard_SharedXML/Mainline/SharedUIPanelTemplates.lua:144>\n",
-["time"] = 1788958996,
 ["session"] = 17,
+["time"] = 1788958996,
 ["counter"] = 1,
 },
 {
@@ -81,20 +81,20 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'PixelPerfectEditMode')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1400: in function 'UpdateSystems'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:953: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:190: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n[C]: in function 'SetActiveLayout'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1460: in function 'SelectLayout'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1270: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:1265>\n[tail call]: ?\n[C]: in function 'securecallfunction'\n[Interface/AddOns/Blizzard_Menu/Menu.lua]:934: in function 'Pick'\n[Interface/AddOns/Blizzard_Menu/MenuTemplates.lua]:137: in function <Interface/AddOns/Blizzard_Menu/MenuTemplates.lua:131>\n",
-["session"] = 20,
 ["time"] = 1789039127,
+["session"] = 20,
 ["counter"] = 1,
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'PixelPerfectEditMode')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:108: in function 'HideSystemSelections'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:115: in function 'ExitEditMode'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:137: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:135>\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: in function 'Hide'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:440: in function 'SetUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:471: in function 'MoveUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:525: in function 'HideUIPanelImplementation'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:484: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:132: in function <...UIParentPanelManager/Shared/UIParentPanelManager.lua:123>\n[C]: in function 'SetAttribute'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:867: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:53: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_SharedXML/Mainline/SharedUIPanelTemplates.lua]:149: in function <...izzard_SharedXML/Mainline/SharedUIPanelTemplates.lua:144>\n",
-["session"] = 20,
 ["time"] = 1789039130,
+["session"] = 20,
 ["counter"] = 2,
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:1692: attempted to index a table that cannot be accessed while tainted (execution tainted by 'PixelPerfectEditMode')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:108: in function 'HideSystemSelections'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:115: in function 'ExitEditMode'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:137: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:135>\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: in function 'Hide'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:440: in function 'SetUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:471: in function 'MoveUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:525: in function 'HideUIPanelImplementation'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:484: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:132: in function <...UIParentPanelManager/Shared/UIParentPanelManager.lua:123>\n[C]: in function 'SetAttribute'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:867: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:53: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_SharedXML/Mainline/SharedUIPanelTemplates.lua]:149: in function <...izzard_SharedXML/Mainline/SharedUIPanelTemplates.lua:144>\n",
-["session"] = 20,
 ["time"] = 1789039130,
+["session"] = 20,
 ["counter"] = 1,
 },
 {
@@ -107,8 +107,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'PixelPerfectEditMode')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:108: in function 'HideSystemSelections'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:115: in function 'ExitEditMode'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:137: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:135>\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n...[C]: in function 'SetAttribute'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:867: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:53: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:14: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:12>\n[C]: in function 'securecallfunction'\n[Interface/AddOns/Blizzard_GameMenuEsc/Blizzard_GameMenuEsc.lua]:101: in function <...AddOns/Blizzard_GameMenuEsc/Blizzard_GameMenuEsc.lua:99>\n[Interface/AddOns/Blizzard_GameMenuEsc/Blizzard_GameMenuEsc.lua]:110: in function <...AddOns/Blizzard_GameMenuEsc/Blizzard_GameMenuEsc.lua:109>\n[C]: ?\n[C]: in function 'ToggleGameMenu'\n[TOGGLEGAMEMENU]:1: in function <[string \"TOGGLEGAMEMENU\"]:1>\n",
-["session"] = 20,
 ["time"] = 1789040064,
+["session"] = 20,
 ["counter"] = 2,
 },
 {
@@ -217,8 +217,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: GetAuraDataByIndex(): Auras cannot be accessed when secret while tainted by 'ExwindTools'\nLua Taint: ExwindTools\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:979: in function 'InvokeOnAnyEditModeSystemAnchorChanged'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:964: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:196: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n",
-["time"] = 1789076540,
 ["session"] = 24,
+["time"] = 1789076540,
 ["counter"] = 3,
 },
 {
@@ -247,8 +247,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...face/AddOns/Blizzard_TextStatusBar/TextStatusBar.lua:110: attempt to compare a secret number value (execution tainted by 'Cell')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1400: in function 'UpdateSystems'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:953: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:190: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n[C]: ?\n[C]: ?\n[C]: in function 'OnLayoutDeleted'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1502: in function 'DeleteLayout'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1186: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:1185>\n[tail call]: ?\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeDialogs.lua]:132: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeDialogs.lua:130>\n[tail call]: ?\n[Interface/AddOns/Blizzard_SharedXML/Shared/Button/UIButtonTemplate.lua]:16: in function <...lizzard_SharedXML/Shared/Button/UIButtonTemplate.lua:12>\n",
-["session"] = 28,
 ["time"] = 1789138928,
+["session"] = 28,
 ["counter"] = 1,
 },
 {
@@ -309,8 +309,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'CooldownManagerCentered')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1400: in function 'UpdateSystems'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:953: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:190: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n",
-["time"] = 1789153526,
 ["session"] = 31,
+["time"] = 1789153526,
 ["counter"] = 2,
 },
 {
@@ -419,14 +419,14 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: AddOn [ExwindCore] failure to load: missing",
-["session"] = 34,
 ["time"] = 1789213889,
+["session"] = 34,
 ["counter"] = 1,
 },
 {
 ["message"] = "LUA_WARNING: AddOn [ExwindTools] Failed to load missing dependency [ExwindCore]",
-["session"] = 34,
 ["time"] = 1789213889,
+["session"] = 34,
 ["counter"] = 1,
 },
 {
@@ -583,19 +583,19 @@ BugGrabberDB = {
 },
 {
 ["message"] = "attempt to perform string conversion on a secret string value (execution tainted by 'ProjectAzilroka')",
-["time"] = 1789236376,
-["locals"] = "spellID=382499\n(for index)=2\n(for limit)=4\n(for step)=1\ni=2\nstr=PAScanTooltipTextRight2 <SharedTooltipTemplates.xml:42>\ntext=<secret string>\n(for state)=<table>{\n SPELL_RECAST_TIME_SEC=\"^[%d%.]- sec cooldown$\"\n SPELL_RECAST_TIME_MIN=\"^[%d%.]- min cooldown$\"\n SPELL_RECAST_TIME_CHARGES_SEC=\"^[%d%.]- sec recharge$\"\n SPELL_RECAST_TIME_CHARGES_MIN=\"^[%d%.]- min recharge$\"\n}\n(for control)=\"SPELL_RECAST_TIME_SEC\"\n_=\"SPELL_RECAST_TIME_SEC\"\nmatchtext=\"^[%d%.]- sec cooldown$\"\nPA=<table>{\n GrowthDirection=<table>\n modules=<table>\n TBC=false\n Classes=<table>\n MyFaction=\"Horde\"\n NUI=false\n UIScale=1\n db=<table>\n QuestSounds=<table>\n Options=<table>\n iFilger=<table>\n Version=\"1.87\"\n Locale=\"enUS\"\n TimeIndicatorColors=<table>\n ScanTooltip=PAScanTooltip <Init.lua:144>\n name=\"ProjectAzilroka\"\n Defaults=<table>\n AllPoints=<table>\n OzCD=<table>\n EnhancedPetBattleUI=<table>\n MouseoverAuras=<table>\n Solid=\"Interface\\Buttons\\WHITE8X8\"\n Tukui=false\n SLE=false\n AddOnSkins=false\n baseName=\"ProjectAzilroka\"\n PetBattleFrameHider=PA_PetBattleFrameHider <Init.lua:147>\n MyRealm=\"Burning Legion\"\n RegisteredCooldowns=<table>\n defaultModuleState=true\n Authors=\"Azilroka    Nihilistzsche\"\n ScreenHeight=1440\n data=<table>\n TS=<table>\n enabledState=true\n stAM=<table>\n SMB=<table>\n ElvUI=true\n Title=\"|cFF16C3F2Project|r|cFFFFFFFFAzilroka|r\"\n AuraReminder=<table>\n MovableFrames=<table>\n MasterExperience=<table>\n FasterLoot=<table>\n ES=<table>\n EFL=<table>\n DO=<table>\n BLDB=<table>\n defaultModuleLibraries=<table>\n MyName=\"Warrington\"\n oUF=<table>\n TimeFormats=<table>\n ClassColor=<table>\n MyRace=\"HighmountainTauren\"\n Libs=<table>\n orderedModules=<table>\n ScreenWidth=2560\n TimeThreshold=3\n TimeColors=<table>\n Multiple=0.833333\n Cata=false\n SpartanUI=false\n MyClass=\"DRUID\"\n Wrath=false\n Retail=true\n SpellBook=<table>\n Classic=false\n}\nUIParent=UIParent <UnknownFile:0>{\n PhotoSharingFrame=PhotoSharingFrame <Blizzard_PhotoSharing.xml:3>\n PixelSnapDisabled=true\n Tabs=<table>\n}\n_G=<table>{\n ERR_OUT_OF_CHI=\"Not enough chi\"\n DH_HAVOC_CORE_ABILITY_2=\"Strong melee attack that consumes Fury. If it critical strikes, some Fury is refunded.\"\n UNIT_NAMES_COMBATLOG_TOOLTIP=\"Color unit names.\"\n AchievementFrameStatsBG=AchievementFrameStatsBG <Blizzard_AchievementUI.xml:2063>\n LE_GAME_ERR_CHAT_RAID_RESTRICTED_TRIAL=800\n SPELL_FAILED_CUSTOM_ERROR_71=\"This partygoer wants to dance with you.\"\n LE_GAME_ERR_PET_SPELL_TARGETS_DEAD=435\n ClassTrialTimerDisplayMixin=<table>\n PlaterAuraContainer71BuffFrame1=PlaterAuraContainer71BuffFrame1 <Plater_Auras.lua:24>\n MultiBarLeftButton7=MultiBarLeftButton7 <ActionBar.lua:31>\n CellPetFrameHeaderUnitButton15ExternalCooldownParent=CellPetFrameHeaderUnitButton15ExternalCooldownParent <Built-in.lua:371>\n MerchantItem7AltCurrencyFrameItem1Text=MerchantItem7AltCurrencyFrameItem1Text <MoneyFrame.xml:176>\n OPTION_SHOW_ACTION_BAR5_TOOLTIP=\"Attached to the left side of Action Bar 4 by default\"\n BINDING_NAME_NAMEPLATES=\"Show Enemy Nameplates\"\n INSTANCE_UNAVAILABLE_OTHER_TEMPORARILY_DISABLED=\"%s cannot enter. This instance is temporarily disabled.\"\n COVENANT_MISSIONS_HEALTH=\"Health\"\n PVPReadyDialogBottomArt=PVPReadyDialogBottomArt <PVPHelper.xml:273>\n CALENDAR_RAID_RESET_DESCRIPTION=\"%1$s resets at %2$s.\"\n CellRaidFrameHeader3UnitButton3TargetedSpells1=CellRaidFrameHeader3UnitButton3TargetedSpells1 <Base.lua:961>\n LE_GAME_ERR_RECRUIT_A_FRIEND_FAILED=1028\n LEGION_REMIX_FACTION_NAGA_CODE=\"|cff66bbff\"\n LE_GAME_ERR_ONLY_ONE_QUIVER=36\n LOSS_OF_CONTROL_DISPLAY_FEAR=\"Feared\"\n CellPetFrameHeaderUnitButton17MissingBuff2=CellPetFrameHeaderUnitButton17MissingBuff2 <Base.lua:1106>\n MacroFrame=MacroFrame <Blizzard_MacroUI.xml:23>\n Boss1TargetFrameValue=Boss1TargetFrameValue <TargetFrame.xml:332>\n ElvUI_Bar6Button6=ElvUI_Bar6Button6 <LibActionButton-1.0.lua:288>\n AUCTIONATOR_L_DEFAULT_LIST_HEADER=\"Default Shopping List\"\n ACTION_SPELL_MISSED_POSSESSIVE=\"1\"\n CellPartyFrameHeaderUnitButton4PetRaidDebuff2Icon=CellPartyFrameHeaderUnitButton4PetRaidDebuff2Icon <PixelPerfect.lua:374>\n CellRaidFrameHeader0UnitButton4DispelRequestText=CellRaidFrameHeader0UnitButton4DispelRequestT",
+["time"] = 1789341489,
+["locals"] = "spellID=382499\n(for index)=2\n(for limit)=4\n(for step)=1\ni=2\nstr=PAScanTooltipTextRight2 <SharedTooltipTemplates.xml:42>\ntext=<secret string>\n(for state)=<table>{\n SPELL_RECAST_TIME_SEC=\"^[%d%.]- sec cooldown$\"\n SPELL_RECAST_TIME_MIN=\"^[%d%.]- min cooldown$\"\n SPELL_RECAST_TIME_CHARGES_SEC=\"^[%d%.]- sec recharge$\"\n SPELL_RECAST_TIME_CHARGES_MIN=\"^[%d%.]- min recharge$\"\n}\n(for control)=\"SPELL_RECAST_TIME_SEC\"\n_=\"SPELL_RECAST_TIME_SEC\"\nmatchtext=\"^[%d%.]- sec cooldown$\"\nPA=<table>{\n GrowthDirection=<table>\n modules=<table>\n TBC=false\n Classes=<table>\n MyFaction=\"Horde\"\n NUI=false\n UIScale=1\n db=<table>\n QuestSounds=<table>\n Options=<table>\n iFilger=<table>\n Version=\"1.87\"\n Locale=\"enUS\"\n TimeIndicatorColors=<table>\n ScanTooltip=PAScanTooltip <Init.lua:144>\n name=\"ProjectAzilroka\"\n Defaults=<table>\n AllPoints=<table>\n OzCD=<table>\n EnhancedPetBattleUI=<table>\n MouseoverAuras=<table>\n Solid=\"Interface\\Buttons\\WHITE8X8\"\n Tukui=false\n SLE=false\n AddOnSkins=false\n baseName=\"ProjectAzilroka\"\n PetBattleFrameHider=PA_PetBattleFrameHider <Init.lua:147>\n MyRealm=\"Burning Legion\"\n RegisteredCooldowns=<table>\n defaultModuleState=true\n Authors=\"Azilroka    Nihilistzsche\"\n ScreenHeight=1440\n data=<table>\n TS=<table>\n enabledState=true\n stAM=<table>\n SMB=<table>\n ElvUI=true\n Title=\"|cFF16C3F2Project|r|cFFFFFFFFAzilroka|r\"\n AuraReminder=<table>\n MovableFrames=<table>\n MasterExperience=<table>\n FasterLoot=<table>\n ES=<table>\n EFL=<table>\n DO=<table>\n BLDB=<table>\n defaultModuleLibraries=<table>\n MyName=\"Warrington\"\n oUF=<table>\n TimeFormats=<table>\n ClassColor=<table>\n MyRace=\"HighmountainTauren\"\n Libs=<table>\n orderedModules=<table>\n ScreenWidth=2560\n TimeThreshold=3\n TimeColors=<table>\n Multiple=0.833333\n Cata=false\n SpartanUI=false\n MyClass=\"DRUID\"\n Wrath=false\n Retail=true\n SpellBook=<table>\n Classic=false\n}\nUIParent=UIParent <UnknownFile:0>{\n PhotoSharingFrame=PhotoSharingFrame <Blizzard_PhotoSharing.xml:3>\n PixelSnapDisabled=true\n Tabs=<table>\n}\n_G=<table>{\n ERR_OUT_OF_CHI=\"Not enough chi\"\n DH_HAVOC_CORE_ABILITY_2=\"Strong melee attack that consumes Fury. If it critical strikes, some Fury is refunded.\"\n UNIT_NAMES_COMBATLOG_TOOLTIP=\"Color unit names.\"\n AchievementFrameStatsBG=AchievementFrameStatsBG <Blizzard_AchievementUI.xml:2063>\n LE_GAME_ERR_CHAT_RAID_RESTRICTED_TRIAL=800\n SPELL_FAILED_CUSTOM_ERROR_71=\"This partygoer wants to dance with you.\"\n LE_GAME_ERR_PET_SPELL_TARGETS_DEAD=435\n ClassTrialTimerDisplayMixin=<table>\n PlaterAuraContainer71BuffFrame1=PlaterAuraContainer71BuffFrame1 <Plater_Auras.lua:24>\n MultiBarLeftButton7=MultiBarLeftButton7 <ActionBar.lua:31>\n CellPetFrameHeaderUnitButton15ExternalCooldownParent=CellPetFrameHeaderUnitButton15ExternalCooldownParent <Built-in.lua:371>\n MerchantItem7AltCurrencyFrameItem1Text=MerchantItem7AltCurrencyFrameItem1Text <MoneyFrame.xml:176>\n OPTION_SHOW_ACTION_BAR5_TOOLTIP=\"Attached to the left side of Action Bar 4 by default\"\n BINDING_NAME_NAMEPLATES=\"Show Enemy Nameplates\"\n INSTANCE_UNAVAILABLE_OTHER_TEMPORARILY_DISABLED=\"%s cannot enter. This instance is temporarily disabled.\"\n COVENANT_MISSIONS_HEALTH=\"Health\"\n PVPReadyDialogBottomArt=PVPReadyDialogBottomArt <PVPHelper.xml:273>\n CALENDAR_RAID_RESET_DESCRIPTION=\"%1$s resets at %2$s.\"\n CellRaidFrameHeader3UnitButton3TargetedSpells1=CellRaidFrameHeader3UnitButton3TargetedSpells1 <Base.lua:961>\n LE_GAME_ERR_RECRUIT_A_FRIEND_FAILED=1028\n LEGION_REMIX_FACTION_NAGA_CODE=\"|cff66bbff\"\n LE_GAME_ERR_ONLY_ONE_QUIVER=36\n LOSS_OF_CONTROL_DISPLAY_FEAR=\"Feared\"\n CellPetFrameHeaderUnitButton17MissingBuff2=CellPetFrameHeaderUnitButton17MissingBuff2 <Base.lua:1106>\n Boss1TargetFrameValue=Boss1TargetFrameValue <TargetFrame.xml:332>\n DetailsBreakdownWindowTabFrameSummary6248PhaseScrollContainerPhaseScrollPhaseBarButton4=DetailsBreakdownWindowTabFrameSummary6248PhaseScrollContainerPhaseScrollPhaseBarButton4 <breakdown_spells_phaseframes.lua:34>\n ElvUI_Bar6Button6=ElvUI_Bar6Button6 <LibActionButton-1.0.lua:288>\n AUCTIONATOR_L_DEFAULT_LIST_HEADER=\"Default Shopping List\"\n ACTION_SPELL_MISSED_POSSESSIVE=\"1\"\n CellPartyFrameHeaderUnitButton4PetRaidDebuff2Icon=Ce",
 ["stack"] = "[Interface/AddOns/ProjectAzilroka/Init.lua]:459: in function <Interface/AddOns/ProjectAzilroka/Init.lua:449>\n[Interface/AddOns/ProjectAzilroka/Init.lua]:474: in function <Interface/AddOns/ProjectAzilroka/Init.lua:465>\n[Interface/AddOns/ProjectAzilroka/Init.lua]:509: in function '?'\n[Interface/AddOns/AbstractFramework/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua]:109: in function <...ork/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua:109>\n[C]: ?\n[Interface/AddOns/AbstractFramework/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua]:19: in function <...ork/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua:15>\n[Interface/AddOns/AbstractFramework/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua]:54: in function 'Fire'\n[Interface/AddOns/CraftSim/Libs/AceEvent-3.0/AceEvent-3.0.lua]:120: in function <...e/AddOns/CraftSim/Libs/AceEvent-3.0/AceEvent-3.0.lua:119>\n",
-["session"] = 43,
-["counter"] = 36,
+["session"] = 44,
+["counter"] = 37,
 },
 {
 ["message"] = "Interface/AddOns/GatherMate2/GatherMate2.lua:527: attempted to index a table that cannot be indexed with secret keys",
-["time"] = 1789236391,
+["time"] = 1789341515,
 ["locals"] = "self=<table>{\n modules=<table>\n nodeTextures=<table>\n defaultModuleState=true\n db_types=<table>\n nodeIDReplacementMap=<table>\n db=<table>\n HBD=<table>\n enabledState=true\n reverseNodeIDs=<table>\n defaultModuleLibraries=<table>\n rareNodes=<table>\n name=\"GatherMate2\"\n orderedModules=<table>\n gmdbs=<table>\n Visible=<table>\n baseName=\"GatherMate2\"\n phasing=<table>\n nodeExpansion=<table>\n db_storage_map=<table>\n mapBlacklist=<table>\n nodeIDs=<table>\n}\ntype=\"Treasure\"\nname=<secret string>\n(*temporary)=<table>{\n Disturbed Earth=566\n Tattered Chest=503\n Large Darkwood Chest=510\n Wicker Chest=526\n Mechanized Chest=560\n Primitive Chest=527\n Jelly Deposit=563\n Glowing Tome=557\n Dented Footlocker=517\n Twice-Fortified Arcwine=559\n Gleaming Draenic Chest=551\n Leypetal Blossom=555\n Prismatic Crystal=562\n Battered Chest=502\n Mysterious Camel Figurine=538\n Large Solid Chest=506\n Netherwing Egg=531\n Mana-Infused Gem=558\n Everfrost Chip=532\n Trove of the Thunder King=547\n Ancient Mana Shard=552\n Dart's Nest=542\n Brightly Colored Egg=533\n Giant Clam=501\n Radiating Apexis Shard=550\n Large Mithril Bound Chest=509\n Solid Fel Iron Chest=528\n Practice Lockbox=514\n Scarlet Footlocker=519\n Buccaneer's Strongbox=508\n Sturdy Treasure Chest=535\n Solid Chest=504\n Glimmering Chest=561\n Runestone Treasure Chest=536\n Ravasaur Matriarch's Nest=544\n Battered Footlocker=515\n Heavy Fel Iron Chest=522\n Onyx Egg=546\n Felsteel Chest=524\n Waterlogged Footlocker=516\n Ancient Mana Crystal=554\n Large Iron Bound Chest=505\n Ground Wart=565\n Glowcap=525\n Dark Iron Treasure Chest=539\n Maplewood Treasure Chest=540\n Bound Adamantite Chest=530\n Silverbound Treasure Chest=537\n Suspiciously Glowing Chest=549\n Takk's Nest=541\n Ancient Mana Chunk=553\n Large Battered Chest=507\n Bound Fel Iron Chest=529\n Leypetal Powder=556\n Large Jelly Deposit=564\n Bloodpetal Sprout=512\n Fel Iron Chest=521\n Razormaw Matriarch's Nest=543\n Silken Treasure Chest=534\n Highmaul Reliquary=548\n Adamantite Bound Chest=523\n Burial Chest=520\n Dark Soil=545\n Mossy Footlocker=518\n}\n(*temporary)=\"attempted to index a table that cannot be indexed with secret keys\"\n",
 ["stack"] = "[Interface/AddOns/GatherMate2/GatherMate2.lua]:527: in function 'GetIDForNode'\n[Interface/AddOns/GatherMate2/Collector.lua]:222: in function '?'\n[Interface/AddOns/AbstractFramework/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua]:109: in function <...ork/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua:109>\n[C]: ?\n[Interface/AddOns/AbstractFramework/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua]:19: in function <...ork/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua:15>\n[Interface/AddOns/AbstractFramework/Libs/CallbackHandler-1.0/CallbackHandler-1.0.lua]:54: in function 'Fire'\n[Interface/AddOns/CraftSim/Libs/AceEvent-3.0/AceEvent-3.0.lua]:120: in function <...e/AddOns/CraftSim/Libs/AceEvent-3.0/AceEvent-3.0.lua:119>\n",
-["session"] = 43,
-["counter"] = 71,
+["session"] = 44,
+["counter"] = 74,
 },
 },
 }

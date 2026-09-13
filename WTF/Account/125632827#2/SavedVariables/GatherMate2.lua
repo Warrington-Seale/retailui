@@ -1,11 +1,11 @@
 
 GatherMate2DB = {
+["profileKeys"] = {
+["Divthediv - Burning Legion"] = "Default",
+["Warrington - Burning Legion"] = "Default",
+},
 ["global"] = {
 ["data_version"] = 8,
-},
-["profileKeys"] = {
-["Warrington - Burning Legion"] = "Default",
-["Divthediv - Burning Legion"] = "Default",
 },
 ["profiles"] = {
 ["Default"] = {

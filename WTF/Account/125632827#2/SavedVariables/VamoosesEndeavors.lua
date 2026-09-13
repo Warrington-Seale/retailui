@@ -8,15 +8,15 @@ VE_DB = {
 ["couponsIcon"] = 134495,
 ["level"] = 0,
 ["xp"] = 0,
-["savedAt"] = 1789236672,
+["savedAt"] = 1789341548,
 },
 ["Divthediv-BurningLegion"] = {
-["coupons"] = 0,
-["maxLevel"] = 9,
 ["xp"] = 0,
+["maxLevel"] = 9,
+["xpForNextLevel"] = 0,
 ["couponsIcon"] = 134495,
 ["level"] = 0,
-["xpForNextLevel"] = 0,
+["coupons"] = 0,
 ["savedAt"] = 1788950886,
 },
 },
@@ -43,6 +43,10 @@ VE_DB = {
 ["Warrington"] = "egj8mjaa",
 ["Divthediv"] = "egj8mjaa",
 },
+["myCharacters"] = {
+["Warrington"] = true,
+["Divthediv"] = true,
+},
 ["config"] = {
 ["debug"] = false,
 ["uiScale"] = 1,
@@ -59,27 +63,16 @@ VE_DB = {
 ["theme"] = "housingtheme",
 ["fontFamily"] = "ARIALN",
 },
-["altSharing"] = {
-["enabled"] = false,
-["lastBroadcast"] = 0,
-["groupingMode"] = "individual",
-["receivedMappings"] = {
+["battleTagMains"] = {
+["egj8mjaa"] = {
+"Warrington",
 },
-},
-["knownInitiatives"] = {
-},
-["ui"] = {
-},
-["minimap"] = {
-["minimapPos"] = 200,
-["lock"] = false,
-["hide"] = false,
 },
 ["characterCoupons"] = {
 ["Warrington-BurningLegion"] = {
 ["name"] = "Warrington",
 ["faction"] = "Horde",
-["lastSeen"] = 1789236391,
+["lastSeen"] = 1789341517,
 ["class"] = "DRUID",
 ["coupons"] = 0,
 ["realm"] = "BurningLegion",
@@ -93,13 +86,20 @@ VE_DB = {
 ["realm"] = "BurningLegion",
 },
 },
-["battleTagMains"] = {
-["egj8mjaa"] = {
-"Warrington",
+["minimap"] = {
+["minimapPos"] = 200,
+["hide"] = false,
+["lock"] = false,
 },
+["ui"] = {
 },
-["myCharacters"] = {
-["Warrington"] = true,
-["Divthediv"] = true,
+["knownInitiatives"] = {
+},
+["altSharing"] = {
+["enabled"] = false,
+["lastBroadcast"] = 0,
+["groupingMode"] = "individual",
+["receivedMappings"] = {
+},
 },
 }

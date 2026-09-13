@@ -1,1368 +1,7 @@
 
 Blizzard_Console_SavedVars = {
 ["version"] = 3,
-["height"] = 300,
 ["messageHistory"] = {
-{
-"Joining realm subRegion=\"3-4-89\" realmAddress=\"3-1-25\"",
-0,
-},
-{
-"Sending ping results from timeout timeoutNs=\"126457629800\" nowNs=\"126462299600\"",
-0,
-},
-{
-"OnRealmJoin code=\"ERROR_OK (0)\"",
-0,
-},
-{
-"Connecting conn=\"(enum)0\" connPtr=\"0000000052504510\" protocol=\"(enum)0\"",
-0,
-},
-{
-"Received AuthedToWoW result=\"ERROR_OK (0)\"",
-0,
-},
-{
-"Screen invalid. Changing from=\"login\" to=\"charselect\"",
-0,
-},
-{
-"Connecting conn=\"(enum)2\" connPtr=\"000000002c12b450\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"0000000052504510\" state=\"(enum)6\"",
-0,
-},
-{
-"Switching to screen=\"CharacterSelect\" (from \"login\")",
-0,
-},
-{
-"From EnsureValidScreen",
-0,
-},
-{
-"Connected to Back. Disconnecting from Front.",
-0,
-},
-{
-"Front disconnecting connectionId=\"1\"",
-0,
-},
-{
-"Disconnecting from authentication server.",
-0,
-},
-{
-"LimitedLuaResources: Global capacity for Texture changed to 400000",
-0,
-},
-{
-"LimitedLuaResources: Addon capacity for Frame changed to 10000",
-0,
-},
-{
-"LimitedLuaResources: Global capacity for FontString changed to 50000",
-0,
-},
-{
-"LimitedLuaResources: Addon capacity for Texture changed to 40000",
-0,
-},
-{
-"LimitedLuaResources: Addon capacity for Timer changed to 500",
-0,
-},
-{
-"LimitedLuaResources: Global capacity for Animation changed to 50000",
-0,
-},
-{
-"LimitedLuaResources: Global capacity for Frame changed to 100000",
-0,
-},
-{
-"LimitedLuaResources: Addon capacity for FontString changed to 5000",
-0,
-},
-{
-"LimitedLuaResources: Addon capacity for AnimGroup changed to 2000",
-0,
-},
-{
-"LimitedLuaResources: Global capacity for AnimGroup changed to 20000",
-0,
-},
-{
-"LimitedLuaResources: Enabled = false",
-0,
-},
-{
-"LimitedLuaResources: Global capacity for Timer changed to 500",
-0,
-},
-{
-"LimitedLuaResources: Addon capacity for Animation changed to 5000",
-0,
-},
-{
-"LimitedLuaResources: Global capacity for Font changed to 3000",
-0,
-},
-{
-"LimitedLuaResources: Addon capacity for Font changed to 300",
-0,
-},
-{
-"Session with Battle.net established.",
-0,
-},
-{
-"[WowEntitlements] [BNetAccount-0-0000077D013B] [WowAccount-0-00000282F123] Initialized with 28 entitlements.",
-0,
-},
-{
-"Front disconnected connectionId=\"1\" result=\"1016\"",
-0,
-},
-{
-"Disconnected from authentication server.",
-0,
-},
-{
-"-------------------------------------------------- Previous Session --------------------------------------------------",
-0,
-},
-{
-"Suspend()",
-0,
-},
-{
-"LimitedLuaResources: Reset Timer",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000017af90b40\" protocol=\"(enum)0\"",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x0000000040",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x0000008040",
-0,
-},
-{
-"Proficiency in item class 4 set to 0x0000000021",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x000000c040",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x000000c440",
-0,
-},
-{
-"Proficiency in item class 4 set to 0x0000000025",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x000000c460",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x000000e460",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x000010e460",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x000010e470",
-0,
-},
-{
-"Proficiency in item class 4 set to 0x0000000027",
-0,
-},
-{
-"Proficiency in item class 2 set to 0x000010e470",
-0,
-},
-{
-"Proficiency in item class 4 set to 0x0000000027",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"Time set to 9/12/2026 (Sat) 13:50",
-0,
-},
-{
-"Gamespeed set from 0.017 to 0.017",
-0,
-},
-{
-"[WowEntitlements] [BNetAccount-0-0000077D013B] [WowAccount-0-00000282F123] (Add) deliverableID=\"1769\" manualReview=\"0\" expireDate=\"0\" displayExpireDate=\"0\" unitsRemaining=\"0\"",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000002c488cc0\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000017af90b40\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"AddOn [ExwindCore] failure to load: missing",
-3,
-},
-{
-"AddOn [ExwindTools] Failed to load missing dependency [ExwindCore]",
-3,
-},
-{
-"Successfully instantiated mirrored storage object",
-0,
-},
-{
-"Time played:",
-0,
-},
-{
-"Total: 14d 3h 28m 48s",
-0,
-},
-{
-"Level: 0d 5h 7m 11s",
-0,
-},
-{
-"Time played:",
-0,
-},
-{
-"Total: 14d 3h 28m 50s",
-0,
-},
-{
-"Level: 0d 5h 7m 13s",
-0,
-},
-{
-"Cannot find neighborhood's map record!0000000000000000",
-3,
-},
-{
-"ModifierTree: 132484. Parent: 132482.  Modifier not supported on client (type=174, asset=59755, secondaryAsset=0, tertiaryAsset=0). Put in a task to add this.",
-3,
-},
-{
-"ModifierTree: 132484. Parent: 132482.  Modifier not supported on client (type=174, asset=59755, secondaryAsset=0, tertiaryAsset=0). Put in a task to add this.",
-3,
-},
-{
-"Spell 343955 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 343955 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344017 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344017 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344018 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344018 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344024 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344024 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344028 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344028 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344115 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344115 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344223 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344223 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344224 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 344224 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 444810 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 444810 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Cannot find neighborhood's map record!0000000000000000",
-3,
-},
-{
-"ModifierTree: 296564. Parent: 296552.  Modifier not supported on client (type=174, asset=82817, secondaryAsset=0, tertiaryAsset=0). Put in a task to add this.",
-3,
-},
-{
-"ModifierTree: 296564. Parent: 296552.  Modifier not supported on client (type=174, asset=82817, secondaryAsset=0, tertiaryAsset=0). Put in a task to add this.",
-3,
-},
-{
-"Spell 1230979 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1230979 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1236628 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1236628 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1236850 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1236850 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1238765 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1238765 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1245978 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1245978 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1264339 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1264339 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1265418 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1265418 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1266478 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1266478 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1289482 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1289482 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1290027 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1290027 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1297936 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"Spell 1297936 tried to cast with a spellVisualScript evaluated on the client.  This is unsupported.",
-3,
-},
-{
-"|cff99999913:52:21|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:52:28|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:52:30|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:52:30|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:52:43|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:52:55|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:53:37|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:53:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Skullcrusher|r |cffff8800<extractedRealm> Skullcrusher|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 557|r",
-0,
-},
-{
-"|cff99999913:53:59|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Skullcrusher|r |cffff8800<extractedRealm> Skullcrusher|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 557|r",
-0,
-},
-{
-"|cff99999913:54:00|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:01|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:11|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:12|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:13|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:52|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:52|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:54:59|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:55:00|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:55:04|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:55:06|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Ysondre|r |cffff8800<extractedRealm> Ysondre|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 1335|r",
-0,
-},
-{
-"|cff99999913:55:06|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Ysondre|r |cffff8800<extractedRealm> Ysondre|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 1335|r",
-0,
-},
-{
-"|cff99999913:55:12|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:55:38|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:55:40|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:56:29|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:57:02|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Al'Akir|r |cffff8800<extractedRealm> Al'Akir|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 519|r",
-0,
-},
-{
-"|cff99999913:57:02|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Al'Akir|r |cffff8800<extractedRealm> Al'Akir|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 519|r",
-0,
-},
-{
-"|cff99999913:57:03|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999913:57:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Draenor|r |cffff8800<extractedRealm> Draenor|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 506|r",
-0,
-},
-{
-"|cff99999913:57:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"World transfer pending...",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"00000001828d9bf0\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000002c488cc0\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"0000000182a301e0\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"00000001828d9bf0\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000017af76470\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"0000000182a301e0\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"|cff99999913:59:59|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:00:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:00:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:04:16|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Stormreaver|r |cffff8800<extractedRealm> Stormreaver|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 559|r",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000018cb216b0\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000017af76470\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000017bba71e0\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000018cb216b0\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"World transfer pending...",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000017af89b80\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000017bba71e0\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"|cff99999914:10:21|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Xavius|r |cffff8800<extractedRealm> Xavius|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 639|r",
-0,
-},
-{
-"|cff99999914:10:21|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Xavius|r |cffff8800<extractedRealm> Xavius|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 639|r",
-0,
-},
-{
-"|cff99999914:10:52|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:10:52|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"Time set to 9/12/2026 (Sat) 14:10",
-0,
-},
-{
-"Time set to 9/12/2026 (Sat) 14:10",
-0,
-},
-{
-"|cff99999914:11:28|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:11:29|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"Successfully instantiated mirrored storage object",
-0,
-},
-{
-"World transfer pending...",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"00000001218f2cc0\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000017af89b80\" state=\"(enum)6\"",
-0,
-},
-{
-"|cff99999914:12:10|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> TarrenMill|r |cffff8800<extractedRealm> TarrenMill|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 1306|r",
-0,
-},
-{
-"|cff99999914:12:11|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> TarrenMill|r |cffff8800<extractedRealm> TarrenMill|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 1306|r",
-0,
-},
-{
-"|cff99999914:12:14|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> TarrenMill|r |cffff8800<extractedRealm> TarrenMill|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 1306|r",
-0,
-},
-{
-"|cff99999914:14:55|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Nordrassil|r |cffff8800<extractedRealm> Nordrassil|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 618|r",
-0,
-},
-{
-"|cff99999914:14:55|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Nordrassil|r |cffff8800<extractedRealm> Nordrassil|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 618|r",
-0,
-},
-{
-"|cff99999914:14:56|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Nordrassil|r |cffff8800<extractedRealm> Nordrassil|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 618|r",
-0,
-},
-{
-"|cff99999914:14:56|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Nordrassil|r |cffff8800<extractedRealm> Nordrassil|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 618|r",
-0,
-},
-{
-"|cff99999914:14:56|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Nordrassil|r |cffff8800<extractedRealm> Nordrassil|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 618|r",
-0,
-},
-{
-"|cff99999914:14:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Nordrassil|r |cffff8800<extractedRealm> Nordrassil|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 618|r",
-0,
-},
-{
-"|cff99999914:14:58|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Nordrassil|r |cffff8800<extractedRealm> Nordrassil|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 618|r",
-0,
-},
-{
-"|cff99999914:14:59|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Nordrassil|r |cffff8800<extractedRealm> Nordrassil|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 618|r",
-0,
-},
-{
-"Sending ping results from timeout timeoutNs=\"1926399175000\" nowNs=\"1926408428700\"",
-0,
-},
-{
-"|cff99999914:20:49|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Stormreaver|r |cffff8800<extractedRealm> Stormreaver|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 559|r",
-0,
-},
-{
-"|cff99999914:20:50|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Stormreaver|r |cffff8800<extractedRealm> Stormreaver|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 559|r",
-0,
-},
-{
-"|cff99999914:20:50|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Stormreaver|r |cffff8800<extractedRealm> Stormreaver|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 559|r",
-0,
-},
-{
-"|cff99999914:20:56|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> TarrenMill|r |cffff8800<extractedRealm> TarrenMill|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 1306|r",
-0,
-},
-{
-"DBCache::CancelCallback ignored",
-0,
-},
-{
-"DBCache::CancelCallback ignored",
-0,
-},
-{
-"DBCache::CancelCallback ignored",
-0,
-},
-{
-"|cff99999914:22:43|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Draenor|r |cffff8800<extractedRealm> Draenor|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 506|r",
-0,
-},
-{
-"DBCache::CancelCallback ignored",
-0,
-},
-{
-"Added house xp to all houses on account xp=\"10\"",
-0,
-},
-{
-"|cff99999914:37:49|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"DBCache::CancelCallback ignored",
-0,
-},
-{
-"|cff99999914:37:50|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:37:50|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"Added house xp to all houses on account xp=\"10\"",
-0,
-},
-{
-"World transfer pending...",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000018269af30\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"00000001218f2cc0\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"|cff99999914:39:20|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:39:23|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"World transfer pending...",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"0000000192190a80\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000018269af30\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"|cff99999914:39:45|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Xavius|r |cffff8800<extractedRealm> Xavius|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 639|r",
-0,
-},
-{
-"|cff99999914:39:46|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Hyjal|r |cffff8800<extractedRealm> Hyjal|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 542|r",
-0,
-},
-{
-"|cff99999914:39:50|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:39:50|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Blackrock|r |cffff8800<extractedRealm> Blackrock|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 581|r",
-0,
-},
-{
-"|cff99999914:39:51|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:40:32|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:40:35|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:40:37|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:40:37|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Xavius|r |cffff8800<extractedRealm> Xavius|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 639|r",
-0,
-},
-{
-"|cff99999914:40:38|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:40:54|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:41:18|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:41:18|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000000a117840\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"0000000192190a80\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"000000000a117e70\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000000a117840\" state=\"(enum)6\"",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"|cff99999914:42:55|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:42:56|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:42:56|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:42:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:42:57|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999914:43:00|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Skullcrusher|r |cffff8800<extractedRealm> Skullcrusher|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 557|r",
-0,
-},
-{
-"|cff99999914:43:00|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Skullcrusher|r |cffff8800<extractedRealm> Skullcrusher|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 557|r",
-0,
-},
-{
-"|cff99999914:43:01|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Skullcrusher|r |cffff8800<extractedRealm> Skullcrusher|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 557|r",
-0,
-},
-{
-"|cff99999914:43:32|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Skullcrusher|r |cffff8800<extractedRealm> Skullcrusher|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 557|r",
-0,
-},
-{
-"|cff99999914:43:46|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Skullcrusher|r |cffff8800<extractedRealm> Skullcrusher|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 557|r",
-0,
-},
-{
-"|cff99999914:43:46|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Xavius|r |cffff8800<extractedRealm> Xavius|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 639|r",
-0,
-},
-{
-"|cff99999914:45:33|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Xavius|r |cffff8800<extractedRealm> Xavius|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 639|r",
-0,
-},
-{
-"|cff99999914:45:34|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Skullcrusher|r |cffff8800<extractedRealm> Skullcrusher|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 557|r",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"0000000192156250\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"000000000a117e70\" state=\"(enum)6\"",
-0,
-},
-{
-"|cff99999914:46:58|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Darkspear|r |cffff8800<extractedRealm> Darkspear|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 1389|r",
-0,
-},
-{
-"[Airlock] Received PreloadMap Destination MapID:2952, Current MapID:0, PreviousTransitionID:-1, Position (12.4814, 257.041, 278.327)",
-0,
-},
-{
-"[Airlock] Preload initiated for map 2952",
-0,
-},
-{
-"Connecting conn=\"(enum)3\" connPtr=\"0000000051f578a0\" protocol=\"(enum)0\"",
-0,
-},
-{
-"KillConnection conn=\"0000000192156250\" state=\"(enum)6\"",
-0,
-},
-{
-"[Airlock] Loading new map 2952 from previous map 0 with translation: (-4767.33, 4377.68, 242.491)\n    Location : (-20.3262, 234.385, 265.247)\n    Location in previous map : (4747, -4143.3, 22.756)",
-0,
-},
-{
-"[Airlock] Swapping to preloaded map 2952 but keeping old map 0 RESIDENT.",
-0,
-},
-{
-"[Airlock] Freezing AOI updates for old map 0",
-0,
-},
-{
-"[Airlock] Finished transition to new map 2952",
-0,
-},
-{
-"Weather changed to 0, intensity 0.000000\n",
-0,
-},
-{
-"[Airlock] Received PreloadMap Destination MapID:0, Current MapID:2952, PreviousTransitionID:0, Position (4747, -4143.3, 22.756)",
-0,
-},
-{
-"[Airlock] Preload skipped - map is same as current map.",
-0,
-},
-{
-"-------------------------------------------------- Previous Session --------------------------------------------------",
-0,
-},
-{
-"LimitedLuaResources: Reset Timer",
-0,
-},
-{
-"LimitedLuaResources: Reset All",
-0,
-},
-{
-"Successfully instantiated mirrored storage object",
-0,
-},
-{
-"Time played:",
-0,
-},
-{
-"Total: 14d 4h 25m 35s",
-0,
-},
-{
-"Level: 0d 6h 3m 58s",
-0,
-},
-{
-"Time played:",
-0,
-},
-{
-"Total: 14d 4h 25m 36s",
-0,
-},
-{
-"Level: 0d 6h 3m 59s",
-0,
-},
-{
-"Cannot find neighborhood's map record!0000000000000000",
-3,
-},
-{
-"Cannot find neighborhood's map record!0000000000000000",
-3,
-},
-{
-"Sending ping results from timeout timeoutNs=\"3726448172800\" nowNs=\"3726459158600\"",
-0,
-},
-{
-"-------------------------------------------------- Previous Session --------------------------------------------------",
-0,
-},
-{
-"LimitedLuaResources: Reset Timer",
-0,
-},
-{
-"LimitedLuaResources: Reset All",
-0,
-},
-{
-"Time played:",
-0,
-},
-{
-"Total: 14d 4h 30m 47s",
-0,
-},
-{
-"Level: 0d 6h 9m 10s",
-0,
-},
-{
-"Time played:",
-0,
-},
-{
-"Total: 14d 4h 30m 48s",
-0,
-},
-{
-"Level: 0d 6h 9m 11s",
-0,
-},
-{
-"Cannot find neighborhood's map record!0000000000000000",
-3,
-},
-{
-"Cannot find neighborhood's map record!0000000000000000",
-3,
-},
-{
-"|cff99999914:53:51|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:03:03|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:05:50|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:11:04|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:11:04|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:11:04|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:11:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:11:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:11:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:11:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:12:36|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:12:36|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:12:36|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"-------------------------------------------------- Previous Session --------------------------------------------------",
-0,
-},
-{
-"LimitedLuaResources: Reset Timer",
-0,
-},
-{
-"LimitedLuaResources: Reset All",
-0,
-},
-{
-"Time played:",
-0,
-},
-{
-"Total: 14d 4h 52m 56s",
-0,
-},
-{
-"Level: 0d 6h 31m 19s",
-0,
-},
-{
-"Time played:",
-0,
-},
-{
-"Total: 14d 4h 52m 57s",
-0,
-},
-{
-"Level: 0d 6h 31m 20s",
-0,
-},
-{
-"Cannot find neighborhood's map record!0000000000000000",
-3,
-},
-{
-"Cannot find neighborhood's map record!0000000000000000",
-3,
-},
-{
-"|cff99999915:15:54|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:15:54|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:15:56|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:15:58|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:15:59|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:02|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:05|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:07|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:09|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:09|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:10|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:10|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:13|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:13|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:13|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:13|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:13|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:13|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:14|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:14|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:14|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:14|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:14|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:21|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:21|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
-{
-"|cff99999915:16:21|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
-0,
-},
 {
 "|cff99999915:16:21|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
 0,
@@ -4279,9 +2918,1302 @@ Blizzard_Console_SavedVars = {
 "|cff99999919:56:38|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
 0,
 },
+{
+"-------------------------------------------------- Previous Session --------------------------------------------------",
+0,
 },
-["isShown"] = false,
+{
+"Multithreaded rendering enabled.",
+0,
+},
+{
+"Multithreaded BeginDraw enabled.",
+0,
+},
+{
+"Multithread shadows changed to 1.",
+0,
+},
+{
+"Multithreaded prepass enabled.",
+0,
+},
+{
+"Multithreaded opaque pass enabled.",
+0,
+},
+{
+"Multithreaded opaque pass enabled.",
+0,
+},
+{
+"Multithreaded alpha M2 pass enabled.",
+0,
+},
+{
+"Multithreaded opaque WMO pass enabled.",
+0,
+},
+{
+"Multithreaded terrain pass enabled.",
+0,
+},
+{
+"Multithreaded volumetric fog enabled.",
+0,
+},
+{
+"Multithreaded Refraction Pass enabled.",
+0,
+},
+{
+"Multithreaded miscellaneous passes enabled.",
+0,
+},
+{
+"Multithreaded decal passes disabled.",
+0,
+},
+{
+"Multithreaded outline passes enabled.",
+0,
+},
+{
+"Multithreaded lightshaft passes enabled.",
+0,
+},
+{
+"Use trigger on BeginDrawComplete enabled.",
+4,
+},
+{
+"Multithreaded alpha pass enabled.",
+0,
+},
+{
+"Multithreaded daynight update enabled.",
+0,
+},
+{
+"Water detail changed to 2",
+0,
+},
+{
+"Ripple detail changed to 1",
+0,
+},
+{
+"Reflection mode changed to 0",
+0,
+},
+{
+"Reflection downscale changed to 0",
+0,
+},
+{
+"Sunshafts quality changed to 2",
+0,
+},
+{
+"Refraction mode changed to 2",
+0,
+},
+{
+"Volume fog enabled.",
+0,
+},
+{
+"Particulate volumes enabled.",
+0,
+},
+{
+"Projected textures enabled.",
+0,
+},
+{
+"Shadow mode changed to 3 - 3 band dynamic shadows on units and terrain, 2048",
+0,
+},
+{
+"Shadow texture size changed to 2048.",
+0,
+},
+{
+"Soft shadows changed to 0.",
+0,
+},
+{
+"Shadow cascade blending changed to 1",
+0,
+},
+{
+"Number of shadow cascades changed to 3",
+0,
+},
+{
+"Shadow RT mode changed to 0 (Disabled)",
+0,
+},
+{
+"maxLightCount must be in range 0 to 32.",
+0,
+},
+{
+"CVar 'maxLightCount' failed validation for its initial value.",
+0,
+},
+{
+"Clustered shading enabled.",
+0,
+},
+{
+"Not forcing clustered shading.",
+0,
+},
+{
+"SSAO mode set to 3",
+0,
+},
+{
+"SSAO type set to 0",
+0,
+},
+{
+"Depth Based Opacity Enabled",
+0,
+},
+{
+"SkyCloudLOD set to 0",
+0,
+},
+{
+"Texture filtering mode updated.",
+0,
+},
+{
+"Terrain mip level changed to 0.",
+0,
+},
+{
+"Outline mode changed to 2",
+0,
+},
+{
+"Physics interaction level changed to 1",
+0,
+},
+{
+"Render scale changed to 1",
+0,
+},
+{
+"Resample quality changed to 3",
+0,
+},
+{
+"MSAA disabled",
+0,
+},
+{
+"MSAA for alpha-test enabled.",
+0,
+},
+{
+"VALAR mode changed to 0",
+0,
+},
+{
+"lodObjectSizeScale cannot be changed.",
+0,
+},
+{
+"Volume fog enabled.",
+0,
+},
+{
+"dynamicLod enabled",
+0,
+},
+{
+"World preload object sort enabled.",
+0,
+},
+{
+"World load object sort enabled.",
+0,
+},
+{
+"World preload non critical enabled.",
+0,
+},
+{
+"World preload high res textures enabled.",
+0,
+},
+{
+"FFX: Color Blind Test Mode Disabled",
+0,
+},
+{
+"CVar 'Sound_AmbienceHighpassDSPCutoff' failed validation for its initial value.",
+0,
+},
+{
+"CVar 'Sound_AllyPlayerHighpassDSPCutoff' failed validation for its initial value.",
+0,
+},
+{
+"CVar 'Sound_EnemyPlayerHighpassDSPCutoff' failed validation for its initial value.",
+0,
+},
+{
+"CVar 'Sound_NPCHighpassDSPCutoff' failed validation for its initial value.",
+0,
+},
+{
+"ChromaEffects disabled",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Texture changed to 400000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Texture changed to 400000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for FontString changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for FontString changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Font changed to 3000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Font changed to 3000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for AnimGroup changed to 20000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for AnimGroup changed to 20000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Texture changed to 40000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Texture changed to 40000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Animation changed to 5000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Animation changed to 5000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Animation changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Animation changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Frame changed to 10000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Frame changed to 10000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Frame changed to 100000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Frame changed to 100000",
+0,
+},
+{
+"LimitedLuaResources: Enabled = false",
+0,
+},
+{
+"LimitedLuaResources: Enabled = false",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for AnimGroup changed to 2000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for AnimGroup changed to 2000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Font changed to 300",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Font changed to 300",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for FontString changed to 5000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for FontString changed to 5000",
+0,
+},
+{
+"Startup()",
+0,
+},
+{
+"Resume()",
+0,
+},
+{
+"Screen invalid. Changing from=\"none\" to=\"login\"",
+0,
+},
+{
+"Switching to screen=\"AccountLogin\" (from \"none\")",
+0,
+},
+{
+"From EnsureValidScreen",
+0,
+},
+{
+"Overlay is disabled.  Only internal builds and public China builds have it.",
+4,
+},
+{
+"Starting login launcherPortal=\"eu.actual.battle.net\" loginPortal=\"eu.actual.battle.net:1119\"",
+0,
+},
+{
+"Resetting",
+0,
+},
+{
+"Initializing",
+0,
+},
+{
+"Attempting logon host=\"eu.actual.battle.net\" port=\"1119\"",
+0,
+},
+{
+"Waiting for server response.",
+0,
+},
+{
+"Front connected connectionId=\"1\" title_id=\"5730135\" platform=\"Wn64\" locale=\"enUS\" usedToken=\"true\"",
+0,
+},
+{
+"Waiting for server response.",
+0,
+},
+{
+"OnSendLogon result=\"0\"",
+0,
+},
+{
+"-------------------------------------------------- Previous Session --------------------------------------------------",
+0,
+},
+{
+"Multithreaded rendering enabled.",
+0,
+},
+{
+"Multithreaded BeginDraw enabled.",
+0,
+},
+{
+"Multithread shadows changed to 1.",
+0,
+},
+{
+"Multithreaded prepass enabled.",
+0,
+},
+{
+"Multithreaded opaque pass enabled.",
+0,
+},
+{
+"Multithreaded opaque pass enabled.",
+0,
+},
+{
+"Multithreaded alpha M2 pass enabled.",
+0,
+},
+{
+"Multithreaded opaque WMO pass enabled.",
+0,
+},
+{
+"Multithreaded terrain pass enabled.",
+0,
+},
+{
+"Multithreaded volumetric fog enabled.",
+0,
+},
+{
+"Multithreaded Refraction Pass enabled.",
+0,
+},
+{
+"Multithreaded miscellaneous passes enabled.",
+0,
+},
+{
+"Multithreaded decal passes disabled.",
+0,
+},
+{
+"Multithreaded outline passes enabled.",
+0,
+},
+{
+"Multithreaded lightshaft passes enabled.",
+0,
+},
+{
+"Use trigger on BeginDrawComplete enabled.",
+4,
+},
+{
+"Multithreaded alpha pass enabled.",
+0,
+},
+{
+"Multithreaded daynight update enabled.",
+0,
+},
+{
+"Water detail changed to 2",
+0,
+},
+{
+"Ripple detail changed to 1",
+0,
+},
+{
+"Reflection mode changed to 0",
+0,
+},
+{
+"Reflection downscale changed to 0",
+0,
+},
+{
+"Sunshafts quality changed to 2",
+0,
+},
+{
+"Refraction mode changed to 2",
+0,
+},
+{
+"Volume fog enabled.",
+0,
+},
+{
+"Particulate volumes enabled.",
+0,
+},
+{
+"Projected textures enabled.",
+0,
+},
+{
+"Shadow mode changed to 3 - 3 band dynamic shadows on units and terrain, 2048",
+0,
+},
+{
+"Shadow texture size changed to 2048.",
+0,
+},
+{
+"Soft shadows changed to 0.",
+0,
+},
+{
+"Shadow cascade blending changed to 1",
+0,
+},
+{
+"Number of shadow cascades changed to 3",
+0,
+},
+{
+"Shadow RT mode changed to 0 (Disabled)",
+0,
+},
+{
+"maxLightCount must be in range 0 to 32.",
+0,
+},
+{
+"CVar 'maxLightCount' failed validation for its initial value.",
+0,
+},
+{
+"Clustered shading enabled.",
+0,
+},
+{
+"Not forcing clustered shading.",
+0,
+},
+{
+"SSAO mode set to 3",
+0,
+},
+{
+"SSAO type set to 0",
+0,
+},
+{
+"Depth Based Opacity Enabled",
+0,
+},
+{
+"SkyCloudLOD set to 0",
+0,
+},
+{
+"Texture filtering mode updated.",
+0,
+},
+{
+"Terrain mip level changed to 0.",
+0,
+},
+{
+"Outline mode changed to 2",
+0,
+},
+{
+"Physics interaction level changed to 1",
+0,
+},
+{
+"Render scale changed to 1",
+0,
+},
+{
+"Resample quality changed to 3",
+0,
+},
+{
+"MSAA disabled",
+0,
+},
+{
+"MSAA for alpha-test enabled.",
+0,
+},
+{
+"VALAR mode changed to 0",
+0,
+},
+{
+"lodObjectSizeScale cannot be changed.",
+0,
+},
+{
+"Volume fog enabled.",
+0,
+},
+{
+"dynamicLod enabled",
+0,
+},
+{
+"World preload object sort enabled.",
+0,
+},
+{
+"World load object sort enabled.",
+0,
+},
+{
+"World preload non critical enabled.",
+0,
+},
+{
+"World preload high res textures enabled.",
+0,
+},
+{
+"FFX: Color Blind Test Mode Disabled",
+0,
+},
+{
+"CVar 'Sound_AmbienceHighpassDSPCutoff' failed validation for its initial value.",
+0,
+},
+{
+"CVar 'Sound_AllyPlayerHighpassDSPCutoff' failed validation for its initial value.",
+0,
+},
+{
+"CVar 'Sound_EnemyPlayerHighpassDSPCutoff' failed validation for its initial value.",
+0,
+},
+{
+"CVar 'Sound_NPCHighpassDSPCutoff' failed validation for its initial value.",
+0,
+},
+{
+"ChromaEffects disabled",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Font changed to 3000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Font changed to 3000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Frame changed to 10000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Frame changed to 10000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Font changed to 300",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Font changed to 300",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Animation changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Animation changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Enabled = false",
+0,
+},
+{
+"LimitedLuaResources: Enabled = false",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Frame changed to 100000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Frame changed to 100000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Texture changed to 400000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Texture changed to 400000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for AnimGroup changed to 20000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for AnimGroup changed to 20000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for AnimGroup changed to 2000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for AnimGroup changed to 2000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for FontString changed to 5000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for FontString changed to 5000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for FontString changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for FontString changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Texture changed to 40000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Texture changed to 40000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Animation changed to 5000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Animation changed to 5000",
+0,
+},
+{
+"Startup()",
+0,
+},
+{
+"Resume()",
+0,
+},
+{
+"Screen invalid. Changing from=\"none\" to=\"login\"",
+0,
+},
+{
+"Switching to screen=\"AccountLogin\" (from \"none\")",
+0,
+},
+{
+"From EnsureValidScreen",
+0,
+},
+{
+"Overlay is disabled.  Only internal builds and public China builds have it.",
+4,
+},
+{
+"Starting login launcherPortal=\"eu.actual.battle.net\" loginPortal=\"eu.actual.battle.net:1119\"",
+0,
+},
+{
+"Resetting",
+0,
+},
+{
+"Initializing",
+0,
+},
+{
+"Attempting logon host=\"eu.actual.battle.net\" port=\"1119\"",
+0,
+},
+{
+"Waiting for server response.",
+0,
+},
+{
+"Front connected connectionId=\"1\" title_id=\"5730135\" platform=\"Wn64\" locale=\"enUS\" usedToken=\"true\"",
+0,
+},
+{
+"Waiting for server response.",
+0,
+},
+{
+"OnSendLogon result=\"0\"",
+0,
+},
+{
+"Logon complete result=\"0\" numGameAccounts=\"3\"",
+0,
+},
+{
+"Waiting for server response.",
+0,
+},
+{
+"Received auth token  code=\"ERROR_OK (0)\" gotCredentials=\"true\"",
+0,
+},
+{
+"B code=\"ERROR_OK (0)\"",
+0,
+},
+{
+"BG code=\"ERROR_OK (0)\"",
+0,
+},
+{
+"BGS_ code=\"ERROR_OK (0)\" name=\"WoW1\" numGameAccounts=\"3\" numGameAccountNames=\"0\"",
+0,
+},
+{
+"BGS_ code=\"ERROR_OK (0)\" name=\"WoW2\" numGameAccounts=\"3\" numGameAccountNames=\"1\"",
+0,
+},
+{
+"BGS_ACCO code=\"ERROR_OK (0)\"",
+0,
+},
+{
+"BGS_ code=\"ERROR_OK (0)\" name=\"WoW3\" numGameAccounts=\"3\" numGameAccountNames=\"2\"",
+0,
+},
+{
+"BGS_ACCO code=\"ERROR_OK (0)\"",
+0,
+},
+{
+"BGS_ACCO code=\"ERROR_OK (0)\"",
+0,
+},
+{
+"Updated game account list, not saving.",
+0,
+},
+{
+"Logon complete.",
+0,
+},
+{
+"Reconnect token saved;  creationTime=\"1789340195\" expirationTime=\"1789354595\"",
+0,
+},
+{
+"Waiting for realm list.",
+0,
+},
+{
+"Requesting realm list ticket",
+0,
+},
+{
+"Received realm list ticket code=\"ERROR_OK (0)\"",
+0,
+},
+{
+"Waiting for realm list.",
+0,
+},
+{
+"Received sub region list code=\"ERROR_OK (0)\"",
+0,
+},
+{
+"Requesting last played chars numSubRegions=\"1\"",
+0,
+},
+{
+"Received last played char code=\"ERROR_OK (0)\" subRegion=\"3-4-89\" lastPlayedTime=\"1789236690\" numRegions=\"1\" numRegionsWithData=\"0\" realmPermissions=\"67\" licensesCount=\"1\" realmEntry=\"{\"wowRealmAddress\":50397209,\"useBleepChance\":0.0,\"cfgTimezonesID\":21,\"populationState\":3,\"cfgCategoriesID\":8,\"version\":{\"versionMajor\":12,\"versionBuild\":68914,\"versionMinor\":1,\"versionRevision\":0},\"cfgRealmsID\":524,\"gameServiceRegionId\":2,\"flags\":0,\"name\":\"Burning Legion\",\"cfgConfigsID\":1,\"cfgContentSetID\":0,\"cfgLanguagesID\":3}\"",
+0,
+},
+{
+"Realm list ready.",
+0,
+},
+{
+"Found most recently played char. Joining realm. lastPlayedRegion=\"3-4-89\" realmAddress=\"50397209\" lastActiveTime=\"1789236690\"",
+0,
+},
+{
+"Joining realm subRegion=\"3-4-89\" realmAddress=\"3-1-25\"",
+0,
+},
+{
+"Sending ping results from timeout timeoutNs=\"12595893295900\" nowNs=\"12595909989700\"",
+0,
+},
+{
+"OnRealmJoin code=\"ERROR_OK (0)\"",
+0,
+},
+{
+"Connecting conn=\"(enum)0\" connPtr=\"000000004e13b6e0\" protocol=\"(enum)0\"",
+0,
+},
+{
+"Received AuthedToWoW result=\"ERROR_OK (0)\"",
+0,
+},
+{
+"Screen invalid. Changing from=\"login\" to=\"charselect\"",
+0,
+},
+{
+"Connecting conn=\"(enum)2\" connPtr=\"00000000286b0400\" protocol=\"(enum)0\"",
+0,
+},
+{
+"KillConnection conn=\"000000004e13b6e0\" state=\"(enum)6\"",
+0,
+},
+{
+"Switching to screen=\"CharacterSelect\" (from \"login\")",
+0,
+},
+{
+"From EnsureValidScreen",
+0,
+},
+{
+"Connected to Back. Disconnecting from Front.",
+0,
+},
+{
+"Front disconnecting connectionId=\"1\"",
+0,
+},
+{
+"Disconnecting from authentication server.",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Texture changed to 400000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Frame changed to 10000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for FontString changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Texture changed to 40000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Animation changed to 50000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Frame changed to 100000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for FontString changed to 5000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for AnimGroup changed to 2000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for AnimGroup changed to 20000",
+0,
+},
+{
+"LimitedLuaResources: Enabled = false",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Timer changed to 500",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Animation changed to 5000",
+0,
+},
+{
+"LimitedLuaResources: Global capacity for Font changed to 3000",
+0,
+},
+{
+"LimitedLuaResources: Addon capacity for Font changed to 300",
+0,
+},
+{
+"Session with Battle.net established.",
+0,
+},
+{
+"[WowEntitlements] [BNetAccount-0-0000077D013B] [WowAccount-0-00000282F123] Initialized with 29 entitlements.",
+0,
+},
+{
+"Front disconnected connectionId=\"1\" result=\"1016\"",
+0,
+},
+{
+"Disconnected from authentication server.",
+0,
+},
+{
+"-------------------------------------------------- Previous Session --------------------------------------------------",
+0,
+},
+{
+"Suspend()",
+0,
+},
+{
+"LimitedLuaResources: Reset Timer",
+0,
+},
+{
+"Connecting conn=\"(enum)3\" connPtr=\"000000008ec4b670\" protocol=\"(enum)0\"",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x0000000040",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x0000008040",
+0,
+},
+{
+"Proficiency in item class 4 set to 0x0000000021",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x000000c040",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x000000c440",
+0,
+},
+{
+"Proficiency in item class 4 set to 0x0000000025",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x000000c460",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x000000e460",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x000010e460",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x000010e470",
+0,
+},
+{
+"Proficiency in item class 4 set to 0x0000000027",
+0,
+},
+{
+"Proficiency in item class 2 set to 0x000010e470",
+0,
+},
+{
+"Proficiency in item class 4 set to 0x0000000027",
+0,
+},
+{
+"Time set to 9/14/2026 (Mon) 0:58",
+0,
+},
+{
+"Gamespeed set from 0.017 to 0.017",
+0,
+},
+{
+"Connecting conn=\"(enum)3\" connPtr=\"000000008edab860\" protocol=\"(enum)0\"",
+0,
+},
+{
+"KillConnection conn=\"000000008ec4b670\" state=\"(enum)6\"",
+0,
+},
+{
+"Successfully instantiated mirrored storage object",
+0,
+},
+{
+"[Airlock] Received PreloadMap Destination MapID:2962, Current MapID:0, PreviousTransitionID:-1, Position (5140.39, -5861.72, 216.883)",
+0,
+},
+{
+"[Airlock] Preload initiated for map 2962, with already loaded cosmetic parent 0",
+0,
+},
+{
+"Time played:",
+0,
+},
+{
+"Total: 14d 9h 47m 31s",
+0,
+},
+{
+"Level: 0d 11h 25m 54s",
+0,
+},
+{
+"Time played:",
+0,
+},
+{
+"Total: 14d 9h 47m 32s",
+0,
+},
+{
+"Level: 0d 11h 25m 55s",
+0,
+},
+{
+"Cannot find neighborhood's map record!0000000000000000",
+3,
+},
+{
+"Cannot find neighborhood's map record!0000000000000000",
+3,
+},
+{
+"[Airlock] Cancel Preload of cosmetic child with MapID:2962",
+0,
+},
+{
+"Connecting conn=\"(enum)3\" connPtr=\"000000008ee29890\" protocol=\"(enum)0\"",
+0,
+},
+{
+"KillConnection conn=\"000000008edab860\" state=\"(enum)6\"",
+0,
+},
+{
+"Connecting conn=\"(enum)3\" connPtr=\"000000008ebe3f80\" protocol=\"(enum)0\"",
+0,
+},
+{
+"KillConnection conn=\"000000008ee29890\" state=\"(enum)6\"",
+0,
+},
+{
+"[Airlock] Received PreloadMap Destination MapID:2952, Current MapID:0, PreviousTransitionID:-1, Position (16.1162, 253.689, 277.39)",
+0,
+},
+{
+"[Airlock] Preload initiated for map 2952",
+0,
+},
+{
+"[Airlock] Received PreloadMap Destination MapID:2952, Current MapID:0, PreviousTransitionID:2952, Position (-20.4741, 231.665, 265.183)",
+0,
+},
+{
+"[Airlock] Preload skipped - map is same as current map.",
+0,
+},
+{
+"Connecting conn=\"(enum)3\" connPtr=\"000000008ebfae00\" protocol=\"(enum)0\"",
+0,
+},
+{
+"KillConnection conn=\"000000008ebe3f80\" state=\"(enum)6\"",
+0,
+},
+{
+"[Airlock] Loading new map 2952 from previous map 0 with translation: (-4767.33, 4377.68, 242.491)\n    Location : (-20.4741, 231.665, 265.183)\n    Location in previous map : (4746.85, -4146.02, 22.692)",
+0,
+},
+{
+"[Airlock] Destination 2952 had not finished preload at position (-20.4741, 231.665, 265.183), putting up loading screen\n",
+0,
+},
+{
+"[Airlock] Swapping to preloaded map 2952 but keeping old map 0 RESIDENT.",
+0,
+},
+{
+"[Airlock] Freezing AOI updates for old map 0",
+0,
+},
+{
+"[Airlock] Finished transition to new map 2952",
+0,
+},
+{
+"Weather changed to 0, intensity 0.000000\n",
+0,
+},
+{
+"[Airlock] Received PreloadMap Destination MapID:0, Current MapID:2952, PreviousTransitionID:0, Position (4746.85, -4146.02, 22.692)",
+0,
+},
+{
+"[Airlock] Preload skipped - map is same as current map.",
+0,
+},
+{
+"|cff99999901:18:58|r |cff20b0ffTooltipRealmInfo|r: |cff00ff00<debug>|r |cffff6060<GetRealmInfo>|r |cff44ffff<calledFrom> AddLines|r |cffffff00<param> Burning Legion|r |cffff8800<extractedRealm> Burning Legion|r |cffff44ff<LibAnswerType> table|r |cffffffff<LibAnswerRealmId> 524|r",
+0,
+},
+},
+["height"] = 300,
 ["fontHeight"] = 14,
+["isShown"] = false,
 ["commandHistory"] = {
 },
 }

@@ -1,8 +1,8 @@
 
 BigWigs3DB = {
 ["profileKeys"] = {
-["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
 ["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
+["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
 },
 ["namespaces"] = {
 ["BigWigs_Plugins_BossBlock"] = {
@@ -48,8 +48,8 @@ BigWigs3DB = {
 ["iconZoom"] = 0.3,
 ["iconHeight"] = 20,
 ["iconFontName"] = "Merfin Font 1",
-["iconWidth"] = 20,
 ["iconOffsetX"] = -3,
+["iconWidth"] = 20,
 },
 ["MerfinUI (1440) v7.8"] = {
 ["iconFontSize"] = 8,
@@ -57,8 +57,8 @@ BigWigs3DB = {
 ["iconZoom"] = 0.3,
 ["iconHeight"] = 20,
 ["iconFontName"] = "Merfin Font 1",
-["iconOffsetX"] = -3,
 ["iconWidth"] = 20,
+["iconOffsetX"] = -3,
 },
 },
 },
@@ -177,11 +177,13 @@ nil,
 ["BigWigs_Plugins_Colors"] = {
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
-["barEmphasized"] = {
+["barBackground"] = {
 ["BigWigs_Plugins_Colors"] = {
 ["default"] = {
-nil,
-0.5960784554481506,
+0.2000000178813934,
+0.2000000178813934,
+0.2000000178813934,
+0.7019608020782471,
 },
 },
 },
@@ -191,16 +193,6 @@ nil,
 0.1294117718935013,
 0.5882353186607361,
 0.9529412388801575,
-},
-},
-},
-["barBackground"] = {
-["BigWigs_Plugins_Colors"] = {
-["default"] = {
-0.2000000178813934,
-0.2000000178813934,
-0.2000000178813934,
-0.7019608020782471,
 },
 },
 },
@@ -214,17 +206,16 @@ nil,
 },
 },
 },
-},
-["MerfinUI (1440) v7.8"] = {
-["barColor"] = {
+["barEmphasized"] = {
 ["BigWigs_Plugins_Colors"] = {
 ["default"] = {
-0.1294117718935013,
-0.5882353186607361,
-0.9529412388801575,
+nil,
+0.5960784554481506,
 },
 },
 },
+},
+["MerfinUI (1440) v7.8"] = {
 ["barEmphasized"] = {
 ["BigWigs_Plugins_Colors"] = {
 ["default"] = {
@@ -240,6 +231,15 @@ nil,
 0.2000000178813934,
 0.2000000178813934,
 0.7019608020782471,
+},
+},
+},
+["barColor"] = {
+["BigWigs_Plugins_Colors"] = {
+["default"] = {
+0.1294117718935013,
+0.5882353186607361,
+0.9529412388801575,
 },
 },
 },
@@ -268,17 +268,9 @@ nil,
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
 ["outline"] = "OUTLINE",
-["normalWidth"] = 200,
 ["expWidth"] = 229,
 ["fill"] = true,
 ["growup"] = true,
-["normalHeight"] = 23,
-["visibleBarLimitEmph"] = 4,
-["visibleBarLimit"] = 5,
-["expHeight"] = 25,
-["emphasizeGrowup"] = true,
-["texture"] = "Merfin Main Texture",
-["barStyle"] = "ElvUI",
 ["expPosition"] = {
 "BOTTOMLEFT",
 "TOPLEFT",
@@ -286,11 +278,19 @@ nil,
 75,
 "ElvUF_Target",
 },
-["fontSizeEmph"] = 14,
+["visibleBarLimitEmph"] = 4,
 ["fontSize"] = 13,
-["emphasizeRestart"] = false,
+["visibleBarLimit"] = 5,
+["expHeight"] = 25,
+["emphasizeGrowup"] = true,
 ["emphasizeTime"] = 10,
+["barStyle"] = "ElvUI",
 ["fontName"] = "Merfin Font 1",
+["fontSizeEmph"] = 14,
+["normalWidth"] = 200,
+["emphasizeRestart"] = false,
+["texture"] = "Merfin Main Texture",
+["normalHeight"] = 23,
 ["normalPosition"] = {
 "BOTTOMLEFT",
 "TOPLEFT",
@@ -320,10 +320,10 @@ nil,
 "ElvUF_Target",
 },
 ["visibleBarLimitEmph"] = 4,
-["texture"] = "Merfin Main Texture",
-["normalWidth"] = 200,
-["normalHeight"] = 23,
 ["emphasizeTime"] = 10,
+["normalHeight"] = 23,
+["normalWidth"] = 200,
+["texture"] = "Merfin Main Texture",
 ["normalPosition"] = {
 "BOTTOMLEFT",
 "TOPLEFT",
@@ -362,41 +362,41 @@ BigWigsStatsDB = {
 [2734] = {
 ["LFR"] = {
 ["kills"] = 1,
-["fkDate"] = "2026/09/11",
-["bestDate"] = "2026/09/11",
-["best"] = 198.7699999999968,
 ["fkDuration"] = 198.7699999999968,
+["best"] = 198.7699999999968,
+["bestDate"] = "2026/09/11",
+["fkDate"] = "2026/09/11",
 },
 },
 [2733] = {
 ["LFR"] = {
 ["kills"] = 1,
-["fkDate"] = "2026/09/11",
-["bestDate"] = "2026/09/11",
+["fkDuration"] = 157.0080000000016,
+["wipes"] = 1,
 ["fkWipes"] = 1,
 ["best"] = 157.0080000000016,
-["wipes"] = 1,
-["fkDuration"] = 157.0080000000016,
+["bestDate"] = "2026/09/11",
+["fkDate"] = "2026/09/11",
 },
 },
 [2738] = {
 ["story"] = {
 ["kills"] = 1,
-["fkDate"] = "2026/09/12",
-["bestDate"] = "2026/09/12",
+["fkDuration"] = 269.503999999999,
+["wipes"] = 1,
 ["fkWipes"] = 1,
 ["best"] = 269.503999999999,
-["wipes"] = 1,
-["fkDuration"] = 269.503999999999,
+["bestDate"] = "2026/09/12",
+["fkDate"] = "2026/09/12",
 },
 },
 [2736] = {
 ["LFR"] = {
 ["kills"] = 1,
-["fkDate"] = "2026/09/11",
-["bestDate"] = "2026/09/11",
-["best"] = 221.1980000000003,
 ["fkDuration"] = 221.1980000000003,
+["best"] = 221.1980000000003,
+["bestDate"] = "2026/09/11",
+["fkDate"] = "2026/09/11",
 },
 },
 },
@@ -404,10 +404,10 @@ BigWigsStatsDB = {
 [2740] = {
 ["story"] = {
 ["kills"] = 1,
-["fkDuration"] = 312.4689999999991,
-["best"] = 312.4689999999991,
-["bestDate"] = "2026/09/12",
 ["fkDate"] = "2026/09/12",
+["bestDate"] = "2026/09/12",
+["best"] = 312.4689999999991,
+["fkDuration"] = 312.4689999999991,
 },
 },
 },

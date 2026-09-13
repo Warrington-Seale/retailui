@@ -9,6 +9,11 @@ TradeSkillMaster_AppHelperDB = {
 },
 ["updateTime"] = 1789153367.595596,
 },
+["fullScan"] = {
+["data"] = {
+},
+["updateTime"] = 0,
+},
 ["analytics"] = {
 ["data"] = {
 "[\"AC\",\"v4.14.76\",1788952554541,0,1,\"ADDON_INITIALIZE\",0]",
@@ -369,12 +374,9 @@ TradeSkillMaster_AppHelperDB = {
 "[\"AC\",\"v4.14.76\",1789235092360,0,10,\"UI_NAVIGATION\",\"\",\"banking\"]",
 "[\"AC\",\"v4.14.76\",1789235222304,0,1,\"ADDON_INITIALIZE\",1]",
 "[\"AC\",\"v4.14.76\",1789235258719,0,2,\"ADDON_ENABLE\",0]",
+"[\"AC\",\"v4.14.76\",1789340234563,0,1,\"ADDON_INITIALIZE\",0]",
+"[\"AC\",\"v4.14.76\",1789340350934,0,2,\"ADDON_ENABLE\",0]",
 },
-["updateTime"] = 1789235258.719323,
-},
-["fullScan"] = {
-["data"] = {
-},
-["updateTime"] = 0,
+["updateTime"] = 1789340350.934411,
 },
 }

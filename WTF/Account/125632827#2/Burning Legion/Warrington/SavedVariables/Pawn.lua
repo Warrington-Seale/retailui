@@ -1,6 +1,6 @@
 
 PawnOptions = {
-["LastVersion"] = 2.1315,
+["LastVersion"] = 2.1316,
 ["LastPlayerFullName"] = "Warrington-Burning Legion",
 ["AutoSelectScales"] = true,
 ["ItemLevels"] = {
@@ -41,9 +41,9 @@ nil,
 ["Link"] = "|cnIQ3:|Hitem:272240::::::::90:104::126:3:12818:6652:13663:1:28:6012:::::|h[Miststalker's Striders]|h|r",
 },
 {
-["ID"] = 256967,
-["Level"] = 276,
-["Link"] = "|cnIQ3:|Hitem:256967::::::::90:104::28:4:12820:6652:13696:13663:1:28:3321:::::|h[Verdant Tracker's Cuffs]|h|r",
+["ID"] = 272246,
+["Level"] = 295,
+["Link"] = "|cnIQ4:|Hitem:272246::::::::90:104::109:4:12834:6652:13696:13662:1:28:6014:::::|h[Miststalker's Wristbands]|h|r",
 },
 {
 ["ID"] = 270361,
