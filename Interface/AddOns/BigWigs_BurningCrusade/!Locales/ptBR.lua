@@ -19,10 +19,6 @@ if L then
 	--L.wipe_trigger = "No! Not yet!"
 	--L.defender = "Defender" -- Ashtongue Defender
 	--L.sorcerer = "Sorcerer" -- Ashtongue Sorcerer
-	--L.adds_right = "Adds (Right)"
-	--L.adds_left = "Adds (Left)"
-
-	--L.engaged = "Shade of Akama Engaged"
 end
 
 L = BigWigs:NewBossLocale("Reliquary of Souls", "ptBR")
@@ -40,7 +36,6 @@ if L then
 	--L.zerevor = "Zerevor: %s"
 
 	--L.circle_heal_message = "Healed! - Next in ~20sec"
-	--L.circle_fail_message = "%s Interrupted! - Next in ~12sec"
 
 	--L.magical_immunity = "Immune to magical!"
 	--L.physical_immunity = "Immune to physical!"
@@ -94,7 +89,6 @@ if L then
 	--L.three = "Wave %d! %d %s, %d %s, %d %s"
 	--L.four = "Wave %d! %d %s, %d %s, %d %s, %d %s"
 	--L.five = "Wave %d! %d %s, %d %s, %d %s, %d %s, %d %s"
-	--L.barWave = "Wave %d spawn"
 
 	--L.waveInc = "Wave %d incoming!"
 	--L.message = "%s in ~%d sec!"

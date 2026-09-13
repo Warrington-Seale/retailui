@@ -1,3 +1,65 @@
+## [1.22.1] - 2026-09-05 (September 2026)
+
+### Fixed
+- Republished. 1.22.0 never reached CurseForge: the upload still declared
+  support for game version 12.0.7, which CurseForge no longer accepts. Nothing
+  in the addon itself differs from 1.22.0.
+
+## [1.22.0] - 2026-09-05 (September 2026)
+
+### Added
+- Nestor can use the talking head and chat at the same time. "Chat Only Mode"
+  made you pick one or the other, so a quote you could not read in time was
+  simply gone. That box is now two -- "Show Talking Head" and "Show In Chat" --
+  and ticking both gives you Nestor to watch and the line to read afterwards.
+  Your current choice carries over; the second box is yours to tick. Thanks to
+  WHTJunior for the request.
+
+## [1.21.0] - 2026-08-31 (August 2026)
+
+### Fixed
+- The endeavor countdown now finishes counting. It read "1 Days Remaining" all
+  the way through the second-to-last day, then went blank entirely once there
+  was under a day left -- exactly when you most want to know. It now says
+  "1 Day Remaining", then counts down in hours and minutes to the wire. Thanks
+  to Logic for the report.
+
+### Changed
+- Community Coupons are no longer capped, so VE has stopped showing a ceiling
+  that does not exist. Your balance now stands on its own, and turns amber past
+  10,000 as a nudge to spend rather than a warning about waste. Alts holding no
+  coupons have dropped out of the breakdown -- they only made the list longer.
+- Coupon forecasts on repeatable tasks now come straight from the game. VE used
+  to work out the diminishing-returns discount itself; the 12.1 client will now
+  tell it exactly what the next completion pays, so the number on the row is
+  the number you get. Their tooltips also say how many times you have completed
+  the task and which rung the next one lands on, coloured to match it.
+
+## [1.20.1] - 2026-08-25 (August 2026)
+
+### Fixed
+- **The real fix for Blizzard's blank Housing Dashboard.** The 1.20.0 repair
+  worked, but by reaching into the dashboard's own data it earned a worse fault:
+  the dashboard's Teleport Home button could fail with the red "blocked from an
+  action only available to the Blizzard UI" error -- the kind that offers to
+  disable the addon. That repair is gone. In its place, VE wakes the dashboard up
+  before its first housing request -- switching houses, refreshing endeavor
+  progress -- so it always hears the game's answers and fills itself the normal
+  way. Nothing about endeavor tracking changes.
+
+## [1.20.0] - 2026-08-20 (August 2026)
+
+### Fixed
+- Blizzard's Housing Dashboard no longer opens blank. VE asked the game for your
+  house list a couple of seconds after you logged in, and that request quietly
+  broke the dashboard for anyone who had not opened it yet: the game hands the
+  list to the dashboard's house dropdown, which then only passes it along when the
+  list changes, so the panel you opened later was left waiting for something that
+  had already been and gone. The dropdown still showed your house name, which is
+  why it looked like the panel had simply failed to draw. VE now asks only when you
+  open its own window, and repairs the dashboard if anything else has already
+  tripped it. Thanks to everyone who reported it.
+
 ## [1.19.0] - 2026-07-25 (July 2026)
 
 FIXED:

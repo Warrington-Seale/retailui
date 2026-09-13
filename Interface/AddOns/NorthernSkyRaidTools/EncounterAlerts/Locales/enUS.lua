@@ -142,6 +142,14 @@ L[3159] = {
 -- ============================================================================
 -- Nymrissa Wavecaller (3379)
 L[3379] = {
+    ["Adds"]          = {group = "Nymrissa", name = "Add-Spawn", text = "Adds"},
+    ["Waves"]         = {group = "Nymrissa", name = "Waves", text = "Waves"},
+    ["Knockback"]     = {group = "Nymrissa", name = "Knockback", text = "Knock"},
+    ["ChillingFrost"] = {group = "Nymrissa", name = "Chilling Frost", text = "Debuffs"},
+    ["AbyssalRain"]   = {group = "Nymrissa", name = "Abyssal Rain", text = "AoE"},
+    ["WaterJet"]      = {group = "Nymrissa", name = "Water Jet", text = "Frontal"},
+    ["WaterFlurry"]   = {group = "Nymrissa", name = "Iceblade Flurry", text = "Tank-Hit"},
+    ["Taunt"]         = {group = "Nymrissa", name = "Taunt", text = "Taunt"},
 }
 
 -- Nek'zali the Soulcoiler (3470)
@@ -167,6 +175,7 @@ L[3445] = {
     ["OrbSpawn"]           = {group = "Sentinels", name = "Orb Spawn", text = "Bait Orbs"},
     ["ShiftingProtovenom"] = {group = "Sentinels", name = "Shifting Protovenom", text = "Spread"},
     ["TransitionDebuffs"]  = {group = "Sentinels", name = "Transition Debuffs", text = "Number Game"},
+    ["Radar"]              = {group = "Sentinels", name = "Radar", text = ""},
 }
 
 -- Vashnik the Malignant (3455)
@@ -179,6 +188,7 @@ L[3455] = {
     ["Soaks"]      = {group = "Vashnik", name = "Soaks", text = "Soaks"},
     ["Waves"]      = {group = "Vashnik", name = "Waves", text = "Waves"},
     ["WaveSpread"] = {group = "Vashnik", name = "Wave-Spread", text = "Pre-Spread"},
+    ["WavesLine"] = {group = "Vashnik", name = "Waves Line", text = ""},
 }
 
 -- The Lost Explorers (3497)
@@ -201,50 +211,84 @@ L[3497] = {
 -- Sszorak (3420)
 L[3420] = {
     ["TankCombo"]    = {group = "Sszorak", name = "Tank Combo", text = "Tank Combo"},
+    ["SetMarkers"]   = {group = "Sszorak", name = "Mark Reminder", text = "Set Markers"},
     ["DamageAmp"]    = {group = "Sszorak", name = "Damage Amp", text = "Damage Amp"},
     ["Bait"]         = {group = "Sszorak", name = "Bait", text = "Bait"},
     ["WindDebuffs"]  = {group = "Sszorak", name = "WindDebuffs", text = "Wind-Debuffs"},
     ["Debuffs"]      = {group = "Sszorak", name = "Debuffs", text = "Debuffs"},
     ["SerpentsFury"] = {group = "Sszorak", name = "Serpent's Fury", text = "Stack Up"},
     ["WindsHelper"]  = {group = "Sszorak", name = "Winds Helper"},
+    ["VenomousSurgeTargets"] = {group = "Sszorak", name = "Debuff Targets"},
+    ["MarkerMap"] = {group = "Sszorak", name = "Marker Map"},
 }
 
 -- The Twin Fangs (3421)
 L[3421] = {
     ["Defensives"]  = {group = "Twin Fangs", name = "Defensives", text = "Defensives"},
     ["Soak"]        = {group = "Twin Fangs", name = "Soak", text = "Soak"},
+    ["Soak1"]       = {group = "Twin Fangs", name = "Soak", text = "Soak"},
+    ["Soak2"]       = {group = "Twin Fangs", name = "Soak", text = "Soak"},
+    ["Soak3"]       = {group = "Twin Fangs", name = "Soak", text = "Soak"},
     ["PreSpread"]   = {group = "Twin Fangs", name = "Pre-Spread", text = "Pre-Spread"},
     ["WatchSide"]   = {group = "Twin Fangs", name = "Watch Side", text = "Watch Side"},
     ["Adds"]        = {group = "Twin Fangs", name = "Adds", text = "Adds"},
     ["Orbs"]        = {group = "Twin Fangs", name = "Orbs", text = "Orbs"},
     ["TankSoak"]    = {group = "Twin Fangs", name = "Tank Soak", text = "Soak"},
-    ["WatchSpawns"] = {group = "Twin Fangs", name = "Watch Spawns", text = "Watch Spawns"},
+    ["WatchSpawns"] = {group = "Twin Fangs", name = "Push", text = "Push"},
     ["Knock"]       = {group = "Twin Fangs", name = "Knock", text = "Knock"},
+    ["DebuffOverview"] = {group = "Twin Fangs", name = "Eternal Venom Overview", text = "Eternal Venom Overview"},
+    ["InterruptWhisperAlert"] = {group = "Twin Fangs", name = "Interrupt Whisper Alert", text = "Your Interrupt"},
 }
 
 -- The Coiled Altar (3429)
 L[3429] = {
-    ["P1Frontal"]     = {group = "Coiled Altar P1", name = "P1 Frontal", text = "Frontal"},
-    ["P1Taunt"]       = {group = "Coiled Altar Tanks", name = "P1 Taunt", text = "Taunt"},
-    ["P1Soak"]        = {group = "Coiled Altar P1", name = "P1 Soak", text = "Soak"},
-    ["MindControls"]  = {group = "Coiled Altar P2", name = "Mind Controls", text = "Mind Controls"},
-    ["P2Frontal"]     = {group = "Coiled Altar P2", name = "P2 Frontal", text = "Frontal"},
-    ["P2Taunt"]       = {group = "Coiled Altar Tanks", name = "P2 Taunt", text = "Taunt"},
-    ["P2Debuffs"]     = {group = "Coiled Altar P2", name = "P2 Debuffs", text = "Debuffs"},
-    ["P2Shield"]      = {group = "Coiled Altar P2", name = "P2 Shield", text = "Shield"},
-    ["InterruptAdds"] = {group = "Coiled Altar P2", name = "P2 Interrupt Adds", text = "Ghosts"},
+    ["P1Frontal"]     = {group = "Coiled Altar", name = "P1 Frontal", text = "Frontal"},
+    ["P1OrbDeadline"] = {group = "Coiled Altar", name = "Orb deadline", text = "Orb deadline"},
+    ["P1Taunt"]       = {group = "Coiled Altar", name = "P1 Taunt", text = "Taunt"},
+    ["P1Soak"]        = {group = "Coiled Altar", name = "P1 Soak", text = "Soak"},
+    ["MindControls"]  = {group = "Coiled Altar", name = "P2 Mind Controls", text = "Mind Controls"},
+    ["P2Frontal"]     = {group = "Coiled Altar", name = "P2 Frontal", text = "Frontal"},
+    ["P2Taunt"]       = {group = "Coiled Altar", name = "P2 Taunt", text = "Taunt"},
+    ["P2Debuffs"]     = {group = "Coiled Altar", name = "P2 Debuffs", text = "Debuffs"},
+    ["P2Shield"]      = {group = "Coiled Altar", name = "P2 Shield", text = "Shield"},
+    ["DebuffCircle"]   = {group = "Coiled Altar", name = "Orb/Bomb Circle", text = ""},
+    ["EternalNightfallAbsorb"] = {group = "Coiled Altar", name = "Eternal Nightfall Absorb", text = ""},
+    ["InterruptAdds"] = {group = "Coiled Altar", name = "P2 Interrupt Adds", text = "Ghosts"},
+    ["InterruptAssignments"] = {group = "Coiled Altar", name = "Interrupt Assignments", text = "Interrupts"},
+    ["P3OrbDeadline"] = {group = "Coiled Altar", name = "P3 Orb deadline", text = "Orb deadline"},
+    ["P2_5WrongTarget"] = {group = "Coiled Altar", name = "Wrong Target", text = "WRONG TARGET"},
+    ["P3Frontal"] = {group = "Coiled Altar", name = "P3 Frontal", text = "Frontal"},
+    ["P3Soak"] = {group = "Coiled Altar", name = "P3 Soak", text = "Soak"},
+    ["P3Shield"] = {group = "Coiled Altar", name = "P3 Shield", text = "Shield"},
+    ["P3Debuffs"] = {group = "Coiled Altar", name = "P3 Debuffs", text = "Debuffs"},
+    ["P3InterruptAdds"] = {group = "Coiled Altar", name = "P3 Interrupt Adds", text = "Ghosts"},
+    ["P3MindControls"] = {group = "Coiled Altar", name = "P3 Mind Controls", text = "Mind Controls"},
+    ["P3Taunt"] = {group = "Coiled Altar", name = "P3 Taunt", text = "Taunt"},
 }
 
 -- Ula'tek (3492)
 L[3492] = {
-    --[[
-    ["HitKnock"]      = {group = "Ula'tek Tanks", name = "P1 Hit+Knock", text = "Hit+Knock"},
-    ["Taunt"]         = {group = "Ula'tek Tanks", name = "P1 Taunt", text = "Taunt"},
-    ["Waves"]         = {group = "Ula'tek P1", name = "Waves", text = "Waves"},
-    ["Adds"]          = {group = "Ula'tek P1", name = "Adds", text = "Adds"},
-    ["DamageAmpIn"]   = {group = "Ula'tek P1", name = "Dmg amp", text = "Dmg amp in"},
-    ["DamageAmp"]     = {group = "Ula'tek P1", name = "Dmg amp Bar", text = "Dmg amp"},
-    ["PlatformBreak"] = {group = "Ula'tek P3", name = "Platform Break", text = "Platform Break + Knock"},
-    ["Debuffs"]       = {group = "Ula'tek P3", name = "Debuffs", text = "Debuffs"},
-    ]]
+    ["HitKnock"]            = {group = "Ula'tek", name = "Mother's Wrath", text = "Hit+Knock"},
+    ["Waves"]               = {group = "Ula'tek", name = "Caustic Wave", text = "Waves"},
+    ["DamageAmpIn"]         = {group = "Ula'tek", name = "Dmg amp in", text = "Dmg amp in"},
+    ["DamageAmp"]           = {group = "Ula'tek", name = "Dmg amp Timer", text = "Dmg amp"},
+    ["PlatformBreak"]       = {group = "Ula'tek", name = "Circling Prey", text = "Platform Break"},
+    ["Debuffs"]             = {group = "Ula'tek", name = "Serpent's Bite", text = "Debuffs"},
+    ["Eggs"]                = {group = "Ula'tek", name = "Eggs", text = "Eggs"},
+    ["EggDeadline"]         = {group = "Ula'tek", name = "Egg Deadline", text = "Egg Deadline"},
+    ["AddSoak"]             = {group = "Ula'tek", name = "Add Soak", text = "Add Soak"},
+    ["Adds"]                = {group = "Ula'tek", name = "P3 Adds", text = "Adds"},
+    ["BossSpawn"]           = {group = "Ula'tek", name = "Boss Spawn", text = "Boss Spawn"},
+    ["Sweep"]               = {group = "Ula'tek", name = "Sweep", text = "Sweep"},
+    ["Soak"]                = {group = "Ula'tek", name = "Soak", text = "Soak"},
+    ["TransitionSoakFirst"] = {group = "Ula'tek", name = "First Soak", text = "First Soak"},
+    ["TransitionSoakSecond"] = {group = "Ula'tek", name = "Second Soak", text = "Second Soak"},
+    ["GraspingFangsOverview"] = {group = "Ula'tek", name = "Grasping Fangs Overview", text = ""},
+    ["WrongTarget"] = {group = "Ula'tek", name = "Wrong Target", text = "WRONG TARGET"},
+    ["WaveDirection"] = {group = "Ula'tek", name = "Wave Direction Display", text = ""},
+    ["WaveDirectionPrompt"] = {group = "Ula'tek", name = "Wave Direction Input", text = "Input Direction"},
+    ["WaveLines"] = {group = "Ula'tek", name = "P3 Wave lines", text = ""},
+    ["InterruptAssignments"] = {group = "Ula'tek", name = "Interrupt Assignments", text = "Interrupts"},
+    ["TransitionPatternSoaks"] = {group = "Ula'tek", name = "Transition Soaks", text = "Soak"},
+    ["TransitionPatternArrow"] = {group = "Ula'tek", name = "Transition Arrow", text = ""},
 }

@@ -280,7 +280,7 @@ end
 
 local function StartFixPosition()
   CancelPositionTicker()
-  Falcon.positionTicker = C_Timer.NewTicker(0.1, function()
+  Falcon.positionTicker = C_Timer.NewTicker(0.2, function()
     API:FixPosition(Falcon)
   end, 1)
 end

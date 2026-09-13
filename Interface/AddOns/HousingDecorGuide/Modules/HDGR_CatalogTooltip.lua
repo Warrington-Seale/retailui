@@ -63,12 +63,40 @@ local function _appendCatalogVendorLines(add, vendors)
     for _, l in ipairs(world) do add(l, VENDOR_R, VENDOR_G, VENDOR_B) end
 end
 
--- Cost line (last), summing every payment option.
+-- The dyed line, under the sourcing, for THE TILE UNDER THE CURSOR: every dyed
+-- variant is its own tile in Blizzard's catalog, so the hover names that one
+-- variant's dyes -- each NAME painted in its own swatch colour (the Companion's
+-- droplets read the same swatchColorStart) -- and its stored count. Listing
+-- every owned variant here was wrong (3.29.0: a player with hundreds of one
+-- table dyed got the whole inventory on every hover). The tile's "Total Owned"
+-- is the aggregate across colours; the count here is this colour's own.
+local function _dyeNameMarkup(Obs, dyeColorID)
+    local info = Obs:GetDyeColorInfo(dyeColorID)
+    if not info then return nil end   -- exception(boundary): C_DyeColor returns nil for an unknown id
+    local r, g, b = info.swatchColorStart:GetRGB()
+    return ("|cff%02x%02x%02x%s|r"):format(
+        math.floor(r * 255 + 0.5), math.floor(g * 255 + 0.5), math.floor(b * 255 + 0.5), info.name)
+end
+
+local function _appendCatalogDyeLine(add, Obs, dyedVariants, variantIdentifier)
+    for _, dv in ipairs(dyedVariants) do
+        if dv.variantIdentifier == variantIdentifier then
+            local names = {}
+            for _, id in ipairs(dv.dyeColorIDs) do
+                names[#names + 1] = _dyeNameMarkup(Obs, id) or dv.label
+            end
+            add(("Dyed: %s x%d"):format(table.concat(names, ", "), dv.numStored), GATE_R, GATE_G, GATE_B)
+            return
+        end
+    end
+end
+
+-- Cost line (last of the sourcing), summing every payment option.
 local function _appendCatalogCostLine(add, row)
     if not (row.costEntries and #row.costEntries > 0) then return end   -- exception(nullable): item has no vendor cost
     local parts = {}
     for _, ce in ipairs(row.costEntries) do
-        parts[#parts + 1] = HDG.Format.FormatCurrency(ce.amount, ce.currencyID)
+        parts[#parts + 1] = HDG.Format.FormatCost(ce.amount, ce)
     end
     add("Cost: " .. table.concat(parts, "  +  "), COST_R, COST_G, COST_B)
 end
@@ -96,6 +124,10 @@ local function _onTooltipCreated(_, entry, tooltip)
         _appendCatalogVendorLines(add, row.vendors)
     end
     _appendCatalogCostLine(add, row)
+    -- variantIdentifier 0 is the undyed base tile: nothing to name.
+    if row.dyedVariants and vid.variantIdentifier ~= 0 then   -- exception(nullable): non-customizable decor bakes no variants
+        _appendCatalogDyeLine(add, Obs, row.dyedVariants, vid.variantIdentifier)
+    end
 
     if #body == 0 then return end   -- nothing HDG can add -> leave Blizzard's tooltip untouched
     tooltip:AddLine("Housing Decor Guide - Decor sourcing:", HEAD_R, HEAD_G, HEAD_B)

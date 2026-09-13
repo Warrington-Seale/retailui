@@ -26,6 +26,7 @@ local difficultiesWithBattleRes = {
 	[17] = true, -- Looking For Raid
 	[33] = true, -- Timewalking (Raid)
 	[233] = true, -- Mythic (Flexible 15-25 player raids)
+	[250] = true, -- World (Lair bosses)
 }
 local castableBattleResSpells = {
 	[20484] = true, -- Rebirth
@@ -270,7 +271,7 @@ do
 		if not LibSharedMedia:IsValid("font", plugin.db.profile.fontName) or not BigWigsAPI.IsValidMediaPath(LibSharedMedia:Fetch("font", plugin.db.profile.fontName)) then
 			plugin.db.profile.fontName = defaultDB.fontName
 		end
-		if not LibSharedMedia:IsValid("border", plugin.db.profile.borderName) then
+		if not LibSharedMedia:IsValid("border", plugin.db.profile.borderName) or (plugin.db.profile.borderName ~= "None" and not BigWigsAPI.IsValidMediaPath(LibSharedMedia:Fetch("border", plugin.db.profile.borderName))) then
 			plugin.db.profile.borderName = defaultDB.borderName -- If the border is suddenly invalid then reset the size and offset also
 			plugin.db.profile.borderSize = defaultDB.borderSize
 			plugin.db.profile.borderOffset = defaultDB.borderOffset
@@ -505,6 +506,9 @@ do
 	local function IsDisabledOrTextMode()
 		return plugin.db.profile.disabled or plugin.db.profile.mode == 2
 	end
+	local function IsDisabledOrTextModeOrBorderSetToNone()
+		return plugin.db.profile.disabled or plugin.db.profile.mode == 2 or plugin.db.profile.borderName == "None"
+	end
 	local function IsDisabledOrAnchorPointIsDefault()
 		return plugin.db.profile.disabled or plugin.db.profile.position[5] == plugin.defaultDB.position[5]
 	end
@@ -714,7 +718,7 @@ do
 							return plugin.db.profile.borderColor[1], plugin.db.profile.borderColor[2], plugin.db.profile.borderColor[3], plugin.db.profile.borderColor[4]
 						end,
 						set = UpdateColorAndWidgets,
-						disabled = IsDisabledOrTextMode,
+						disabled = IsDisabledOrTextModeOrBorderSetToNone,
 					},
 					borderSize = {
 						type = "range",
@@ -724,7 +728,7 @@ do
 						max = 32,
 						step = 1,
 						width = 1,
-						disabled = IsDisabledOrTextMode,
+						disabled = IsDisabledOrTextModeOrBorderSetToNone,
 					},
 					borderOffset = {
 						type = "range",
@@ -734,7 +738,7 @@ do
 						max = 32,
 						step = 1,
 						width = 1,
-						disabled = IsDisabledOrTextMode,
+						disabled = IsDisabledOrTextModeOrBorderSetToNone,
 					},
 					borderName = {
 						type = "select",
@@ -767,6 +771,7 @@ do
 						set = soundSet,
 						values = LibSharedMedia:List("sound"),
 						width = 2.5,
+						dialogControl = "BigWigsSharedDropdown",
 						itemControl = "DDI-Sound",
 						disabled = IsDisabled,
 					},

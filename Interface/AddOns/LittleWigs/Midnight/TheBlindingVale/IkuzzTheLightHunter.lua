@@ -6,11 +6,6 @@ local mod, CL = BigWigs:NewBoss("Ikuzz the Light Hunter", 2859, 2770)
 if not mod then return end
 mod:SetEncounterID(3200)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{1237091, sound = "warning"}, -- Bloodthirsty Gaze
-	{1237267, sound = "alarm"}, -- Incise
-	{1272290, sound = "warning"}, -- Crunched
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -30,6 +25,18 @@ mod:SetRenames({
 	[1236746] = {1236746}, -- Verdant Stomp
 	[1236709] = {1236709}, -- Thorncaller Roar
 	[1237090] = {1237090, CL.you:format(mod:SpellName(1237090)), notes = {CL.generalNote, CL.messageOnYouNote}, original = {1237090, CL.you:format(mod:SpellName(1237090))}}, -- Bloodthirsty Gaze
+})
+
+--------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{1236747, duration = 4, tip = CL.debuffGroupAfterCastNote:format(mod:SpellName(1236746))}, -- Verdant Stomp
+	{1259365, dispel = "magic", mechanic = "rooted", soundOnApplied = "info", tip = CL.debuffUnderYouNote}, -- Bloodthorn Roots
+	{1237091, duration = 10, tip = CL.debuffTargetedNote:format(mod:SpellName(1237091))}, -- Bloodthirsty Gaze
+	{1237267, duration = 3, dispel = "bleed", mechanic = "bleeding", soundOnApplied = "warning", tip = CL.debuffFailureMoveFromCastNote:format(mod:SpellName(1237091))}, -- Incise
+	{1272290, duration = 5, tip = CL.postDebuffNote:format(mod:SpellName(1237267))}, -- Crunched
 })
 
 --------------------------------------------------------------------------------
@@ -73,7 +80,7 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 	local duration = self:RoundNumber(eventInfo.duration, 0)
 	local barInfo
 	if duration >= 60 then return end
-	if BigWigsLoader.isNext then
+	if self:Mythic() then
 		if duration == 6 or duration == 29 then -- Verdant Stomp
 			barInfo = self:VerdantStompTimeline(eventInfo)
 		elseif duration == 22 then -- Thorncaller Roar
@@ -89,7 +96,7 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 				self:SendMessage("BigWigs_PauseBar", nil, nil, eventInfo.id)
 			end
 		end
-	else -- XXX remove in 12.1
+	else -- Normal, Heroic
 		if duration == 6 then -- Verdant Stomp
 			barInfo = self:VerdantStompTimeline(eventInfo)
 		elseif duration == 20 then -- Thorncaller Roar

@@ -59,15 +59,18 @@ end
 --
 
 function mod:Bloodboil(args)
-	self:MessageOld(args.spellId, "yellow", "info", CL.count:format(args.spellName, bloodCount))
+	local msg = CL.count:format(args.spellName, bloodCount)
+	self:StopBar(msg)
+	self:Message(args.spellId, "yellow", msg)
 	if bloodCount == 3 then bloodCount = 0 end
 	bloodCount = bloodCount + 1
 	self:CDBar(args.spellId, 10, CL.count:format(args.spellName, bloodCount))
+	self:PlaySound(args.spellId, "info")
 end
 
 function mod:FelRage(args)
 	self:StopBar(args.spellName) -- Fel Rage
-	self:StopBar(CL.count:format(args.spellName, bloodCount)) -- Bloodboil
+	self:StopBar(CL.count:format(self:SpellName(42005), bloodCount)) -- Bloodboil
 	self:StopBar(40508) -- Fel-Acid Breath
 
 	if self:Me(args.destGUID) then

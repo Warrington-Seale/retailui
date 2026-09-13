@@ -34,11 +34,6 @@ local function sameSkillLines(a, b)
 end
 
 -- Returns nil if SessionIdentity hasn't dispatched yet (boot window).
-local function getCharIdentity(state)
-    local id = state.session.identity
-    if id.charKey == "" then return nil end
-    return id
-end
 
 -- True if the player PERSONALLY OWNS this profession -- its skillLineID is one of
 -- their GetProfessions() slots. The ownership gate for Scan: without it, opening a
@@ -152,9 +147,9 @@ local function isForeignTradeSkill(CT)
 end
 
 -- Full-record equality: profession, spellID, categoryName (sub-recipes only; nil==nil for
--- decor), AND the reagent {id=qty} set. A change in ANY (12.1 reduced-lumber reagents, a
--- profession move, a new recipe, a spellID backfill) counts as changed -> re-dispatch.
--- nil `a` = itemID not in the store yet = new recipe = changed.
+-- decor), outputQtyMin, AND the reagent {id=qty} set. A change in ANY (12.1 reduced-lumber
+-- reagents, a profession move, a new recipe, a spellID backfill, a yield the store predates)
+-- counts as changed -> re-dispatch. nil `a` = itemID not in the store yet = new recipe = changed.
 local function sameRecord(a, b)
     if not a then return false end
     if a.profession ~= b.profession then return false end
@@ -162,6 +157,7 @@ local function sameRecord(a, b)
     if a.categoryName ~= b.categoryName then return false end
     if a.expansion ~= b.expansion then return false end
     if a.name ~= b.name then return false end
+    if a.outputQtyMin ~= b.outputQtyMin then return false end
     for id, qty in pairs(a.reagents) do if b.reagents[id] ~= qty then return false end end
     for id in pairs(b.reagents) do if a.reagents[id] == nil then return false end end
     return true
@@ -243,6 +239,7 @@ end
 -- and record tiered slots' quality groups.
 local function _walkProfessionBook(profName, CT, catalog, ids)
     local BASIC = (_G.Enum and _G.Enum.CraftingReagentType and _G.Enum.CraftingReagentType.Basic) or 0  -- exception(boundary): enum absent headless; Basic = 0
+    local SALVAGE = (_G.Enum and _G.Enum.TradeskillRecipeType and _G.Enum.TradeskillRecipeType.Salvage) or 2  -- exception(boundary): enum absent headless; Salvage = 2
     local recipes, n = {}, 0
     local allByOutput = {}   -- [outItemID] = { reagents, spellID, profession } -- transient closure index
     local variantGroups = {} -- [reagentID] = sorted sibling ids -- quality groups seen this walk
@@ -263,6 +260,14 @@ local function _walkProfessionBook(profName, CT, catalog, ids)
                 -- so the resolver can materialize a full entry (spellID drives IsSpellKnown) for
                 -- recipes the seed DB doesn't ship. Capture is the source of truth; seed is fallback.
                 local rec = { reagents = reagents, profession = profName, spellID = recipeID }
+                -- Per-craft yield for multi-output recipes (bolts make 2, Imbued Silkweave
+                -- 10): PowerCrafter divides demand by it. Salvage schematics report the
+                -- INPUT consumed in quantityMin (Reference gotcha), so they are skipped.
+                -- 1 is the default and is not stored -- sparse, like the seed's outputQtyMin.
+                local yield = schematic.quantityMin or 1  -- exception(boundary): schematic field, documented as number but read defensively
+                if schematic.recipeType ~= SALVAGE and yield > 1 then
+                    rec.outputQtyMin = yield
+                end
                 allByOutput[itemID] = rec
                 local row = catalog:GetRow(itemID)  -- exception(nullable): non-decor products
                 if row then  -- decor products (catalog-recognized)
@@ -367,7 +372,7 @@ function PS:Scan()
     -- actually owns. Skips guild/linked/inspected profession windows -- otherwise
     -- viewing someone else's profession records it against the player at skill 0.
     if not playerOwnsProfession(base.professionID) then return end
-    local ident = getCharIdentity(HDG.Store:GetState())
+    local ident = HDG.SessionIdentity.GetIdentity(HDG.Store:GetState())
     if not ident then return end
     -- Find Lumber awareness stamped here (profession-window context) to avoid
     -- a dedicated SPELLS_CHANGED listener for a single spell. Stale until the
@@ -461,6 +466,19 @@ local function forceShowAllRecipes()
     CT.ClearRecipeSourceTypeFilter()
 end
 
+-- The snapshot has to outlive the session. These flags PERSIST across sessions and are
+-- inherited by the guild view, so a /reload or logout mid-harvest used to leave the
+-- player's own profession window permanently forced to show-everything with their
+-- filters cleared, and nothing would ever put it back (review 2026-08-23).
+-- Parked on account.ui through the generic persisted setter rather than minting an
+-- action for one recovery latch; it is read back on the next profession window open.
+local FILTER_RESTORE_KEY = "professionFilterRestore"
+
+local function parkFilterSnapshot(snap)
+    HDG.Store:Dispatch({ type = HDG.Constants.ACTIONS.UI_SET_PERSISTENT,
+                         payload = { key = FILTER_RESTORE_KEY, value = snap } })
+end
+
 local function restoreRecipeFilters(snap)
     if not snap then return end  -- exception(nullable): no snapshot when harvest never started
     local CT = _G.C_TradeSkillUI
@@ -498,6 +516,7 @@ local function harvestTeardown()
     h.token = h.token + 1   -- invalidate every pending timer closure
     restoreProfessionsFrame()
     restoreRecipeFilters(h.filterSnapshot)
+    parkFilterSnapshot(nil)   -- clean teardown: nothing left to recover
     h.filterSnapshot = nil
     h.active = false
     h.loadingProfession = nil
@@ -537,6 +556,36 @@ end
 -- Chain to the next queued profession (or finish). ViewGuildRecipes opens the
 -- guild view; the standing TRADE_SKILL_LIST_UPDATE debounce fires Scan() ->
 -- capture -> _HarvestOnListUpdate below chains onward.
+-- Hide OUR guild-opened window (SetAlpha, never Hide -- Hide tears down tradeskill
+-- state). The provenance check keeps a player's OWN crafting window visible even if
+-- they open it mid-harvest (VGC 1.4.2 bug class).
+function PS:_HideOurGuildWindow()
+    if PS._harvest.openedTradeSkill and _G.ProfessionsFrame
+        and isForeignTradeSkill(_G.C_TradeSkillUI) then
+        _G.ProfessionsFrame:SetAlpha(0)
+    end
+end
+
+-- A harvest that died mid-flight (reload, logout, disconnect) never ran its teardown,
+-- so the player's filters are still forced open. Put them back the next time a
+-- profession window appears, then clear the latch. Never runs during a live harvest --
+-- teardown owns the restore there.
+function PS:_RecoverParkedFilters()
+    if PS._harvest.active then return end
+    local parked = HDG.Store:GetState().account.ui[FILTER_RESTORE_KEY]
+    if not parked then return end  -- exception(nullable): no interrupted harvest to recover
+    restoreRecipeFilters(parked)
+    parkFilterSnapshot(nil)
+    HDG.Log:Debug("recipe_capture", "restored profession filters parked by an interrupted guild scan")
+end
+
+-- Idempotent: ADDON_LOADED and the onEnable catch-up both call it.
+function PS:_InstallProfessionsFrameHook()
+    if PS._pfHooked or not _G.ProfessionsFrame then return end  -- exception(boundary): LoD frame
+    PS._pfHooked = true
+    _G.ProfessionsFrame:HookScript("OnShow", function() PS:_HideOurGuildWindow() end)
+end
+
 local function harvestLoadNext()
     local h = PS._harvest
     -- Combat abort at the chain boundary (PLAYER_REGEN_DISABLED is CombatMiddleware-owned,
@@ -551,6 +600,17 @@ local function harvestLoadNext()
     local prof = h.queue[h.queueIndex]
     if not prof then
         harvestFinish()
+        return
+    end
+    -- Blizzard gates its own "All Recipes" button on CanViewGuildRecipes. Without the
+    -- same check a rank that cannot view simply never opens a window, and the chain
+    -- waits out the full per-profession timeout instead -- twelve professions of that
+    -- is two minutes of nothing, reported as success.
+    if _G.CanViewGuildRecipes and not _G.CanViewGuildRecipes(prof.id) then  -- exception(boundary): bare FrameXML global
+        HDG.Log:Debug("recipe_capture", "Guild scan: rank cannot view " .. tostring(prof.name) .. ", skipping")
+        -- Advance immediately: nothing was opened, so there is nothing to wait for or
+        -- restore. Bounded by the queue length (one pass per profession), not recursion depth.
+        harvestLoadNext()
         return
     end
     h.loadingProfession = prof.id
@@ -641,6 +701,7 @@ function PS:StartGuildHarvest()
     h.headersReceived = false
     h.startCount = captureStoreCount()
     h.filterSnapshot = snapshotRecipeFilters()
+    parkFilterSnapshot(h.filterSnapshot)
     forceShowAllRecipes()
     harvestProgress({ phase = "headers" })
     -- Timeout: guild data never arrived.
@@ -651,6 +712,56 @@ function PS:StartGuildHarvest()
         end
     end)
     _G.QueryGuildRecipes()
+end
+
+-- ===== Recipe acquisition text ===============================================
+-- Where an unlearned recipe comes from, per the profession book's own hover.
+--
+-- Lives HERE because this module is the declared sole owner of C_TradeSkillUI
+-- (ADR-011, boot-validated disjoint) -- the parse itself is a pure Core file.
+--
+-- The getter is SYNCHRONOUS and answers cold: the first call already returns the
+-- answer, so there is NO tick and NO dispatch here. The first cut copied
+-- ItemNameResolver's resolve-and-tick shape -- which exists because item info
+-- arrives ASYNCHRONOUSLY -- and fired a store action on every first fill. Since
+-- this is read from a selector and from a tooltip build, that put an
+-- invalidate-and-repaint in the middle of a paint, once per newly-seen recipe,
+-- nested (Store:Dispatch has no reentrancy guard). Shipped in 3.31.0 and
+-- reported as the window being laggy. Memoised per spellID, and MISSES TOO
+-- (as `false`): about 1 recipe in 20 has no acquisition data, and without a
+-- negative entry those would re-ask the API on every repaint forever.
+--
+-- Lazy by design -- no walk at login. 325 decor recipes fill as they are looked
+-- at, which is a handful per session, not a sweep.
+local _recipeSource = {}
+
+function PS:GetRecipeSource(spellID)
+    if not spellID then return nil end  -- exception(nullable): non-crafted rows have none
+    local hit = _recipeSource[spellID]
+    if hit ~= nil then
+        return hit or nil   -- false is the memoised miss
+    end
+    -- exception(boundary): undocumented Blizzard getter; nil OR "" when the
+    -- server has no acquisition data, and "" is truthy in Lua.
+    local raw = _G.C_TradeSkillUI and _G.C_TradeSkillUI.GetRecipeSourceText
+        and _G.C_TradeSkillUI.GetRecipeSourceText(spellID) or nil
+    local parsed = HDG.RecipeSourceParse.Parse(raw)
+    _recipeSource[spellID] = parsed or false
+    return parsed
+end
+
+-- The same answer, keyed by the CRAFTED ITEM rather than the recipe spell.
+--
+-- Every surface that wants this holds an itemID, and HDG's own row envelopes
+-- call that id `recipeID` ("recipeID == produced itemID", Selectors_Recipes) --
+-- which reads exactly like the spell id this API needs and is not. Passing one
+-- for the other returns nil forever and looks like an item with no data, so the
+-- conversion lives HERE and no call site has to know the difference.
+function PS:GetRecipeSourceForItem(itemID)
+    if not itemID then return nil end  -- exception(nullable): header rows carry no item
+    local recipe = HDG.StaticData.Recipes:Get(itemID)  -- exception(nullable): not every crafted item is in DecorDB
+    if not recipe then return nil end
+    return self:GetRecipeSource(recipe.spellID)
 end
 
 -- ===== Module registration ===================================================
@@ -682,6 +793,18 @@ HDG.Modules:Declare({
         PS._HarvestOnListUpdate()
     end,
     onEnable = function(self)
+        -- ProfessionsFrame OnShow is the RELIABLE hook. TRADE_SKILL_SHOW alone was not:
+        -- Blizzard_Professions is load-on-demand and is loaded BY that event, so on the
+        -- first guild profession of a session `_G.ProfessionsFrame` was still nil when we
+        -- looked, the alpha never applied, and the window opened full-size over the screen.
+        -- The sibling ProfessionButtons module already uses this ADDON_LOADED shape.
+        HDG.BlizzardEvents:_internalSubscribe("ADDON_LOADED", function(name)
+            if name ~= "Blizzard_Professions" then return end
+            PS:_InstallProfessionsFrameHook()
+        end)
+        -- Covers the case where Blizzard_Professions loaded before onEnable ran.
+        PS:_InstallProfessionsFrameHook()
+
         -- Catalog warmed after a capture skipped cold (RequestLoad above): re-scan
         -- while the profession window is still open so the capture actually lands.
         self._storeToken = HDG.Store:Subscribe(function(actionType)
@@ -703,12 +826,7 @@ HDG.Modules:Declare({
         PS._HarvestOnHeaders()
     end,
     OnTradeSkillShow = function(self)
-        -- Hide OUR guild-opened window (SetAlpha, never Hide -- Hide tears down
-        -- tradeskill state). The provenance check keeps a player's OWN crafting
-        -- window visible even if they open it mid-harvest (VGC 1.4.2 bug class).
-        if PS._harvest.openedTradeSkill and _G.ProfessionsFrame
-            and isForeignTradeSkill(_G.C_TradeSkillUI) then
-            _G.ProfessionsFrame:SetAlpha(0)
-        end
+        PS:_HideOurGuildWindow()
+        PS:_RecoverParkedFilters()
     end,
 })

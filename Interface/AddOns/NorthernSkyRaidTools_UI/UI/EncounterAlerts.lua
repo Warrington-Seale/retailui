@@ -255,10 +255,54 @@ local function BuildEncounterAlertsUI(parentFrame)
     local searchText         = ""
     local groupsByEnc        = {}    -- [encID] = { [groupName] = true } — populated each RebuildScrollData
     local copiedAlertSection = nil
+    local SharedAlertDataKeys = {
+        enabled = true,
+        DisplayType = true,
+        text = true,
+        spellID = true,
+        isTaunt = true,
+        customIcon = true,
+        dur = true,
+        sticky = true,
+        HideTimer = true,
+        HideSwipe = true,
+        glowunit = true,
+        glowColors = true,
+        textColors = true,
+        ringColors = true,
+        showBackground = true,
+        Texture = true,
+        Ticks = true,
+        barColors = true,
+        TTS = true,
+        TTSTimer = true,
+        countdown = true,
+        sound = true,
+        loadConditions = true,
+    }
 
     function NSI:SaveAlertData(alert, dataKey, newData)
         if alert then
             alert[dataKey] = newData
+            if alert.internalID and SharedAlertDataKeys[dataKey] and (dataKey ~= "enabled" or newData ~= false) then
+                local encounterID = alert.encID or selectedEncID
+                local encounterAlerts = NSRT.EncounterAlerts and NSRT.EncounterAlerts[encounterID]
+                if encounterAlerts then
+                    for difficultyID, difficultyAlerts in pairs(encounterAlerts) do
+                        for alertKey, sibling in pairs(difficultyAlerts) do
+                            if sibling ~= alert and sibling.internalID == alert.internalID then
+                                sibling[dataKey] = type(newData) == "table" and CopyTable(newData) or newData
+                                if dataKey == "text" and sibling.ReloeReminder == true then
+                                    sibling.UserModifiedText = true
+                                end
+                                if dataKey == "enabled" and sibling.ReloeReminder == true then
+                                    sibling.UserModifiedEnabled = true
+                                end
+                            end
+                        end
+                    end
+                end
+            end
             if dataKey == "text" and alert.ReloeReminder == true then
                 alert.UserModifiedText = true
             end
@@ -445,7 +489,6 @@ local function BuildEncounterAlertsUI(parentFrame)
         row.pinIcon:SetSize(12, 12)
         row.pinIcon:SetTexture([[Interface\Addons\NorthernSkyRaidTools\Media\Icons\pin.png]])
         row.pinIcon:SetVertexColor(189/255, 142/255, 69/255, 1)
-        row.pinIcon:SetPoint("RIGHT", row, "RIGHT", -20, 0)
         row.pinIcon:Hide()
 
         row:EnableMouse(true)
@@ -591,6 +634,7 @@ local function BuildEncounterAlertsUI(parentFrame)
 
     local function SortAlerts(t)
         table.sort(t, function(a, b)
+            if a._pinned ~= b._pinned then return a._pinned end
             local ag = (a._enabled and 0 or 2) + (a._isReloeCreated and 1 or 0)
             local bg = (b._enabled and 0 or 2) + (b._isReloeCreated and 1 or 0)
             if ag ~= bg then return ag < bg end
@@ -638,6 +682,7 @@ local function BuildEncounterAlertsUI(parentFrame)
                                     _sortName       = displayName,
                                     _orderID        = isReloe and entry.id or nil,
                                     _group          = entry.group,
+                                    _pinned         = entry.pinned == true,
                                 }
                                 if grp then
                                     local gk = GroupKey(encID, grp)
@@ -693,7 +738,6 @@ local function BuildEncounterAlertsUI(parentFrame)
 
         SortAlerts(pinned)
         for _, item in ipairs(pinned) do
-            item._pinned = true
             if NSI.CurrentEncounterIDs[item.encID] then
                 table.insert(currentPinned, item)
             else
@@ -830,7 +874,7 @@ local function BuildEncounterAlertsUI(parentFrame)
                                 if diffTable then
                                     for akey, alert in pairs(diffTable) do
                                         if type(alert) == "table" and alert.group == gname then
-                                            alert.enabled = true
+                                            NSI:SaveAlertData(alert, "enabled", true)
                                             NSI:FireCallback("NSRT_ALERT_CHANGED", gencID, filterDiffID, akey)
                                         end
                                     end
@@ -843,7 +887,7 @@ local function BuildEncounterAlertsUI(parentFrame)
                                 if diffTable then
                                     for akey, alert in pairs(diffTable) do
                                         if type(alert) == "table" and alert.group == gname then
-                                            alert.enabled = false
+                                            NSI:SaveAlertData(alert, "enabled", false)
                                             NSI:FireCallback("NSRT_ALERT_CHANGED", gencID, filterDiffID, akey)
                                         end
                                     end
@@ -958,7 +1002,7 @@ local function BuildEncounterAlertsUI(parentFrame)
                                    and NSRT.EncounterAlerts[eid][did]
                                    and NSRT.EncounterAlerts[eid][did][akey]
                         if e then
-                            e.enabled = v
+                            NSI:SaveAlertData(e, "enabled", v)
                             e.UserModifiedEnabled = true
                             if selectedEncID == eid and selectedDiffID == did and selectedKey == akey then
                                 enabledCB:SetValue(v)
@@ -972,7 +1016,7 @@ local function BuildEncounterAlertsUI(parentFrame)
                     local aencID  = entry.encID
                     local adid    = entry.diffID
                     row.enabledCB:SetOnChange(function(nsi, v)
-                        alert.enabled = v
+                        NSI:SaveAlertData(alert, "enabled", v)
                         if selectedKey == akey and selectedEncID == aencID then
                             enabledCB:SetValue(v)
                         end
@@ -1034,6 +1078,13 @@ local function BuildEncounterAlertsUI(parentFrame)
                         end)
                     end
                 end
+
+                local pinAnchor = canDelete and row.deleteBtn or row.lockIcon
+                row.pinIcon:ClearAllPoints()
+                row.pinIcon:SetPoint("RIGHT", pinAnchor, "LEFT", -4, 0)
+                row.nameLabel:ClearAllPoints()
+                row.nameLabel:SetPoint("LEFT", row.bossIcon, "RIGHT", 4, 0)
+                row.nameLabel:SetPoint("RIGHT", entry._pinned and row.pinIcon or pinAnchor, "LEFT", -4, 0)
 
                 -- Click to select (skip when clicking the enabled checkbox)
                 do
@@ -1129,6 +1180,7 @@ local function BuildEncounterAlertsUI(parentFrame)
                                     local newKey = NSI:UniqueAlertID(diffTable, false)
                                     local newData = CopyTable(entry.data)
                                     newData.ReloeReminder = nil
+                                    newData.internalID = newKey
                                     diffTable[newKey] = newData
                                     RebuildList()
                                 end })
@@ -1234,6 +1286,13 @@ local function BuildEncounterAlertsUI(parentFrame)
     screen.RefreshSelected = function()
         if selectedEncID and selectedKey then
             SelectAlert(selectedKey, selectedDiffID or filterDiffID, selectedEncID)
+        end
+    end
+
+    NSI.RefreshEncounterAlertsUIHandler = function()
+        if screen:IsShown() then
+            RebuildList()
+            screen.RefreshSelected()
         end
     end
 
@@ -1387,7 +1446,7 @@ local function BuildEncounterAlertsUI(parentFrame)
                 if type(diffTable) == "table" then
                     for akey, alert in pairs(diffTable) do
                         if type(alert) == "table" and alert.ReloeReminder then
-                            alert.enabled = enabled
+                            NSI:SaveAlertData(alert, "enabled", enabled)
                             alert.UserModifiedEnabled = true
                             NSI:FireCallback("NSRT_ALERT_CHANGED", encID, filterDiffID, akey)
                         end
@@ -1428,7 +1487,6 @@ local function BuildEncounterAlertsUI(parentFrame)
             local locale = GetLocale()
             NSRT.Alerts.Language = languagesAvailable[locale] and locale or "enUS"
         end
-        ApplyAlertLanguage(NSRT.Alerts.Language)
 
         local languageLabel = CreateLabel(addOptFrame, NSI:Loc("Alerts Language"), ADDOPT_INNER_W, 16)
         languageLabel:SetPoint("TOPLEFT", disableAllBtn.frame, "BOTTOMLEFT", 0, -8)
@@ -1812,6 +1870,7 @@ local function BuildEncounterAlertsUI(parentFrame)
     CanCopySection = function(sectionName, alert)
         if not alert then return false end
         if sectionName == "Options" then return false end
+        if alert.NoEdit and (sectionName == "Display" or sectionName == "Sound") then return false end
         if sectionName == "Trigger" and alert.ReloeReminder then return false end
         return sectionName == "Display" or sectionName == "Trigger" or sectionName == "Sound" or sectionName == "Load"
     end
@@ -2520,6 +2579,8 @@ local function BuildEncounterAlertsUI(parentFrame)
         if dispF.colorsPicker then dispF.colorsPicker:Refresh() end
     end
     dispF.SetDisplayType = SetDisplayType
+    dispF.lockOverlay = MakeLockOverlay(dispF,
+        "Display settings are fixed\nfor this alert.")
     end -- DISPLAY TAB
 
     -- ================================================================
@@ -2939,7 +3000,8 @@ local function BuildEncounterAlertsUI(parentFrame)
     )
     local soundDD = CreateDropdown(sndF, nil, soundGetItems, soundGetSelected,
         rightW, 22, "NSUIEncAlertSound",
-        { title = "Sound File", desc = "If you select a sound here it will take priority over any configured TTS. It will still use the TTS-Timer field to determine when to play" })
+        { title = "Sound File", desc = "If you select a sound here it will take priority over any configured TTS. It will still use the TTS-Timer field to determine when to play" },
+        nil, nil, true)
     soundDD:SetPoint("TOPLEFT", sndF, "TOPLEFT", 0, -178)
     sndF.soundDD = soundDD
     end -- SOUND TAB
@@ -3419,7 +3481,7 @@ local function BuildEncounterAlertsUI(parentFrame)
 
     -- Lock overlay for Sound tab (reloeCreated alerts — sound is managed by the addon)
     sndF.lockOverlay = MakeLockOverlay(sndF,
-        "Sound settings are fixed\nfor addon-created alerts.")
+        "Sound settings are fixed\nfor this alert.")
     end -- LOAD TAB
 
     -- ================================================================
@@ -3452,6 +3514,7 @@ local function BuildEncounterAlertsUI(parentFrame)
     local function SetCustomMode()
         trigF.lockOverlay:Hide()
         loadF.lockOverlay:Hide()
+        dispF.lockOverlay:Hide()
         sndF.lockOverlay:Hide()
         dispHint:Hide()
         sndHint:Hide()
@@ -3461,11 +3524,12 @@ local function BuildEncounterAlertsUI(parentFrame)
         if activeInnerTab == "Options" then activeInnerTab = "Display" end
     end
 
-    local function SetReloeCreatedMode()
+    local function SetReloeCreatedMode(alert)
         trigF.lockOverlay:Show()
         loadF.lockOverlay:Hide()
-        sndF.lockOverlay:Hide()
-        dispHint:Hide()
+        dispF.lockOverlay:SetShown(alert and alert.NoEdit == true)
+        sndF.lockOverlay:SetShown(alert and alert.NoEdit == true)
+        dispHint:SetShown(false)
         sndHint:Hide()
         nameEntry.editBox:SetEnabled(false)
         nameEntry.editBox:SetAlpha(0.45)
@@ -3490,7 +3554,7 @@ local function BuildEncounterAlertsUI(parentFrame)
             end
             return
         end
-        if NSI:IsUsingTLAlerts() then print(NSI:Loc("|cFFFF0000NSRT:|r Preview is disabled because you are displaying alerts through TimelineReminders.")) return end
+        if NSI:IsUsingTLAlerts() and not dispF._alert.isSpecialDisplay then print(NSI:Loc("|cFFFF0000NSRT:|r Preview is disabled because you are displaying alerts through TimelineReminders.")) return end
         local info = NSI:CreateReminder(dispF._alert, true)
         NSI:HideAllReminders()
         NSI:DisplayReminder(info, true)
@@ -3516,7 +3580,7 @@ local function BuildEncounterAlertsUI(parentFrame)
 
         local isReloe = entry.ReloeReminder == true
         rightPanel:Show()
-        if isReloe then SetReloeCreatedMode() else SetCustomMode() end
+        if isReloe then SetReloeCreatedMode(entry) else SetCustomMode() end
         PositionInnerTabLayout(GetConditionText(entry.isConditional))
 
         dispF._alert = entry; dispF._hardcodedEncID = nil
@@ -3611,6 +3675,34 @@ local function BuildEncounterAlertsUI(parentFrame)
         RebuildList()
         SelectInnerTab(activeInnerTab)
         RefreshSectionCopyButtons()
+    end
+
+    screen.OpenAlert = function(screenFrame, encID, diffID, internalID)
+        if not encID or not diffID or not internalID then return false end
+        local difficultyAlerts = NSRT.EncounterAlerts and NSRT.EncounterAlerts[encID] and NSRT.EncounterAlerts[encID][diffID]
+        if not difficultyAlerts then return false end
+
+        local alertKey
+        local selectedAlert
+        for key, alert in pairs(difficultyAlerts) do
+            if type(alert) == "table" and alert.internalID == internalID then
+                alertKey = key
+                selectedAlert = alert
+                break
+            end
+        end
+        if not alertKey then return false end
+
+        filterEncID = encID
+        filterDiffID = diffID
+        if selectedAlert.group and selectedAlert.group ~= "" then
+            EnsureGroup(encID, selectedAlert.group)
+            NSRT.Alerts.Groups[GroupKey(encID, selectedAlert.group)].collapsed = false
+        end
+        filterDD:Refresh()
+        RebuildList()
+        SelectAlert(alertKey, diffID, encID)
+        return true
     end
 
     SelectInnerTab("Display")

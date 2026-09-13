@@ -17,11 +17,11 @@ MythicDungeonToolsDB = {
 ["enabled"] = false,
 ["content"] = {
 ["normal"] = false,
-["lfr"] = false,
 ["heroic"] = false,
+["mythic"] = false,
 ["mythic_dungeon"] = false,
 ["mythic_plus"] = false,
-["mythic"] = false,
+["lfr"] = false,
 },
 },
 ["minimap"] = {

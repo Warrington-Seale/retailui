@@ -1,4 +1,4 @@
-## Interface: 120100, 120005, 120007
+## Interface: 120100, 120105, 120007
 
 ## Title: LittleWigs [|cffeda55fCataclysm|r]
 ## Title-deDE: LittleWigs [|cffeda55fCataclysm|r]
@@ -19,5 +19,5 @@
 ## X-Category: Party
 ## X-BigWigs-LoadOn-InstanceId: 33, 36, 568, 643, 644, 645, 657, 670, 725, 755, 859, 938, 939, 940, 2849
 
-modules.xml
 !Locales\[TextLocale].lua [AllowLoadTextLocale deDE, esES, esMX, frFR, itIT, koKR, ptBR, ruRU, zhCN, zhTW]
+modules.xml

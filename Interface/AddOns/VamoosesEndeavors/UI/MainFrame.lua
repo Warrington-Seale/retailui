@@ -279,8 +279,9 @@ function VE:CreateMainWindow()
         local housing = state.housing
         local C = VE.Constants:GetThemeColors()
 
-        -- Update coupons (cap = 2000)
-        local COUPON_CAP = 2000
+        -- Update coupons. Uncapped since 12.1 -- the threshold is a hoarding
+        -- nudge, not a waste warning, so there is no fraction to show.
+        local hoardThreshold = VE.Constants.COUPON_HOARD_THRESHOLD
         local coupons = housing.coupons
         local couponsIconID = housing.couponsIcon
         -- Always pull a fresh snapshot if we don't have one cached, even if balance is 0,
@@ -295,19 +296,13 @@ function VE:CreateMainWindow()
             end
         end
         if coupons and coupons > 0 then
-            local pct = coupons / COUPON_CAP
-            if pct >= 0.95 then -- 1900+: critical, swap icon to warning
-                self.couponsIcon:SetAtlas("Ping_Chat_Warning")
-                self.couponsText:SetText("|cFFff4444" .. coupons .. "|r")
-            elseif pct >= 0.80 then -- 1600+: warning color
-                if couponsIconID then self.couponsIcon:SetTexture(couponsIconID) end
+            if couponsIconID then self.couponsIcon:SetTexture(couponsIconID) end
+            if coupons >= hoardThreshold then -- amber: sitting on a pile, go spend it
                 self.couponsText:SetText("|cFFffaa00" .. coupons .. "|r")
             else -- normal: yellow to match house xp / contribution
-                if couponsIconID then self.couponsIcon:SetTexture(couponsIconID) end
                 self.couponsText:SetText("|cFFe8d44d" .. coupons .. "|r")
             end
             self._couponCount = coupons
-            self._couponCap = COUPON_CAP
             self.couponsIcon:Show()
             self.couponsText:Show()
         else
@@ -374,14 +369,14 @@ function VE:CreateMainWindow()
     VE.Theme:Register(seasonName, "HeaderText")
     frame.seasonName = seasonName
 
-    -- Days remaining (top right)
-    local daysRemaining = headerSection:CreateFontString(nil, "OVERLAY")
-    daysRemaining:SetPoint("TOPRIGHT", 0, -2)
-    VE.Theme.ApplyFont(daysRemaining, C, "small")
-    daysRemaining:SetTextColor(C.text_dim.r, C.text_dim.g, C.text_dim.b)
-    daysRemaining._colorType = "text_dim"
-    VE.Theme:Register(daysRemaining, "HeaderText")
-    frame.daysRemaining = daysRemaining
+    -- Endeavor countdown (top right)
+    local timeRemaining = headerSection:CreateFontString(nil, "OVERLAY")
+    timeRemaining:SetPoint("TOPRIGHT", 0, -2)
+    VE.Theme.ApplyFont(timeRemaining, C, "small")
+    timeRemaining:SetTextColor(C.text_dim.r, C.text_dim.g, C.text_dim.b)
+    timeRemaining._colorType = "text_dim"
+    VE.Theme:Register(timeRemaining, "HeaderText")
+    frame.timeRemaining = timeRemaining
 
     -- Progress bar (full width, below season name)
     local progressBar = VE.UI:CreateProgressBar(headerSection, {
@@ -620,29 +615,32 @@ function VE:CreateMainWindow()
         GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
         GameTooltip:AddLine("Community Coupons", 1, 1, 1)
         local count = frame._couponCount or 0
-        local cap = frame._couponCap or 2000
-        GameTooltip:AddLine(count .. " / " .. cap, 1, 0.82, 0)
-        if count >= cap * 0.95 then
-            GameTooltip:AddLine("Near cap! Spend coupons to avoid waste.", 1, 0.3, 0.3)
-        elseif count >= cap * 0.80 then
-            GameTooltip:AddLine("Approaching cap.", 1, 0.65, 0.3)
+        local hoardThreshold = VE.Constants.COUPON_HOARD_THRESHOLD
+        GameTooltip:AddLine(tostring(count), 1, 0.82, 0)
+        if count >= hoardThreshold then
+            GameTooltip:AddLine("That is a big pile -- coupons only help once you spend them.", 1, 0.65, 0.3)
         end
 
-        -- Per-character breakdown (from VE_DB.characterCoupons snapshots)
+        -- Per-character breakdown (from VE_DB.characterCoupons snapshots).
+        -- Alts holding nothing are dropped: they cost a row each and add nothing
+        -- to the total, which is how the list grew longer than the tooltip.
         local chars = VE_DB and VE_DB.characterCoupons
-        if chars and next(chars) then
+        local sorted = {}
+        if chars then
+            for k, v in pairs(chars) do
+                if (v.coupons or 0) > 0 then
+                    sorted[#sorted + 1] = { key = k, data = v }
+                end
+            end
+        end
+        if #sorted > 0 then
             GameTooltip:AddLine(" ")
             GameTooltip:AddLine("Characters", 0.7, 0.7, 0.7)
 
-            local sorted = {}
-            for k, v in pairs(chars) do
-                sorted[#sorted + 1] = { key = k, data = v }
-            end
-            table.sort(sorted, function(a, b) return (a.data.coupons or 0) > (b.data.coupons or 0) end)
+            table.sort(sorted, function(a, b) return a.data.coupons > b.data.coupons end)
 
             local currentKey = VE:GetCharacterKey()
             local total = 0
-            local totalCap = 0
             for _, entry in ipairs(sorted) do
                 local d = entry.data
                 local classColor = (RAID_CLASS_COLORS and d.class and RAID_CLASS_COLORS[d.class]) or { r = 1, g = 1, b = 1 }
@@ -650,23 +648,19 @@ function VE:CreateMainWindow()
                 if entry.key == currentKey then
                     nameStr = nameStr .. " |cFF888888(current)|r"
                 end
-                local charCoupons = d.coupons or 0
-                local charCap = d.cap or 2000
+                local charCoupons = d.coupons
                 local countStr
-                if charCoupons >= charCap * 0.95 then
-                    countStr = string.format("|cFFff4444%d|r / %d", charCoupons, charCap)
-                elseif charCoupons >= charCap * 0.80 then
-                    countStr = string.format("|cFFffaa00%d|r / %d", charCoupons, charCap)
+                if charCoupons >= hoardThreshold then
+                    countStr = string.format("|cFFffaa00%d|r", charCoupons)
                 else
-                    countStr = string.format("%d / %d", charCoupons, charCap)
+                    countStr = tostring(charCoupons)
                 end
                 GameTooltip:AddDoubleLine(nameStr, countStr, classColor.r, classColor.g, classColor.b, 1, 0.82, 0)
                 total = total + charCoupons
-                totalCap = totalCap + charCap
             end
 
             GameTooltip:AddLine(" ")
-            GameTooltip:AddDoubleLine("Total", string.format("%d / %d", total, totalCap), 1, 1, 1, 1, 0.82, 0)
+            GameTooltip:AddDoubleLine("Total", tostring(total), 1, 1, 1, 1, 0.82, 0)
         end
 
         GameTooltip:Show()
@@ -805,11 +799,12 @@ function VE:CreateMainWindow()
 
         self.seasonName:SetText(state.endeavor.seasonName or "Housing Endeavors")
 
-        if state.endeavor.daysRemaining and state.endeavor.daysRemaining > 0 then
-            self.daysRemaining:SetText(state.endeavor.daysRemaining .. " Days Remaining")
-        else
-            self.daysRemaining:SetText("")
-        end
+        -- Count down off the absolute end time rather than the whole-day
+        -- figure: seasonEndTime keeps sub-day precision, so the final 24 hours
+        -- read as hours/minutes instead of blanking the line.
+        local endTime = state.endeavor.seasonEndTime
+        local span = endTime > 0 and VE:FormatDuration(endTime - time()) or nil
+        self.timeRemaining:SetText(span and (span .. " Remaining") or "")
 
         -- Set final reward texture from last milestone (for maxed display)
         local milestones = state.endeavor.milestones
@@ -1234,7 +1229,7 @@ function VE:CreateMainWindow()
             if frame.isMinimized then
                 -- Hide header elements (keep progress bar and stats row)
                 frame.seasonName:Hide()
-                frame.daysRemaining:Hide()
+                frame.timeRemaining:Hide()
                 frame.dropdownRow:Hide()
                 frame.activeContainer:Hide()
                 -- Reposition progress bar directly under title bar
@@ -1258,7 +1253,7 @@ function VE:CreateMainWindow()
             else
                 -- Restore header elements
                 frame.seasonName:Show()
-                frame.daysRemaining:Show()
+                frame.timeRemaining:Show()
                 frame.dropdownRow:Show()
                 frame.activeContainer:Show()
                 -- Restore progress bar position

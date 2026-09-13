@@ -79,3 +79,49 @@ BigWigsAPI.SetBossModuleLocale("Crown of the Cosmos", {
 	aspect_of_the_end = "Liens",
 	devouring_cosmos = "Prochaine plateforme",
 })
+
+-- The Venomous Abyss
+
+BigWigsAPI.SetBossModuleLocale("Nek'zali the Soulcoiler", {
+	possession_barrage = "Barrage",
+})
+
+BigWigsAPI.SetBossModuleLocale("The Lost Explorers", {
+	trader_gebbo = "Gebbo",
+	first_mate_nama = "Nama",
+	scrollsage_iku = "Iku",
+})
+
+BigWigsAPI.SetBossModuleLocale("Vashnik the Malignant", {
+	malignant_catalyst = "Catalyseur", -- Short for Malignant Catalyst
+})
+
+BigWigsAPI.SetBossModuleLocale("The Twin Fangs", {
+	coiling_toxin = "Toxine", -- Short for Coiling Toxin
+	corrosive_spit = "Crachat", -- Short for Corrosive Spit
+})
+
+BigWigsAPI.SetBossModuleLocale("Ula'tek", {
+	mephitic_thrash = "Balayage",
+	call_of_the_serpent = "Œufs",
+	gore_rattle = "Queue",
+	grasping_fangs = "Liens",
+	circling_prey = "Destruction de plateforme",
+	p3_knock_up = "Envoi en l'air",
+
+	toxic_womb = "Apparition d'avortons",
+	fester_burst = "Bulle d'avortons",
+	toxic_incubation = "Vagues d'avortons",
+
+	count_amount_side = "%s (%d/%d) %s",
+	count_side = "%s (%d) %s",
+	fester_burst_count = "%s (%d-%d)",
+
+	custom_select_limit_warnings = "Groupe d'anneaux spectraux",
+	custom_select_limit_warnings_desc = "N'afficher que les barres de votre groupe de soak (gauche ou droite). Le côté droit est le premier dans la P1, le côté gauche est le premier dans l'Intervalle.",
+	custom_select_limit_warnings_value1 = "Afficher les avertissements des deux côtés.",
+	custom_select_limit_warnings_value2 = "Afficher les avertissements du côté gauche uniquement.",
+	custom_select_limit_warnings_value3 = "Afficher les avertissements du côté droit uniquement.",
+	custom_select_limit_warnings_value4 = "Groupes impaires gauche, groupes pairs droits.",
+	custom_select_limit_warnings_value5 = "Mythique : grp. 1 & 2 gauche, grp. 3 & 4 droite. Autre diff. : grp. 1/2/3 gauche, grp. 4/5/6 droite.",
+})

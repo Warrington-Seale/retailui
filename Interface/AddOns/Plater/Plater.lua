@@ -383,7 +383,6 @@ Plater.AnchorNamesByPhraseId = {
 --Plater allocate several values in memory to save performance (cpu), this may increase memory usage
 --example: intead of querying Plater.db.profile.tank it just hold a pointer to that table in the variable DB_AGGRO_TANK_COLORS, and this pointer is updated when the user changes something in the options panel
 
-	local DB_NUMBER_REGION_EAST_ASIA
 	local DB_TICK_THROTTLE
 	local DB_LERP_COLOR
 	local DB_LERP_COLOR_SPEED
@@ -1502,7 +1501,7 @@ Plater.AnchorNamesByPhraseId = {
 		Plater.UpdateAllPlates()
 		
 		if (PlaterOptionsPanelFrame) then
-			PlaterOptionsPanelFrame.RefreshOptionsFrame()
+			--C_Timer.After(1, PlaterOptionsPanelFrame.RefreshOptionsFrame) -- runs through "too long" executes... should be fine
 		end
 		
 		Plater.UpdateSettingsCache()
@@ -1787,7 +1786,6 @@ Plater.AnchorNamesByPhraseId = {
 		DB_AURA_ALPHA = profile.aura_alpha
 		DB_AURA_SEPARATE_BUFFS = profile.buffs_on_aura2
 
-		DB_NUMBER_REGION_EAST_ASIA = Plater.db.profile.number_region == "eastasia"
 		platerInternal.ReBuildAbbreviateConfig()
 		
 		DB_TICK_THROTTLE = profile.update_throttle
@@ -2109,172 +2107,6 @@ Plater.AnchorNamesByPhraseId = {
 		unitFrame.PlaterRaidTargetFrame:SetFrameLevel(unitFrame.healthBar:GetFrameLevel() + 25)
 	end
 	
-	--> regional format numbers
-	do
-		local eastAsiaMyriads_1k, eastAsiaMyriads_10k, eastAsiaMyriads_1B
-		if (GetLocale() == "koKR") then
-			eastAsiaMyriads_1k, eastAsiaMyriads_10k, eastAsiaMyriads_1B = "천", "만", "억"
-			
-		elseif (GetLocale() == "zhCN") then
-			eastAsiaMyriads_1k, eastAsiaMyriads_10k, eastAsiaMyriads_1B = "千", "万", "亿"
-			
-		elseif (GetLocale() == "zhTW") then
-			eastAsiaMyriads_1k, eastAsiaMyriads_10k, eastAsiaMyriads_1B = "千", "萬", "億"
-			
-		else
-			eastAsiaMyriads_1k, eastAsiaMyriads_10k, eastAsiaMyriads_1B = "천", "만", "억"
-		end
-
-		platerInternal.abbreviateConfig = C_StringUtil and C_StringUtil.GetDefaultAbbreviationBreakpoints and C_StringUtil.GetDefaultAbbreviationBreakpoints(GetLocale()) -- default it
-		platerInternal.ReBuildAbbreviateConfig = function()
-			if not platerInternal.abbreviateConfig then return end -- if it could not be defaulted, skip this.
-			local myriadK, myriadM, myriadB, myriadT
-			if DB_NUMBER_REGION_EAST_ASIA then
-				-- use the easter locale
-				myriadM, myriadB = eastAsiaMyriads_10k, eastAsiaMyriads_1B
-				platerInternal.abbreviateConfig = {
-					breakpointData = {
-						{
-							breakpoint=1000000000,
-							significandDivisor=100000000,
-							fractionDivisor=1,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadB
-						}, 
-						{
-							breakpoint=100000000, 
-							significandDivisor=10000000,
-							fractionDivisor=10,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadB
-						}, 
-						{
-							breakpoint=100000,
-							significandDivisor=10000,
-							fractionDivisor=1,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadM
-						}, 
-						{
-							breakpoint=10000,
-							significandDivisor=1000,
-							fractionDivisor=10,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadM
-						}
-					}
-				}
-			else
-				-- default to eastern locale
-				myriadK, myriadM, myriadB, myriadT = "K", "M", "B", "T"
-				platerInternal.abbreviateConfig = {
-					breakpointData = {
-						{ 
-							breakpoint=10000000000000,
-							significandDivisor=1000000000000,
-							fractionDivisor=1,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadT
-						},
-						{
-							breakpoint=1000000000000,
-							significandDivisor=100000000000,
-							fractionDivisor=10,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadT
-						},
-						{
-							breakpoint=10000000000,
-							significandDivisor=1000000000,
-							fractionDivisor=1,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadB
-						},
-						{
-							breakpoint=1000000000,
-							significandDivisor=100000000,
-							fractionDivisor=10,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadB 
-						}, 
-						{
-							breakpoint=10000000,
-							significandDivisor=1000000,
-							fractionDivisor=1,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadM
-						}, 
-						{
-							breakpoint=1000000,
-							significandDivisor=100000,
-							fractionDivisor=10,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadM
-						}, 
-						{
-							breakpoint=10000,
-							significandDivisor=1000,
-							fractionDivisor=1,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadK
-						}, 
-						{
-							breakpoint=1000,
-							significandDivisor=100,
-							fractionDivisor=10,
-							abbreviationIsGlobal=false,
-							abbreviation=myriadK
-						}
-					}
-				}
-			end
-		end
-		Plater.GetAbbreviateConfig = function ()
-			return platerInternal.abbreviateConfig
-		end
-
-		function Plater.FormatNumber (number)
-			if (DB_NUMBER_REGION_EAST_ASIA) then
-				if (number > 99999999) then
-					return format ("%.2f", number/100000000) .. eastAsiaMyriads_1B
-					
-				elseif (number > 999999) then
-					return format ("%.2f", number/10000) .. eastAsiaMyriads_10k
-					
-				elseif (number > 99999) then
-					return floor (number/10000) .. eastAsiaMyriads_10k
-					
-				elseif (number > 9999) then
-					return format ("%.1f", (number/10000)) .. eastAsiaMyriads_10k
-					
-				elseif (number > 999) then
-					return format ("%.1f", (number/1000)) .. eastAsiaMyriads_1k
-					
-				end
-				
-				return format ("%.1f", number)
-			else
-				if (number > 999999999) then
-					return format ("%.2fB", number/1000000000)
-					
-				elseif (number > 999999) then
-					return format ("%.2fM", number/1000000)
-					
-				elseif (number > 99999) then
-					return floor (number/1000) .. "K"
-					
-				elseif (number > 999) then
-					return format ("%.1fK", (number/1000))
-					
-				end
-				
-				return floor (number)			
-			end
-		end
-
-	end
-	
-
 	
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 --> event handler
@@ -2369,10 +2201,20 @@ Plater.AnchorNamesByPhraseId = {
 					--Plater.ScheduleUpdateForNameplate (plateFrame, unit)
 					
 					Plater.RunScheduledUpdate({unitId = unit}) -- do this now
-					if plateFrame.unitFrame.PlaterOnScreen then
-						Plater.CreateOrUpdateAuraContainers(plateFrame.unitFrame, unit)
+					if plateFrame.unitFrame.PlaterOnScreen then -- should no longer be needed
+						Plater.CreateOrUpdateAuraContainers(plateFrame.unitFrame, unit, true) -- maybe still need this
 					end
 				end
+			elseif NAMEPLATES_ON_SCREEN_CACHE[unit] then
+				-- no nameplate anymore, hide it
+				Plater.RunFunctionForEvent ("NAME_PLATE_UNIT_REMOVED", unit)
+			end
+		end,
+
+		UNIT_CLASSIFICATION_CHANGED = function (_, unit)
+			if NAMEPLATES_ON_SCREEN_CACHE[unit] then -- this is on screen, refresh it.
+				Plater.RunFunctionForEvent ("NAME_PLATE_UNIT_REMOVED", unit)
+				Plater.RunFunctionForEvent ("NAME_PLATE_UNIT_ADDED", unit)
 			end
 		end,
 		
@@ -2388,7 +2230,7 @@ Plater.AnchorNamesByPhraseId = {
 			if (plateFrame) then
 				Plater.ScheduleUpdateForNameplate (plateFrame)
 				if plateFrame.unitFrame.PlaterOnScreen then
-					Plater.CreateOrUpdateAuraContainers(plateFrame.unitFrame, unit)
+					Plater.CreateOrUpdateAuraContainers(plateFrame.unitFrame, unit) -- might still need this
 				end
 			end
 		end,
@@ -3262,14 +3104,16 @@ Plater.AnchorNamesByPhraseId = {
 				--overlay for the healthbar showing the healthbar of the execute (shown when the unit is on execute range)
 				local executeRange = healthBar:CreateTexture (nil, "border")
 				executeRange:SetTexture ([[Interface\AddOns\Plater\images\execute_bar]])
-				PixelUtil.SetPoint (executeRange, "left", healthBar, "left", 0, 0)
+				--PixelUtil.SetPoint (executeRange, "left", healthBar, "left", 0, 0)
+				executeRange:SetPoint ("left", healthBar, "left", 0, 0)
 				healthBar.executeRange = executeRange
 				healthBar.ExecuteRangeBar = executeRange --alias for scripting
 				executeRange:Hide()
 				
 				local executeRangeUpper = healthBar:CreateTexture (nil, "border")
 				executeRangeUpper:SetTexture ([[Interface\AddOns\Plater\images\execute_bar]])
-				PixelUtil.SetPoint (executeRangeUpper, "left", healthBar, "left", 0, 0)
+				--PixelUtil.SetPoint (executeRangeUpper, "left", healthBar, "left", 0, 0)
+				executeRangeUpper:SetPoint ("left", healthBar, "left", 0, 0)
 				healthBar.executeRangeUpper = executeRangeUpper
 				healthBar.ExecuteRangeUpperBar = executeRangeUpper --alias for scripting
 				executeRangeUpper:Hide()
@@ -3281,8 +3125,10 @@ Plater.AnchorNamesByPhraseId = {
 				executeGlowUp:SetHeight (32)		
 				executeGlowUp:SetBlendMode ("ADD")
 				executeGlowUp:Hide()
-				PixelUtil.SetPoint (executeGlowUp, "bottomright", healthBar, "topright", 0, 0)
-				PixelUtil.SetPoint (executeGlowUp, "bottomleft", healthBar, "topleft", 0, 0)
+				--PixelUtil.SetPoint (executeGlowUp, "bottomright", healthBar, "topright", 0, 0)
+				--PixelUtil.SetPoint (executeGlowUp, "bottomleft", healthBar, "topleft", 0, 0)
+				executeGlowUp:SetPoint ("bottomright", healthBar, "topright", 0, 0)
+				executeGlowUp:SetPoint ("bottomleft", healthBar, "topleft", 0, 0)
 				healthBar.ExecuteGlowUp = executeGlowUp
 				
 				local executeGlowDown = healthBar:CreateTexture (nil, "overlay")
@@ -3291,8 +3137,10 @@ Plater.AnchorNamesByPhraseId = {
 				executeGlowDown:SetHeight (32)
 				executeGlowDown:SetBlendMode ("ADD")
 				executeGlowDown:Hide()
-				PixelUtil.SetPoint (executeGlowDown, "topright", healthBar, "bottomright", 0, 0)
-				PixelUtil.SetPoint (executeGlowDown, "topleft", healthBar, "bottomleft", 0, 0)
+				--PixelUtil.SetPoint (executeGlowDown, "topright", healthBar, "bottomright", 0, 0)
+				--PixelUtil.SetPoint (executeGlowDown, "topleft", healthBar, "bottomleft", 0, 0)
+				executeGlowDown:SetPoint ("topright", healthBar, "bottomright", 0, 0)
+				executeGlowDown:SetPoint ("topleft", healthBar, "bottomleft", 0, 0)
 				healthBar.ExecuteGlowDown = executeGlowDown
 				
 				local executeGlowUpperUp = healthBar:CreateTexture (nil, "overlay")
@@ -3301,8 +3149,10 @@ Plater.AnchorNamesByPhraseId = {
 				executeGlowUpperUp:SetHeight (32)		
 				executeGlowUpperUp:SetBlendMode ("ADD")
 				executeGlowUpperUp:Hide()
-				PixelUtil.SetPoint (executeGlowUpperUp, "bottomright", healthBar, "topright", 0, 0)
-				PixelUtil.SetPoint (executeGlowUpperUp, "bottomleft", healthBar, "topleft", 0, 0)
+				--PixelUtil.SetPoint (executeGlowUpperUp, "bottomright", healthBar, "topright", 0, 0)
+				--PixelUtil.SetPoint (executeGlowUpperUp, "bottomleft", healthBar, "topleft", 0, 0)
+				executeGlowUpperUp:SetPoint ("bottomright", healthBar, "topright", 0, 0)
+				executeGlowUpperUp:SetPoint ("bottomleft", healthBar, "topleft", 0, 0)
 				healthBar.ExecuteGlowUpperUp = executeGlowUpperUp
 				
 				local executeGlowUpperDown = healthBar:CreateTexture (nil, "overlay")
@@ -3311,8 +3161,10 @@ Plater.AnchorNamesByPhraseId = {
 				executeGlowUpperDown:SetHeight (32)
 				executeGlowUpperDown:SetBlendMode ("ADD")
 				executeGlowUpperDown:Hide()
-				PixelUtil.SetPoint (executeGlowUpperDown, "topright", healthBar, "bottomright", 0, 0)
-				PixelUtil.SetPoint (executeGlowUpperDown, "topleft", healthBar, "bottomleft", 0, 0)
+				--PixelUtil.SetPoint (executeGlowUpperDown, "topright", healthBar, "bottomright", 0, 0)
+				--PixelUtil.SetPoint (executeGlowUpperDown, "topleft", healthBar, "bottomleft", 0, 0)
+				executeGlowUpperDown:SetPoint ("topright", healthBar, "bottomright", 0, 0)
+				executeGlowUpperDown:SetPoint ("topleft", healthBar, "bottomleft", 0, 0)
 				healthBar.ExecuteGlowUpperDown = executeGlowUpperDown
 				
 				local executeGlowAnimationOnPlay = function (self)
@@ -3341,7 +3193,8 @@ Plater.AnchorNamesByPhraseId = {
 			--> create the raid target widgets
 				--raid target inside the health bar
 				local raidTarget = healthBar:CreateTexture (nil, "overlay")
-				PixelUtil.SetPoint (raidTarget, "right", raidTarget:GetParent(), "right", -2, 0)
+				--PixelUtil.SetPoint (raidTarget, "right", raidTarget:GetParent(), "right", -2, 0)
+				raidTarget:SetPoint ("right", raidTarget:GetParent(), "right", -2, 0)
 				plateFrame.RaidTarget = raidTarget
 				healthBar.ExtraRaidMark = raidTarget --alias for scripting
 
@@ -3350,7 +3203,8 @@ Plater.AnchorNamesByPhraseId = {
 				--unitFrame.PlaterRaidTargetFrame = CreateFrame ("frame", nil, unitFrame.healthBar, BackdropTemplateMixin and "BackdropTemplate")
 				local targetFrame = unitFrame.PlaterRaidTargetFrame
 				targetFrame:SetSize (22, 22)
-				PixelUtil.SetPoint (targetFrame, "right", healthBar, "left", -15, 0)
+				--PixelUtil.SetPoint (targetFrame, "right", healthBar, "left", -15, 0)
+				targetFrame:SetPoint ("right", healthBar, "left", -15, 0)
 				
 				--icon
 				targetFrame.RaidTargetIcon = targetFrame:CreateTexture (nil, "artwork")
@@ -3411,7 +3265,8 @@ Plater.AnchorNamesByPhraseId = {
 				local ActorNameSpecial = unitFrame:CreateFontString (nil, "artwork", "GameFontNormal")
 				unitFrame.ActorNameSpecial = ActorNameSpecial --alias for scripts
 				plateFrame.ActorNameSpecial = ActorNameSpecial
-				PixelUtil.SetPoint (plateFrame.ActorNameSpecial, "center", plateFrame, "center", 0, 0)
+				--PixelUtil.SetPoint (plateFrame.ActorNameSpecial, "center", plateFrame, "center", 0, 0)
+				plateFrame.ActorNameSpecial:SetPoint ("center", plateFrame, "center", 0, 0)
 				plateFrame.ActorNameSpecial:Hide()
 				
 				local ActorTitleSpecial = unitFrame:CreateFontString (nil, "artwork", "GameFontNormal")
@@ -3420,7 +3275,8 @@ Plater.AnchorNamesByPhraseId = {
 				end
 				unitFrame.ActorTitleSpecial = ActorTitleSpecial --alias for scripts
 				plateFrame.ActorTitleSpecial = ActorTitleSpecial
-				PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", ActorNameSpecial, "bottom", 0, -2)
+				--PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", ActorNameSpecial, "bottom", 0, -2)
+				plateFrame.ActorTitleSpecial:SetPoint ("top", ActorNameSpecial, "bottom", 0, -2)
 				plateFrame.ActorTitleSpecial:Hide()
 				
 				
@@ -3588,10 +3444,14 @@ Plater.AnchorNamesByPhraseId = {
 				--create a border using default borders from the retail game
 				local healthBarBorder = DF:CreateFullBorder(nil, unitFrame.healthBar)
 				local borderOffset = 0 -- -1 * (Plater.db.profile.use_ui_parent and (UIParent:GetEffectiveScale() * Plater.db.profile.ui_parent_scale_tune)) or 1
-				PixelUtil.SetPoint (healthBarBorder, "TOPLEFT", unitFrame.healthBar, "TOPLEFT", -borderOffset, borderOffset)
-				PixelUtil.SetPoint (healthBarBorder, "TOPRIGHT", unitFrame.healthBar, "TOPRIGHT", borderOffset, borderOffset)
-				PixelUtil.SetPoint (healthBarBorder, "BOTTOMLEFT", unitFrame.healthBar, "BOTTOMLEFT", -borderOffset, -borderOffset)
-				PixelUtil.SetPoint (healthBarBorder, "BOTTOMRIGHT", unitFrame.healthBar, "BOTTOMRIGHT", borderOffset, -borderOffset)
+				--PixelUtil.SetPoint (healthBarBorder, "TOPLEFT", unitFrame.healthBar, "TOPLEFT", -borderOffset, borderOffset)
+				--PixelUtil.SetPoint (healthBarBorder, "TOPRIGHT", unitFrame.healthBar, "TOPRIGHT", borderOffset, borderOffset)
+				--PixelUtil.SetPoint (healthBarBorder, "BOTTOMLEFT", unitFrame.healthBar, "BOTTOMLEFT", -borderOffset, -borderOffset)
+				--PixelUtil.SetPoint (healthBarBorder, "BOTTOMRIGHT", unitFrame.healthBar, "BOTTOMRIGHT", borderOffset, -borderOffset)
+				healthBarBorder:SetPoint ("TOPLEFT", unitFrame.healthBar, "TOPLEFT", -borderOffset, borderOffset)
+				healthBarBorder:SetPoint ("TOPRIGHT", unitFrame.healthBar, "TOPRIGHT", borderOffset, borderOffset)
+				healthBarBorder:SetPoint ("BOTTOMLEFT", unitFrame.healthBar, "BOTTOMLEFT", -borderOffset, -borderOffset)
+				healthBarBorder:SetPoint ("BOTTOMRIGHT", unitFrame.healthBar, "BOTTOMRIGHT", borderOffset, -borderOffset)
 				healthBarBorder.Left:SetDrawLayer("OVERLAY", 6)
 				healthBarBorder.Right:SetDrawLayer("OVERLAY", 6)
 				healthBarBorder.Top:SetDrawLayer("OVERLAY", 6)
@@ -3599,10 +3459,14 @@ Plater.AnchorNamesByPhraseId = {
 				unitFrame.healthBar.border = healthBarBorder
 				
 				local powerBarBorder = DF:CreateFullBorder(nil, unitFrame.powerBar)
-				PixelUtil.SetPoint (powerBarBorder, "TOPLEFT", unitFrame.powerBar, "TOPLEFT", -borderOffset, borderOffset)
-				PixelUtil.SetPoint (powerBarBorder, "TOPRIGHT", unitFrame.powerBar, "TOPRIGHT", borderOffset, borderOffset)
-				PixelUtil.SetPoint (powerBarBorder, "BOTTOMLEFT", unitFrame.powerBar, "BOTTOMLEFT", -borderOffset, -borderOffset)
-				PixelUtil.SetPoint (powerBarBorder, "BOTTOMRIGHT", unitFrame.powerBar, "BOTTOMRIGHT", borderOffset, -borderOffset)
+				--PixelUtil.SetPoint (powerBarBorder, "TOPLEFT", unitFrame.powerBar, "TOPLEFT", -borderOffset, borderOffset)
+				--PixelUtil.SetPoint (powerBarBorder, "TOPRIGHT", unitFrame.powerBar, "TOPRIGHT", borderOffset, borderOffset)
+				--PixelUtil.SetPoint (powerBarBorder, "BOTTOMLEFT", unitFrame.powerBar, "BOTTOMLEFT", -borderOffset, -borderOffset)
+				--PixelUtil.SetPoint (powerBarBorder, "BOTTOMRIGHT", unitFrame.powerBar, "BOTTOMRIGHT", borderOffset, -borderOffset)
+				powerBarBorder:SetPoint ("TOPLEFT", unitFrame.powerBar, "TOPLEFT", -borderOffset, borderOffset)
+				powerBarBorder:SetPoint ("TOPRIGHT", unitFrame.powerBar, "TOPRIGHT", borderOffset, borderOffset)
+				powerBarBorder:SetPoint ("BOTTOMLEFT", unitFrame.powerBar, "BOTTOMLEFT", -borderOffset, -borderOffset)
+				powerBarBorder:SetPoint ("BOTTOMRIGHT", unitFrame.powerBar, "BOTTOMRIGHT", borderOffset, -borderOffset)
 				powerBarBorder.Left:SetDrawLayer("OVERLAY", 6)
 				powerBarBorder.Right:SetDrawLayer("OVERLAY", 6)
 				powerBarBorder.Top:SetDrawLayer("OVERLAY", 6)
@@ -3623,8 +3487,10 @@ Plater.AnchorNamesByPhraseId = {
 			--> focus indicator
 				local focusIndicator = healthBar:CreateTexture(nil, "overlay")
 				focusIndicator:SetDrawLayer("overlay", 2)
-				PixelUtil.SetPoint(focusIndicator, "topleft", healthBar, "topleft", 0, 0)
-				PixelUtil.SetPoint(focusIndicator, "bottomright", healthBar, "bottomright", 0, 0)
+				--PixelUtil.SetPoint(focusIndicator, "topleft", healthBar, "topleft", 0, 0)
+				--PixelUtil.SetPoint(focusIndicator, "bottomright", healthBar, "bottomright", 0, 0)
+				focusIndicator:SetPoint("topleft", healthBar, "topleft", 0, 0)
+				focusIndicator:SetPoint("bottomright", healthBar, "bottomright", 0, 0)
 				focusIndicator:Hide()
 				healthBar.FocusIndicator = focusIndicator
 				plateFrame.FocusIndicator = focusIndicator
@@ -3632,8 +3498,10 @@ Plater.AnchorNamesByPhraseId = {
 			
 			--> low aggro warning
 				unitFrame.aggroGlowUpper = plateFrame:CreateTexture (nil, "background", nil, -4)
-				PixelUtil.SetPoint (unitFrame.aggroGlowUpper, "bottomleft", unitFrame.healthBar, "topleft", -3, 0)
-				PixelUtil.SetPoint (unitFrame.aggroGlowUpper, "bottomright", unitFrame.healthBar, "topright", 3, 0)
+				--PixelUtil.SetPoint (unitFrame.aggroGlowUpper, "bottomleft", unitFrame.healthBar, "topleft", -3, 0)
+				--PixelUtil.SetPoint (unitFrame.aggroGlowUpper, "bottomright", unitFrame.healthBar, "topright", 3, 0)
+				unitFrame.aggroGlowUpper:SetPoint ("bottomleft", unitFrame.healthBar, "topleft", -3, 0)
+				unitFrame.aggroGlowUpper:SetPoint ("bottomright", unitFrame.healthBar, "topright", 3, 0)
 				unitFrame.aggroGlowUpper:SetTexture ([[Interface\BUTTONS\UI-Panel-Button-Glow]])
 				unitFrame.aggroGlowUpper:SetTexCoord (0, 95/128, 0, 9/64)
 				unitFrame.aggroGlowUpper:SetBlendMode ("ADD")
@@ -3641,8 +3509,10 @@ Plater.AnchorNamesByPhraseId = {
 				unitFrame.aggroGlowUpper:Hide()
 				
 				unitFrame.aggroGlowLower = plateFrame:CreateTexture (nil, "background", nil, -4)
-				PixelUtil.SetPoint (unitFrame.aggroGlowLower, "topleft", unitFrame.healthBar, "bottomleft", -3, 0)
-				PixelUtil.SetPoint (unitFrame.aggroGlowLower, "topright", unitFrame.healthBar, "bottomright", 3, 0)
+				--PixelUtil.SetPoint (unitFrame.aggroGlowLower, "topleft", unitFrame.healthBar, "bottomleft", -3, 0)
+				--PixelUtil.SetPoint (unitFrame.aggroGlowLower, "topright", unitFrame.healthBar, "bottomright", 3, 0)
+				unitFrame.aggroGlowLower:SetPoint ("topleft", unitFrame.healthBar, "bottomleft", -3, 0)
+				unitFrame.aggroGlowLower:SetPoint ("topright", unitFrame.healthBar, "bottomright", 3, 0)
 				unitFrame.aggroGlowLower:SetTexture ([[Interface\BUTTONS\UI-Panel-Button-Glow]])
 				unitFrame.aggroGlowLower:SetTexCoord (0, 95/128, 30/64, 38/64)
 				unitFrame.aggroGlowLower:SetBlendMode ("ADD")
@@ -3662,7 +3532,8 @@ Plater.AnchorNamesByPhraseId = {
 				--unitFrame.softInteractIconFrame.Mask:SetScale(1)
 				unitFrame.softInteractIcon:AddMaskTexture(unitFrame.softInteractIconFrame.Mask)
 				unitFrame.softInteractIconFrame.Mask:ClearAllPoints()
-				PixelUtil.SetPoint(unitFrame.softInteractIconFrame.Mask, "CENTER", unitFrame.softInteractIconFrame, "CENTER", 0, 0)
+				--PixelUtil.SetPoint(unitFrame.softInteractIconFrame.Mask, "CENTER", unitFrame.softInteractIconFrame, "CENTER", 0, 0)
+				unitFrame.softInteractIconFrame.Mask:SetPoint("CENTER", unitFrame.softInteractIconFrame, "CENTER", 0, 0)
 				unitFrame.softInteractIconFrame.Mask:SetAllPoints(unitFrame.softInteractIcon)
 				unitFrame.softInteractIconFrame:Hide()
 				unitFrame.softInteractIcon.anchor = { side = 8, x = 0, y = 18, }
@@ -3670,6 +3541,11 @@ Plater.AnchorNamesByPhraseId = {
 				--Plater.SetAnchor(unitFrame.softInteractIconFrame, unitFrame.softInteractIcon.anchor or { side = 8, x = 0, y = 18, }, unitFrame.healthBar)
 				--Plater.SetAnchor(unitFrame.softInteractIconFrame, unitFrame.softInteractIcon.anchor or { side = 8, x = 0, y = 18, }, unitFrame.PlateFrame)
 			
+
+				if PixelUtil.SetRoundLayoutToNearestPixelRecursively then
+					PixelUtil.SetRoundLayoutToNearestPixelRecursively(unitFrame)
+				end
+
 			--> name plate created hook
 				if (HOOK_NAMEPLATE_CREATED.ScriptAmount > 0) then
 					for i = 1, HOOK_NAMEPLATE_CREATED.ScriptAmount do
@@ -3922,7 +3798,6 @@ Plater.AnchorNamesByPhraseId = {
 			
 			plateFrame.unitFrame.PlaterOnScreen = true
 			
-			Plater.AddToAuraUpdate(unitID, plateFrame.unitFrame)
 			-- update DBM and BigWigs nameplate auras
 			Plater.EnsureUpdateBossModAuras(plateFrame [MEMBER_GUID])
 			
@@ -3980,6 +3855,8 @@ Plater.AnchorNamesByPhraseId = {
 			plateFrame.actorType = actorType
 			unitFrame.actorType = actorType
 			unitFrame.ActorType = actorType --exposed to scripts
+
+			Plater.AddToAuraUpdate(unitID, plateFrame.unitFrame)
 			
 			--set the unit
 			unitFrame:SetUnit (unitID)
@@ -4372,7 +4249,7 @@ Plater.AnchorNamesByPhraseId = {
 		NAME_PLATE_UNIT_REMOVED = function (event, unitBarId)
 			--ViragDevTool_AddData({ctime = GetTime(), unit = unitBarId or "nil", stack = debugstack()}, "NAME_PLATE_UNIT_REMOVED - " .. (unitBarId or "nil"))
 			---@type plateframe
-			local plateFrame = C_NamePlate.GetNamePlateForUnit (unitBarId)
+			local plateFrame = C_NamePlate.GetNamePlateForUnit (unitBarId) or (NAMEPLATES_ON_SCREEN_CACHE[unitBarId] and NAMEPLATES_ON_SCREEN_CACHE[unitBarId].PlateFrame) -- we had one that requires unloading.
 			
 			Plater.RemoveFromAuraUpdate (unitBarId, plateFrame.unitFrame) -- ensure no updates
 			
@@ -4698,6 +4575,8 @@ end
 
 function Plater.OnInit() --private --~oninit ~init
 	LibStub ("AceDBOptions-3.0"):GetOptionsTable (Plater.db, true) -- register this now, to ensure no default "realm", "char - realm" profiles are shown in profiles management
+
+	Plater.StartPreCreateAuraContainers()
 	
 	-- Inspired by and mostly copied from https://github.com/Cidan/BetterBags/pull/934/, thanks Cidan
 	-- PatchWerk breaks WoW addons by patching _G functions and overwriting addon code.
@@ -5029,6 +4908,7 @@ function Plater.OnInit() --private --~oninit ~init
 		
 		Plater.EventHandlerFrame:RegisterEvent ("UNIT_FLAGS")
 		Plater.EventHandlerFrame:RegisterEvent ("UNIT_FACTION")
+		Plater.EventHandlerFrame:RegisterEvent ("UNIT_CLASSIFICATION_CHANGED")
 		
 		Plater.EventHandlerFrame:RegisterEvent ("DISPLAY_SIZE_CHANGED")
 		Plater.EventHandlerFrame:RegisterEvent ("UI_SCALE_CHANGED")
@@ -5669,7 +5549,8 @@ function Plater.OnInit() --private --~oninit ~init
 					borderShield:SetTexture ([[Interface\GROUPFRAME\UI-GROUP-MAINTANKICON]])
 					borderShield:SetTexCoord (0, 1, 0, 1)
 					borderShield:SetDesaturated (true)
-					PixelUtil.SetSize (borderShield, castBarHeight * 0.8, castBarHeight)
+					--PixelUtil.SetSize (borderShield, castBarHeight * 0.8, castBarHeight)
+					borderShield:SetSize (castBarHeight * 0.8, castBarHeight)
 
 					local actorType = unitFrame.actorType
 					local plateConfigs = DB_PLATE_CONFIG [actorType]
@@ -5685,7 +5566,8 @@ function Plater.OnInit() --private --~oninit ~init
 							icon:SetPoint("topright", castBar, "topleft", profile.castbar_icon_x_offset, 0)
 							icon:SetPoint("bottomright", castBar, "bottomleft", profile.castbar_icon_x_offset, 0)
 							
-							PixelUtil.SetPoint (borderShield, "center", castBar, "left", 0, 0)
+							--PixelUtil.SetPoint (borderShield, "center", castBar, "left", 0, 0)
+							borderShield:SetPoint ("center", castBar, "left", 0, 0)
 							
 							height = castBarHeight
 
@@ -5700,7 +5582,8 @@ function Plater.OnInit() --private --~oninit ~init
 								height = castBarHeight + healthBarHeight + castBarOffSetY
 							end
 							
-							PixelUtil.SetPoint (borderShield, "center", castBar, "left", 0, 0)
+							--PixelUtil.SetPoint (borderShield, "center", castBar, "left", 0, 0)
+							borderShield:SetPoint ("center", castBar, "left", 0, 0)
 						end
 
 					elseif (profile.castbar_icon_attach_to_side == "right") then
@@ -5708,7 +5591,8 @@ function Plater.OnInit() --private --~oninit ~init
 							icon:SetPoint("topleft", castBar, "topright", profile.castbar_icon_x_offset, 0)
 							icon:SetPoint("bottomleft", castBar, "bottomright", profile.castbar_icon_x_offset, 0)
 							
-							PixelUtil.SetPoint (borderShield, "center", castBar, "right", 0, 0)
+							--PixelUtil.SetPoint (borderShield, "center", castBar, "right", 0, 0)
+							borderShield:SetPoint ("center", castBar, "right", 0, 0)
 							
 							height = castBarHeight
 
@@ -5723,7 +5607,8 @@ function Plater.OnInit() --private --~oninit ~init
 								height = castBarHeight + healthBarHeight + castBarOffSetY
 							end
 							
-							PixelUtil.SetPoint (borderShield, "center", castBar, "right", 0, 0)
+							--PixelUtil.SetPoint (borderShield, "center", castBar, "right", 0, 0)
+							borderShield:SetPoint ("center", castBar, "right", 0, 0)
 						end
 					end
 
@@ -5743,7 +5628,8 @@ function Plater.OnInit() --private --~oninit ~init
 			else
 				icon:ClearAllPoints()
 				icon:SetPoint("left", castBar, "left")
-				PixelUtil.SetSize (icon, castBarHeight, castBarHeight)
+				--PixelUtil.SetSize (icon, castBarHeight, castBarHeight)
+				icon:SetSize (castBarHeight, castBarHeight)
 				
 				--setup non interruptible cast shield
 				--borderShield:SetTexture ([[Interface\ACHIEVEMENTFRAME\UI-Achievement-Progressive-IconBorder]])
@@ -5757,8 +5643,10 @@ function Plater.OnInit() --private --~oninit ~init
 				borderShield:SetTexture ([[Interface\GROUPFRAME\UI-GROUP-MAINTANKICON]])
 				borderShield:SetTexCoord (0, 1, 0, 1)
 				borderShield:SetDesaturated (true)
-				PixelUtil.SetSize (borderShield, castBarHeight * 0.8, castBarHeight)
-				PixelUtil.SetPoint (borderShield, "center", castBar, "left", 0, 0)
+				--PixelUtil.SetSize (borderShield, castBarHeight * 0.8, castBarHeight)
+				--PixelUtil.SetPoint (borderShield, "center", castBar, "left", 0, 0)
+				borderShield:SetSize (castBarHeight * 0.8, castBarHeight)
+				borderShield:SetPoint ("center", castBar, "left", 0, 0)
 
 				castBar:UpdateInterruptState() -- ensure icon is shown as appropriate
 			end
@@ -5801,13 +5689,13 @@ function Plater.OnInit() --private --~oninit ~init
 			return PlaterDB.InterruptableSpells[spellId]
 		end
 
-		function Plater.SetCastBarInterruptedState(unitFrame, sourceGUID, name)
+		function Plater.SetCastBarInterruptedState(unitFrame, sourceGUID, sourceName)
 			if not Plater.db.profile.show_interrupt_author then return end
 			if not unitFrame or not sourceGUID then return end
 			local castBar = unitFrame.castBar
 			
 			local coloredName
-			if IS_WOW_PROJECT_MIDNIGHT or not name then
+			if IS_WOW_PROJECT_MIDNIGHT or not sourceName then
 				local _, class, _, race, _, name, realm = GetPlayerInfoByGUID(sourceGUID)
 				local classColor
 				if class then
@@ -5822,7 +5710,7 @@ function Plater.OnInit() --private --~oninit ~init
 					coloredName = name
 				end
 			else
-				coloredName = Plater.SetTextColorByClass (sourceGUID, name)
+				coloredName = Plater.SetTextColorByClass (sourceGUID, sourceName)
 			end
 			
 			castBar.Text:SetText (INTERRUPTED .. " [" .. coloredName .. "]")
@@ -5959,7 +5847,8 @@ function Plater.OnInit() --private --~oninit ~init
 					--reset spark color and size
 					self.Spark:SetVertexColor(unpack(profile.cast_statusbar_spark_color))
 					self.Spark:SetAlpha (profile.cast_statusbar_spark_alpha)
-					PixelUtil.SetSize(self.Spark, profile.cast_statusbar_spark_width, self:GetHeight())
+					--PixelUtil.SetSize(self.Spark, profile.cast_statusbar_spark_width, self:GetHeight())
+					self.Spark:SetSize(profile.cast_statusbar_spark_width, self:GetHeight())
 
 					Plater.UpdateCastbarTargetText (self)
 
@@ -6098,7 +5987,7 @@ function Plater.OnInit() --private --~oninit ~init
 					end
 					
 					if (self.unit and Plater.db.profile.castbar_target_show and not self.unitFrame.IsSelf) then
-						if IS_WOW_PROJECT_MIDNIGHT then
+						if UnitSpellTargetName then
 							local targetName = UnitSpellTargetName(self.unit)
 							if targetName then
 								--local targetNameShort = Ambiguate(targetName, "short")
@@ -6682,17 +6571,17 @@ end
 				r, g, b, a = unpack (Plater.db.profile.tap_denied_color)
 				
 			--elseif Plater.db.profile.unit_type_coloring_enabled and (Plater.ZoneInstanceType == "party" or Plater.ZoneInstanceType == "raid") and unitFrame.isGoodAggroState then
-			elseif Plater.db.profile.unit_type_coloring_enabled and (Plater.ZoneInstanceType == "party" or Plater.ZoneInstanceType == "raid") then
+			elseif Plater.db.profile.unit_type_coloring_enabled and (Plater.ZoneInstanceType == "party" or Plater.ZoneInstanceType == "raid" or Plater.ZoneInstanceType == "scenario") then
 				local pLevel = UnitEffectiveLevel("player")
                 local uLevel = UnitEffectiveLevel(unitID)
 
 				--boss
-				if uLevel == pLevel + 2 or uLevel == -1 then
+				if uLevel == pLevel + 2 or uLevel == -1 and not unitFrame.namePlateIsLieutenant then
 					r, g, b, a = unpack (Plater.db.profile.unit_type_coloring_boss)
 					unitFrame.hasUnitTypeColor = true
 
 				--miniboss
-				elseif uLevel == pLevel + 1 or unitFrame.namePlateIsBossMob or unitFrame.namePlateIsLieutenant then
+				elseif uLevel >= pLevel + 1 or unitFrame.namePlateIsBossMob or unitFrame.namePlateIsLieutenant then
 					r, g, b, a = unpack (Plater.db.profile.unit_type_coloring_miniboss)
 					unitFrame.hasUnitTypeColor = true
 
@@ -6707,7 +6596,7 @@ end
 					unitFrame.hasUnitTypeColor = true
 
 				--trivial
-				elseif Plater.db.profile.unit_type_coloring_enable_trivial then
+				elseif Plater.db.profile.unit_type_coloring_enable_trivial and (UnitIsMinion(unitID) or unitFrame.namePlateClassification == "normal" or unitFrame.namePlateClassification == "trivial" or unitFrame.namePlateClassification == "minus") then
 					r, g, b, a = unpack (Plater.db.profile.unit_type_coloring_trivial)
 					unitFrame.hasUnitTypeColor = true
 
@@ -6807,7 +6696,7 @@ end
 					Plater.AddToAuraUpdate(plateFrame.unitFrame.unit, plateFrame.unitFrame) -- force aura update
 				end
 				
-				Plater.UpdatePlateFrame (plateFrame, nil, forceUpdate, justAdded, regenDisabled)
+				Plater.UpdatePlateFrame (plateFrame, plateFrame.unitFrame.ActorType, forceUpdate, justAdded, regenDisabled)
 				--trigger a nameplate updated event
 				Plater.TriggerNameplateUpdatedEvent(plateFrame.unitFrame)
 			end
@@ -6903,8 +6792,10 @@ end
 			--health bar
 				-- ensure that we are using the configured size, as it will be automatically scaled
 				healthBar:ClearAllPoints()
-				PixelUtil.SetPoint (healthBar, "center", unitFrame, "center", profile.global_offset_x, profile.global_offset_y)
-				PixelUtil.SetSize (healthBar, healthBarWidth, healthBarHeight)
+				--PixelUtil.SetPoint (healthBar, "center", unitFrame, "center", profile.global_offset_x, profile.global_offset_y)
+				--PixelUtil.SetSize (healthBar, healthBarWidth, healthBarHeight)
+				healthBar:SetPoint ("center", unitFrame, "center", profile.global_offset_x, profile.global_offset_y)
+				healthBar:SetSize (healthBarWidth, healthBarHeight)
 		--end of patch
 			--update scale
 			Plater.UpdateUIParentScale (plateFrame)
@@ -6925,8 +6816,10 @@ end
 				healthBar:SetScale(1/unitFrame.nameplateScaleAdjust)
 				
 				healthBar:ClearAllPoints()
-				PixelUtil.SetPoint (healthBar, "topleft", unitFrame, "topleft", xOffSet + profile.global_offset_x, -yOffSet + profile.global_offset_y)
-				PixelUtil.SetPoint (healthBar, "bottomright", unitFrame, "bottomright", -xOffSet + profile.global_offset_x, yOffSet + profile.global_offset_y)
+				--PixelUtil.SetPoint (healthBar, "topleft", unitFrame, "topleft", xOffSet + profile.global_offset_x, -yOffSet + profile.global_offset_y)
+				--PixelUtil.SetPoint (healthBar, "bottomright", unitFrame, "bottomright", -xOffSet + profile.global_offset_x, yOffSet + profile.global_offset_y)
+				healthBar:SetPoint ("topleft", unitFrame, "topleft", xOffSet + profile.global_offset_x, -yOffSet + profile.global_offset_y)
+				healthBar:SetPoint ("bottomright", unitFrame, "bottomright", -xOffSet + profile.global_offset_x, yOffSet + profile.global_offset_y)
 		end
 		
 		--execute indicator
@@ -6937,12 +6830,17 @@ end
 		
 		--cast bar - is set by default below the healthbar
 			castBar:ClearAllPoints()
-			PixelUtil.SetPoint (castBar, "topleft", healthBar, "bottomleft", castBarOffSetXRel + castBarOffSetX, castBarOffSetY)
-			PixelUtil.SetPoint (castBar, "topright", healthBar, "bottomright", -castBarOffSetXRel + castBarOffSetX, castBarOffSetY)
-			PixelUtil.SetWidth (castBar, castBarWidth)
-			PixelUtil.SetHeight (castBar, castBarHeight)
+			--PixelUtil.SetPoint (castBar, "topleft", healthBar, "bottomleft", castBarOffSetXRel + castBarOffSetX, castBarOffSetY)
+			--PixelUtil.SetPoint (castBar, "topright", healthBar, "bottomright", -castBarOffSetXRel + castBarOffSetX, castBarOffSetY)
+			castBar:SetPoint ("topleft", healthBar, "bottomleft", castBarOffSetXRel + castBarOffSetX, castBarOffSetY)
+			castBar:SetPoint ("topright", healthBar, "bottomright", -castBarOffSetXRel + castBarOffSetX, castBarOffSetY)
+			--PixelUtil.SetWidth (castBar, castBarWidth)
+			--PixelUtil.SetHeight (castBar, castBarHeight)
+			castBar:SetWidth (castBarWidth)
+			castBar:SetHeight (castBarHeight)
 			--PixelUtil.SetSize (castBar.BorderShield, castBarHeight * 1.4, castBarHeight * 1.4)
-			PixelUtil.SetSize (castBar.Spark, profile.cast_statusbar_spark_width, castBarHeight)
+			--PixelUtil.SetSize (castBar.Spark, profile.cast_statusbar_spark_width, castBarHeight)
+			castBar.Spark:SetSize (profile.cast_statusbar_spark_width, castBarHeight)
 			castBar.Spark:SetAlpha (profile.cast_statusbar_spark_alpha)
 			Plater.UpdateCastbarIcon(castBar)
 
@@ -6951,9 +6849,12 @@ end
 
 		--power bar
 			powerBar:ClearAllPoints()
-			PixelUtil.SetPoint (powerBar, "topleft", healthBar, "bottomleft", powerBarOffSetX, powerBarOffSetY)
-			PixelUtil.SetPoint (powerBar, "topright", healthBar, "bottomright", -powerBarOffSetX, powerBarOffSetY)
-			PixelUtil.SetSize (powerBar, powerBarWidth, powerBarHeight)
+			--PixelUtil.SetPoint (powerBar, "topleft", healthBar, "bottomleft", powerBarOffSetX, powerBarOffSetY)
+			--PixelUtil.SetPoint (powerBar, "topright", healthBar, "bottomright", -powerBarOffSetX, powerBarOffSetY)
+			--PixelUtil.SetSize (powerBar, powerBarWidth, powerBarHeight)
+			powerBar:SetPoint ("topleft", healthBar, "bottomleft", powerBarOffSetX, powerBarOffSetY)
+			powerBar:SetPoint ("topright", healthBar, "bottomright", -powerBarOffSetX, powerBarOffSetY)
+			powerBar:SetSize (powerBarWidth, powerBarHeight)
 			
 			--power bar are hidden by default, show it if there's a custom size for it
 			if (unitFrame.customPowerBarWidth and unitFrame.customPowerBarHeight) then
@@ -8052,6 +7953,7 @@ end
 
 	-- ~target ~selection
 	function Plater.UpdateTarget (plateFrame) --private
+		Plater.StartLogPerformanceCore("Plater-Core", "Update", "UpdateTarget")
 
 		local profile = Plater.db.profile
 		local unitFrame = plateFrame.unitFrame
@@ -8140,6 +8042,7 @@ end
 
 		Plater.CheckRange (plateFrame, false) --disabled on 2018-10-09 | enabled back on 2020-1-16
 
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "UpdateTarget")
 	end
 
 	--called when the player targets a new unit, when focus changed or when a unit isn't in the screen any more
@@ -8191,15 +8094,19 @@ end
 		plateFrame.TargetNeonUp:SetAlpha (alpha)
 		plateFrame.TargetNeonUp:SetTexture (texture)
 		plateFrame.TargetNeonUp:SetHeight (height)
-		PixelUtil.SetPoint (plateFrame.TargetNeonUp, "bottomleft", healthBar, "topleft", 0, 0)
-		PixelUtil.SetPoint (plateFrame.TargetNeonUp, "bottomright", healthBar, "topright", 0, 0)
+		--PixelUtil.SetPoint (plateFrame.TargetNeonUp, "bottomleft", healthBar, "topleft", 0, 0)
+		--PixelUtil.SetPoint (plateFrame.TargetNeonUp, "bottomright", healthBar, "topright", 0, 0)
+		plateFrame.TargetNeonUp:SetPoint ("bottomleft", healthBar, "topleft", 0, 0)
+		plateFrame.TargetNeonUp:SetPoint ("bottomright", healthBar, "topright", 0, 0)
 
 		plateFrame.TargetNeonDown:SetVertexColor (unpack (color))
 		plateFrame.TargetNeonDown:SetAlpha (alpha)
 		plateFrame.TargetNeonDown:SetTexture (texture)
 		plateFrame.TargetNeonDown:SetHeight (height)
-		PixelUtil.SetPoint (plateFrame.TargetNeonDown, "topleft", healthBar, "bottomleft", 0, 0)
-		PixelUtil.SetPoint (plateFrame.TargetNeonDown, "topright", healthBar, "bottomright", 0, 0)
+		--PixelUtil.SetPoint (plateFrame.TargetNeonDown, "topleft", healthBar, "bottomleft", 0, 0)
+		--PixelUtil.SetPoint (plateFrame.TargetNeonDown, "topright", healthBar, "bottomright", 0, 0)
+		plateFrame.TargetNeonDown:SetPoint ("topleft", healthBar, "bottomleft", 0, 0)
+		plateFrame.TargetNeonDown:SetPoint ("topright", healthBar, "bottomright", 0, 0)
 	end
 
 	function Plater.UpdateTargetIndicator (plateFrame)
@@ -8310,11 +8217,13 @@ end
 	-- update all texts in the nameplate, settings can variate from different unit types
 	-- needReset is true when the previous unit type shown on this place is different from the current unit
 	function Plater.UpdatePlateText (plateFrame, plateConfigs, needReset) --private
+		Plater.StartLogPerformanceCore("Plater-Core", "Update", "UpdatePlateText")
 	
 		if plateFrame.unitFrame.isWidgetOnlyMode then
 			plateFrame.ActorNameSpecial:Hide()
 			plateFrame.ActorTitleSpecial:Hide()
 			
+			Plater.EndLogPerformanceCore("Plater-Core", "Update", "UpdatePlateText")
 			return
 		end
 		
@@ -8378,7 +8287,8 @@ end
 			
 			--set the point of the name and guild texts
 			nameFontString:ClearAllPoints()
-			PixelUtil.SetPoint (plateFrame.ActorNameSpecial, "center", plateFrame.unitFrame, "center", 0, 10)
+			--PixelUtil.SetPoint (plateFrame.ActorNameSpecial, "center", plateFrame.unitFrame, "center", 0, 10)
+			plateFrame.ActorNameSpecial:SetPoint ("center", plateFrame.unitFrame, "center", 0, 10)
 			
 			--format the color if is the same guild, a friend from friends list or color by player class
 			if (Plater.db.profile.plate_config [ACTORTYPE_FRIENDLY_PLAYER].actorname_use_guild_color and plateFrame.playerGuildName == Plater.PlayerGuildName) then
@@ -8411,6 +8321,7 @@ end
 				plateFrame.isFriend = nil
 			end
 			
+			Plater.EndLogPerformanceCore("Plater-Core", "Update", "UpdatePlateText")
 			return
 		
 		elseif (plateFrame.IsNpcWithoutHealthBar) then --not critical code
@@ -8423,8 +8334,10 @@ end
 			plateFrame.ActorNameSpecial:Hide()
 			plateFrame.ActorTitleSpecial:Hide()
 			
-			PixelUtil.SetPoint (plateFrame.ActorNameSpecial, "center", plateFrame.unitFrame, "center", 0, 10)
-			PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
+			--PixelUtil.SetPoint (plateFrame.ActorNameSpecial, "center", plateFrame.unitFrame, "center", 0, 10)
+			--PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
+			plateFrame.ActorNameSpecial:SetPoint ("center", plateFrame.unitFrame, "center", 0, 10)
+			plateFrame.ActorTitleSpecial:SetPoint ("top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
 
 			--there's two ways of showing this for friendly npcs (selected from the options panel): show all names or only npcs with profession names
 			--enemy npcs always show all
@@ -8474,7 +8387,8 @@ end
 						--subTitle = DF:RemoveRealmName (subTitle) -- why are removing real names on npc titles? e.g. <T-Shirt Scalper> Skin-Me-Own-Coat-Dibblefur gets broken to <T>.
 						plateFrame.ActorTitleSpecial:SetText ("<" .. subTitle .. ">")
 						plateFrame.ActorTitleSpecial:ClearAllPoints()
-						PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
+						--PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
+						plateFrame.ActorTitleSpecial:SetPoint ("top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
 						
 						plateFrame.ActorTitleSpecial:SetTextColor (r, g, b, a)
 						DF:SetFontSize (plateFrame.ActorTitleSpecial, plateConfigs.big_actortitle_text_size)
@@ -8502,7 +8416,8 @@ end
 						--subTitle = DF:RemoveRealmName (subTitle)
 						plateFrame.ActorTitleSpecial:SetText ("<" .. subTitle .. ">")
 						plateFrame.ActorTitleSpecial:ClearAllPoints()
-						PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
+						--PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
+						plateFrame.ActorTitleSpecial:SetPoint ("top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
 						
 						plateFrame.ActorTitleSpecial:SetTextColor (unpack (plateConfigs.big_actortitle_text_color))
 						DF:SetFontSize (plateFrame.ActorTitleSpecial, plateConfigs.big_actortitle_text_size)
@@ -8521,7 +8436,8 @@ end
 					--subTitle = DF:RemoveRealmName (subTitle)
 					plateFrame.ActorTitleSpecial:SetText ("<" .. subTitle .. ">")
 					plateFrame.ActorTitleSpecial:ClearAllPoints()
-					PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
+					--PixelUtil.SetPoint (plateFrame.ActorTitleSpecial, "top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
+					plateFrame.ActorTitleSpecial:SetPoint ("top", plateFrame.ActorNameSpecial, "bottom", 0, -2)
 					
 					plateFrame.ActorTitleSpecial:SetTextColor (unpack (plateConfigs.big_actortitle_text_color))
 					plateFrame.ActorNameSpecial:SetTextColor (unpack (plateConfigs.big_actorname_text_color))
@@ -8546,6 +8462,7 @@ end
 				end
 			end
 			
+			Plater.EndLogPerformanceCore("Plater-Core", "Update", "UpdatePlateText")
 			return
 		end
 		
@@ -8659,6 +8576,7 @@ end
 			plateFrame.unitFrame.healthBar.unitName:SetText ("")
 		end
 		
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "UpdatePlateText")
 		return true
 	end
 	
@@ -8674,7 +8592,8 @@ end
 		DF:SetFontColor(fontString, plateConfigs.percent_text_color)
 
 		Plater.SetAnchor(fontString, plateConfigs.percent_text_anchor)
-		PixelUtil.SetHeight(fontString, fontString:GetLineHeight())
+		--PixelUtil.SetHeight(fontString, fontString:GetLineHeight())
+		fontString:SetHeight(fontString:GetLineHeight())
 		
 		fontString:SetAlpha(plateConfigs.percent_text_alpha)
 	end
@@ -9116,10 +9035,9 @@ end
 		unitFrame.actorType = actorType
 		unitFrame.ActorType = actorType --exposed to scripts
 		
-		local shouldForceRefresh = justAdded or forceUpdate
+		local shouldForceRefresh = forceUpdate --or justAdded
 		if (plateFrame.IsNpcWithoutHealthBar or plateFrame.IsFriendlyPlayerWithoutHealthBar) then
 			shouldForceRefresh = true
-			
 		end
 
 		healthBar.BorderIsAggroIndicator = nil
@@ -9855,9 +9773,11 @@ end
 			local attachTo = plateFrame.IconIndicators [plateFrame.IconIndicators.Next - 1]
 			--se for menor que 4 ele deve crescer para o lado da esquerda, nos outros casos vai para a direita
 			if (Plater.db.profile.indicator_anchor.side < 4) then
-				PixelUtil.SetPoint (thisIndicator, "right", attachTo, "left", -1, 0)
+				--PixelUtil.SetPoint (thisIndicator, "right", attachTo, "left", -1, 0)
+				thisIndicator:SetPoint ("right", attachTo, "left", -1, 0)
 			else
-				PixelUtil.SetPoint (thisIndicator, "left", attachTo, "right", 1, 0)
+				--PixelUtil.SetPoint (thisIndicator, "left", attachTo, "right", 1, 0)
+				thisIndicator:SetPoint ("left", attachTo, "right", 1, 0)
 			end
 		end
 		
@@ -10119,92 +10039,109 @@ end
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
 			local widgetRelative = centered and "bottom" or "bottomleft"
-			PixelUtil.SetPoint (widget, widgetRelative, attachTo, "topleft", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, widgetRelative, attachTo, "topleft", config.x, config.y, 0, 0)
+			widget:SetPoint (widgetRelative, attachTo, "topleft", config.x, config.y, 0, 0)
 		end,
 		--2 left
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
 			local widgetRelative = centered and "center" or "right"
-			PixelUtil.SetPoint (widget, widgetRelative, attachTo, "left", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, widgetRelative, attachTo, "left", config.x, config.y, 0, 0)
+			widget:SetPoint (widgetRelative, attachTo, "left", config.x, config.y, 0, 0)
 		end,
 		--3 bottomleft
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
 			local widgetRelative = centered and "top" or "topleft"
-			PixelUtil.SetPoint (widget, widgetRelative, attachTo, "bottomleft", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, widgetRelative, attachTo, "bottomleft", config.x, config.y, 0, 0)
+			widget:SetPoint (widgetRelative, attachTo, "bottomleft", config.x, config.y, 0, 0)
 		end,
 		--4 bottom
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "top", attachTo, "bottom", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "top", attachTo, "bottom", config.x, config.y, 0, 0)
+			widget:SetPoint ("top", attachTo, "bottom", config.x, config.y, 0, 0)
 		end,
 		--5 bottomright
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
 			local widgetRelative = centered and "top" or "topright"
-			PixelUtil.SetPoint (widget, widgetRelative, attachTo, "bottomright", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, widgetRelative, attachTo, "bottomright", config.x, config.y, 0, 0)
+			widget:SetPoint (widgetRelative, attachTo, "bottomright", config.x, config.y, 0, 0)
 		end,
 		--6 right
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
 			local widgetRelative = centered and "center" or "left"
-			PixelUtil.SetPoint (widget, widgetRelative, attachTo, "right", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, widgetRelative, attachTo, "right", config.x, config.y, 0, 0)
+			widget:SetPoint (widgetRelative, attachTo, "right", config.x, config.y, 0, 0)
 		end,
 		--7 topright
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
 			local widgetRelative = centered and "bottom" or "bottomright"
-			PixelUtil.SetPoint (widget, widgetRelative, attachTo, "topright", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, widgetRelative, attachTo, "topright", config.x, config.y, 0, 0)
+			widget:SetPoint (widgetRelative, attachTo, "topright", config.x, config.y, 0, 0)
 		end,
 		--8 top
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "bottom", attachTo, "top", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "bottom", attachTo, "top", config.x, config.y, 0, 0)
+			widget:SetPoint ("bottom", attachTo, "top", config.x, config.y, 0, 0)
 		end,
 		--9 center
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "center", attachTo, "center", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "center", attachTo, "center", config.x, config.y, 0, 0)
+			widget:SetPoint ("center", attachTo, "center", config.x, config.y, 0, 0)
 		end,
 		--10 inner left
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "left", attachTo, "left", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "left", attachTo, "left", config.x, config.y, 0, 0)
+			widget:SetPoint ("left", attachTo, "left", config.x, config.y, 0, 0)
 		end,
 		--11 inner right
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "right", attachTo, "right", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "right", attachTo, "right", config.x, config.y, 0, 0)
+			widget:SetPoint ("right", attachTo, "right", config.x, config.y, 0, 0)
 		end,
 		--12 inner top
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "top", attachTo, "top", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "top", attachTo, "top", config.x, config.y, 0, 0)
+			widget:SetPoint ("top", attachTo, "top", config.x, config.y, 0, 0)
 		end,
 		--13 inner bottom
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "bottom", attachTo, "bottom", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "bottom", attachTo, "bottom", config.x, config.y, 0, 0)
+			widget:SetPoint ("bottom", attachTo, "bottom", config.x, config.y, 0, 0)
 		end,
 		--14 inner topleft
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "topleft", attachTo, "topleft", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "topleft", attachTo, "topleft", config.x, config.y, 0, 0)
+			widget:SetPoint ("topleft", attachTo, "topleft", config.x, config.y, 0, 0)
 		end,
 		--15 inner bottom left
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "bottomleft", attachTo, "bottomleft", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "bottomleft", attachTo, "bottomleft", config.x, config.y, 0, 0)
+			widget:SetPoint ("bottomleft", attachTo, "bottomleft", config.x, config.y, 0, 0)
 		end,
 		--16 inner bottom right
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "bottomright", attachTo, "bottomright", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "bottomright", attachTo, "bottomright", config.x, config.y, 0, 0)
+			widget:SetPoint ("bottomright", attachTo, "bottomright", config.x, config.y, 0, 0)
 		end,
 		--17 inner top right
 		function (widget, config, attachTo, centered)
 			widget:ClearAllPoints()
-			PixelUtil.SetPoint (widget, "topright", attachTo, "topright", config.x, config.y, 0, 0)
+			--PixelUtil.SetPoint (widget, "topright", attachTo, "topright", config.x, config.y, 0, 0)
+			widget:SetPoint ("topright", attachTo, "topright", config.x, config.y, 0, 0)
 		end,
 	}
 
@@ -12780,6 +12717,7 @@ end
 			["ScheduleUpdateForNameplate"] = true,
 			["EventHandlerFrame"] = true,
 			["OnInit"] = true,
+			["StartPreCreateAuraContainers"] = true,
 			["HookLoadCallback"] = true,
 			["CheckFirstRun"] = true,
 			["CommHandler"] = true,

@@ -26,7 +26,16 @@ MDT.dungeonSubLevels[dungeonIndex] = {
 
 MDT.dungeonTotalCount[dungeonIndex] = { normal = 817 }
 
-MDT.mapPOIs[dungeonIndex] = {};
+MDT.mapPOIs[dungeonIndex] = {
+  [1] = {
+    [1] = {
+      ["type"] = "dungeonEntrance",
+      ["x"] = 134.9,
+      ["y"] = -107.6,
+      ["sizeMult"] = 1.5,
+    },
+  },
+};
 
 MDT.dungeonEnemies[dungeonIndex] = {
   [1] = {
@@ -56,14 +65,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
     ["clones"] = {
       [1] = {
-        ["x"] = 59.443213885137,
-        ["y"] = -205.55356532802,
+        ["x"] = 65.5,
+        ["y"] = -205.5,
         ["g"] = 5,
         ["sublevel"] = 1,
       },
       [2] = {
-        ["x"] = 208.39669758873,
-        ["y"] = -204.5632505828,
+        ["x"] = 201.1,
+        ["y"] = -204.8,
         ["g"] = 7,
         ["sublevel"] = 1,
       },
@@ -242,12 +251,6 @@ MDT.dungeonEnemies[dungeonIndex] = {
       [1] = {
         ["x"] = 334.97324901951,
         ["y"] = -243.26850597954,
-        ["g"] = 19,
-        ["sublevel"] = 1,
-      },
-      [2] = {
-        ["x"] = 343.94168990017,
-        ["y"] = -242.68944828255,
         ["g"] = 19,
         ["sublevel"] = 1,
       },
@@ -519,14 +522,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [8] = {
-        ["x"] = 48.4,
-        ["y"] = -214.2,
+        ["x"] = 58.5,
+        ["y"] = -205.2,
         ["g"] = 5,
         ["sublevel"] = 1,
       },
       [9] = {
-        ["x"] = 209.5,
-        ["y"] = -189.5,
+        ["x"] = 201.5,
+        ["y"] = -196.8,
         ["g"] = 7,
         ["sublevel"] = 1,
       },
@@ -632,20 +635,20 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [8] = {
-        ["x"] = 60.109042993678,
-        ["y"] = -191.3764945572,
+        ["x"] = 65.7,
+        ["y"] = -197.2,
         ["g"] = 5,
         ["sublevel"] = 1,
       },
       [9] = {
-        ["x"] = 59.681086244483,
-        ["y"] = -219.44746293834,
+        ["x"] = 65.6,
+        ["y"] = -211.7,
         ["g"] = 5,
         ["sublevel"] = 1,
       },
       [11] = {
-        ["x"] = 218.7,
-        ["y"] = -212.6,
+        ["x"] = 207,
+        ["y"] = -204.7,
         ["g"] = 7,
         ["sublevel"] = 1,
       },
@@ -698,8 +701,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [21] = {
-        ["x"] = 209.00249715976,
-        ["y"] = -220.61647324249,
+        ["x"] = 201.2,
+        ["y"] = -212,
         ["g"] = 7,
         ["sublevel"] = 1,
       },
@@ -711,7 +714,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 25,
     ["health"] = 4864883,
     ["scale"] = 1.8,
-    ["displayId"] = 142327,
+    ["displayId"] = 147578,
     ["creatureType"] = "Humanoid",
     ["level"] = 91,
     ["spells"] = {
@@ -765,7 +768,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Ascendant Serpent",
     ["id"] = 261573,
     ["count"] = 30,
-    ["health"] = 9081114,
+    ["health"] = 8173003,
     ["scale"] = 2,
     ["displayId"] = 146299,
     ["creatureType"] = "Beast",
@@ -811,7 +814,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 25,
     ["health"] = 5513534,
     ["scale"] = 1.8,
-    ["displayId"] = 142386,
+    ["displayId"] = 147569,
     ["creatureType"] = "Beast",
     ["level"] = 91,
     ["spells"] = {
@@ -858,6 +861,16 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["x"] = 640.39454992005,
         ["y"] = -280.2279076338,
         ["g"] = 42,
+        ["sublevel"] = 1,
+      },
+      [5] = {
+        ["x"] = 197.11640827536,
+        ["y"] = -100.49049173731,
+        ["sublevel"] = 1,
+      },
+      [6] = {
+        ["x"] = 69.594575511737,
+        ["y"] = -100.68653429409,
         ["sublevel"] = 1,
       },
     },
@@ -1103,7 +1116,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 5,
     ["health"] = 3243255,
     ["scale"] = 1.2,
-    ["displayId"] = 142336,
+    ["displayId"] = 147577,
     ["creatureType"] = "Humanoid",
     ["level"] = 90,
     ["spells"] = {
@@ -1245,7 +1258,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Rav'i",
     ["id"] = 259445,
     ["count"] = 0,
-    ["health"] = 21216291,
+    ["health"] = 21216292,
     ["scale"] = 1.5,
     ["displayId"] = 144110,
     ["creatureType"] = "Beast",
@@ -1379,7 +1392,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Zul'jan",
     ["id"] = 259447,
     ["count"] = 0,
-    ["health"] = 27027123,
+    ["health"] = 27027124,
     ["scale"] = 1.5,
     ["displayId"] = 145435,
     ["creatureType"] = "Humanoid",
@@ -1428,7 +1441,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Uncoiled Writhe",
     ["id"] = 262398,
     ["count"] = 0,
-    ["health"] = 361821,
+    ["health"] = 33783904,
     ["scale"] = 1,
     ["displayId"] = 142361,
     ["creatureType"] = "Beast",

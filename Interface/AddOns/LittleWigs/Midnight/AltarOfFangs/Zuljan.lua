@@ -1,4 +1,3 @@
-if not BigWigsLoader.isNext then return end -- 12.1
 --------------------------------------------------------------------------------
 -- Module Declaration
 --
@@ -7,10 +6,6 @@ local mod, CL = BigWigs:NewBoss("Zul'jan", 2993, 2880)
 if not mod then return end
 mod:SetEncounterID(3458)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{1300894, sound = "info"}, -- Ritual Venom
-	{1301231, sound = "none"}, -- Bloodletting
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -20,7 +15,6 @@ local ritualOfTheFangCount = 1
 local axegrinderCount = 1
 local chopDownCount = 1
 local boneslicerCount = 1
-local count14 = 1
 local activeBars = {}
 local backupBars = {}
 
@@ -36,6 +30,17 @@ mod:SetRenames({
 })
 
 --------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{1300885, soundOnApplied = "info", tip = CL.debuffWalkIntoObjectNote:format(CL.beam)}, -- Ritual of the Fang
+	{1300894, duration = 50, soundOnAppliedDose = "none", tip = CL.debuffWalkIntoObjectNote:format(CL.beam)}, -- Ritual Venom
+	{1301508, duration = 7, soundOnAppliedDose = "none", tip = CL.debuffHitByCastNote:format(mod:SpellName(1301413))}, -- Boneslicer
+	{1301231, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Bloodletting
+})
+
+--------------------------------------------------------------------------------
 -- Initialization
 --
 
@@ -43,7 +48,7 @@ function mod:GetOptions()
 	return {
 		1300876, -- Ritual of the Fang
 		1301111, -- Axegrinder
-		{1301350, "TANK"}, -- Chop Down
+		{1301350, "TANK_HEALER"}, -- Chop Down
 		1301413, -- Boneslicer
 	}
 end
@@ -54,7 +59,6 @@ function mod:OnEncounterStart()
 	axegrinderCount = 1
 	chopDownCount = 1
 	boneslicerCount = 1
-	count14 = 1
 	activeBars = {}
 	backupBars = {}
 	if self:ShouldShowBars() then
@@ -78,13 +82,13 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 	if eventInfo.source ~= 0 then return end -- Enum.EncounterTimelineEventSource.Encounter
 	local duration = self:RoundNumber(eventInfo.duration, 0)
 	local barInfo
-	if duration == 64 then -- Ritual of the Fang
+	if duration == 3 or duration == 65 then -- Ritual of the Fang
 		barInfo = self:RitualOfTheFangTimeline(eventInfo)
-	elseif (duration == 14 and count14 % 2 == 1) then -- Axegrinder
+	elseif duration == 18 then -- Axegrinder
 		barInfo = self:AxegrinderTimeline(eventInfo)
 	elseif duration == 26 or (not self:IsWiping() and duration == 30) then -- Chop Down
 		barInfo = self:ChopDownTimeline(eventInfo)
-	elseif duration == 32 or (duration == 14 and count14 % 2 == 0) then -- Boneslicer
+	elseif duration == 36 or duration == 16 then -- Boneslicer
 		barInfo = self:BoneslicerTimeline(eventInfo)
 	elseif not self:IsWiping() then
 		self:ErrorForTimelineEvent(eventInfo)
@@ -94,9 +98,6 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 		if state == 1 then -- Enum.EncounterTimelineEventState.Paused = 1
 			self:SendMessage("BigWigs_PauseBar", nil, nil, eventInfo.id)
 		end
-	end
-	if duration == 14 then
-		count14 = count14 + 1
 	end
 	if barInfo then
 		activeBars[eventInfo.id] = barInfo
@@ -149,14 +150,19 @@ end
 --
 
 function mod:RitualOfTheFangTimeline(eventInfo) -- Ritual of the Fang
-	local barText = CL.count:format(self:GetRename(1300876), ritualOfTheFangCount + 1)
+	local barText = CL.count:format(self:GetRename(1300876), ritualOfTheFangCount)
 	self:CDBar(1300876, eventInfo.duration, barText, nil, eventInfo.id)
-	self:Message(1300876, "cyan", CL.count:format(self:GetRename(1300876), ritualOfTheFangCount)) -- cast on pull
-	ritualOfTheFangCount = ritualOfTheFangCount + 1
-	self:PlaySound(1300876, "long")
+	if self:RoundNumber(eventInfo.duration, 0) == 3 then
+		-- the 65s bar is always canceled with ~4s left and replaced by a 3s bar for the actual cast
+		ritualOfTheFangCount = ritualOfTheFangCount + 1
+	end
 	return {
 		msg = barText,
 		key = 1300876,
+		callback = function()
+			self:Message(1300876, "cyan", barText)
+			self:PlaySound(1300876, "long")
+		end
 	}
 end
 

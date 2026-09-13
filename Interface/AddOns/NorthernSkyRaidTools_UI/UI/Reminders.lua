@@ -19,9 +19,14 @@ local CreateLocalizedButton = NSI.UI.Components.CreateLocalizedButton
 
 function NSI:SpawnPreviewReminders()
     self:HideAllReminders()
+    if self.DebuffOverviewMover then
+        self.DebuffOverviewMover.PreviewStartedAt = GetTime()
+        self.DebuffOverviewMover.PreviewTicker = 0
+    end
     self.AllGlows = self.AllGlows or {}
     self.GlowStarted = {}
-    self.LGF.GetUnitFrame("player")
+    self.UnitFrames = self.UnitFrames or {}
+    self.UnitFrames.player = self.LGF.GetUnitFrame("player")
     local info1 = {
         text = NSI:Loc("Personals"),
         DisplayType = "Text",
@@ -102,7 +107,7 @@ function NSI:TogglePreviewMode()
         end
         self.IsInPreview = false
         self:HideAllReminders()
-        for _, v in ipairs({"IconMover", "BarMover", "TextMover", "CircleMover"}) do
+        for _, v in ipairs({"IconMover", "BarMover", "TextMover", "CircleMover", "DebuffOverviewMover"}) do
             if self[v] then
                 self[v]:StopMovingOrSizing()
             end
@@ -113,12 +118,13 @@ function NSI:TogglePreviewMode()
         return
     end
 
-    local allMovers = {"IconMover", "BarMover", "TextMover", "CircleMover"}
+    local allMovers = {"IconMover", "BarMover", "TextMover", "CircleMover", "DebuffOverviewMover"}
     local allSettings = {
         IconMover = NSRT.ReminderSettings.IconSettings,
         BarMover = NSRT.ReminderSettings.BarSettings,
         TextMover = NSRT.ReminderSettings.TextSettings,
         CircleMover = NSRT.ReminderSettings.CircleSettings,
+        DebuffOverviewMover = NSRT.ReminderSettings.DebuffOverviewSettings,
     }
 
     -- Build the floating preview bar once

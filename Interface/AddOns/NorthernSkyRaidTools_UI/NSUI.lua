@@ -223,8 +223,8 @@ function NSUI:Init()
     local NOTES_HEADER_BTN_Y = -38
 
     local notesTabs = {
-        { name = "SharedNotes",   textKey = "Shared Notes",   icon = "users_icon" },
-        { name = "PersonalNotes", textKey = "Personal Notes", icon = "user_icon" },
+        { name = "SharedNotes",   textKey = "Shared Notes",   icon = [[Interface\AddOns\NorthernSkyRaidTools\Media\Icons\users-round.png]] },
+        { name = "PersonalNotes", textKey = "Personal Notes", icon = [[Interface\AddOns\NorthernSkyRaidTools\Media\Icons\user-round.png]] },
     }
 
     for i, nt in ipairs(notesTabs) do
@@ -485,7 +485,7 @@ function NSUI:Init()
     -- --------------------------------------------------------
     local versionNumber           = " v" .. C_AddOns.GetAddOnMetadata("NorthernSkyRaidTools", "Version")
     --[==[@debug@
-        if versionNumber == " v12.1.5" then
+        if versionNumber == " v12.1.21" then
             versionNumber = " Dev Build"
         end
     --@end-debug@]==]
@@ -507,6 +507,12 @@ function NSUI:Init()
         if self.PendingShow then
             self.PendingShow = false
             NSUI:Show()
+        end
+        local pendingOpenAlert = NSI.PendingOpenAlert
+        if pendingOpenAlert then
+            NSI.PendingOpenAlert = nil
+            self.MenuFrame:SelectTabByName("EncounterAlerts")
+            self.encounters_frame:OpenAlert(pendingOpenAlert.encID, pendingOpenAlert.diffID, pendingOpenAlert.internalID)
         end
     end)
     end)

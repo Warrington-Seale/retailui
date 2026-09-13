@@ -1,8 +1,8 @@
 
 TomTomDB = {
 ["profileKeys"] = {
-["Divthediv - Burning Legion"] = "MerfinUI v7.8",
 ["Warrington - Burning Legion"] = "MerfinUI v7.8",
+["Divthediv - Burning Legion"] = "MerfinUI v7.8",
 },
 ["profiles"] = {
 ["Default"] = {
@@ -40,11 +40,6 @@ nil,
 -350,
 },
 },
-["paste"] = {
-["button"] = {
-["showInCompartment"] = true,
-},
-},
 ["block"] = {
 ["enable"] = false,
 ["width"] = 130,
@@ -58,19 +53,24 @@ nil,
 },
 ["height"] = 40,
 },
+["paste"] = {
+["button"] = {
+["showInCompartment"] = true,
+},
+},
 },
 },
 }
 TomTomWaypoints = nil
 TomTomWaypointsM = {
 ["profileKeys"] = {
-["Divthediv - Burning Legion"] = "Divthediv - Burning Legion",
 ["Warrington - Burning Legion"] = "Warrington - Burning Legion",
+["Divthediv - Burning Legion"] = "Divthediv - Burning Legion",
 },
 ["profiles"] = {
-["Divthediv - Burning Legion"] = {
-},
 ["Warrington - Burning Legion"] = {
+},
+["Divthediv - Burning Legion"] = {
 },
 },
 }

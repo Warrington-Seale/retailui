@@ -140,6 +140,14 @@ L[3159] = {
 -- ============================================================================
 -- Nymrissa Wavecaller (3379)
 L[3379] = {
+    ["Adds"]          = {group = "님리사", name = "쫄 등장", text = "쫄"},
+    ["Waves"]         = {group = "님리사", name = "물결", text = "물결"},
+    ["Knockback"]     = {group = "님리사", name = "넉백", text = "넉백"},
+    ["ChillingFrost"] = {group = "님리사", name = "오싹한 서리", text = "디버프"},
+    ["AbyssalRain"]   = {group = "님리사", name = "심연의 비", text = "광역뎀"},
+    ["WaterJet"]      = {group = "님리사", name = "물 분출", text = "전방스킬"},
+    ["WaterFlurry"]   = {group = "님리사", name = "질풍의 얼음칼날", text = "탱커 공격"},
+    ["Taunt"]         = {group = "님리사", name = "도발", text = "도발"},
 }
 
 -- Nek'zali the Soulcoiler (3470)
@@ -158,25 +166,27 @@ L[3445] = {
     ["PoisonHits"]      = {group = "파수꾼", name = "독 탱커 공격", text = "탱커 공격"},
     ["BloodHits"]       = {group = "파수꾼", name = "피 탱커 공격", text = "탱커 공격"},
     ["BloodDropPool"]   = {group = "파수꾼", name = "탱커 바닥 깔림", text = "바닥 깔림"},
-    ["BloodSoak"]       = {group = "파수꾼", name = "피 스킬 맞기", text = "피 스킬 맞기"},
-    ["BloodSoakPool"]   = {group = "파수꾼", name = "스킬 맞고 바닥 깔림", text = "바닥 깔림"},
+    ["BloodSoak"]       = {group = "파수꾼", name = "피 같이맞기", text = "피 같이맞기"},
+    ["BloodSoakPool"]   = {group = "파수꾼", name = "같이맞고 바닥 깔림", text = "바닥 깔림"},
     ["BloodDispels"]    = {group = "파수꾼", name = "피 해제", text = "해제"},
     ["PoisonAdd"]       = {group = "파수꾼", name = "독 쫄", text = "독 쫄"},
-    ["OrbSpawn"]        = {group = "파수꾼", name = "구슬 등장", text = "구슬 유도"},
+    ["OrbSpawn"]        = {group = "파수꾼", name = "구슬 나옴", text = "구슬 유도"},
     ["ShiftingProtovenom"] = {group = "파수꾼", name = "변화무쌍한 원시맹독", text = "산개"},
     ["TransitionDebuffs"] = {group = "파수꾼", name = "사이페 디버프", text = "숫자 게임"},
+    ["Radar"]            = {group = "파수꾼", name = "레이더", text = ""},
 }
 
 -- Vashnik the Malignant (3455)
 L[3455] = {
     ["TankHits"]    = {group = "바쉬니크", name = "탱커 공격", text = "탱커 공격"},
-    ["Taunts"]      = {group = "바쉬니크", name = "Taunt", text = "도발"},
+    ["Taunts"]      = {group = "바쉬니크", name = "도발", text = "도발"},
     ["Adds"]        = {group = "바쉬니크", name = "쫄", text = "쫄"},
     ["Infection"]   = {group = "바쉬니크", name = "감염", text = "감염"},
     ["AoE"]         = {group = "바쉬니크", name = "광역뎀", text = "광역뎀"},
-    ["Soaks"]       = {group = "바쉬니크", name = "스킬 맞기", text = "스킬 맞기"},
-    ["Waves"]       = {group = "바쉬니크", name = "파도", text = "파도"},
-    ["WaveSpread"] = {group = "바쉬니크", name = "파도 산개", text = "미리 산개"},
+    ["Soaks"]       = {group = "바쉬니크", name = "바닥 맞기", text = "바닥 맞기"},
+    ["Waves"]       = {group = "바쉬니크", name = "물결", text = "물결"},
+    ["WaveSpread"] = {group = "바쉬니크", name = "물결 산개", text = "미리 산개"},
+    ["WavesLine"] = {group = "바쉬니크", name = "물결 선", text = ""},
 }
 
 -- The Lost Explorers (3497)
@@ -187,62 +197,96 @@ L[3497] = {
     ["ShellSpinNormal"]         = {group = "일등항해사 스킬", name = "등껍질 회전 일반", text = "유도"},
     ["ShellSpinScroll"]         = {group = "일등항해사 스킬", name = "등껍질 회전 - 두루마리 강화됨", text = "유도"},
     ["ShellSpinTrader"]         = {group = "일등항해사 스킬", name = "등껍질 회전 - 무역상 강화됨", text = "유도"},
-    ["MightyThud"]              = {group = "일등항해사 스킬", name = "스킬 맞기", text = "스킬 맞기"},
-    ["Fish-Spawn"]              = {group = "무역상 스킬", name = "물고기 생성", text = "물고기 생성"},
+    ["MightyThud"]              = {group = "일등항해사 스킬", name = "같이맞기", text = "같이맞기"},
+    ["Fish-Spawn"]              = {group = "무역상 스킬", name = "물고기 나옴", text = "물고기 나옴"},
     ["MushroomBait"]            = {group = "무역상 스킬", name = "버섯 유도", text = "유도"},
     ["ExplosiveSurprise"]       = {group = "무역상 스킬", name = "폭탄 디버프", text = "폭탄 걸림"},
     ["MushroomJump"]            = {group = "무역상 스킬", name = "버섯 점프", text = "점프"},
-    ["TimeToThrow"]             = {group = "무역상 스킬", name = "물고기 던지기 시간", text = "던지기 시간"},
-    ["TimeToThrowNonConditional"] = {group = "무역상 스킬", name = "무조건 물고기 던지기 시간", text = "던지기 시간"},
+    ["TimeToThrow"]             = {group = "무역상 스킬", name = "물고기 던질 타이밍", text = "던질 타이밍"},
+    ["TimeToThrowNonConditional"] = {group = "무역상 스킬", name = "무조건 물고기 던질 타이밍", text = "던질 타이밍"},
 }
 
 -- Sszorak (3420)
 L[3420] = {
     ["TankCombo"]   = {group = "스조라크", name = "탱커 연속 공격", text = "탱커 연속 공격"},
-    ["DamageAmp"]   = {group = "스조라크", name = "피해 증가", text = "피해 증가"},
+    ["SetMarkers"]  = {group = "스조라크", name = "바닥징 찍기 알림", text = "바닥징 찍기"},
+    ["DamageAmp"]   = {group = "스조라크", name = "약화됨", text = "약화됨"},
     ["Bait"]        = {group = "스조라크", name = "유도", text = "유도"},
     ["WindDebuffs"] = {group = "스조라크", name = "바람 디버프", text = "바람 디버프"},
     ["Debuffs"]     = {group = "스조라크", name = "디버프", text = "디버프"},
     ["SerpentsFury"] = {group = "스조라크", name = "뱀의 격노", text = "뭉치기"},
     ["WindsHelper"] = {group = "스조라크", name = "바람 기믹 헬퍼"},
+    ["VenomousSurgeTargets"] = {group = "스조라크", name = "디버프 대상"},
+    ["MarkerMap"] = {group = "스조라크", name = "징표 맵"},
 }
 
 -- The Twin Fangs (3421)
 L[3421] = {
     ["Defensives"] = {group = "쌍둥이 송곳니", name = "생존기", text = "생존기"},
     ["Soak"]        = {group = "쌍둥이 송곳니", name = "스킬 맞기", text = "스킬 맞기"},
+    ["Soak1"]       = {group = "쌍둥이 송곳니", name = "스킬 맞기", text = "스킬 맞기"},
+    ["Soak2"]       = {group = "쌍둥이 송곳니", name = "스킬 맞기", text = "스킬 맞기"},
+    ["Soak3"]       = {group = "쌍둥이 송곳니", name = "스킬 맞기", text = "스킬 맞기"},
     ["PreSpread"]   = {group = "쌍둥이 송곳니", name = "미리 산개", text = "미리 산개"},
-    ["WatchSide"]   = {group = "쌍둥이 송곳니", name = "머리 방향", text = "머리 방향"},
+    ["WatchSide"]   = {group = "쌍둥이 송곳니", name = "브레스 방향", text = "브레스 방향"},
     ["Adds"]        = {group = "쌍둥이 송곳니", name = "쫄", text = "쫄"},
     ["Orbs"]        = {group = "쌍둥이 송곳니", name = "구슬", text = "구슬"},
-    ["TankSoak"]    = {group = "쌍둥이 송곳니", name = "탱커와 같이 맞기", text = "스킬 맞기"},
-    ["WatchSpawns"] = {group = "쌍둥이 송곳니", name = "브레스 머리 나옴", text = "브레스 머리 나옴"},
+    ["TankSoak"]    = {group = "쌍둥이 송곳니", name = "탱커 바닥 맞기", text = "바닥 맞기"},
+    ["WatchSpawns"] = {group = "쌍둥이 송곳니", name = "밀려남", text = "밀려남"},
     ["Knock"]       = {group = "쌍둥이 송곳니", name = "넉백", text = "넉백"},
+    ["DebuffOverview"] = {group = "쌍둥이 송곳니", name = "영원의 맹독 현황", text = "영원의 맹독 현황"},
+    -- ["InterruptWhisperAlert"] = {group = "Twin Fangs", name = "Interrupt Whisper Alert", text = "Your Interrupt"},
 }
 
 -- The Coiled Altar (3429)
 L[3429] = {
-    ["P1Frontal"]       = {group = "똬리의 제단 1페", name = "1페 전방스킬", text = "전방스킬"},
-    ["P1Taunt"]         = {group = "똬리의 제단 탱커", name = "1페 도발", text = "도발"},
-    ["P1Soak"]          = {group = "똬리의 제단 1페", name = "1페 스킬 맞기", text = "스킬 맞기"},
-    ["MindControls"] = {group = "똬리의 제단 2페", name = "정신 지배", text = "정신 지배"},
-    ["P2Frontal"]       = {group = "똬리의 제단 2페", name = "2페 전방스킬", text = "전방스킬"},
-    ["P2Taunt"]         = {group = "똬리의 제단 탱커", name = "2페 도발", text = "도발"},
-    ["P2Debuffs"]       = {group = "똬리의 제단 2페", name = "2페 디버프", text = "디버프"},
-    ["P2Shield"]        = {group = "똬리의 제단 2페", name = "2페 보호막", text = "보호막"},
-    ["InterruptAdds"] = {group = "똬리의 제단 2페", name = "2페 쫄 차단", text = "유령"},
+    ["P1Frontal"]       = {group = "똬리의 제단", name = "1페 전방스킬", text = "전방스킬"},
+    ["P1OrbDeadline"] = {group = "똬리의 제단", name = "구슬 운반 마감", text = "구슬 운반 마감"},
+    ["P1Taunt"]         = {group = "똬리의 제단", name = "1페 도발", text = "도발"},
+    ["P1Soak"]          = {group = "똬리의 제단", name = "1페 같이맞기", text = "같이맞기"},
+    ["MindControls"] = {group = "똬리의 제단", name = "2페 정신 지배", text = "정신 지배"},
+    ["P2Frontal"]       = {group = "똬리의 제단", name = "2페 전방스킬", text = "전방스킬"},
+    ["P2Taunt"]         = {group = "똬리의 제단", name = "2페 도발", text = "도발"},
+    ["P2Debuffs"]       = {group = "똬리의 제단", name = "2페 디버프", text = "디버프"},
+    ["P2Shield"]        = {group = "똬리의 제단", name = "2페 보호막", text = "보호막"},
+    ["DebuffCircle"] = {group = "똬리의 제단", name = "구슬/폭탄 원 도형", text = ""},
+    ["EternalNightfallAbsorb"] = {group = "똬리의 제단", name = "영원한 일몰 보호막", text = ""},
+    ["InterruptAdds"] = {group = "똬리의 제단", name = "2페 쫄 차단", text = "유령"},
+    ["InterruptAssignments"] = {group = "똬리의 제단", name = "차단 배정", text = "차단"},
+    ["P3OrbDeadline"] = {group = "똬리의 제단", name = "3페 구슬 운반 마감", text = "구슬 운반 마감"},
+    ["P2_5WrongTarget"] = {group = "똬리의 제단", name = "타겟 잘못 잡음", text = "타겟 잘못 잡음"},
+    ["P3Frontal"] = {group = "똬리의 제단", name = "3페 전방스킬", text = "전방스킬"},
+    ["P3Soak"] = {group = "똬리의 제단", name = "3페 같이맞기", text = "같이맞기"},
+    ["P3Shield"] = {group = "똬리의 제단", name = "3페 보호막", text = "보호막"},
+    ["P3Debuffs"] = {group = "똬리의 제단", name = "3페 디버프", text = "디버프"},
+    ["P3InterruptAdds"] = {group = "똬리의 제단", name = "3페 쫄 차단", text = "유령"},
+    ["P3MindControls"] = {group = "똬리의 제단", name = "3페 정신 지배", text = "정신 지배"},
+    ["P3Taunt"] = {group = "똬리의 제단", name = "3페 도발", text = "도발"},
 }
 
 -- Ula'tek (3492)
 L[3492] = {
-    --[[
-    ["HitKnock"]      = {group = "울라텍 탱커", name = "1페 공격+넉백", text = "공격+넉백"},
-    ["Taunt"]         = {group = "울라텍 탱커", name = "1페 도발", text = "도발"},
-    ["Waves"]         = {group = "울라텍 1페", name = "파도", text = "파도"},
-    ["Adds"]          = {group = "울라텍 1페", name = "쫄", text = "쫄"},
-    ["DamageAmpIn"]   = {group = "울라텍 1페", name = "피해 증가", text = "피해 증가"},
-    ["DamageAmp"]     = {group = "울라텍 1페", name = "피해 증가 바", text = "피해 증가"},
-    ["PlatformBreak"] = {group = "울라텍 3페", name = "바닥 파괴", text = "바닥 파괴 + 넉백"},
-    ["Debuffs"]       = {group = "울라텍 3페", name = "디버프", text = "디버프"},
-    ]]
+    ["HitKnock"]            = {group = "울라텍", name = "어미의 분노", text = "공격+넉백"},
+    ["Waves"]               = {group = "울라텍", name = "부식의 파도", text = "파도"},
+    ["DamageAmpIn"]         = {group = "울라텍", name = "맹독의 심장", text = "곧 약화"},
+    ["DamageAmp"]           = {group = "울라텍", name = "맹독의 심장", text = "약화됨"},
+    ["PlatformBreak"]       = {group = "울라텍", name = "사냥감 포위", text = "바닥 꺼짐"},
+    ["Debuffs"]             = {group = "울라텍", name = "뱀의 물어뜯기", text = "디버프"},
+    ["Eggs"]                = {group = "울라텍", name = "알", text = "알"},
+    ["EggDeadline"]         = {group = "울라텍", name = "알 운반 마감", text = "알 운반 마감"},
+    ["AddSoak"]             = {group = "울라텍", name = "쫄 맞기", text = "쫄 맞기"},
+    ["Adds"]                = {group = "울라텍", name = "3페 쫄", text = "쫄"},
+    ["BossSpawn"]           = {group = "울라텍", name = "보스 등장", text = "보스 등장"},
+    ["Sweep"]               = {group = "울라텍", name = "휩쓸기", text = "휩쓸기"},
+    ["Soak"]                = {group = "울라텍", name = "바닥 맞기", text = "맞기"},
+    ["TransitionSoakFirst"] = {group = "울라텍", name = "1조 맞기", text = "1조 맞기"},
+    ["TransitionSoakSecond"] = {group = "울라텍", name = "2조 맞기", text = "2조 맞기"},
+    ["GraspingFangsOverview"] = {group = "울라텍", name = "움켜쥐는 송곳니 현황", text = ""},
+    ["WrongTarget"] = {group = "울라텍", name = "타겟 잘못 잡음", text = "타겟 잘못 잡음"},
+    ["WaveDirection"] = {group = "울라텍", name = "파도 방향 디스플레이", text = ""},
+    ["WaveDirectionPrompt"] = {group = "울라텍", name = "파도 방향 입력", text = "방향 입력"},
+    ["WaveLines"] = {group = "울라텍", name = "3페 파도 선", text = ""},
+    ["InterruptAssignments"] = {group = "울라텍", name = "차단 배정", text = "차단"},
+    ["TransitionPatternSoaks"] = {group = "울라텍", name = "사이페 바닥 맞기", text = "맞기"},
+    ["TransitionPatternArrow"] = {group = "울라텍", name = "사이페 화살표", text = ""},
 }

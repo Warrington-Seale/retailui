@@ -86,7 +86,7 @@ local Skin = {
   },
   Shadow = {
     Inset = 7,
-    SliceMargin = { left = 7, top = 7, right = 7, bottom = 7 },
+    SliceMargin = { left = 7,  top = 7, right = 7, bottom = 7 },
     Texture = 'Interface\\AddOns\\Falcon\\Media\\Border\\FalconOutsideGlow.tga',
   },
   InsideGlow = {
@@ -415,8 +415,8 @@ function Falcon:UpdateBuffAnchor(layout)
   end
   local anchorConfig = buffAnchorPoints[anchor]
   self.WhirlingSurge:ClearAllPoints()
-  self.WhirlingSurge:SetPoint(anchorConfig[1], target, anchorConfig[2], anchorConfig[3], anchorConfig[4])
-  end)
+  PixelUtil.SetPoint(self.WhirlingSurge, anchorConfig[1], target, anchorConfig[2], anchorConfig[3], anchorConfig[4])
+end)
 end
 
 function Falcon:UpdateBarBehaviourVisibility(flags)
@@ -484,13 +484,30 @@ function Falcon:UpdateUISizes(new_charge_width, new_speed_height, new_charge_hei
   local precisionSpeedBarHeight = PixelUtil.GetNearestPixelSize(speedHeight, uiScale, 1)
   local precisionChargeBarHeight = PixelUtil.GetNearestPixelSize(chargeHeight, uiScale, 1)
 
+  local function UpdatePixelPerfectBounds(frame)
+    if frame.shadow then
+      frame.shadow:ClearAllPoints()
+      PixelUtil.SetPoint(frame.shadow, 'TOPLEFT', frame, 'TOPLEFT', -Skin.Shadow.Inset, Skin.Shadow.Inset)
+      PixelUtil.SetPoint(frame.shadow, 'BOTTOMRIGHT', frame, 'BOTTOMRIGHT', Skin.Shadow.Inset, -Skin.Shadow.Inset)
+    end
+    if frame.outline then
+      frame.outline:ClearAllPoints()
+      PixelUtil.SetPoint(frame.outline, 'TOPLEFT', frame, 'TOPLEFT', -Skin.Outline.Inset, Skin.Outline.Inset)
+      PixelUtil.SetPoint(frame.outline, 'BOTTOMRIGHT', frame, 'BOTTOMRIGHT', Skin.Outline.Inset, -Skin.Outline.Inset)
+    end
+  end
+
+  UpdatePixelPerfectBounds(self)
+  UpdatePixelPerfectBounds(self.SpeedBarBG)
+  UpdatePixelPerfectBounds(self.ChargesParent)
+  UpdatePixelPerfectBounds(self.WhirlingSurge)
+
   local totalWidth = PixelUtil.GetNearestPixelSize((num_charges * precisionWidth) + ((num_charges - 1) * precisionPadding), uiScale, 1)
   local mainframeHeight = PixelUtil.GetNearestPixelSize(precisionSpeedBarHeight + precisionPadding + precisionChargeBarHeight, uiScale, 1)
 
   self:SetSize(totalWidth, mainframeHeight)
-  local iconSize = MutableData.BuffSettings.Size
-  PixelUtil.SetSize(self.WhirlingSurge, iconSize, iconSize, iconSize, iconSize)
-
+  local iconSize = PixelUtil.GetNearestPixelSize(MutableData.BuffSettings.Size, UIParent:GetScale(), 1)
+  self.WhirlingSurge:SetSize(iconSize, iconSize)
   self.SpeedBarBG:SetSize(totalWidth, precisionSpeedBarHeight)
   self.SpeedBarBG:ClearAllPoints()
 
@@ -510,10 +527,13 @@ function Falcon:UpdateUISizes(new_charge_width, new_speed_height, new_charge_hei
   self.SpeedBar:SetPoint('TOPLEFT', self.SpeedBarBG, 'TOPLEFT', INSET, -INSET)
   self.SpeedBar:SetPoint('BOTTOMRIGHT', self.SpeedBarBG, 'BOTTOMRIGHT', -INSET, INSET)
   self.SpeedBar.tick:SetPoint('TOPLEFT', self.SpeedBar, 'TOPLEFT', PixelUtil.GetNearestPixelSize(totalWidth/2 - 0.5, uiScale), 1)
+
   for i = 1, num_charges do
     local chargesBG = self.ChargeBGs[i]
     local chargeBar = self.ChargeBars[i]
     local secondWindBar = self.SecondWindBars[i]
+
+    UpdatePixelPerfectBounds(chargesBG)
 
     chargesBG:SetSize(precisionWidth, precisionChargeBarHeight)
     chargesBG:ClearAllPoints()
@@ -567,20 +587,21 @@ end
 
 function Falcon:AddShadow(frame)
   local shadow = self:SetupSlicedTexture(frame, Skin.Shadow, 'BACKGROUND', -1)
-  shadow:SetPoint('TOPLEFT', frame, 'TOPLEFT', -Skin.Shadow.Inset, Skin.Shadow.Inset)
-  shadow:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', Skin.Shadow.Inset, -Skin.Shadow.Inset)
+  PixelUtil.SetPoint(shadow, 'TOPLEFT', frame, 'TOPLEFT', -Skin.Shadow.Inset, Skin.Shadow.Inset)
+  PixelUtil.SetPoint(shadow, 'BOTTOMRIGHT', frame, 'BOTTOMRIGHT', Skin.Shadow.Inset, -Skin.Shadow.Inset)
   frame.shadow = shadow
 end
 
 function Falcon:AddInsideGlow(frame)
-  local glow =  self:SetupSlicedTexture(frame, Skin.InsideGlow)
+  local glow = self:SetupSlicedTexture(frame, Skin.InsideGlow)
   glow:SetAllPoints()
   frame.insideGlow = glow
 end
+
 function Falcon:AddOutline(frame)
-  local outline =  self:SetupSlicedTexture(frame, Skin.Outline)
-  outline:SetPoint('TOPLEFT', frame, 'TOPLEFT', -Skin.Outline.Inset, Skin.Outline.Inset)
-  outline:SetPoint('BOTTOMRIGHT', frame, 'BOTTOMRIGHT', Skin.Outline.Inset, -Skin.Outline.Inset)
+  local outline = self:SetupSlicedTexture(frame, Skin.Outline)
+  PixelUtil.SetPoint(outline, 'TOPLEFT', frame, 'TOPLEFT', -Skin.Outline.Inset, Skin.Outline.Inset)
+  PixelUtil.SetPoint(outline, 'BOTTOMRIGHT', frame, 'BOTTOMRIGHT', Skin.Outline.Inset, -Skin.Outline.Inset)
   frame.outline = outline
 end
 

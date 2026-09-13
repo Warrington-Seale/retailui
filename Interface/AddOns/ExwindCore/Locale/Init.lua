@@ -27,7 +27,7 @@ local function NormalizeLocaleMode(mode)
 end
 
 local function GetSavedLocaleMode()
-    local db = rawget(_G, "ExwindToolsDB")
+    local db = rawget(_G, "EXCORE12S2")
     if type(db) == "table" and type(db.Locale) == "table" then
         return NormalizeLocaleMode(db.Locale.mode)
     end

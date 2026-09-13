@@ -1,20 +1,20 @@
 
 g_auctionHouseFilters = {
-["minLevel"] = 0,
 ["maxLevel"] = 0,
+["minLevel"] = 0,
 ["filters"] = {
 false,
-false,
-false,
+true,
+true,
 false,
 nil,
+false,
+false,
+false,
 true,
-true,
-true,
-true,
-true,
-true,
-true,
+false,
+false,
+false,
 },
 }
 g_activeBidAuctionIDs = {

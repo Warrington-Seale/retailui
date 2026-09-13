@@ -17,13 +17,20 @@ VE.Store:Flush()                                     -- Cancel pending save time
 
 -- Built-in reducers (dispatch these actions):
 -- "SET_CONFIG"                { key, value }        -- Update config setting
--- "SET_ENDEAVOR_INFO"         { seasonName, seasonEndTime, daysRemaining, currentProgress, maxProgress, milestones }
+-- "SET_ENDEAVOR_INFO"         { seasonName, seasonEndTime, currentProgress, maxProgress, milestones }
 -- "SET_TASKS"                 { tasks }             -- Update endeavor tasks list
 -- "UPDATE_CHARACTER_PROGRESS" { charKey, name, realm, class, tasks }
 -- "SET_SELECTED_CHARACTER"    { charKey }           -- Change viewed character
 -- "SET_HOUSE_GUID"            { houseGUID }         -- Cache current house GUID
 -- "SET_HOUSE_LEVEL"           { level, xp, xpForNextLevel, maxLevel }
 -- "SET_COUPONS"               { count, iconID }     -- Update community coupons
+
+-- ============================================================================
+-- Init.lua - Addon lifecycle and shared helpers
+-- ============================================================================
+
+VE:GetCharacterKey()                                 -- "Name-Realm" key for per-character SavedVariables
+VE:FormatDuration(seconds)                           -- "3 Days" / "1 Day" / "18 Hours" / "42 Minutes" / "Under a Minute"; nil at <= 0
 
 -- ============================================================================
 -- EventBus.lua - Pub/Sub messaging

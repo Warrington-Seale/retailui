@@ -2,31 +2,26 @@ local _, MDT = ...
 
 MDT.changeLog = {
   {
-    tag = "6.2.3",
-    date = "2026-08-17",
+    tag = "6.2.16",
+    date = "2026-09-08",
     notes = {
-      "Improved map loading and responsiveness when displaying large numbers of enemies.",
-      "Corrected enemy positions and icon sizes throughout The Blinding Vale.",
-      "Bosses in The Blinding Vale no longer contribute enemy forces.",
+      "Added a missing Lightgorged Lasher and corrected a Lasher's position in The Blinding Vale.",
+      "Added missing translations for The Blinding Vale enemies and Thundering Totem in King's Rest.",
     },
   },
   {
-    tag = "6.2.2",
-    date = "2026-08-14",
+    tag = "6.2.15",
+    date = "2026-09-05",
     notes = {
-      "Corrected enemy data and map positions for Altar of Fangs, Den of Nalorakk, Murder Row, and The Blinding Vale.",
+      "Added two missing Twinfang Harrowers in Altar of Fangs.",
     },
   },
   {
-    tag = "6.2.1",
-    date = "2026-08-11",
+    tag = "6.2.14-alpha1",
+    date = "2026-09-05",
     notes = {
-      "Add WoW 12.1 support for Midnight Season 2",
-      "Added an option to show each pull's total health in the route sidebar. (off by default)",
-      "Added an option to automatically pan the map to the selected pull. (on by default)",
-      "Enemies can now be dragged on the map to move them into pulls, with a preview showing which enemies will move.",
-      "New route exports and group sharing now use Blizzard's route encoding.",
-      "MDT's interface now loads only when opened, reducing memory usage while MDT is not in use and reducing loading screen impact.",
+      "Experimental alpha version intended to help debug route sharing issues.",
+      "Added detailed error reports for route sharing problems. If an MDT error window appears while sharing a route, please report it using the links in the window.",
     },
   },
 }

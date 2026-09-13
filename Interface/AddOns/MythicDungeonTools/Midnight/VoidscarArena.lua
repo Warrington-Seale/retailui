@@ -10,7 +10,7 @@ MDT.mapInfo[dungeonIndex] = {
   mapID = 585
 };
 
-local zones = { 2572, 2573, 2574 }
+local zones = { 2574, 2572, 2573 }
 for _, zone in ipairs(zones) do
   MDT.zoneIdToDungeonIdx[zone] = dungeonIndex
 end
@@ -26,7 +26,16 @@ MDT.dungeonSubLevels[dungeonIndex] = {
 
 MDT.dungeonTotalCount[dungeonIndex] = { normal = 738 }
 
-MDT.mapPOIs[dungeonIndex] = {};
+MDT.mapPOIs[dungeonIndex] = {
+  [1] = {
+    [1] = {
+      ["type"] = "dungeonEntrance",
+      ["x"] = 199.7,
+      ["y"] = -539.6,
+      ["sizeMult"] = 1.5,
+    },
+  },
+};
 
 MDT.dungeonEnemies[dungeonIndex] = {
   [1] = {
@@ -304,7 +313,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 5,
     ["health"] = 3243255,
     ["scale"] = 1.5,
-    ["displayId"] = 140034,
+    ["displayId"] = 140036,
     ["creatureType"] = "Humanoid",
     ["level"] = 90,
     ["spells"] = {
@@ -391,15 +400,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [11] = {
-        ["x"] = 698.02480063097,
-        ["y"] = -358.23846911549,
+        ["x"] = 698.2,
+        ["y"] = -353.2,
         ["g"] = 55,
-        ["sublevel"] = 1,
-      },
-      [12] = {
-        ["x"] = 614.20644182213,
-        ["y"] = -380.73020278058,
-        ["g"] = 36,
         ["sublevel"] = 1,
       },
       [13] = {
@@ -488,15 +491,21 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [12] = {
-        ["x"] = 706.08728490923,
-        ["y"] = -376.85121082903,
-        ["g"] = 56,
+        ["x"] = 704.2,
+        ["y"] = -358.9,
+        ["g"] = 55,
         ["sublevel"] = 1,
       },
       [13] = {
         ["x"] = 165.14186200507,
         ["y"] = -482.56192955344,
         ["g"] = 5,
+        ["sublevel"] = 1,
+      },
+      [14] = {
+        ["x"] = 614.2,
+        ["y"] = -380.7,
+        ["g"] = 36,
         ["sublevel"] = 1,
       },
     },
@@ -616,11 +625,11 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Aegyra the Unyielding",
     ["id"] = 267545,
     ["count"] = 40,
-    ["health"] = 10000,
+    ["health"] = 8432463,
     ["scale"] = 2.5,
-    ["displayId"] = 74439,
+    ["displayId"] = 147378,
     ["creatureType"] = "Humanoid",
-    ["level"] = 90,
+    ["level"] = 91,
     ["spells"] = {
       [1298903] = {
       },
@@ -656,7 +665,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 40,
     ["health"] = 7459487,
     ["scale"] = 2.5,
-    ["displayId"] = 143575,
+    ["displayId"] = 147363,
     ["creatureType"] = "Humanoid",
     ["level"] = 91,
     ["spells"] = {
@@ -778,7 +787,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["health"] = 7135161,
     ["scale"] = 2.2,
     ["displayId"] = 140264,
-    ["creatureType"] = "Beast",
+    ["creatureType"] = "Humanoid",
     ["level"] = 91,
     ["spells"] = {
       [1234890] = {
@@ -948,8 +957,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [14] = {
-        ["x"] = 709.12201144271,
-        ["y"] = -357.71515053596,
+        ["x"] = 708.9,
+        ["y"] = -352.8,
         ["g"] = 55,
         ["sublevel"] = 1,
       },
@@ -989,7 +998,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Kilivore Screamer",
     ["id"] = 243766,
     ["count"] = 7,
-    ["health"] = 6227050,
+    ["health"] = 3081092,
     ["scale"] = 1.5,
     ["displayId"] = 141196,
     ["creatureType"] = "Beast",
@@ -1151,15 +1160,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 58,
         ["sublevel"] = 1,
       },
-      [8] = {
-        ["x"] = 678.67654449072,
-        ["y"] = -312.74413561583,
-        ["g"] = 49,
-        ["sublevel"] = 1,
-      },
       [9] = {
-        ["x"] = 693.63339389051,
-        ["y"] = -313.0163350389,
+        ["x"] = 686.8,
+        ["y"] = -315,
         ["g"] = 49,
         ["sublevel"] = 1,
       },
@@ -1169,7 +1172,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Blistercreep",
     ["id"] = 243736,
     ["count"] = 1,
-    ["health"] = 698699,
+    ["health"] = 648651,
     ["scale"] = 0.9,
     ["displayId"] = 141204,
     ["creatureType"] = "Beast",
@@ -1308,7 +1311,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 30,
     ["health"] = 6227050,
     ["scale"] = 2.2,
-    ["displayId"] = 142611,
+    ["displayId"] = 147459,
     ["creatureType"] = "Humanoid",
     ["level"] = 91,
     ["spells"] = {
@@ -1610,51 +1613,61 @@ MDT.dungeonEnemies[dungeonIndex] = {
       [41] = {
         ["x"] = 762.7369345774,
         ["y"] = -367.67582843254,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [42] = {
         ["x"] = 768.03836907644,
         ["y"] = -360.8040208483,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [43] = {
         ["x"] = 773.98065805064,
         ["y"] = -366.9848891221,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [44] = {
         ["x"] = 763.39012330707,
         ["y"] = -373.69337801526,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [45] = {
         ["x"] = 768.22681334696,
         ["y"] = -366.73361191039,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [46] = {
         ["x"] = 774.15638744058,
         ["y"] = -373.25369188093,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [47] = {
         ["x"] = 768.42786976923,
         ["y"] = -379.29631322335,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [48] = {
         ["x"] = 768.50324075904,
         ["y"] = -373.12804125727,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [49] = {
         ["x"] = 774.34493019478,
         ["y"] = -379.30892283968,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [50] = {
         ["x"] = 773.82975313296,
         ["y"] = -360.75374366364,
+        ["g"] = 64,
         ["sublevel"] = 1,
       },
       [51] = {
@@ -1725,7 +1738,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 7,
     ["health"] = 6227050,
     ["scale"] = 1.5,
-    ["displayId"] = 139865,
+    ["displayId"] = 147460,
     ["creatureType"] = "Aberration",
     ["level"] = 90,
     ["spells"] = {
@@ -1819,7 +1832,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["creatureType"] = "Beast",
     ["level"] = 92,
     ["isBoss"] = true,
-    ["encounterID"] = 2791,
+    ["encounterID"] = 2792,
     ["instanceID"] = 1313,
     ["spells"] = {
       [1222484] = {
@@ -1866,7 +1879,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["creatureType"] = "Aberration",
     ["level"] = 92,
     ["isBoss"] = true,
-    ["encounterID"] = 2791,
+    ["encounterID"] = 2793,
     ["instanceID"] = 1313,
     ["spells"] = {
       [1222755] = {
@@ -1931,7 +1944,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Magma Totem",
     ["id"] = 248666,
     ["count"] = 0,
-    ["health"] = 10000,
+    ["health"] = 441313,
     ["scale"] = 1,
     ["displayId"] = 30762,
     ["creatureType"] = "Not specified",
@@ -1944,8 +1957,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
     ["clones"] = {
       [1] = {
-        ["x"] = 417.34660145931,
-        ["y"] = -69.849923700256,
+        ["x"] = 409.5,
+        ["y"] = -68.9,
         ["sublevel"] = 1,
       },
     },
@@ -1954,9 +1967,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Ethereal Shade",
     ["id"] = 254677,
     ["count"] = 0,
-    ["health"] = 817478,
+    ["health"] = 675678,
     ["scale"] = 1,
-    ["displayId"] = 124083,
+    ["displayId"] = 147404,
     ["creatureType"] = "Humanoid",
     ["level"] = 92,
     ["spells"] = {

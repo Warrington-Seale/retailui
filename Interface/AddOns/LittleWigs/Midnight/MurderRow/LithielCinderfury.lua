@@ -6,8 +6,6 @@ local mod, CL = BigWigs:NewBoss("Lithiel Cinderfury", 2813, 2682)
 if not mod then return end
 mod:SetEncounterID(3105)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -27,6 +25,16 @@ mod:SetRenames({
 	[474408] = {474408},   -- Summon Vilefiend
 	[1218203] = {1218203}, -- Fingers of Gul'dan
 	[1224478] = {1224478}, -- Malefic Wave
+})
+
+--------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{1214730, duration = 3.5, tip = CL.debuffWalkIntoObjectNote:format(mod:SpellName(1214730))}, -- Demonic Gateway
+	{1217384, duration = 60, mechanic = "infected", soundOnApplied = "warning", soundOnAppliedDose = "none", tip = CL.debuffFailureMoveFromCastNote:format(mod:SpellName(1224478))}, -- Malefic Wave
+	-- there is a Fixate but it doesn't log
 })
 
 --------------------------------------------------------------------------------
@@ -166,43 +174,17 @@ function mod:FingersOfGuldanTimeline(eventInfo) -- Fingers of Gul'dan
 	}
 end
 
-if BigWigsLoader.isNext then -- XXX remove in 12.1
-	function mod:MaleficWaveTimeline(eventInfo) -- Malefic Wave
-		local barText = CL.count:format(self:GetRename(1224478), maleficWaveCount)
-		self:CDBar(1224478, eventInfo.duration, barText, nil, eventInfo.id)
-		maleficWaveCount = maleficWaveCount + 1
-		return {
-			msg = barText,
-			key = 1224478,
-			callback = function()
-				self:StopBlizzMessages(1)
-				self:Message(1224478, "red", barText)
-				self:PlaySound(1224478, "warning")
-			end
-		}
-	end
-else
-	function mod:MaleficWaveTimeline(eventInfo) -- Malefic Wave
-		local barText = CL.count:format(self:GetRename(1224478), maleficWaveCount)
-		self:CDBar(1224478, eventInfo.duration, barText, nil, eventInfo.id)
-		maleficWaveCount = maleficWaveCount + 1
-		local timer = self:ScheduleTimer(function()
-			self:StopBar(barText)
+function mod:MaleficWaveTimeline(eventInfo) -- Malefic Wave
+	local barText = CL.count:format(self:GetRename(1224478), maleficWaveCount)
+	self:CDBar(1224478, eventInfo.duration, barText, nil, eventInfo.id)
+	maleficWaveCount = maleficWaveCount + 1
+	return {
+		msg = barText,
+		key = 1224478,
+		callback = function()
+			self:StopBlizzMessages(1)
 			self:Message(1224478, "red", barText)
 			self:PlaySound(1224478, "warning")
-		end, eventInfo.duration)
-		return {
-			msg = barText,
-			key = 1224478,
-			callback = function()
-				self:Error("Malefic Wave now has a callback")
-			end,
-			cancelCallback = function()
-				if timer then
-					self:CancelTimer(timer)
-					timer = nil
-				end
-			end
-		}
-	end
+		end
+	}
 end

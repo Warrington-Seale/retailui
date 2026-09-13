@@ -66,8 +66,10 @@ function MDT:HardReset()
 end
 
 function MDT:ResetDataCache()
+  db.devModeCache = nil
   db.dungeonEnemies = nil
   db.mapPOIs = nil
+  db.devModeCacheBaseline = nil
   ReloadUI()
 end
 
@@ -299,6 +301,7 @@ if not db.minimap.compartmentHide then minimapIcon:AddButtonToCompartment("Mythi
 local function buildFocusMarkerMacro(settings)
   local markerIndex = tonumber(settings.lastMarker) or 0
   local body = "/focus [@mouseover,exists,nodead][]"
+  if markerIndex == 0 and settings.preserveExistingTargetMarkers then return body end
   local conditionals = "[@focus]"
   local targetMarkerIndex = markerIndex
   if settings.disableTargetMarkerInRaid then

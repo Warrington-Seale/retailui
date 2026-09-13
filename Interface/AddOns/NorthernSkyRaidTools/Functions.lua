@@ -57,6 +57,11 @@ function NSI:Restricted()
     return C_Secrets.ShouldAurasBeSecret()
 end
 
+function NSI:IsPTRPatch()
+    local interfaceVersion = select(4, GetBuildInfo())
+    return interfaceVersion >= 120150
+end
+
 function NSI:GetPrimaryPhase(phase)
     if type(phase) == "table" then
         local primaryPhase
@@ -85,7 +90,15 @@ function NSI:GetSortedPhaseKeys(phaseTimers)
 end
 
 function NSI:GetActiveEncounterTimelineEventCount()
-    return C_EncounterTimeline.GetEventCountBySource(0)
+    local activeCount = 0
+    for _, eventID in ipairs(C_EncounterTimeline.GetEventList()) do
+        local info = C_EncounterTimeline.GetEventInfo(eventID)
+        if info.source == Enum.EncounterTimelineEventSource.Encounter
+            and C_EncounterTimeline.GetEventState(eventID) == Enum.EncounterTimelineEventState.Active then
+            activeCount = activeCount + 1
+        end
+    end
+    return activeCount
 end
 
 function NSI:SortTable(t, reversed)
@@ -136,7 +149,7 @@ function NSAPI:Shorten(unit, num, specicon, AddonName, combined, roleicon) -- Re
     end
     if classFile then -- basically "if unit found"
         local color = classFile == "PRIEST" and CreateColor(200/255, 200/255, 200/255) or GetClassColorObj(classFile)
-        local newname = num and NSI:Utf8Sub(NSAPI:GetName(name, AddonName), 1, num) or NSAPI:GetName(name, AddonName) -- shorten name before wrapping in color
+        local newname = num and NSI:Utf8Sub(NSAPI:GetName(unit, AddonName), 1, num) or NSAPI:GetName(unit, AddonName) -- resolve the display name from the current unit before wrapping it in color
         if color then -- should always be true anyway?
             return combined and specicon..roleicon..color:WrapTextInColorCode(newname) or color:WrapTextInColorCode(newname), combined and "" or specicon, combined and "" or roleicon
         else
@@ -372,11 +385,90 @@ function NSAPI.UnregisterAllCallbacks(target)
     return NSI.UnregisterAllCallbacks(target)
 end
 
+function NSI:RefreshEncounterAlertsUI()
+    if self.RefreshEncounterAlertsUIHandler then
+        self.RefreshEncounterAlertsUIHandler()
+    end
+end
+
+function NSAPI:SetEncounterAlertState(encID, internalID, enabled, difficultyID)
+    local alertTable = NSRT.EncounterAlerts and NSRT.EncounterAlerts[encID]
+    if not alertTable then return false end
+
+    local newState = enabled == true
+    if not newState then
+        difficultyID = difficultyID or NSI:DifficultyCheck({14, 15, 16, 220})
+    end
+
+    local found = false
+    for alertDifficultyID, difficultyAlerts in pairs(alertTable) do
+        if newState or alertDifficultyID == difficultyID then
+            local alert = difficultyAlerts[internalID]
+            if alert then
+                found = true
+                alert.enabled = newState
+                if alert.ReloeReminder == true then
+                    alert.UserModifiedEnabled = true
+                end
+                NSI:FireCallback("NSRT_ALERT_CHANGED", encID, alertDifficultyID, internalID)
+            end
+        end
+    end
+
+    if found then
+        NSI:RefreshEncounterAlertsUI()
+    end
+    return found
+end
+
+function NSAPI:OpenAlert(encID, diffID, internalID)
+    if not encID or not diffID or not internalID then return false end
+
+    local function openAlert()
+        if not NSI.NSUI or not NSI.NSUI.encounters_frame then return false end
+        NSI.NSUI.MenuFrame:SelectTabByName("EncounterAlerts")
+        return NSI.NSUI.encounters_frame:OpenAlert(encID, diffID, internalID)
+    end
+
+    if NSI:LoadUI(true, "EncounterAlerts") then
+        return openAlert()
+    end
+
+    if NSI.NSUI and NSI.NSUI.Initializing then
+        NSI.PendingOpenAlert = {encID = encID, diffID = diffID, internalID = internalID}
+        NSI.NSUI.PendingShow = true
+        NSI.NSUI.PendingTabName = "EncounterAlerts"
+        return true
+    end
+
+    return false
+end
+
 local ExportSerializer = LibStub("LibSerialize")
 local ExportDeflate = LibStub("LibDeflate")
 
+local function CopySerializableValue(value, copies)
+    local valueType = type(value)
+    if valueType == "function" then return nil end
+    if valueType ~= "table" then return value end
+
+    copies = copies or {}
+    if copies[value] then return copies[value] end
+
+    local copy = {}
+    copies[value] = copy
+    for key, nestedValue in pairs(value) do
+        local copiedKey = CopySerializableValue(key, copies)
+        local copiedValue = CopySerializableValue(nestedValue, copies)
+        if copiedKey ~= nil and copiedValue ~= nil then
+            copy[copiedKey] = copiedValue
+        end
+    end
+    return copy
+end
+
 function NSI:EncodeExportData(data, serializer)
-    local serialized = (serializer or ExportSerializer):Serialize(data)
+    local serialized = (serializer or ExportSerializer):Serialize(CopySerializableValue(data))
     local compressed = serialized and ExportDeflate:CompressDeflate(serialized)
     return compressed and ExportDeflate:EncodeForPrint(compressed)
 end
@@ -407,10 +499,13 @@ function NSI:StopFrameMove(F, SettingsTable)
     self:SaveFramePosition(F, SettingsTable)
 end
 
-function NSI:MakeDraggable(F, settingsTable, enable, isNote)
+function NSI:MakeDraggable(F, settingsTable, enable, isNote, onPositionSaved)
     if not F then return end
 
     if enable then
+        if not F._nsrtPreservedOnUpdate then
+            F._nsrtPreservedOnUpdate = F:GetScript("OnUpdate")
+        end
         if (not F.dragBorder) and (not isNote) then
             F.dragBorder = CreateFrame("Frame", nil, F, "BackdropTemplate")
             F.dragBorder:SetPoint("TOPLEFT",     F, "TOPLEFT",     -8,  8)
@@ -431,6 +526,11 @@ function NSI:MakeDraggable(F, settingsTable, enable, isNote)
         if F.Border and isNote then F.Border:Show() end
         if F.dragBorder then F.dragBorder:Show() end
         if F.Text then F.Text:Show() end
+        if F.IsDebuffOverview then
+            for _, row in ipairs(F.PreviewRows) do
+                row:Show()
+            end
+        end
         if F.TitleLabel then F.TitleLabel:Show() end
         if F.GearButton then F.GearButton:Show() end
 
@@ -441,24 +541,35 @@ function NSI:MakeDraggable(F, settingsTable, enable, isNote)
                 f._nsrtLiveSaveDrag = true
                 f:SetScript("OnUpdate", function(frame, elapsed)
                     frame._nsrtDragSaveElapsed = (frame._nsrtDragSaveElapsed or 0) + elapsed
-                    if frame._nsrtDragSaveElapsed < 0.05 then return end
-                    frame._nsrtDragSaveElapsed = 0
-                    self:SaveFramePosition(frame, settingsTable)
+                    if frame._nsrtDragSaveElapsed >= 0.05 then
+                        frame._nsrtDragSaveElapsed = 0
+                        self:SaveFramePosition(frame, settingsTable)
+                        if onPositionSaved then onPositionSaved(frame, settingsTable) end
+                    end
+                    if frame._nsrtPreservedOnUpdate then
+                        frame._nsrtPreservedOnUpdate(frame, elapsed)
+                    end
                 end)
             end
         end)
         F:SetScript("OnDragStop", function(f)
             if f._nsrtLiveSaveDrag then
-                f:SetScript("OnUpdate", nil)
+                f:SetScript("OnUpdate", f._nsrtPreservedOnUpdate)
                 f._nsrtLiveSaveDrag = nil
                 f._nsrtDragSaveElapsed = nil
             end
             self:StopFrameMove(f, settingsTable)
+            if onPositionSaved then onPositionSaved(f, settingsTable) end
         end)
     else
         if F.Border and isNote then F.Border:Hide() end
         if F.dragBorder then F.dragBorder:Hide() end
         if F.Text then F.Text:Hide() end
+        if F.IsDebuffOverview then
+            for _, row in ipairs(F.PreviewRows) do
+                row:Hide()
+            end
+        end
         if F.TitleLabel then F.TitleLabel:Hide() end
         if F.GearButton then F.GearButton:Hide() end
         if F.SettingsWindow then F.SettingsWindow:Hide() end
@@ -466,7 +577,7 @@ function NSI:MakeDraggable(F, settingsTable, enable, isNote)
         F:SetMovable(false)
         F:EnableMouse(false)
         if F._nsrtLiveSaveDrag then
-            F:SetScript("OnUpdate", nil)
+            F:SetScript("OnUpdate", F._nsrtPreservedOnUpdate)
             F._nsrtLiveSaveDrag = nil
             F._nsrtDragSaveElapsed = nil
         end

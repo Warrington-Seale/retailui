@@ -1179,20 +1179,10 @@ function VE.UI:CreateTaskRow(parent, options)
         self.name:SetText(task.name or "Unknown Task")
         self.points:SetText(tostring(task.points or 0))
 
-        -- Update coupon reward display.
-        -- Blizzard exposes only the BASE coupon amount (GetQuestRewardCurrencyInfo);
-        -- DR is applied server-side. We forecast it ourselves via the curve.
+        -- Update coupon reward display. couponReward already carries Blizzard's
+        -- own dampening for the next completion (GetInitiativeTaskRewardScaling),
+        -- so there is nothing left for us to multiply.
         local couponDisplay = task.couponReward or 0
-        if couponDisplay > 0 and VE.EndeavorTracker and VE.EndeavorTracker.GetDRStepInfo then
-            local drForCoupon = VE.EndeavorTracker:GetDRStepInfo({
-                taskType = task.taskType,
-                timesCompleted = task.timesCompleted,
-            })
-            if drForCoupon then
-                local base = task.couponBase or task.couponReward
-                couponDisplay = math.floor((base or 0) * drForCoupon.multiplier + 0.5)
-            end
-        end
         if couponDisplay > 0 then
             self.couponText:SetText("+" .. couponDisplay)
             self.couponBg:Show()
@@ -1374,13 +1364,29 @@ function VE.UI:CreateTaskRow(parent, options)
                 local currentMult = (times >= 5) and 0.5 or math.max(0.5, 1.0 - times * 0.1)
                 local pointsForecast = self.task.points or 0
                 local xpBase = (currentMult > 0) and math.floor(pointsForecast / currentMult + 0.5) or pointsForecast
-                local couponBase = self.task.couponBase or self.task.couponReward or 0
+                local couponBase = self.task.couponBase or 0
 
                 if xpBase > 0 or couponBase > 0 then
                     GameTooltip:AddLine(" ")
                     local baseLine = "Base reward: " .. xpBase .. " XP"
                     if couponBase > 0 then baseLine = baseLine .. "  /  " .. couponBase .. " coupons" end
                     GameTooltip:AddLine(baseLine, 1.00, 0.82, 0.00)
+
+                    -- Where this task actually stands. The ">" marker names the
+                    -- rung but not the count behind it, and the count is what
+                    -- tells you whether the next one is still worth doing.
+                    local currentStep = math.min(times, 5)
+                    local standing
+                    if times == 0 then
+                        standing = "Not completed yet -- next is #1"
+                    elseif times >= 5 then
+                        standing = ("Completed %d times -- at the 50%% floor"):format(times)
+                    else
+                        standing = ("Completed %d time%s -- next is #%d"):format(
+                            times, times == 1 and "" or "s", currentStep + 1)
+                    end
+                    local standingColor = VE.UI.DR_STEP_COLORS[currentStep]
+                    GameTooltip:AddLine(standing, standingColor.r, standingColor.g, standingColor.b)
 
                     GameTooltip:AddLine("Diminishing returns for each completion:", 0.7, 0.7, 0.7)
                     for step = 0, 5 do
@@ -1389,7 +1395,7 @@ function VE.UI:CreateTaskRow(parent, options)
                         local cp = math.floor(couponBase * mult + 0.5)
                         local sc = (VE.UI and VE.UI.DR_STEP_COLORS and VE.UI.DR_STEP_COLORS[step])
                             or { r = 1, g = 1, b = 1 }
-                        local marker = (step == math.min(times, 5)) and ">  " or "    "
+                        local marker = (step == currentStep) and ">  " or "    "
                         local nLabel = (step >= 5) and (tostring(step + 1) .. "+") or tostring(step + 1)
                         local pctLabel = (step >= 5) and "50%+" or string.format("%d%%", math.floor(mult * 100 + 0.5))
                         local line = string.format("%s#%s (%s): %d XP", marker, nLabel, pctLabel, xp)

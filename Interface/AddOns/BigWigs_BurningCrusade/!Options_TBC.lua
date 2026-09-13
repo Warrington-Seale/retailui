@@ -8,7 +8,7 @@ BigWigs:AddColors("Rage Winterchill", {
 
 BigWigs:AddSounds("Rage Winterchill", {
 	[31249] = "alert",
-	[31258] = "alarm",
+	[31258] = "underyou",
 	["berserk"] = "alarm",
 })
 
@@ -33,14 +33,14 @@ BigWigs:AddSounds("Kaz'rogal", {
 })
 
 BigWigs:AddColors("Azgalor", {
-	[31340] = "orange",
+	[31340] = "blue",
 	[31344] = "red",
 	[31347] = {"blue","yellow"},
 	["berserk"] = {"orange","red","yellow"},
 })
 
 BigWigs:AddSounds("Azgalor", {
-	[31340] = "alarm",
+	[31340] = "underyou",
 	[31347] = "alert",
 	["berserk"] = "alarm",
 })
@@ -59,7 +59,7 @@ BigWigs:AddSounds("ArchimondeHyjal", {
 })
 
 BigWigs:AddColors("Hyjal Summit Trash", {
-	["waves"] = {"cyan","orange","yellow"},
+	["waves"] = {"cyan","orange"},
 })
 
 BigWigs:AddSounds("Hyjal Summit Trash", {
@@ -444,7 +444,7 @@ BigWigs:AddColors("Supremus", {
 })
 
 BigWigs:AddSounds("Supremus", {
-	[40265] = "alert",
+	[40265] = "underyou",
 	["berserk"] = "alarm",
 	["fixate"] = "warning",
 	["stages"] = "info",
@@ -456,7 +456,7 @@ BigWigs:AddColors("Shade of Akama", {
 })
 
 BigWigs:AddSounds("Shade of Akama", {
-	[42023] = "alert",
+	[42023] = "underyou",
 	["stages"] = "info",
 })
 
@@ -543,6 +543,7 @@ BigWigs:AddColors("The Illidari Council", {
 	[41481] = "blue",
 	[41482] = "blue",
 	[41485] = {"blue","red"},
+	[41541] = "blue",
 	["berserk"] = {"orange","red","yellow"},
 })
 
@@ -552,9 +553,10 @@ BigWigs:AddSounds("The Illidari Council", {
 	[41455] = "warning",
 	[41475] = "long",
 	[41476] = "alert",
-	[41481] = "alarm",
-	[41482] = "alarm",
+	[41481] = "underyou",
+	[41482] = "underyou",
 	[41485] = "alarm",
+	[41541] = "underyou",
 	["berserk"] = "alarm",
 })
 
@@ -578,13 +580,13 @@ BigWigs:AddColors("Illidan Stormrage", {
 
 BigWigs:AddSounds("Illidan Stormrage", {
 	[39869] = "warning",
-	[40018] = {"alert","info"},
+	[40018] = {"info","underyou"},
 	[40506] = "alarm",
 	[40585] = "alert",
-	[40611] = "alert",
+	[40611] = "underyou",
 	[40683] = "long",
 	[40695] = {"info","warning"},
-	[40841] = "alert",
+	[40841] = "underyou",
 	[40932] = "alert",
 	[41032] = "alert",
 	[41117] = "alert",

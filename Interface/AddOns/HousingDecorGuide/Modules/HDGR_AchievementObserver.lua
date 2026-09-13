@@ -68,6 +68,14 @@ function R:OnAchievementEarned(achievementID)
     })
 end
 
+-- NO name -> ID index here. 3.31.1 built one from GetCategoryList /
+-- GetAchievementInfo (~4,000 by-index calls) inside the first catalog sweep;
+-- the owner's /hdgr perf measured it at 3,079 ms of a 3,168 ms sweep
+-- (2026-09-03) -- the whole freeze themindboggle reported. Achievement IDs
+-- ship in ItemAugment, resolved against the Achievement DB2 at rebuild time
+-- (housingdecorguide-tools/itemaugment/achievement_id_map.lua); the client is
+-- never asked to match a name.
+
 HDG.Modules:Declare({
     name = "AchievementObserver",
     ownsBlizzardNamespaces = { "C_AchievementInfo" },

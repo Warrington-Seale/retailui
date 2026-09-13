@@ -39,7 +39,8 @@ hb_settings = hb_settings or {
 	showMerchantCheckmarks = false,
 	hideTwitchDrop = false,
 	hideVendorCosts = false,
-	showMapPins = false
+	showMapPins = false,
+	showIncompletePinsOnly = false
 }
 dbHB = {minimap = {hide = false}}
 
@@ -69,6 +70,7 @@ local vendorFilteredItems = {}
 local vendorPopup
 local UpdateVendorPopup
 local pinsCheck
+local pinsIncompleteCheck
 local toggleHB
 
 local QuestEventListener = CreateFrame("Frame")
@@ -360,7 +362,10 @@ end
 local function ToggleFavorite(reward)
 	if not hb_settings.favorites[currentTab] then hb_settings.favorites[currentTab] = {} end
 	local id = GetRewardID(reward)
-	hb_settings.favorites[currentTab][id] = not hb_settings.favorites[currentTab][id]
+	local isNowFavorited = not hb_settings.favorites[currentTab][id]
+	hb_settings.favorites[currentTab][id] = isNowFavorited
+	if isNowFavorited then PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	else PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF) end
 	GameTooltip:Hide()
 	if HB_SmallPreviewFrame then HB_SmallPreviewFrame:Hide() end
 	if HB_RewardFrame then HB_RewardFrame:Hide() end
@@ -850,6 +855,7 @@ end
 local function ShowVendorPopup(npcID, vendorName)
 	if not npcID or not db.vendorItems or not db.vendorItems[npcID] then return end
 	
+	PlaySound(SOUNDKIT.IG_SPELLBOOK_OPEN)
 	vendorPopup.mode = "vendor"
 	currentPopupNpcID = npcID
 	currentPopupNpcName = vendorName or currentPopupNpcName
@@ -895,6 +901,7 @@ local function ShowReagentsPopup(itemData)
 	local reagents = itemData.reagents
 	if not reagents then return end
 	
+	PlaySound(SOUNDKIT.IG_SPELLBOOK_OPEN)
 	vendorPopup.mode = "reagents"
 	vendorPopupTitle:SetText(db.L_REAGENTS_REQ)
 	
@@ -1026,9 +1033,37 @@ supportersBtn:SetScript("OnEnter", function(self)
 end)
 supportersBtn:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
+local uploadFrame = CreateFrame("Frame", "HB_UploadFrame", UIParent, "BackdropTemplate")
+uploadFrame:SetSize(450, 168); uploadFrame:SetPoint("CENTER")
+ApplyBackdrop(uploadFrame, 0.02, 0.02, 0.02, 0.95)
+uploadFrame:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+uploadFrame:SetFrameStrata("DIALOG"); MakeMovable(uploadFrame); uploadFrame:Hide()
+
+local uploadTitleBg = uploadFrame:CreateTexture(nil, "BACKGROUND")
+uploadTitleBg:SetTexture("Interface\\Buttons\\WHITE8x8")
+uploadTitleBg:SetPoint("TOPLEFT", 4, -4); uploadTitleBg:SetPoint("TOPRIGHT", -4, -4); uploadTitleBg:SetHeight(40)
+uploadTitleBg:SetGradient("VERTICAL", CreateColor(0.15, 0.15, 0.15, 1), CreateColor(0.08, 0.08, 0.08, 1))
+local uploadTitle = uploadFrame:CreateFontString(nil, "OVERLAY")
+uploadTitle:SetFont(STANDARD_TEXT_FONT, 16, "OUTLINE"); uploadTitle:SetPoint("TOP", 0, -16); uploadTitle:SetText("Upload Blueprint"); uploadTitle:SetTextColor(1, 0.85, 0, 1)
+local uploadCloseBtn = CreateFrame("Button", nil, uploadFrame, "UIPanelCloseButton")
+uploadCloseBtn:SetPoint("TOPRIGHT", -2, -2); uploadCloseBtn:SetSize(28, 28)
+
+local function CreateUploadEditBox(text, url, yOffset)
+	local txt = uploadFrame:CreateFontString(nil, "OVERLAY")
+	txt:SetFont(STANDARD_TEXT_FONT, 13); txt:SetPoint("TOPLEFT", 20, yOffset); txt:SetText(text); txt:SetTextColor(0.9, 0.9, 0.9, 1)
+	local box = CreateFrame("EditBox", nil, uploadFrame, "InputBoxTemplate")
+	box:SetSize(408, 20); box:SetPoint("TOPLEFT", 22, yOffset - 20); box:SetAutoFocus(false); box:SetText(url)
+	box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end); box:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+	return txt
+end
+
+CreateUploadEditBox(db.L_LINK1, "https://dsc.gg/homebound", -54)
+CreateUploadEditBox(db.L_UPLOAD, "https://hb-blueprints.vercel.app/", -110)
+
 frame:SetScript("OnHide", function()
 	if wowheadPopup and wowheadPopup:IsShown() then wowheadPopup:Hide() end
 	if supportFrame and supportFrame:IsShown() then supportFrame:Hide() end
+	if uploadFrame and uploadFrame:IsShown() then uploadFrame:Hide() end
 	if vendorPopup and vendorPopup:IsShown() then vendorPopup:Hide() end
 	if costTooltip and costTooltip:IsShown() then costTooltip:Hide() end
 end)
@@ -1178,7 +1213,7 @@ local function CreateBottomTab(id, text, iconPath)
 	tab:SetScript("OnMouseUp", function(self)
 		if currentTab ~= self.id then self:ClearAllPoints(); self:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", self.xPos, 1) end
 	end)
-	tab:SetScript("OnClick", function() currentTab = string.lower(id); UpdateTabStyles(); BuildUI() end)
+	tab:SetScript("OnClick", function() PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB); currentTab = string.lower(id); UpdateTabStyles(); BuildUI() end)
 	return tab
 end
 
@@ -1189,13 +1224,14 @@ local tabProfessions = CreateBottomTab("Professions", db.L_TAB4_PROFESSIONS, "In
 local tabBlueprints = CreateBottomTab("Blueprints", "Blueprints", "Interface\\Icons\\Inv_mechagon_blueprints")
 
 tabBlueprints:SetScript("OnClick", function(self)
+	PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
 	if C_AddOns and C_AddOns.IsAddOnLoaded("HomeBound_Blueprints") then
 		currentTab = string.lower(self.id)
 		UpdateTabStyles()
 		BuildUI()
 	else
 		wowheadPopupTitle:SetText(db.L_BLUEPRINTS)
-		wowheadPopupEditBox:SetText("https://www.curseforge.com/wow/addons/home-bound-blueprints")
+		wowheadPopupEditBox:SetText("https://www.curseforge.com/wow/addons/home-bounds-blueprints")
 		local textWidth = wowheadPopupTitle:GetStringWidth()
 		local newWidth = math.max(350, textWidth + 70)
 		wowheadPopup:SetWidth(newWidth)
@@ -2310,8 +2346,16 @@ local function CreateOptionsPanel()
 		hb_settings.showMapPins = self:GetChecked(); mapData:RefreshAllData()
 	end)
 
+	pinsIncompleteCheck = CreateFrame("CheckButton", nil, configFrame, "UICheckButtonTemplate")
+	pinsIncompleteCheck:SetPoint("TOPLEFT", pinsCheck, "BOTTOMLEFT", 20, -10)
+	pinsIncompleteCheck.Text:SetFont(STANDARD_TEXT_FONT, 14); pinsIncompleteCheck.Text:SetTextColor(1, 0.82, 0); pinsIncompleteCheck.Text:SetText(" " .. db.L_ONLY_INCOMPLETE)
+	pinsIncompleteCheck:SetChecked(hb_settings.showIncompletePinsOnly)
+	pinsIncompleteCheck:SetScript("OnClick", function(self)
+		hb_settings.showIncompletePinsOnly = self:GetChecked(); mapData:RefreshAllData()
+	end)
+
 	local scaleLabel = configFrame:CreateFontString(nil, "ARTWORK")
-	scaleLabel:SetFont(STANDARD_TEXT_FONT, 14); scaleLabel:SetTextColor(1, 0.82, 0); scaleLabel:SetPoint("TOPLEFT", pinsCheck, "BOTTOMLEFT", 0, -20); scaleLabel:SetText(db.L_UI_SCALE)
+	scaleLabel:SetFont(STANDARD_TEXT_FONT, 14); scaleLabel:SetTextColor(1, 0.82, 0); scaleLabel:SetPoint("TOPLEFT", pinsIncompleteCheck, "BOTTOMLEFT", -20, -20); scaleLabel:SetText(db.L_UI_SCALE)
 	local scaleSlider = CreateFrame("Slider", nil, configFrame, "MinimalSliderWithSteppersTemplate")
 	scaleSlider:SetWidth(200)
 	scaleSlider:SetHeight(20)
@@ -2325,7 +2369,7 @@ local function CreateOptionsPanel()
 	scaleSlider:RegisterCallback(MinimalSliderWithSteppersMixin.Event.OnValueChanged, function(_, value)
 		local rounded = tonumber(string.format("%.2f", value))
 		hb_settings.scale = rounded
-		frame:SetScale(rounded); supportFrame:SetScale(rounded); vendorPopup:SetScale(rounded); wowheadPopup:SetScale(rounded); costTooltip:SetScale(rounded)
+		frame:SetScale(rounded); supportFrame:SetScale(rounded); uploadFrame:SetScale(rounded); vendorPopup:SetScale(rounded); wowheadPopup:SetScale(rounded); costTooltip:SetScale(rounded)
 	end)
 	local keybindLabel = configFrame:CreateFontString(nil, "ARTWORK")
 	keybindLabel:SetFont(STANDARD_TEXT_FONT, 14); keybindLabel:SetTextColor(1, 0.82, 0); keybindLabel:SetPoint("TOPLEFT", scaleSlider, "BOTTOMLEFT", 0, -30); keybindLabel:SetText(db.L_TOGGLE_KEYBIND)
@@ -2453,24 +2497,27 @@ function mapData:RefreshAllData()
 
 	local map = self:GetMap(); local mapID, c = map:GetMapID(), map:GetCanvas()
 	for _, group in ipairs(db.vendors) do for _, npc in ipairs(group.npcs) do if npc.mapID == mapID then
-		self.activeCount = self.activeCount + 1
-		local p = self.pins[self.activeCount]
-		if not p then
-			p = CreateFrame("Button", nil, c)
-			p:SetSize(20, 20) p:SetFrameLevel(c:GetFrameLevel() + 2500) p:RegisterForClicks("LeftButtonUp") p:SetPropagateMouseClicks(true)
-			p:SetScript("OnEnter", function()
-				GameTooltip:SetOwner(p, "ANCHOR_RIGHT")
-				if PinTooltip(p) then p.t = C_Timer.NewTicker(0.2, function() if not PinTooltip(p) then p.t:Cancel() end end) end
-			end)
-			p:SetScript("OnLeave", function() if p.t then p.t:Cancel() end GameTooltip:Hide() end)
-			p:SetScript("OnClick", function() if not IsControlKeyDown() then local n, l = GetCachedNpcName(p.vendorID) ShowVendorPopup(p.vendorID, l and "Vendor" or n) end end)
-			local t = p:CreateTexture(nil, "ARTWORK") t:SetAllPoints() t:SetAtlas("housing-decor-vendor_32")
-			local ht = p:CreateTexture(nil, "HIGHLIGHT") ht:SetAllPoints() ht:SetAtlas("housing-decor-vendor_32")
-			ht:SetBlendMode("ADD") ht:SetAlpha(0.4)
-			self.pins[self.activeCount] = p
+		local isComplete = GetVendorStatus(npc.id)
+		if not hb_settings.showIncompletePinsOnly or not isComplete then
+			self.activeCount = self.activeCount + 1
+			local p = self.pins[self.activeCount]
+			if not p then
+				p = CreateFrame("Button", nil, c)
+				p:SetSize(20, 20) p:SetFrameLevel(c:GetFrameLevel() + 2500) p:RegisterForClicks("LeftButtonUp") p:SetPropagateMouseClicks(true)
+				p:SetScript("OnEnter", function()
+					GameTooltip:SetOwner(p, "ANCHOR_RIGHT")
+					if PinTooltip(p) then p.t = C_Timer.NewTicker(0.2, function() if not PinTooltip(p) then p.t:Cancel() end end) end
+				end)
+				p:SetScript("OnLeave", function() if p.t then p.t:Cancel() end GameTooltip:Hide() end)
+				p:SetScript("OnClick", function() if not IsControlKeyDown() then local n, l = GetCachedNpcName(p.vendorID) ShowVendorPopup(p.vendorID, l and "Vendor" or n) end end)
+				local t = p:CreateTexture(nil, "ARTWORK") t:SetAllPoints() t:SetAtlas("housing-decor-vendor_32")
+				local ht = p:CreateTexture(nil, "HIGHLIGHT") ht:SetAllPoints() ht:SetAtlas("housing-decor-vendor_32")
+				ht:SetBlendMode("ADD") ht:SetAlpha(0.4)
+				self.pins[self.activeCount] = p
+			end
+			p.vendorID, p.nx, p.ny, p.faction = npc.id, npc.x / 100, npc.y / 100, GetRewardFaction(npc)
+			p:Show()
 		end
-		p.vendorID, p.nx, p.ny, p.faction = npc.id, npc.x / 100, npc.y / 100, GetRewardFaction(npc)
-		p:Show()
 	end end end
 	self:UpdatePinPositions()
 end
@@ -2480,7 +2527,12 @@ Menu.ModifyMenu("MENU_WORLD_MAP_TRACKING", function(_, rootDescription)
 	rootDescription:CreateCheckbox(db.L_TAB2_VENDORS, function() return hb_settings.showMapPins end, function()
 		hb_settings.showMapPins = not hb_settings.showMapPins
 		mapData:RefreshAllData()
-		pinsCheck:SetChecked(hb_settings.showMapPins)
+		if pinsCheck then pinsCheck:SetChecked(hb_settings.showMapPins) end
+	end)
+	rootDescription:CreateCheckbox(db.L_ONLY_INCOMPLETE, function() return hb_settings.showIncompletePinsOnly end, function()
+		hb_settings.showIncompletePinsOnly = not hb_settings.showIncompletePinsOnly
+		mapData:RefreshAllData()
+		if pinsIncompleteCheck then pinsIncompleteCheck:SetChecked(hb_settings.showIncompletePinsOnly) end
 	end)
 end)
 
@@ -2507,6 +2559,7 @@ init:SetScript("OnEvent", function(self, event, addon, ...)
 		if hb_settings.hideVendorCosts == nil then hb_settings.hideVendorCosts = false end
 		if hb_settings.groupFavorites == nil then hb_settings.groupFavorites = false end
 		if hb_settings.showMapPins == nil then hb_settings.showMapPins = false end
+		if hb_settings.showIncompletePinsOnly == nil then hb_settings.showIncompletePinsOnly = false end
 		
 		db.decorIdToItemId = {}
 		for itemID, data in pairs(db.decorItem) do
@@ -2571,7 +2624,7 @@ init:SetScript("OnEvent", function(self, event, addon, ...)
 			if searcherTimer then searcherTimer:Cancel(); searcherTimer = nil end
 			if UnitFactionGroup("player") == "Horde" then currentFaction = 2 end
 			local scale = hb_settings.scale or 1.0
-			frame:SetScale(scale); supportFrame:SetScale(scale); vendorPopup:SetScale(scale); wowheadPopup:SetScale(scale); costTooltip:SetScale(scale)
+			frame:SetScale(scale); supportFrame:SetScale(scale); uploadFrame:SetScale(scale); vendorPopup:SetScale(scale); wowheadPopup:SetScale(scale); costTooltip:SetScale(scale)
 			BuildUI()
 			CreateOptionsPanel()
 			UpdateEscBehavior()
@@ -2617,6 +2670,7 @@ init:SetScript("OnEvent", function(self, event, addon, ...)
 				end
 				collectionCache[itemID] = nil
 				BuildUI()
+				mapData:RefreshAllData()
 			end
 		end
 		if decorID == TWITCH_DROP_DECOR_ID then

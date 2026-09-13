@@ -7,18 +7,14 @@ if not mod then return end
 mod:RegisterEnableMob(124729) -- L'ura
 mod:SetEncounterID(2068)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{1265426, sound = "warning", note = CL.beam}, -- Discordant Beam
-})
 
 --------------------------------------------------------------------------------
 -- Localization
 --
 
-local L = mod:GetLocale()
-if L then
-	L.warmup_text = "L'ura Active"
-end
+local L = mod:SetDefaultLocale({
+	warmup_text = "L'ura Active",
+})
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -76,6 +72,16 @@ if mod:Retail() then -- Midnight+
 		[1265689] = {CL.explosions}, -- Grim Chorus (Explosions)
 		[1266003] = {CL.intermission}, -- Symphony of the Eternal Night (Intermission)
 		[1265999] = {CL.weakened}, -- Siphon Void (Weakened)
+	})
+end
+
+--------------------------------------------------------------------------------
+-- Midnight Auras
+--
+
+if mod:Retail() then -- Midnight+
+	mod:SetAuraData({
+		{1265426, duration = 7.5, soundOnApplied = "warning", note = CL.beam}, -- Discordant Beam
 	})
 end
 

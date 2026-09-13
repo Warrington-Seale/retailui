@@ -125,11 +125,7 @@ L.BUTTON_TRACKNEW =                      "Suivre les apparences inconnues"
 L.CURRENT_SETTING =                      "Paramètre actuel :"
 L.MODE_APPEARANCES =                     "nouvelles apparences"
 L.MODE_SOURCES =                         "nouvelles apparences et sources"
-L.TRACK_NEW1 =                           "Cela va vérifier" -- Followed by a number
-L.TRACK_NEW2 =                           "recettes visibles pour les" -- Preceded by a number, followed by L.MODE_APPEARANCES or L.MODE_SOURCES
-L.TRACK_NEW3 =                           "Le jeu peut se bloquer pendant quelques secondes."
-L.ADDED_RECIPES1 =                       "Ajout de" -- Followed by a number
-L.ADDED_RECIPES2 =                       "recettes éligibles" -- Preceded by a number
+-- L.ADDED_RECIPES =                        "Checked %d visible recipes for %s. Tracked %d recipes." -- %d becomes a number, %s becomes L.MODE_APPEARANCES or L.MODE_SOURCES
 
 -- Tooltip info
 L.MORE_NEEDED =                          "de plus sont nécessaires" -- Preceded by a number
@@ -249,6 +245,10 @@ L.SETTINGS_INCLUDEHIGHER_TITLE =         "Inclure une qualité supérieure"
 L.SETTINGS_INCLUDEHIGHER_DESC =          "Faut-il inclure ou non les réactifs de qualité supérieure ? (Par exemple, faut-il inclure les réactifs de niveau 2 détenus lors du décompte des réactifs de niveau 1 ?)"
 L.SETTINGS_COLLECTMODE_TITLE =           "Mode de collection"
 L.SETTINGS_COLLECTMODE_DESC =            "Définir les objets à inclure lors de l’utilisation du bouton " .. app:Colour(L.BUTTON_TRACKNEW) .. "."
+
+-- L.PROFESSION_WINDOW =                    "Profession Window"
+-- L.SETTINGS_FILTER_OPTREAGENTS =          "Filter Optional Reagents"
+-- L.SETTINGS_FILTER_OPTREAGENTS_DESC =     "When %s is checked for optional reagents, hide combinable items." -- %s becomes "Hide Unavailable"
 L.SETTINGS_SPENDTOPERK_TITLE =           "Dépenser jusqu’au prochain palier"
 L.SETTINGS_SPENDTOPERK_DESC =            "Maj + Clic sur une spécialisation de métier dépense tous les points de connaissance jusqu’au prochain palier."
 L.SETTINGS_ENHANCEDORDERS_TITLE =        "Commandes améliorées"

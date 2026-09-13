@@ -26,7 +26,16 @@ MDT.dungeonSubLevels[dungeonIndex] = {
   [1] = L["Kings' Rest Sublevel"],
 }
 
-MDT.mapPOIs[dungeonIndex] = {};
+MDT.mapPOIs[dungeonIndex] = {
+  [1] = {
+    [1] = {
+      ["type"] = "dungeonEntrance",
+      ["x"] = 806.3,
+      ["y"] = -288.3,
+      ["sizeMult"] = 1.5,
+    },
+  },
+};
 
 MDT.dungeonEnemies[dungeonIndex] = {
   [1] = {
@@ -51,15 +60,13 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
     ["clones"] = {
       [1] = {
-        ["x"] = 589.10950032871,
-        ["y"] = -277.61103164926,
-        ["g"] = 1,
+        ["x"] = 586.94497459713,
+        ["y"] = -268.41177406719,
         ["sublevel"] = 1,
       },
       [2] = {
-        ["x"] = 588.65454340543,
-        ["y"] = -296.85278885383,
-        ["g"] = 1,
+        ["x"] = 587.84285786752,
+        ["y"] = -299.82901560523,
         ["sublevel"] = 1,
       },
       [3] = {
@@ -80,7 +87,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Minion of Zul",
     ["id"] = 133943,
     ["count"] = 0,
-    ["health"] = 340110,
+    ["health"] = 362169,
     ["scale"] = 1,
     ["displayId"] = 76055,
     ["creatureType"] = "Aberration",
@@ -988,6 +995,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["characteristics"] = {
       ["Taunt"] = true,
     },
+    ["spells"] = {
+      [272388] = {
+      },
+      [1298304] = {
+      },
+      [1309385] = {
+      },
+    },
     ["clones"] = {
       [1] = {
         ["x"] = 207.89294769914,
@@ -1183,10 +1198,10 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
   },
   [27] = {
-    ["name"] = "Disruption Totem",
+    ["name"] = "Thundering Totem",
     ["id"] = 135761,
     ["count"] = 0,
-    ["health"] = 324326,
+    ["health"] = 444902,
     ["scale"] = 1.5,
     ["displayId"] = 84680,
     ["creatureType"] = "Totem",
@@ -1210,7 +1225,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Explosive Totem",
     ["id"] = 135764,
     ["count"] = 0,
-    ["health"] = 374121,
+    ["health"] = 440583,
     ["scale"] = 1.5,
     ["displayId"] = 84933,
     ["creatureType"] = "Totem",
@@ -1276,11 +1291,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "T'zala",
     ["id"] = 136976,
     ["count"] = 0,
-    ["health"] = 27027123,
+    ["health"] = 27027125,
     ["scale"] = 2,
     ["displayId"] = 84274,
     ["creatureType"] = "Undead",
     ["level"] = 91,
+    ["isBoss"] = true,
+    ["encounterID"] = 2172,
+    ["instanceID"] = 1041,
     ["spells"] = {
       [1303324] = {
       },
@@ -1310,7 +1328,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Reban",
     ["id"] = 136984,
     ["count"] = 0,
-    ["health"] = 3783797,
+    ["health"] = 3783798,
     ["scale"] = 2,
     ["displayId"] = 84273,
     ["creatureType"] = "Undead",
@@ -1341,7 +1359,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Minion of Zul",
     ["id"] = 138493,
     ["count"] = 0,
-    ["health"] = 243242,
+    ["health"] = 6,
     ["scale"] = 1,
     ["displayId"] = 76055,
     ["creatureType"] = "Aberration",
@@ -1499,7 +1517,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Animated Gold",
     ["id"] = 135406,
     ["count"] = 0,
-    ["health"] = 224807,
+    ["health"] = 385943,
     ["scale"] = 1,
     ["displayId"] = 88651,
     ["creatureType"] = "Aberration",
@@ -1542,7 +1560,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Healing Tide Totem",
     ["id"] = 137591,
     ["count"] = 0,
-    ["health"] = 374121,
+    ["health"] = 372519,
     ["scale"] = 1,
     ["displayId"] = 84934,
     ["creatureType"] = "Totem",

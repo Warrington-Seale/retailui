@@ -6,12 +6,6 @@ local mod, CL = BigWigs:NewBoss("Lightblossom Trinity", 2859, 2769)
 if not mod then return end
 mod:SetEncounterID(3199)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{1234802, sound = "underyou"}, -- Fertile Loam
-	{1235574, sound = "info"}, -- Lightblossom Beam
-	{1235828, sound = "underyou"}, -- Light-Scorched Earth
-	{1235865, sound = "alert"}, -- Thornblade
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -34,6 +28,19 @@ mod:SetRenames({
 	[1235640] = {1235640, CL.you:format(mod:SpellName(1235640)), notes = {CL.generalNote, CL.messageOnYouNote}, original = {1235640, CL.you:format(mod:SpellName(1235640))}}, -- Thornblade
 	[1234850] = {1234850}, -- Lightsower Dash
 	[1235564] = {1235564}, -- Lightblossom Beam
+})
+
+--------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{1276586, duration = 8, tip = CL.debuffGroupAfterCastNote:format(mod:SpellName(1234753))}, -- Bedrock Surge
+	{1234802, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Fertile Loam
+	{1235574, soundOnApplied = "info", tip = CL.debuffWalkIntoObjectNote:format(CL.beam)}, -- Lightblossom Beam
+	{1235828, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Light-Scorched Earth
+	{1261276, duration = 3, tip = CL.debuffTargetedNote:format(mod:SpellName(1235640))}, -- Thornblade
+	{1235865, duration = 12, dispel = "bleed", mechanic = "bleeding", soundOnApplied = "alert", tip = CL.debuffDotAfterCastNote:format(mod:SpellName(1235640))}, -- Thornblade
 })
 
 --------------------------------------------------------------------------------
@@ -83,7 +90,7 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 	if eventInfo.source ~= 0 then return end -- Enum.EncounterTimelineEventSource.Encounter
 	local duration = self:RoundNumber(eventInfo.duration, 0)
 	local barInfo
-	if BigWigsLoader.isNext then
+	if self:Mythic() then
 		if duration == 5 or (count40something % 4 == 1 and duration > 40 and duration <= 45) then -- Bedrock Slam
 			barInfo = self:BedrockSlamTimeline(eventInfo)
 		elseif duration == 8 or (count40something % 4 == 2 and duration > 40 and duration <= 45) then -- Thornblade
@@ -101,7 +108,7 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 				self:SendMessage("BigWigs_PauseBar", nil, nil, eventInfo.id)
 			end
 		end
-	else -- XXX remove in 12.1
+	else -- Normal, Heroic
 		if duration == 5 or (count40something % 3 == 1 and duration > 40 and duration <= 45) then -- Bedrock Slam
 			barInfo = self:BedrockSlamTimeline(eventInfo)
 		elseif duration == 4 or duration == 10 then -- Thornblade

@@ -2,5 +2,9 @@ VER 3 0000000000000001 "Extrabutton" "134400"
 #showtooltip
 /click ExtraActionButton1
 /cast Zone Ability
-/cast Garrison Ability
+END
+VER 3 0000000000000002 "MO DE" "134400"
+/run local f=DeM or CreateFrame("Button","DeM",nil,"SecureActionButtonTemplate") f:SetAttribute("type","click") f:SetAttribute("clickbutton",GetMouseFoci()[1])
+/cast Disenchant
+/click DeM 1 1
 END

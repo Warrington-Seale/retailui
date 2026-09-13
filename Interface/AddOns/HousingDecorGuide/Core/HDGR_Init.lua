@@ -257,6 +257,16 @@ SlashCmdList["HDG"] = function(msg)
         D:Log(rest)
     elseif lower == "house" then
         D:House()
+    elseif lower == "petscene" then
+        D:PetScene()
+    elseif first == "petseat" then
+        D:PetSeat(rest)
+    elseif lower == "dashtaint" then
+        D:DashTaint()
+    elseif lower == "dashdump" then
+        D:DashDump()
+    elseif lower == "dashsync" then
+        D:DashSync()
     elseif first == "costdump" then
         D:CostDump(rest)
     elseif first == "dumpdecor" then
@@ -269,6 +279,8 @@ SlashCmdList["HDG"] = function(msg)
         HDG.SelectorCallLog:Command(rest)   -- was /hdgrsl
     elseif first == "perf" then
         HDG.Perf:Command(rest)              -- was /hdgr perf
+    elseif lower == "floors" then
+        HDG.HousingObserver:FloorDump()   -- raw Blizzard floor-indexing dump
     elseif lower == "doors" then
         HDG.ProjectsCanvasController:DoorAudit()  -- was /hdgr doors
     elseif lower == "housemap" then

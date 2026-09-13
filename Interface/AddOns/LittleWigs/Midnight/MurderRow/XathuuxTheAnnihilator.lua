@@ -6,11 +6,6 @@ local mod, CL = BigWigs:NewBoss("Xathuux the Annihilator", 2813, 2681)
 if not mod then return end
 mod:SetEncounterID(3103)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{473898, sound = "none"}, -- Legion Strike
-	{474234, sound = "underyou"}, -- Burning Steps
-	{1214650, sound = "none"}, -- Fel Light
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -36,26 +31,28 @@ mod:SetRenames({
 })
 
 --------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{473898, duration = 8, tip = CL.debuffTankAfterCastNote:format(mod:SpellName(473898))}, -- Legion Strike
+	{1214637, duration = 5, tip = CL.debuffTargetedNote:format(mod:SpellName(1214637))}, -- Axe Toss
+	{1214650, soundOnAppliedDose = "none", tip = CL.debuffGroupAfterCastNote:format(mod:SpellName(1214637))}, -- Fel Lightning
+	{1295455, duration = 8, tip = CL.debuffGroupAfterCastNote:format(mod:SpellName(1295453))}, -- Infernal Crush
+	{474234, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Burning Steps
+})
+
+--------------------------------------------------------------------------------
 -- Initialization
 --
 
-if BigWigsLoader.isNext then
-	function mod:GetOptions()
-		return {
-			473898, -- Legion Strike
-			1214637, -- Axe Toss
-			1295453, -- Infernal Crush
-			{474197, "CASTBAR"}, -- Demonic Rage
-		}
-	end
-else -- XXX remove in 12.1
-	function mod:GetOptions()
-		return {
-			473898, -- Legion Strike
-			1214637, -- Axe Toss
-			{474197, "CASTBAR"}, -- Demonic Rage
-		}
-	end
+function mod:GetOptions()
+	return {
+		473898, -- Legion Strike
+		1214637, -- Axe Toss
+		1295453, -- Infernal Crush
+		{474197, "CASTBAR"}, -- Demonic Rage
+	}
 end
 
 mod:UseCustomTimers(true)
@@ -101,7 +98,7 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 		end
 	elseif duration == 15 then -- Axe Toss
 		barInfo = self:AxeTossTimeline(eventInfo)
-	elseif BigWigsLoader.isNext and (not self:IsWiping() and duration == 30) then -- Infernal Crush (XXX remove check in 12.1)
+	elseif not self:IsWiping() and duration == 30 then -- Infernal Crush
 		barInfo = self:InfernalCrushTimeline(eventInfo)
 	elseif duration == 35 then -- Demonic Rage
 		barInfo = self:DemonicRageTimeline(eventInfo)
@@ -128,9 +125,6 @@ function mod:ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(_, eventID)
 		elseif state == 1 then -- Paused
 			-- paused bars are never resumed, cancel them now
 			self:StopBar(barInfo.msg)
-			if barInfo.cancelCallback then
-				barInfo.cancelCallback()
-			end
 			activeBars[eventID] = nil
 		elseif state == 2 then -- Finished
 			self:StopBar(barInfo.msg)
@@ -222,7 +216,7 @@ function mod:DemonicRageTimeline(eventInfo) -- Demonic Rage
 		callback = function()
 			self:StopBlizzMessages(1)
 			self:Message(474197, "yellow", barText)
-			self:CastBar(474197, 4, self:GetRename(474197, 2))
+			self:CastBar(474197, 4, 2)
 			self:ScheduleTimer(function()
 				self:Message(474197, "yellow", self:GetRename(474197, 3))
 				self:Bar(474197, 15, self:GetRename(474197, 3))

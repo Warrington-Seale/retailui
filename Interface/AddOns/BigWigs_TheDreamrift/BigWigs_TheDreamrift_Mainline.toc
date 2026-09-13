@@ -1,4 +1,4 @@
-## Interface: 120100, 120005, 120007
+## Interface: 120100, 120105, 120007
 
 ## Title: BigWigs [|cffeda55fThe Dreamrift|r]
 ## Title-deDE: BigWigs [|cffeda55fDer Traumriss|r]
@@ -13,7 +13,7 @@
 ## Title-zhTW: BigWigs [|cffeda55f夢境裂隙|r]
 ## Notes: BigWigs The Dreamrift Modules
 ## Notes-deDE: BigWigs Der Traumriss Module
-## Notes-esES: BigWigs The Dreamrift Modules
+## Notes-esES: Módulos de BigWigs para la Falla Onírica
 ## Notes-esMX: BigWigs The Dreamrift Modules
 ## Notes-frFR: BigWigs The Dreamrift Modules
 ## Notes-itIT: BigWigs The Dreamrift Modules
@@ -23,7 +23,7 @@
 ## Notes-zhCN: BigWigs 梦境裂隙模块
 ## Notes-zhTW: BigWigs 夢境裂隙模組
 ## IconTexture: Interface\AddOns\BigWigs\Media\Icons\minimap_raid.tga
-## Version: v419.2
+## Version: v424.8
 
 ## LoadOnDemand: 1
 ## Dependencies: BigWigs

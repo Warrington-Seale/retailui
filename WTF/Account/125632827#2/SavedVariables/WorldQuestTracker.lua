@@ -1,30 +1,31 @@
 
 WQTrackerDB = {
 ["profileKeys"] = {
-["Divthediv - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "Default",
+["Divthediv - Burning Legion"] = "Default",
 },
 ["profiles"] = {
 ["Default"] = {
+["TutorialTracker"] = 2,
 ["world_map_hubscale"] = {
-[2274] = 0.95,
+[2537] = 0.85,
 [875] = 0.9,
 [947] = 1,
-[619] = 0.3,
-[1550] = 1,
-[2537] = 0.85,
 [1978] = 0.85,
+[1550] = 1,
 [876] = 0.9,
+[619] = 0.3,
+[2274] = 0.95,
 },
 ["world_map_hubenabled"] = {
-[2274] = true,
+[2537] = true,
 [875] = true,
 [947] = true,
-[619] = true,
-[1550] = true,
-[2537] = true,
 [1978] = true,
+[1550] = true,
 [876] = true,
+[619] = true,
+[2274] = true,
 },
 ["player_names"] = {
 ["Player-3713-09224DF3"] = {
@@ -39,6 +40,88 @@ WQTrackerDB = {
 },
 },
 ["clicked_order_by_once"] = true,
+["history"] = {
+["quest"] = {
+["global"] = {
+[91796] = 1,
+[92141] = 1,
+[92145] = 1,
+[92153] = 1,
+[91601] = 1,
+["total"] = 17,
+[92138] = 1,
+[91582] = 1,
+[91801] = 1,
+[91803] = 1,
+[92146] = 1,
+[92086] = 1,
+[89267] = 1,
+[91811] = 1,
+[92123] = 1,
+[93524] = 1,
+[91490] = 1,
+[88992] = 1,
+},
+["character"] = {
+["Player-3713-09224DF3"] = {
+[91796] = 1,
+[92141] = 1,
+[92145] = 1,
+[92153] = 1,
+[91601] = 1,
+["total"] = 17,
+[92138] = 1,
+[91582] = 1,
+[91801] = 1,
+[91803] = 1,
+[92146] = 1,
+[92086] = 1,
+[89267] = 1,
+[91811] = 1,
+[92123] = 1,
+[93524] = 1,
+[91490] = 1,
+[88992] = 1,
+},
+},
+},
+["period"] = {
+["global"] = {
+["260911"] = {
+["quest"] = 9,
+["gold"] = 341600,
+},
+["260912"] = {
+["quest"] = 8,
+["resource"] = 35,
+},
+},
+["character"] = {
+["Player-3713-09224DF3"] = {
+["260911"] = {
+["quest"] = 9,
+["gold"] = 341600,
+},
+["260912"] = {
+["quest"] = 8,
+["resource"] = 35,
+},
+},
+},
+},
+["reward"] = {
+["global"] = {
+["resource"] = 35,
+["gold"] = 341600,
+},
+["character"] = {
+["Player-3713-09224DF3"] = {
+["resource"] = 35,
+["gold"] = 341600,
+},
+},
+},
+},
 ["quests_tracked"] = {
 ["Player-3713-09224DF3"] = {
 },
@@ -47,130 +130,35 @@ WQTrackerDB = {
 },
 ["quests_all_characters"] = {
 ["Player-3713-09224DF3"] = {
-[75120] = {
-["expireAt"] = 1789228886,
-["rewardAmount"] = "",
-["rewardTexture"] = 1519429,
-},
-[52938] = {
-["expireAt"] = 1789099273,
-["rewardAmount"] = 180,
-["rewardTexture"] = "Interface\\AddOns\\WorldQuestTracker\\media\\icon_artifact_power",
-},
-[75750] = {
-["expireAt"] = 1789228885,
-["rewardAmount"] = "15",
-["rewardTexture"] = 2004597,
-},
-[54060] = {
-["expireAt"] = 1789099213,
-["rewardAmount"] = "",
-["rewardTexture"] = 237368,
-},
-[50885] = {
-["expireAt"] = 1789099273,
-["rewardAmount"] = "|cff2292FF23",
-["rewardTexture"] = "Interface\\ICONS\\INV_Belt_15",
-},
-[50652] = {
-["expireAt"] = 1789156813,
-["rewardAmount"] = "|cff2292FF23",
-["rewardTexture"] = "Interface\\ICONS\\INV_Pants_08",
-},
-[51064] = {
-["expireAt"] = 1789099273,
-["rewardAmount"] = 274,
-["rewardTexture"] = "Interface\\AddOns\\WorldQuestTracker\\media\\icon_artifact_power",
-},
-[75067] = {
-["expireAt"] = 1789099286,
-["rewardAmount"] = "|cff2292FF59",
+[92746] = {
+["expireAt"] = 1789304457,
+["rewardAmount"] = "|cff2292FF276",
 ["rewardTexture"] = "Interface\\ICONS\\INV_Jewelry_Talisman_07",
 },
-[74989] = {
-["expireAt"] = 1789531226,
-["rewardAmount"] = "|cff2292FF59",
-["rewardTexture"] = "Interface\\ICONS\\INV_Jewelry_Talisman_07",
+[87759] = {
+["expireAt"] = 1789272065,
+["rewardAmount"] = "|cff2292FF269",
+["rewardTexture"] = "Interface\\ICONS\\INV_Misc_Cape_19",
 },
 [69938] = {
 ["expireAt"] = 1789531286,
 ["rewardAmount"] = "51",
 ["rewardTexture"] = "Interface\\ICONS\\INV_Gauntlets_17",
 },
-[70653] = {
-["expireAt"] = 1789228886,
-["rewardAmount"] = "59",
-["rewardTexture"] = "Interface\\ICONS\\INV_Belt_15",
+[74989] = {
+["expireAt"] = 1789531226,
+["rewardAmount"] = "|cff2292FF59",
+["rewardTexture"] = "Interface\\ICONS\\INV_Jewelry_Talisman_07",
 },
-[70655] = {
-["expireAt"] = 1789228885,
-["rewardAmount"] = "59",
-["rewardTexture"] = "Interface\\ICONS\\INV_Gauntlets_17",
+[92549] = {
+["expireAt"] = 1789455657,
+["rewardAmount"] = "|cff2292FF266",
+["rewardTexture"] = "Interface\\ICONS\\INV_Jewelry_Talisman_07",
 },
-[50876] = {
-["expireAt"] = 1789142473,
-["rewardAmount"] = 170,
-["rewardTexture"] = "Interface\\AddOns\\WorldQuestTracker\\media\\icon_artifact_power",
-},
-[75123] = {
-["expireAt"] = 1789228885,
-["rewardAmount"] = "",
-["rewardTexture"] = 1519429,
-},
-[51157] = {
-["expireAt"] = 1789142473,
-["rewardAmount"] = 309,
-["rewardTexture"] = "Interface\\AddOns\\WorldQuestTracker\\media\\icon_artifact_power",
-},
-[55344] = {
-["expireAt"] = 1789099273,
-["rewardAmount"] = 180,
-["rewardTexture"] = "Interface\\AddOns\\WorldQuestTracker\\media\\icon_artifact_power",
-},
-[70417] = {
-["expireAt"] = 1789228885,
-["rewardAmount"] = "",
-["rewardTexture"] = 1519429,
-},
-[70419] = {
-["expireAt"] = 1789228885,
-["rewardAmount"] = "",
-["rewardTexture"] = 1519429,
-},
-[70421] = {
-["expireAt"] = 1789228885,
-["rewardAmount"] = "",
-["rewardTexture"] = 1519429,
-},
-[51635] = {
-["expireAt"] = 1789099273,
-["rewardAmount"] = 154,
-["rewardTexture"] = "Interface\\AddOns\\WorldQuestTracker\\media\\icon_artifact_power",
-},
-[51628] = {
-["expireAt"] = 1789099273,
-["rewardAmount"] = 170,
-["rewardTexture"] = "Interface\\AddOns\\WorldQuestTracker\\media\\icon_artifact_power",
-},
-[70427] = {
-["expireAt"] = 1789228886,
-["rewardAmount"] = "",
-["rewardTexture"] = 1519429,
-},
-[70057] = {
-["expireAt"] = 1789228825,
-["rewardAmount"] = "59",
-["rewardTexture"] = "Interface\\ICONS\\INV_Boots_Cloth_03",
-},
-[73221] = {
-["expireAt"] = 1789185686,
-["rewardAmount"] = "59",
-["rewardTexture"] = "Interface\\ICONS\\INV_Sword_39",
-},
-[70066] = {
-["expireAt"] = 1789228885,
-["rewardAmount"] = "59",
-["rewardTexture"] = "Interface\\ICONS\\INV_Gauntlets_17",
+[91804] = {
+["expireAt"] = 1789531263,
+["rewardAmount"] = "|cff2292FF266",
+["rewardTexture"] = "Interface\\ICONS\\INV_Shoulder_25",
 },
 },
 },

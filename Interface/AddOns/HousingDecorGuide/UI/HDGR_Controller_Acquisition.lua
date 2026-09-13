@@ -19,10 +19,16 @@ function AcquisitionController:OpenWorldMapAt(uiMapID)
 end
 
 -- itemRow: item name + profession/expansion meta. Click selects the primary vendor.
+--
+-- Ranked rather than vendors[1]: catalog parse order puts Blizzard's synthetic
+-- "World Vendors" grouping ahead of a named merchant often enough that clicking
+-- a boulder selected a vendor with no location instead of the one standing in
+-- Founder's Point. No neighborhood preference here -- that is the shopping
+-- list's travel aid, and this is "show me who sells it".
 local function FindFirstVendorForItem(itemID)
     local row = HDG.HousingCatalogObserver:GetRow(itemID)
-    local v = row and row.vendors and row.vendors[1]
-    if not v then return nil end
+    local v = HDG.VendorRank.Pick(row, nil)
+    if not v then return nil end  -- exception(nullable): drops/quests/achievements have no vendor
     return HDG.StaticData.VendorAugment:ResolveName(v.name, v.zone)
 end
 
@@ -79,8 +85,7 @@ local function _wireItemRow(row, ed)
         -- Shift-click links the item in chat (active editbox, or opens chat);
         -- mirrors the Decor browser row. A plain click selects.
         if IsShiftKeyDown() then
-            local _, link = C_Item.GetItemInfo(itemID)  -- exception(boundary): itemLink nil on cold item cache
-            if link then _G.ChatFrameUtil.InsertLink(link) end
+            HDG.UI.LinkItem(itemID)
             return
         end
         CH.Mechanics.SetUITransientView("acquisition", "selectedItemID", itemID)
@@ -515,6 +520,9 @@ function AcquisitionController:_wireAchievementHyperlinks(rootFrame)
     hyperHost:SetScript("OnHyperlinkClick", function(_, link)
         local achID = _achievementForItem(_parseAchLink(link))
         if not achID then return end
+        -- ShowUIPanel refuses insecure callers in combat (CheckProtectedFunctionsAllowed)
+        -- and blames the addon by name in the red error. Same guard the mapAllBtn uses.
+        if InCombatLockdown() then return end
         ShowAchievementFrameForAchievement(achID)  -- canonical Blizzard path (same as SetItemRef)
     end)
     hyperHost:SetScript("OnHyperlinkEnter", function(self, link)
@@ -565,7 +573,7 @@ function AcquisitionController:Wire(rootFrame)
     local itemList = HDG.UI.W(rootFrame, "acquisitionListPanel.itemList")
     if itemList and itemList.WireStoreSelectionSync then
         itemList:WireStoreSelectionSync("session.ui.acquisition.selectedItemID",
-            function(ed, id) return ed and ed.itemID == id end)
+            function(ed, id) return id ~= nil and ed.itemID == id end)
     end
 
     -- Find Decor + Recipes scroll list (shares acq.list cell). Recipe rows wire
@@ -574,13 +582,24 @@ function AcquisitionController:Wire(rootFrame)
     local recipeList = HDG.UI.W(rootFrame, "acquisitionListPanel.recipeList")
     if recipeList and recipeList.WireStoreSelectionSync then
         recipeList:WireStoreSelectionSync("session.ui.acquisition.selectedItemID",
-            function(ed, id) return ed and ed.itemID == id end)
+            function(ed, id) return id ~= nil and ed.itemID == id end)
     end
 
     local vendorList = HDG.UI.W(rootFrame, "acquisitionListPanel.vendorList")
     if vendorList and vendorList.WireStoreSelectionSync then
+        -- Same identity rule as acq.selectedVendor and the auto-select guard in
+        -- Refresh: npcID when set; for npcID-less vendors (catalog-only NPCs,
+        -- the synthetic World Vendors groupings) the (name, zone) SelectVendor
+        -- stamps. A bare `ed.npcID == id` with a nil id matched the FIRST
+        -- npcID-less row -- a wrong highlight, and now a wrong scroll.
         vendorList:WireStoreSelectionSync("session.ui.acquisition.selectedNpcID",
-            function(ed, id) return ed and ed.npcID == id end)
+            function(ed, id)
+                if id ~= nil then return ed.npcID == id end
+                local ui = HDG.Store:GetState().session.ui.acquisition  -- exception(false-positive): top-level controller read, not a row factory
+                if ui.selectedVendorName == nil then return false end
+                return ed.npcID == nil and ed.name == ui.selectedVendorName
+                    and (ed.catalogZone or ed.zone) == ui.selectedVendorZone  -- exception(nullable): catalogZone is the catalog's zone when known, zone the augment's
+            end)
     end
 
     -- Search editbox: every keystroke dispatches. Filters acq.vendors via

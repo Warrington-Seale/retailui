@@ -133,6 +133,14 @@ end
 -- EVENT HANDLING
 -- ============================================================================
 
+-- Blizzard dashboard cache repair REMOVED 2026-08-25 -- see the tombstone in
+-- HDGR_HousingObserver.lua: the playerHouseList write is a taint bomb that
+-- kills the dashboard's protected Teleport Home / Return buttons in
+-- ADDON_ACTION_FORBIDDEN. The blank House Info pane is Blizzard's own 12.1
+-- bug (their forwarder throws in InitiativesFrame before feeding
+-- HouseUpgradeFrame) and recovers on any real list change. There is NO
+-- taint-free write into Blizzard UI state -- do not reintroduce this.
+
 function Tracker:OnEvent(event, ...)
     local debug = VE.Store:GetState().config.debug
 
@@ -150,18 +158,34 @@ function Tracker:OnEvent(event, ...)
         local charName = UnitName("player")
         if charName then VE_DB.myCharacters[charName] = true end
 
-        -- Trigger house list fetch (PLAYER_HOUSE_LIST_UPDATED handles the rest)
-        -- and pull initial coupon balance. Cancel-and-replace so re-entering the
-        -- world (e.g. hearth during load) doesn't stack.
+        -- NO HOUSE-LIST REQUEST AT LOGIN. This used to call
+        -- C_Housing.GetPlayerOwnedHouses() on a 2s timer and it broke Blizzard's
+        -- Housing Dashboard for every VE user (2026-08-20).
+        --
+        -- Why: that call broadcasts PLAYER_HOUSE_LIST_UPDATED to EVERY listener,
+        -- and Blizzard's HousingDashboardHouseDropdownMixin registers it as a
+        -- LIFETIME event -- it listens from OnLoad, long before the dashboard is
+        -- opened. It caches the list, then only re-broadcasts
+        -- "HouseDropdown.HouseListUpdated" when the list CHANGES. So our request
+        -- populated its cache first; when the player finally opened the dashboard,
+        -- HouseInfoContent registered its callbacks, the list compared equal, the
+        -- guard returned early, and the content pane sat blank forever waiting on
+        -- an event that had already been consumed. The dropdown still showed the
+        -- house name, because the dropdown had its own copy -- which is exactly
+        -- what the bug reports looked like.
+        --
+        -- VE now takes the list PASSIVELY (the PLAYER_HOUSE_LIST_UPDATED handler
+        -- still runs whenever anything else asks -- Blizzard's dropdown requests
+        -- on every OnShow), and asks for itself only when the VE window is opened.
+        --
+        -- This is the "no work at login" rule. It exists for precisely this.
+        --
+        -- Coupons stay: C_CurrencyInfo.GetCurrencyInfo is a LOCAL cache read that
+        -- broadcasts nothing and cannot affect another addon. The short timer is
+        -- because currency data is not populated the instant we enter the world.
         if self._initFetchTimer then self._initFetchTimer:Cancel() end
         self._initFetchTimer = C_Timer.NewTimer(2, function()
             self._initFetchTimer = nil
-            if C_Housing and C_Housing.GetPlayerOwnedHouses then
-                if debug then
-                    print("|cFF2aa198[VE Tracker]|r Requesting player house list to initialize housing system...")
-                end
-                C_Housing.GetPlayerOwnedHouses()
-            end
             self:UpdateCoupons()
         end)
 
@@ -867,7 +891,7 @@ function Tracker:_ProcessHouseListUpdate(houseInfoList)
                 end
             end
             local tag = faction and (" (|cFF" .. (faction == "Alliance" and "4488ff" or "ff4444") .. faction .. "|r)") or ""
-            -- ProcessInitiativeInfo will pick up _pendingLoginMsg and print with daysRemaining.
+            -- ProcessInitiativeInfo will pick up _pendingLoginMsg and print with the time left.
             -- That fires reliably via NEIGHBORHOOD_INITIATIVE_UPDATED -- no fallback timer needed.
             self._pendingLoginMsg = { name = name, tag = tag }
         end
@@ -939,7 +963,6 @@ function Tracker:ClearEndeavorData(seasonName)
     VE.Store:Dispatch("SET_ENDEAVOR_INFO", {
         seasonName = seasonName or "No Active Endeavor",
         seasonEndTime = 0,
-        daysRemaining = 0,
         currentProgress = 0,
         maxProgress = 0,
         milestones = {},
@@ -1101,10 +1124,10 @@ end
 -- ============================================================================
 
 function Tracker:ProcessInitiativeInfo(info)
-    local daysRemaining = 0
-    if info.duration and info.duration > 0 then
-        daysRemaining = math.floor(info.duration / 86400)
-    end
+    -- Absolute end time, not a whole-day count: the header needs sub-day
+    -- precision to keep counting through the final 24 hours. nil when the API
+    -- reports no duration, so the reducer keeps whatever it already had.
+    local endTime = (info.duration and info.duration > 0) and (time() + info.duration) or nil
 
     -- Process milestones
     local milestones = {}
@@ -1209,7 +1232,7 @@ function Tracker:ProcessInitiativeInfo(info)
             seasonName = info.title or "",
             currentProgress = info.currentProgress or 0,
             maxProgress = maxProgress,
-            daysRemaining = daysRemaining,
+            endTime = endTime,
             cycleID = info.currentCycleID or 0,
             initiativeID = info.initiativeID or 0,
             playerTotalContribution = info.playerTotalContribution or 0,
@@ -1231,8 +1254,7 @@ function Tracker:ProcessInitiativeInfo(info)
 
     VE.Store:Dispatch("SET_ENDEAVOR_INFO", {
         seasonName = info.title or "Unknown Endeavor",
-        seasonEndTime = (info.duration and info.duration > 0) and (time() + info.duration) or VE.Store:GetState().endeavor.seasonEndTime,
-        daysRemaining = daysRemaining,
+        seasonEndTime = endTime,
         currentProgress = info.currentProgress or 0,
         maxProgress = maxProgress,
         milestones = milestones,
@@ -1242,11 +1264,12 @@ function Tracker:ProcessInitiativeInfo(info)
         chest = chest,
     })
 
-    -- Deferred login message (now we have daysRemaining)
+    -- Deferred login message (now we know how long is left)
     if self._pendingLoginMsg then
         local msg = self._pendingLoginMsg
         self._pendingLoginMsg = nil
-        local daysStr = daysRemaining > 0 and (" -- |cFFe5c040" .. daysRemaining .. " day" .. (daysRemaining == 1 and "" or "s") .. " remaining|r") or ""
+        local span = VE:FormatDuration(info.duration)
+        local timeStr = span and (" -- |cFFe5c040" .. span .. " remaining|r") or ""
         -- Append chest status (silent when chest is locked-not-yet-at-100%
         -- to avoid noise; only shows when actionable or already-done).
         local chestStr = ""
@@ -1268,7 +1291,7 @@ function Tracker:ProcessInitiativeInfo(info)
                 chestReady = true
             end
         end
-        print("|cFF2aa198[VE]|r Active endeavor: |cFFffd700" .. msg.name .. "|r" .. msg.tag .. daysStr .. chestStr)
+        print("|cFF2aa198[VE]|r Active endeavor: |cFFffd700" .. msg.name .. "|r" .. msg.tag .. timeStr .. chestStr)
         if chestReady then
             print("|cFF2aa198[VE]|r |cFF93a1a1(type |cFFffd700/ve claimed|r|cFF93a1a1 if you have already claimed chest for this house)|r")
         end
@@ -1321,7 +1344,7 @@ function Tracker:ProcessInitiativeInfo(info)
                     isRepeatable = isRepeatable,
                     rewardQuestID = task.rewardQuestID,
                     couponReward = couponReward,
-                    couponBase = couponBase or couponReward,
+                    couponBase = couponBase,
                 })
             end
         end
@@ -1392,10 +1415,22 @@ function Tracker:GetTaskMax(task)
     return 1
 end
 
--- Returns (couponReward, couponBase) for a task. Both are the BASE amount from
--- Blizzard's quest reward data -- DR is applied on top by the row update via
--- the curve formula. Returns nil,nil while Blizzard's quest data is still
--- loading (caller retries).
+-- Blizzard's own dampener, added in 12.1 (Blizzard_FrameXMLUtil/QuestUtils.lua
+-- runs quest favor and currency rewards through it before showing them). It
+-- knows the task's repetition count, so it answers what the NEXT completion
+-- actually pays -- authoritative where our curve was only a forecast.
+-- exception(boundary): absent on 12.0.7, which the TOC still supports; the
+-- undampened base is the honest answer there rather than a guessed multiplier.
+local function ScaleTaskReward(taskID, amount)
+    if amount <= 0 then return amount end
+    if not (taskID and C_NeighborhoodInitiative.GetInitiativeTaskRewardScaling) then return amount end
+    return C_NeighborhoodInitiative.GetInitiativeTaskRewardScaling(taskID, amount)
+end
+
+-- Returns (couponReward, couponBase) for a task: the dampened amount the next
+-- completion pays, and the undampened base from Blizzard's quest reward data
+-- (which the tooltip's DR ladder is built from). Returns nil,nil while that
+-- quest data is still loading (caller retries).
 function Tracker:GetTaskCouponReward(task)
     if not task.rewardQuestID or task.rewardQuestID == 0 then
         return 0, 0
@@ -1415,7 +1450,7 @@ function Tracker:GetTaskCouponReward(task)
             break
         end
     end
-    return base, base
+    return ScaleTaskReward(task.ID, base), base
 end
 
 function Tracker:RefreshTrackedTasks()
@@ -1538,7 +1573,9 @@ function Tracker:GetProjectedHouseXP()
 end
 
 -- DR curve 87592 (the only curve Blizzard uses for repeatable initiative tasks):
--- rep 0 = 100%, rep 1 = 90%, ... rep 5+ = 50% floor.
+-- rep 0 = 100%, rep 1 = 90%, ... rep 5+ = 50% floor. Still drives the step
+-- COLOURS and the tooltip's future-completions ladder -- ScaleTaskReward only
+-- answers for the next completion, not the ones after it.
 -- See Reference/VE_DB2_DATA_REFERENCE.md.
 local function DRFactor(timesCompleted)
     local n = timesCompleted or 0
@@ -1846,8 +1883,21 @@ end
 
 -- Request house info. levelOnly=true skips the house list and just refreshes XP
 -- for the cached house GUID (used after task completion to avoid stale-list races).
+-- Any housing request while Blizzard_HousingDashboard is unloaded warms the
+-- client house cache; the dashboard's own eventual first load then replies
+-- synchronously mid-OnLoad and its House Info pane strands blank for the
+-- session (proven 2026-08-25 -- VE stranded it even with the list call gated,
+-- via the favor path). Robust invariant: LOAD THE DASHBOARD FIRST. A
+-- Blizzard-signed addon runs secure regardless of the load caller -- no taint.
+function Tracker:EnsureBlizzardDashboard()
+    if not C_AddOns.IsAddOnLoaded("Blizzard_HousingDashboard") then
+        C_AddOns.LoadAddOn("Blizzard_HousingDashboard")
+    end
+end
+
 function Tracker:RequestHouseInfo(levelOnly)
     local state = VE.Store:GetState()
+    self:EnsureBlizzardDashboard()
     if not levelOnly and C_Housing and C_Housing.GetPlayerOwnedHouses then
         -- Full refresh: PLAYER_HOUSE_LIST_UPDATED handler requests favor for the selected house
         pcall(C_Housing.GetPlayerOwnedHouses)
@@ -1899,18 +1949,19 @@ function Tracker:_OnHouseLevelFavorUpdated(houseLevelFavor)
         end
     end
 
-    -- Get max level. Fallback matches current season cap (Midnight S2 = 9).
-    -- Real value comes from the API; this fallback only fires if the call errors.
+    -- Get max level. Fallback matches current season cap (Midnight S2 = 9), and
+    -- now only covers the API being absent, not it erroring: both calls below are
+    -- SYNCHRONOUS value getters (MCP-verified, "safe to call inline"), so they are
+    -- read strictly. The pcalls they replaced caught nothing and would have turned
+    -- a rename into a silent fallback -- the 12.1 IsInsideOwnHouse lesson.
     local maxLevel = 9
     if C_Housing and C_Housing.GetMaxHouseLevel then
-        local success, max = pcall(C_Housing.GetMaxHouseLevel)
-        if success and max then maxLevel = max end
+        maxLevel = C_Housing.GetMaxHouseLevel() or maxLevel  -- exception(boundary): cold-cache nil keeps the season cap
     end
 
     local xpForNextLevel = 0
     if currentLevel < maxLevel and C_Housing and C_Housing.GetHouseLevelFavorForLevel then
-        local success, needed = pcall(C_Housing.GetHouseLevelFavorForLevel, currentLevel + 1)
-        if success and needed then xpForNextLevel = needed end
+        xpForNextLevel = C_Housing.GetHouseLevelFavorForLevel(currentLevel + 1) or 0  -- exception(boundary): cold-cache nil
     end
 
     VE.Store:Dispatch("SET_HOUSE_LEVEL", {
@@ -1944,7 +1995,6 @@ function Tracker:UpdateCoupons()
         class    = classFile,
         faction  = UnitFactionGroup("player"),
         coupons  = currencyInfo.quantity or 0,
-        cap      = currencyInfo.maxQuantity ~= 0 and currencyInfo.maxQuantity or 2000,
         lastSeen = time(),
     }
 end

@@ -1,6 +1,9 @@
 # Details! Damage Meter
 
-## [Details.20260811.15270.172-1-gc139bf3](https://github.com/Tercioo/Details-Damage-Meter/tree/c139bf364e92455a69933b242a1b743e7a696d6b) (2026-08-14)
-[Full Changelog](https://github.com/Tercioo/Details-Damage-Meter/compare/Details.20260811.15270.172...c139bf364e92455a69933b242a1b743e7a696d6b) 
+## [Details.20260811.15275.172-3-g17e716e](https://github.com/Tercioo/Details-Damage-Meter/tree/17e716eb2709a68fd0b89096f873941362732b5b) (2026-09-08)
+[Full Changelog](https://github.com/Tercioo/Details-Damage-Meter/compare/Details.20260811.15275.172...17e716eb2709a68fd0b89096f873941362732b5b) 
 
-- Rework how text objects work on bars  
+- Merge pull request #1128 from Hollicsh/master  
+    Update the .toc files  
+- Update the .toc files  
+- Show note for the user when it is not in group  

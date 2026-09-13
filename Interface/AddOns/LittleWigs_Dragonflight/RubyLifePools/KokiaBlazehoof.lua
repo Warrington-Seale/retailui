@@ -7,9 +7,6 @@ if not mod then return end
 mod:RegisterEnableMob(189232) -- Kokia Blazehoof
 mod:SetEncounterID(2606)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{372820, sound = "underyou"}, -- Scorched Earth
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -68,7 +65,7 @@ local backupBars = {}
 -- Midnight Renames
 --
 
-if BigWigsLoader.isNext then -- Midnight+ XXX swap to mod:Retail() in 12.1
+if mod:Retail() then -- Midnight+
 	mod:SetRenames({
 		[372864] = {372864}, -- Ritual of Blazebinding
 		[372110] = {372110}, -- Molten Boulder
@@ -77,10 +74,24 @@ if BigWigsLoader.isNext then -- Midnight+ XXX swap to mod:Retail() in 12.1
 end
 
 --------------------------------------------------------------------------------
+-- Midnight Auras
+--
+
+if mod:Retail() then -- Midnight+
+	mod:SetAuraData({
+		{372865, duration = 15, tip = CL.debuffTargetedNote:format(mod:SpellName(372864))}, -- Ritual of Blazebinding
+		{384823, duration = 8, soundOnAppliedDose = "none", tip = CL.debuffGroupAfterCastNote:format(mod:SpellName(384823))}, -- Inferno
+		{372820, soundOnApplied = "underyou", difficulty = "mythic", tip = CL.debuffUnderYouNote}, -- Scorched Earth
+		{372858, duration = 3, tip = CL.debuffTankAfterCastNote:format(mod:SpellName(372858))}, -- Searing Blows
+		{372860, duration = 8, soundOnAppliedDose = "none", tip = CL.debuffDotAfterCastNote:format(mod:SpellName(372858))}, -- Searing Wounds
+	})
+end
+
+--------------------------------------------------------------------------------
 -- Midnight Initialization
 --
 
-if BigWigsLoader.isNext then -- Midnight+ XXX swap to mod:Retail() in 12.1
+if mod:Retail() then -- Midnight+
 	function mod:GetOptions()
 		return {
 			372864, -- Ritual of Blazebinding

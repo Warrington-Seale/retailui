@@ -22,11 +22,16 @@ R.byDecorID      = R.byDecorID      or {}  -- [decorID] = row (built alongside b
 R.byVendor       = R.byVendor       or {}
 R.allVendorNames = R.allVendorNames or {}
 R.tagIDToGroup   = R.tagIDToGroup   or {}
+-- Storage-entry events that land while a sweep is in flight are parked here and
+-- replayed by _CommitSweep against the swapped-in tables (see ReconcileEntry).
+R._sweepInFlight  = R._sweepInFlight  or false  -- exception(false-positive): idempotent module-load init
+R._pendingEntries = R._pendingEntries or {}     -- exception(false-positive): idempotent module-load init
 
 -- ===== Reconciler ============================================================
 -- Two entry points:
---   ReconcileFull       -- cold sweep, atomic-rebuilds all indexes
---   ReconcileEntry(id)  -- targeted update from HOUSING_STORAGE_ENTRY_UPDATED
+--   ReconcileFull                  -- cold sweep, atomic-rebuilds all indexes
+--   ReconcileEntry(entryVariantID) -- targeted update from HOUSING_STORAGE_ENTRY_UPDATED;
+--                                     parked while a sweep is in flight, replayed at commit
 -- Both mutate state via reducer dispatches (per ADR-012).
 
 function R:GetClientVer()
@@ -152,6 +157,9 @@ function R:ReconcileFull(reason)
     if HDG.Perf and HDG.Perf.Enabled and HDG.Perf:Enabled() then  -- exception(false-positive): HDG.Perf is TOC-guaranteed at runtime; headless test mock omits it
         self._perfSearchFiredAt = _G.debugprofilestop and _G.debugprofilestop() or nil
     end
+    -- From here until _CommitSweep swaps the snapshot in, a targeted patch would
+    -- land in tables about to be replaced; ReconcileEntry parks instead.
+    self._sweepInFlight = true
     s:RunSearch()
 end
 
@@ -201,6 +209,64 @@ local function _indexVendorsFromRow(acc, row)
     end
 end
 
+-- ===== Sweep stage profiling ================================================
+-- Splits catalog.indexSweep into its stages WITH CALL COUNTS, so /hdgr perf can
+-- say which layer the time is in: the Blizzard entry read, the variant fetch,
+-- our parse, each bake group, the index stamp. The owner's 2026-09-03 login
+-- profile showed the whole sweep as one 3297 ms op (2045 entries) with nothing
+-- to say whether that was Blizzard's calls or ours. Live only during a timed
+-- sweep (_sweepProf is set by _OnSearcherResults under HDG.Perf:Enabled());
+-- every lap site is a single nil-check when perf is off. A stage's count is
+-- its denominator: "variants (225 calls)" reads as 225 fetches, not 2045 rows
+-- that did nothing.
+-- Every top-level stage is single-sided: entryInfo, variants, variantDyes and
+-- parseSource.strip are Blizzard calls; everything else is ours. The stages
+-- partition the sweep, and "~unlapped" is what the laps did not cover (the loop
+-- itself), so the report proves its own coverage instead of asserting it.
+-- "~clock" is the cost of reading the clock, the floor every per-call figure
+-- must be read against.
+local SWEEP_STAGES = {
+    "entryInfo", "rowTable", "variants", "parseSource", "overrides+augment",
+    "tags+category+placement", "vendors", "cost", "recipe+sourceTypes+bonus",
+    "variantDyes", "sourceTags", "index",
+}
+-- Nested inside parseSource: the C_StringUtil.StripHyperlinks half of the parse,
+-- one call per sourceText line. Reported on its own row, not part of the sum.
+local STRIP_STAGE = "parseSource.strip"
+local CLOCK_PROBE_READS = 1000
+local _sweepProf = nil   -- { ms = {stage=ms}, n = {stage=count} } during a timed sweep
+
+local function _lap(stage, t0)
+    local now = _G.debugprofilestop()
+    _sweepProf.ms[stage] = (_sweepProf.ms[stage] or 0) + (now - t0)
+    _sweepProf.n[stage]  = (_sweepProf.n[stage]  or 0) + 1
+    return now
+end
+
+local function _clockFloorMs()
+    local t0 = _G.debugprofilestop()
+    for _ = 1, CLOCK_PROBE_READS do _G.debugprofilestop() end
+    return _G.debugprofilestop() - t0
+end
+
+local function _reportSweepStages(perf, totalMs, entries)
+    local lapped = 0
+    for _, stage in ipairs(SWEEP_STAGES) do
+        local n = _sweepProf.n[stage]
+        if n then
+            perf:RecordOpQuiet(("catalog.sweep.%s (%d calls)"):format(stage, n), _sweepProf.ms[stage])
+            lapped = lapped + _sweepProf.ms[stage]
+        end
+    end
+    local strips = _sweepProf.n[STRIP_STAGE]
+    if strips then
+        perf:RecordOpQuiet(("catalog.sweep.%s (%d calls, inside parseSource)"):format(STRIP_STAGE, strips),
+                           _sweepProf.ms[STRIP_STAGE])
+    end
+    perf:RecordOpQuiet(("catalog.sweep.~unlapped (%d entries)"):format(entries), totalMs - lapped)
+    perf:RecordOpQuiet(("catalog.sweep.~clock (%d reads)"):format(CLOCK_PROBE_READS), _clockFloorMs())
+end
+
 -- Process one searcher entry: build the row, stamp the indexes, feed vendors.
 -- entryType must be a REAL member of Enum.HousingCatalogEntryType. Blizzard's
 -- argument validator rejects anything else and GetCatalogEntryInfo throws
@@ -246,7 +312,9 @@ local function _processEntry(acc, entry)
         acc.skippedPoisoned = (acc.skippedPoisoned or 0) + 1
         return
     end
+    local t = _sweepProf and _G.debugprofilestop()
     local info = _G.C_HousingCatalog.GetCatalogEntryInfo(entry)
+    if t then t = _lap("entryInfo", t) end
     if not info then return end
     -- (12.0.5+ searcher rows have no subtypeIdentifier -- the old variant-placeholder
     -- filter is gone with the compound-entryID era.)
@@ -254,11 +322,13 @@ local function _processEntry(acc, entry)
     -- info.recordID isn't always populated by the entry-info API; the entry
     -- itself carries it via the searcher result.
     info.recordID = info.recordID or rid
-    local row = R:BuildRow(info)
+    local row = R:BuildRow(info)   -- laps its own stages
+    if t then t = _G.debugprofilestop() end
     acc.byItemID[row.itemID] = row
     acc.byDecorID[rid]       = row
     if row.isOwned then acc.owned[rid] = true end
     _indexVendorsFromRow(acc, row)
+    if t then _lap("index", t) end
 end
 
 function R:_OnSearcherResults(searcher)
@@ -293,6 +363,7 @@ function R:_OnSearcherResults(searcher)
     local _perf  = HDG.Perf
     local _timed = _perf and _perf:Enabled()
     local _t0    = _timed and _G.debugprofilestop() or nil
+    _sweepProf   = _timed and { ms = {}, n = {} } or nil
     for _, entry in ipairs(items) do
         _processEntry(acc, entry)
     end
@@ -301,8 +372,10 @@ function R:_OnSearcherResults(searcher)
             :format(acc.skippedPoisoned))
     end
     if _timed then
-        _perf:RecordOp("catalog.indexSweep (" .. #items .. " entries)",
-                       _G.debugprofilestop() - _t0)
+        local totalMs = _G.debugprofilestop() - _t0
+        _perf:RecordOp("catalog.indexSweep (" .. #items .. " entries)", totalMs)
+        _reportSweepStages(_perf, totalMs, #items)
+        _sweepProf = nil
     end
     table.sort(acc.allVendorNames)
 
@@ -342,6 +415,7 @@ function R:_CommitSweep(result)
     R.byVendor       = result.byVendor
     R.allVendorNames = result.allVendorNames
     R._catalogSchemaVersion = HDG.Constants.CATALOG_SCHEMA_VERSION
+    R._sweepInFlight = false
 
     local vendorCount = 0
     for _ in pairs(result.byVendor) do vendorCount = vendorCount + 1 end
@@ -368,6 +442,16 @@ function R:_CommitSweep(result)
             generation  = generation,
         },
     })
+
+    -- Storage-entry events parked during the sweep (ReconcileEntry) replay now,
+    -- against the tables just swapped in and after BULK_LOAD has written the
+    -- snapshot's owned set -- so a learn the snapshot predates is re-applied
+    -- rather than overwritten.
+    local parked = R._pendingEntries
+    R._pendingEntries = {}
+    for _, p in ipairs(parked) do
+        R:_ApplyEntry(p.entryID, p.decorID, p.wasOwned)
+    end
 
     -- Rebuild category nav: the MAIN_WINDOW_OPENING build runs before the sweep
     -- completes; this ensures subcategory info (e.g. Furnishings) is populated.
@@ -412,29 +496,50 @@ function R:_UpdateVintage()
     end
 end
 
--- ReconcileEntry(entryID): targeted update from HOUSING_STORAGE_ENTRY_UPDATED.
+-- ReconcileEntry(entryVariantID): targeted update from HOUSING_STORAGE_ENTRY_UPDATED.
+-- The payload is a HousingCatalogEntryVariantID {recordID, entryType,
+-- variantIdentifier} and its recordID IS the identity. The fetched info carries
+-- one too, but that field is nil on a just-acquired entry (Reference:
+-- HOUSING_CATALOG_API.md), and taking identity from there silently dropped the
+-- one learn that mattered -- the one that just happened. Merchant marks stayed
+-- red until a fresh session (Gnuclear Gnome, Discord 2026-09-05).
 function R:ReconcileEntry(entryID)
-    if not (entryID and _G.C_HousingCatalog
-            and _G.C_HousingCatalog.GetCatalogEntryInfo) then return end
+    local decorID = type(entryID) == "table" and entryID.recordID  -- exception(boundary): Blizzard event payload
+    if not decorID then
+        HDG.Log:Warn("catalog_reconcile", "storage entry event carried no recordID: " .. tostring(entryID))
+        return
+    end
+    local row      = R.byDecorID[decorID]
+    local wasOwned = row and row.isOwned or false  -- exception(nullable): entry not yet in the catalog
+    -- A sweep in flight builds a private snapshot and swaps it in wholesale at
+    -- settle, so a patch made now lands in tables about to be replaced. Park the
+    -- event for _CommitSweep to replay, keeping wasOwned from BEFORE the swap so
+    -- the learned transition survives a snapshot that already shows it owned.
+    if R._sweepInFlight then
+        R._pendingEntries[#R._pendingEntries + 1] = { entryID = entryID, decorID = decorID, wasOwned = wasOwned }
+        return
+    end
+    R:_ApplyEntry(entryID, decorID, wasOwned)
+end
+
+function R:_ApplyEntry(entryID, decorID, wasOwned)
+    if not (_G.C_HousingCatalog and _G.C_HousingCatalog.GetCatalogEntryInfo) then return end  -- exception(boundary): C_HousingCatalog absent in headless tests
     local info = _G.C_HousingCatalog.GetCatalogEntryInfo(entryID)
     if type(info) ~= "table" then
         HDG.Log:Warn("catalog_error",
             "GetCatalogEntryInfo returned non-table for entryID: " .. tostring(entryID))
         return
     end
-    local decorID = info.recordID  -- exception(boundary): Blizz struct; nil for non-catalog entries
-    if not decorID then return end
 
     local A        = HDG.Constants.ACTIONS
     local row      = R.byDecorID[decorID]
-    local wasOwned = row and row.isOwned or false
     local total    = (info.totalNumStored or 0) + (info.remainingRedeemable or 0) + (info.totalNumPlaced or 0)  -- exception(boundary): Blizzard struct field sparse
     local isOwned  = total > 0
 
     -- New row path: build + ROW_ADDED immediately (don't defer to next full sweep).
     if not row then
-        -- info.recordID isn't always populated by GetCatalogEntryInfo; stamp it from decorID.
-        info.recordID = info.recordID or decorID
+        -- BuildRow keys on info.recordID, nil on a just-acquired entry; the event's identity wins.
+        info.recordID = decorID
         local newRow = R:BuildRow(info)
         HDG.Store:Dispatch({
             type = A.COLLECTION_CATALOG_ROW_ADDED,
@@ -533,6 +638,7 @@ end
 -- Snapshots live state at sweep time; stale until next sweep/reload.
 -- Internal callers must never pass nil (strict read -- will throw on nil info).
 function R:BuildRow(info)
+    local t = _sweepProf and _G.debugprofilestop()
     local row = {
         -- identity
         itemID    = info.itemID,
@@ -587,6 +693,7 @@ function R:BuildRow(info)
     }
     -- isOwned: includes remainingRedeemable (unclaimed tokens count as owned).
     row.isOwned = (row.quantity + row.remainingRedeemable + row.numPlaced) > 0
+    if t then t = _lap("rowTable", t) end
 
     -- Dye variants for customizable items. API takes {recordID, entryType} table arg
     -- (not positional -- exception(boundary): positional args silently errored under old pcall).
@@ -600,12 +707,14 @@ function R:BuildRow(info)
         if type(variants) == "table" then
             row.variants = variants
         end
+        if t then t = _lap("variants", t) end
     end
 
     -- Parse sourceText into structured vendor/quest/achievement/category/
     -- factionGate fields. Sets row.vendors[], row.quest, row.achievement,
     -- row.category, row.factionGate. Pure; mutates row in place.
     R:_ParseSourceText(info.sourceText or "", row)
+    if t then t = _lap("parseSource", t) end
 
     -- Apply CatalogOverrides. Sparse: most items have no entry, :Get returns nil.
     -- Transparent to selectors: they see corrected rows directly without knowing
@@ -620,22 +729,29 @@ function R:BuildRow(info)
     -- Order matters: bakes that depend on others (gateLine reads gates,
     -- costLine reads costEntries) come after the producers.
     R:_bakeItemAugmentBackfill(row)  -- row.achievement / row.achievementID from aug.sources type=1
+    if t then t = _lap("overrides+augment", t) end
     R:_bakeTags(row)         -- row.expansion, row.sizeLabel, row.tags(+Label), row.dataTags
     R:_bakeCategory(row)     -- row.categoryLabel
     R:_bakePlacement(row)    -- row.placementLabel (budget icon prefixed)
+    if t then t = _lap("tags+category+placement", t) end
     R:_bakeVendors(row)      -- per-vendor enrichment + row.vendorLines[]
+    if t then t = _lap("vendors", t) end
     R:_bakeCost(row)         -- row.costEntries (unified) + row.costLine
+    if t then t = _lap("cost", t) end
     R:_bakeRecipe(row)       -- row.recipe + row.recipeLabel (MUST precede _bakeSourceTypes,
                              -- which reads row.recipe to assign sourceType=6 / CRAFTED)
-    R:_bakeSourceTypes(row)  -- row.sourceType / sourceName / altSourceType / altSourceName
+    R:_bakeSourceTypes(row)  -- row.sourceType / sourceName / sourceDetail (vendor-first)
     R:_bakeBonusXp(row)      -- row.bonusXpLabel (first-acquisition reward chip)
+    if t then t = _lap("recipe+sourceTypes+bonus", t) end
     R:_bakeVariantDyes(row)  -- row.dyedVariants[] (per-owned-variant dye derivation)
+    if t and row.variants then t = _lap("variantDyes", t) end   -- only rows that had variants to walk
     -- Single canonical source/gate bake. Produces row.sourceTags[] in
     -- SOURCE_KIND_PRIORITY order; entries carry text + extras (factionPrefix,
     -- achievementID, ...) for kinds that have them, nothing for chip-only
     -- kinds (DROP, VENDOR, etc.). row.gateLine + row.primarySourceCode are
     -- thin derivations of sourceTags[1] kept for backward-compat consumers.
     R:_bakeSourceTags(row)
+    if t then _lap("sourceTags", t) end
 
     return row
 end
@@ -647,11 +763,17 @@ end
 -- type=1 sources. Runs before _bakeSourceTypes so downstream sees consistent ach data.
 -- The catalog "Achievement:" line gives a name but NEVER an achievementID; ItemAugment
 -- is the sole achievementID source -- without it the [ACH] hyperlink has no ID.
+-- ItemAugment is the ONLY achievementID source, and it is complete: on 12.1
+-- the catalog names an achievement for 184 items and ItemAugment carries the
+-- ID for every one (achievement_id_map.lua resolves the catalog names against
+-- the Achievement DB2 at rebuild time). 3.31.1 instead asked the live client
+-- to match names -- ~4,000 by-index GetAchievementInfo calls -- inside the
+-- first sweep, which the owner's /hdgr perf measured at 3,079 of the sweep's
+-- 3,168 ms (2026-09-03): the whole "3 s freeze". Names are matched offline
+-- now, never in the client.
 function R:_bakeItemAugmentBackfill(row)
-    local aug = HDG.StaticData.ItemAugment
-                and HDG.StaticData.ItemAugment:Get(row.itemID)
-    if not (aug and aug.sources) then return end
-    for _, s in ipairs(aug.sources) do
+    local aug = HDG.StaticData.ItemAugment:Get(row.itemID)
+    for _, s in ipairs((aug and aug.sources) or {}) do
         if s.type == 1 and s.name and s.name ~= "" then
             -- Name: catalog parse wins for display; only fill when absent.
             if not (row.achievement and row.achievement ~= "") then
@@ -762,6 +884,27 @@ local function _resolveVendorNpc(v, Aug)
     v.zone    = meta.zone or v.zone
 end
 
+-- _dropNotSoldBy: remove the vendors a CatalogOverride `notSoldBy` names. The
+-- catalog's sourceText sometimes lists a merchant who does not stock the piece:
+-- Ransa Greyfeather is named FIRST on twelve Highmountain pieces that only Torv
+-- Dubstomp, a few steps from her in Thunder Totem, sells (reganart, in-game
+-- 2026-09-02; Wowhead's merchant scans of both NPCs agree). Two routable
+-- vendors tie in VendorRank and keep the catalog's order, so that phantom name
+-- won the decor card, the source line and a Shop by Vendor page of its own.
+-- Only REMOVAL is curated: the catalog names the real seller itself. Runs after
+-- the override-source fold so it sees the whole list, and matches the catalog's
+-- English name the way every name in the overrides file does.
+local function _dropNotSoldBy(row)
+    if not row.notSoldBy then return end  -- exception(optional): sparse override field; most rows have none
+    local drop = {}
+    for _, who in ipairs(row.notSoldBy) do drop[who] = true end
+    local keep = {}
+    for _, v in ipairs(row.vendors) do
+        if not drop[v.name] then keep[#keep + 1] = v end
+    end
+    row.vendors = keep
+end
+
 function R:_bakeVendors(row)
     -- Fold CatalogOverride vendors (row.sources type=5) into row.vendors so the whole
     -- pipeline -- the zone/faction filters, the per-item vendor display, AND the byVendor
@@ -776,6 +919,7 @@ function R:_bakeVendors(row)
         end
     end
     if not row.vendors then row.vendors, row.vendorLines = {}, {}; return end
+    _dropNotSoldBy(row)
     local Aug = HDG.StaticData.VendorAugment
     local lines = {}
     for _, v in ipairs(row.vendors) do
@@ -838,6 +982,18 @@ end
 -- + bake costLine. row.costEntries for structured access; row.costLine for direct render.
 
 -- gold(copper) + currency list -> normalized {currencyID, amount} entries.
+-- Override-sourced costs carry no icon of their own. Resolve it HERE, at the observer
+-- bake, rather than leaving it to the renderer: an icon-less entry made Format.FormatCurrency
+-- fall through to a live C_CurrencyInfo call, and blueprints.costBadge is a pure selector
+-- with no resolver tick to re-derive it (review 2026-08-23). Format.lua's own header scopes
+-- that fallback to "observer bake, not selector" -- this is the bake.
+local function _currencyIcon(currencyID)
+    local CI = _G.C_CurrencyInfo  -- exception(boundary): absent in headless tests
+    if not (CI and CI.GetCurrencyInfo) then return nil end
+    local info = CI.GetCurrencyInfo(currencyID)
+    return info and info.iconFileID  -- exception(boundary): nil for an unknown currencyID
+end
+
 local function _entriesFromCostSpec(cost, GOLD)
     local entries = {}
     if cost.gold and cost.gold > 0 then
@@ -845,27 +1001,26 @@ local function _entriesFromCostSpec(cost, GOLD)
     end
     if cost.currencies then
         for _, c in ipairs(cost.currencies) do
-            entries[#entries + 1] = { currencyID = c.id, amount = c.amount }
+            entries[#entries + 1] = { currencyID = c.id, amount = c.amount, icon = _currencyIcon(c.id) }
         end
     end
     return entries
 end
 
--- Catalog cost: currency hyperlinks from the Cost: line, or gold fallback.
-local function _costFromVendor(vendor, GOLD)
-    if not vendor then return nil end
-    if vendor.costEntries and #vendor.costEntries > 0 then
-        local entries = {}
-        for _, e in ipairs(vendor.costEntries) do
-            entries[#entries + 1] = { currencyID = e.currencyID, amount = e.amount, icon = e.icon }
-        end
-        return entries
+-- Catalog cost: the entries _extractCostEntries lifted from the RAW Cost: line
+-- (currency links, item-token links, the gold money icon) -- and nothing else.
+-- The bare-digits-means-gold fallback that used to sit here is how 25 item-token
+-- prices shipped as gold: StripHyperlinks reduces ANY unknown link to its digits,
+-- so "no entries but digits" is an unparsed shape, not a price. It must surface
+-- as no cost so the parser gets taught the shape, never as a plausible number.
+local function _costFromVendor(vendor)
+    if not vendor then return nil end  -- exception(nullable): row.vendors[1] on a vendorless row
+    if not (vendor.costEntries and #vendor.costEntries > 0) then return nil end  -- exception(nullable): priceless vendor block
+    local entries = {}
+    for _, e in ipairs(vendor.costEntries) do
+        entries[#entries + 1] = { currencyID = e.currencyID, itemID = e.itemID, amount = e.amount, icon = e.icon }
     end
-    if vendor.cost and vendor.cost:match("^[%d,]+$") then
-        local n = tonumber((vendor.cost:gsub(",", "")))
-        if n and n > 0 then return { { currencyID = GOLD, amount = n } } end
-    end
-    return nil
+    return entries
 end
 
 -- Override fallback (only when catalog has no cost). First source with a .cost wins.
@@ -881,7 +1036,7 @@ local function _formatCostLine(entries)
     if not (entries and #entries > 0) then return "" end
     local parts = {}
     for _, e in ipairs(entries) do
-        local s = HDG.Format.FormatCurrency(e.amount, e.currencyID, e.icon)
+        local s = HDG.Format.FormatCost(e.amount, e)
         if s ~= "" then parts[#parts + 1] = s end
     end
     return table.concat(parts, "  +  ")
@@ -891,17 +1046,17 @@ end
 local function _costKey(entries)
     local parts = {}
     for _, e in ipairs(entries) do
-        parts[#parts + 1] = tostring(e.currencyID) .. ":" .. tostring(e.amount)
+        parts[#parts + 1] = HDG.Format.CostKey(e) .. "=" .. tostring(e.amount)
     end
     table.sort(parts)
     return table.concat(parts, "|")
 end
 
 -- Distinct cost variants across all vendor blocks (e.g. 30 coupons OR 500g = two options).
-local function _costVariants(row, GOLD)
+local function _costVariants(row)
     local lines, seen = {}, {}
     for _, vendor in ipairs(row.vendors or {}) do
-        local entries = _costFromVendor(vendor, GOLD)
+        local entries = _costFromVendor(vendor)
         if entries and #entries > 0 then
             local key = _costKey(entries)
             if not seen[key] then
@@ -928,12 +1083,12 @@ function R:_bakeCost(row)
         return
     end
     local vendor = row.vendors and row.vendors[1]
-    local entries = _costFromVendor(vendor, GOLD)
+    local entries = _costFromVendor(vendor)
                  or _costFromOverrideSources(row.sources, GOLD)
     row.costEntries = entries or {}
     row.costLine    = _formatCostLine(entries)
     -- Per-option lines (>=1 when any cost). Multi-option drives vendor list to show item once per option.
-    local variants = _costVariants(row, GOLD)
+    local variants = _costVariants(row)
     if #variants == 0 and row.costLine ~= "" then variants = { row.costLine } end
     row.costVariants = variants
 end
@@ -997,24 +1152,115 @@ end
 
 -- _composeRepProgressSuffix lives in HDG.Format (live progress via detail-panel selector + RepObserver).
 
--- _bakeSourceTypes: detail-panel "Source: X" label. Priority: Quest > Ach > Vendor > Crafted.
--- Distinct from _bakeSourceTags (binding-strength priority for House donut buckets).
+-- "Source (Zone)" for the drop/treasure/event records _ParseSourceText stamps.
+-- Module scope because BOTH source bakes want it: _bakeSourceTags for the chip
+-- and _bakeSourceTypes for the headline.
+local function _composeSourceText(rec)
+    if not rec then return nil end   -- exception(nullable): row carries only the source kinds it has
+    if rec.zone and rec.zone ~= "" then
+        return rec.source .. " (" .. rec.zone .. ")"
+    end
+    return rec.source
+end
+
+-- Curated source type -> SOURCE_KINDS entry, shared by both bakes. WorldQuest
+-- (3) chips and headlines as QUEST; Profession (11) belongs to the recipe DB and
+-- yields nothing here. Any other code must be a donor code: a curated source
+-- carrying one the table does not know is data drift, and errors.
+local function _kindForSourceType(code)
+    if code == 3  then return HDG.Constants.SOURCE_KIND_BY_KEY.QUEST end
+    if code == 11 then return nil end
+    local kind = HDG.Constants.SOURCE_KIND_BY_DONOR[code]
+    if not kind then
+        error(("curated source type %s has no SOURCE_KINDS entry"):format(tostring(code)))
+    end
+    return kind
+end
+
+-- The first curated source that can stand as the headline: CatalogOverrides
+-- first (they are the corrections), then ItemAugment. Vendors are skipped
+-- because VendorRank already chose among them once _bakeVendors folded the
+-- override vendors in, and Craft because _bakeRecipe answers it. Returns the
+-- source and its kind, or nothing.
+local function _curatedHeadline(row)
+    local aug = HDG.StaticData.ItemAugment:Get(row.itemID)
+    -- exception(nullable): both stores are sparse; no entry is the common case
+    for _, list in ipairs({ row.sources or {}, aug and aug.sources or {} }) do
+        for _, src in ipairs(list) do
+            local kind = _kindForSourceType(src.type)
+            if kind and kind.key ~= "VENDOR" and kind.key ~= "CRAFT" then
+                return src, kind
+            end
+        end
+    end
+    return nil
+end
+
+-- _bakeSourceTypes: the "Source: X" label -- one concrete answer to "where do I
+-- get this?". Priority: Vendor > Quest > Ach > Crafted.
+--
+-- Vendor leads because it is the only one of the four that is still true for the
+-- reader. A quest or achievement a piece once came from is spent the moment it
+-- is done, and for anyone reading a published blueprint list it may never have
+-- been available at all -- but the vendor is standing in a zone they can fly to
+-- today. This is the same concrete-primary convention the curated master keeps
+-- (HDG_AllDecorDB: vendor primary, quest/ach demoted to `alt`), so the live-
+-- catalog bake and the master now agree.
+--
+-- Distinct from _bakeSourceTags, which stays binding-strength ordered (REP >
+-- CRAFT > QUEST > ...) -- gate chips answer "what stops me", not "where is it".
 function R:_bakeSourceTypes(row)
-    local firstVendor = row.vendors and row.vendors[1]
-    if row.quest then
+    -- nil preference: one baked row serves every player, so the neighborhood
+    -- toggle cannot be frozen in here. The pick still demotes the unroutable
+    -- groupings, which is what "Vendor: World Vendors" over a named merchant was.
+    local bestVendor = HDG.VendorRank.Pick(row, nil)
+    if bestVendor then
+        -- Vendor: surface the vendor's name (Hesta Forlath) and zone
+        -- (Silvermoon City) in the label. Detail-panel renders as
+        --   [VEND] Hesta Forlath (Silvermoon City)
+        row.sourceType, row.sourceName = 5, bestVendor.name or ""
+        row.sourceDetail              = bestVendor.zone or ""
+    elseif row.quest then
         row.sourceType, row.sourceName = 2, row.quest
     elseif row.achievement then
         row.sourceType, row.sourceName = 1, row.achievement
-    elseif firstVendor then
-        -- Vendor: surface the first vendor's name (Hesta Forlath) and zone
-        -- (Silvermoon City) in the label. Detail-panel renders as
-        --   [VEND] Hesta Forlath (Silvermoon City)
-        row.sourceType, row.sourceName = 5, firstVendor.name or ""
-        row.sourceDetail              = firstVendor.zone or ""
     elseif row.recipe then
         row.sourceType, row.sourceName = 6, row.recipe.expansion or ""
+    -- Drop/Treasure/Event were parsed and chipped but never made it into the
+    -- HEADLINE, so a delve-only piece fell through to UNKN(0) -- and the plain-
+    -- text manifest drops UNKN lines rather than stamp "Unknown" on every
+    -- unbaked row. That is why Hanging Dawnflower read "[DROP] Midnight Delves"
+    -- in Find Decor and carried no source at all into a copied blueprint list.
+    elseif row.drop then
+        row.sourceType, row.sourceName = 4, _composeSourceText(row.drop)
+    elseif row.treasure then
+        row.sourceType, row.sourceName = 9, _composeSourceText(row.treasure)
+    elseif row.event then
+        row.sourceType, row.sourceName = 14, _composeSourceText(row.event)
+    -- Shop and Promotion are the catalog's two BARE lines: it says the piece
+    -- comes from the in-game shop or a promotion and names nothing further,
+    -- so these carry a kind with no name. The label IS the whole answer, which
+    -- is why the manifest prints them without a trailing "name" clause.
+    elseif row.shop then
+        row.sourceType, row.sourceName = 12, ""
+    elseif row.promo then
+        row.sourceType, row.sourceName = 10, ""
     else
-        row.sourceType, row.sourceName = 0, ""
+        -- Nothing in the catalog's own text. Only curated VENDORS reached this
+        -- label before (through _bakeVendors and VendorRank), so a quest or a
+        -- drop the catalog never mentions -- the Elodor Barrel's missive, the
+        -- Last Architect's weekly gift -- chipped [QUST] or [DROP] and then named
+        -- nothing: in the Decor panel, the catalog tooltip and a copied blueprint
+        -- list alike (KevinW on CurseForge, 2026-09-09). The curated source is
+        -- the answer the chip was already pointing at.
+        local src, kind = _curatedHeadline(row)
+        if src then
+            row.sourceType = kind.donorCode
+            -- exception(optional): a bare curated source carries a kind and no name, like the catalog's Shop/Promotion lines
+            row.sourceName = src.name and _composeSourceText({ source = src.name, zone = src.detail }) or ""
+        else
+            row.sourceType, row.sourceName = 0, ""
+        end
     end
 end
 
@@ -1056,7 +1302,7 @@ local function _repTagEntry(row, aug)
 end
 
 function R:_bakeSourceTags(row)
-    local aug = HDG.StaticData.ItemAugment and HDG.StaticData.ItemAugment:Get(row.itemID)
+    local aug = HDG.StaticData.ItemAugment:Get(row.itemID)
     local byKind = {}     -- {[kind] = entry} -- dedupes per-kind contributions
     local order  = {}     -- insertion order; re-sorted by priority at end
 
@@ -1089,14 +1335,6 @@ function R:_bakeSourceTags(row)
 
     -- Non-gating signals: chip-only or "Source (Zone)" when descriptor text exists.
     -- Drop/Treasure/Event come from _ParseSourceText (stamps row.drop/treasure/event).
-    local function _composeSourceText(rec)
-        if not rec then return nil end
-        if rec.zone and rec.zone ~= "" then
-            return rec.source .. " (" .. rec.zone .. ")"
-        end
-        return rec.source
-    end
-
     if row.vendors and #row.vendors > 0 then emit("VENDOR", {}) end
     if row.drop      then emit("DROP",     { text = _composeSourceText(row.drop)     }) end
     if row.treasure  then emit("TREASURE", { text = _composeSourceText(row.treasure) }) end
@@ -1104,19 +1342,12 @@ function R:_bakeSourceTags(row)
     if row.shop      then emit("SHOP",     {}) end   -- catalog bare "Shop"/"In-Game Shop" line
     if row.promo     then emit("PROMO",    {}) end   -- catalog bare "Promotion" line
 
-    -- type->kind mapper: type 3 (WQ) -> QUEST; type 11 (PROFESSION) dropped; else donor index.
-    local function fromSourceType(code)
-        if code == 3  then return "QUEST" end
-        if code == 11 then return nil end
-        local kind = HDG.Constants.SOURCE_KIND_BY_DONOR[code]
-        return kind and kind.key
-    end
-
     -- ItemAugment signals: catalog-undetectable kinds (SHOP/PROMO/TREASURE/DROP/etc).
     -- VENDOR is chip-only. emit() dedupes per kind (catalog signal wins).
     if aug and aug.sources then
         for _, s in ipairs(aug.sources) do
-            local k = s.type and fromSourceType(s.type)
+            local kind = _kindForSourceType(s.type)
+            local k = kind and kind.key
             if k == "VENDOR" then
                 emit(k, {})
             elseif k then
@@ -1132,7 +1363,8 @@ function R:_bakeSourceTags(row)
     -- VENDOR chip-only; other kinds carry the override's name+zone text.
     if row.sources then
         for _, s in ipairs(row.sources) do
-            local k = s.type and fromSourceType(s.type)
+            local kind = _kindForSourceType(s.type)
+            local k = kind and kind.key
             if k == "VENDOR" then
                 emit(k, {})
             elseif k then
@@ -1192,8 +1424,11 @@ end
 -- lines. Multi-vendor items repeat the Vendor/Zone/Faction/Cost block.
 -- row.factionGate = first Faction: line; selectors fall back to ItemAugment if absent.
 --
--- _extractCostEntries: parse {currencyID, amount, icon} from the RAW Cost: line.
--- MUST be raw (not SHL-stripped) -- SHL nukes |Hcurrency:<id>|h wrappers.
+-- _extractCostEntries: parse cost entries from the RAW Cost: line --
+-- { currencyID, amount, icon } for |Hcurrency: links and the gold money icon,
+-- { itemID, amount, icon } for |Hitem: links (Format.CostKey/FormatCost/CostName
+-- read the distinction). MUST be raw (not SHL-stripped) -- SHL nukes the |H..|h
+-- wrappers, leaving bare digits that say nothing about what they count.
 -- The catalog-embedded icon is always correct; avoids a stale hand-curated table
 -- and won't drop currencies outside it (boundary: any currency in Cost: IS a decor cost).
 local function _extractCostEntries(raw)
@@ -1209,6 +1444,20 @@ local function _extractCostEntries(raw)
             entries[#entries + 1] = { currencyID = id, amount = n, icon = iconByID[id] }
         end
     end
+    -- Item tokens: "1|Hitem:137642|h|T<icon>:0|t|h" (Mark of Honor, Dreamsurge
+    -- Coalescence, ...). Same shape as the currency loop with the item's own ID;
+    -- an item is not a currency, so the entry carries itemID and no currencyID.
+    local itemIconByID = {}
+    for iid, icon in raw:gmatch("|Hitem:(%d+)|h|T([^:|]+)") do
+        itemIconByID[tonumber(iid)] = icon
+    end
+    for amt, iid in raw:gmatch("([%d,]+)%s*|Hitem:(%d+)|h") do
+        local n  = tonumber((amt:gsub(",", "")))
+        local id = tonumber(iid)
+        if n and id then
+            entries[#entries + 1] = { itemID = id, amount = n, icon = itemIconByID[id] }
+        end
+    end
     -- Gold is a money texture ("<amt>|TInterface\MoneyFrame\UI-GoldIcon...|t"), NOT a
     -- |Hcurrency: link, so the loop above misses it -- an item can charge a currency AND
     -- gold (e.g. 2000 Order Resources + 1000g). Match the gold icon and emit a GOLD entry.
@@ -1219,6 +1468,35 @@ local function _extractCostEntries(raw)
         end
     end
     return entries
+end
+
+-- A vendor block can carry SEVERAL Zone: lines. Blizzard reports ONE Vendor with every
+-- zone that vendor stands in:
+--     Vendor: Unquestionably Griftah / Zone: Razorwind Shores / Zone: Founder's Point
+--     Vendor: Second Chair Pawdo     / Zone: Stormwind City   / Zone: Dornogal
+-- Assigning current.zone per line kept only the LAST and silently dropped the rest --
+-- 74 of 986 vendor blocks in the recorded catalog, every one of them losing a zone.
+-- That is what made a vendor standing in Razorwind Shores list as Founder's Point.
+--
+-- Emit one vendor record PER zone: byVendor is already keyed (name, zone), and
+-- acq.allVendors already emits a UI row per key, so the whole chain wants this shape.
+local function _flushVendor(vendors, v)
+    if not v then return end
+    local zones = v.zones
+    v.zones = nil
+    if not zones or #zones == 0 then
+        vendors[#vendors + 1] = v
+        return
+    end
+    for i = 1, #zones do
+        local rec = v
+        if i > 1 then                       -- shallow copy per extra zone
+            rec = {}
+            for k, val in pairs(v) do rec[k] = val end
+        end
+        rec.zone = zones[i]
+        vendors[#vendors + 1] = rec
+    end
 end
 
 function R:_ParseSourceText(sourceText, row)
@@ -1236,7 +1514,9 @@ function R:_ParseSourceText(sourceText, row)
     -- Tracks the active Drop:/Treasure:/Event: record so the following Zone: line can fill .zone.
     local pendingZoneTarget = nil
     for raw in rawText:gmatch("[^\n]+") do
+        local ts = _sweepProf and _G.debugprofilestop()
         local line = SHL(raw, false, false, false, false, false)
+        if ts then _lap(STRIP_STAGE, ts) end
         line = line:match("^%s*(.-)%s*$") or line  -- trim
         local vName    = line:match("^Vendors?:%s*(.+)")  -- matches Vendor: AND Vendors:
         local zone     = line:match("^Zone:%s*(.+)")
@@ -1253,8 +1533,8 @@ function R:_ParseSourceText(sourceText, row)
         -- (e.g. a stray "Profession") are not in the table -> nil -> ignored.
         local bareKind = SOURCE_TOKENS[line]
         if vName then
-            if current then table.insert(vendors, current) end
-            current = { name = vName, zone = "", cost = "", faction = "", standing = "" }
+            _flushVendor(vendors, current)
+            current = { name = vName, zone = "", zones = {}, cost = "", faction = "", standing = "" }
             pendingZoneTarget = nil
         elseif drop then
             -- "Drop: <Source>" optional "Zone:" follows via pendingZoneTarget.
@@ -1276,7 +1556,8 @@ function R:_ParseSourceText(sourceText, row)
             row.promo = true
             pendingZoneTarget = nil
         elseif zone and current then
-            current.zone = zone
+            current.zones[#current.zones + 1] = zone
+            current.zone = zone   -- last-seen; _flushVendor overwrites per emitted record
         elseif zone and pendingZoneTarget then
             pendingZoneTarget.zone = zone
             pendingZoneTarget = nil
@@ -1307,7 +1588,7 @@ function R:_ParseSourceText(sourceText, row)
             row.achievement = ach
         elseif cat then
             row.category = cat
-        elseif current and raw:match("|Hcurrency:") then
+        elseif current and (raw:match("|Hcurrency:") or raw:match("|Hitem:")) then
             -- Bare cost line (no "Cost:" prefix): achievement-vendor catalog format
             -- (e.g. "800|Hcurrency:3392|h"). Same handling as the Cost: branch.
             current.cost = line
@@ -1315,7 +1596,7 @@ function R:_ParseSourceText(sourceText, row)
             if next(entries) then current.costEntries = entries end
         end
     end
-    if current then table.insert(vendors, current) end
+    _flushVendor(vendors, current)
     row.vendors = vendors
 end
 
@@ -1763,6 +2044,7 @@ HDG.Modules:Declare({
         catalog_swept     = { user = false, level = "info"    },
         catalog_refreshed = { user = true,  level = "success", duration = 5    },
         catalog_error     = { user = true,  level = "error",   duration = nil  },
+        catalog_reconcile = { user = false, level = "warn"    },
     },
     blizzardEvents = {
         -- Queuing model: events dispatch CATALOG_REFRESH_QUEUED regardless of window state.

@@ -386,7 +386,7 @@ for _, entry in ipairs(HDG.Constants.ACQ_PRESETS or {}) do
 end
 
 -- Endeavor currency = Community Coupons (Constants HOUSING_DECOR_CURRENCY_DATA).
-local ENDEAVOR_CURRENCY = 3363
+local ENDEAVOR_CURRENCY = HDG.Constants.COUPON_CURRENCY_ID
 -- Cost-based flags from the catalog row's baked costEntries -- keyed by itemID
 -- so BOTH view modes share one path (item mode: item.itemID; vendor mode: the
 -- raw itemID via the shared item predicate). Returns (costsEndeavor, isGoldOnly):
@@ -1719,7 +1719,18 @@ end
 -- hover handlers read achievementID / name off the same row). Earned -> append
 -- a live checkmark (AchievementObserver, gated by achievementStatus.tick).
 local function _buildAchSourceLine(id, prefix, chip, t, row)
-    local line = string.format("%s%s  |cffffff00|Hhdgrach:%d|h[%s]|h|r", prefix, chip, id, t.text)
+    -- LINK ONLY WHEN THERE IS AN ID TO OPEN. The catalog's "Achievement:" line
+    -- gives a NAME and never an achievementID (_bakeItemAugmentBackfill says so:
+    -- ItemAugment is the sole ID source), so a row backed only by catalog text
+    -- has nothing to click through to. The click handler already returns early
+    -- on the missing ID -- silently -- so linking anyway offered a highlight and
+    -- a "Click to open Achievement window" tooltip for a click that could never
+    -- work (Preyhunter's Terror Effigy, reported 2026-08-31). Unlinked, it is
+    -- still named; it just stops promising.
+    local body = row.achievementID
+        and string.format("|cffffff00|Hhdgrach:%d|h[%s]|h|r", id, t.text)
+        or  string.format("[%s]", t.text)
+    local line = string.format("%s%s  %s", prefix, chip, body)
     if row.achievementID and HDG.AchievementObserver:IsEarned(row.achievementID) then
         line = line .. "  |A:common-icon-checkmark:14:14|a"
     end
@@ -1893,34 +1904,29 @@ end
 
 Selectors:Register("acq.selected.items", {
     memoized = true,
-    calls = {"decor.isCollected"},
+    calls = {"decor.isCollected", "acq.selectedVendor"},
     reads = {
         "session.resolvers.staticData.tick",  -- ADR-003c StaticData marker (sweep rule 4c)
         "session.resolvers.catalog.tick",
-        "session.ui.acquisition.selectedVendorName",  -- synthetic-vendor fallback
-        "session.ui.acquisition.selectedVendorZone",
         -- gate-met chip-dim signals (questDone/achEarned/repMet stamped per item below)
         "session.resolvers.questStatus.tick", "session.resolvers.achievementStatus.tick",
         "account.questCompletions", "session.resolvers.rep.tick",
     },
     fn = function(state, ctx)
-        -- Synthetic catalog vendors ("Draenor World Vendors" etc.) have no
-        -- npcID -- the row click stamps selectedVendorName / Zone in
-        -- transient UI state which we read below. byVendor is keyed by
-        -- (name, zone) composite, populated at sweep time.
-        -- Resolve vendor identity via the stamped (name, catalogZone) the
-        -- row click placed in transient UI state. catalogZone is the zone
-        -- string byVendor is keyed by (catalog Zone: line) -- which can
-        -- diverge from VendorAugment.zone (catalog ships parent map names
-        -- like "Zuldazar" where VendorAugment has the city "Dazar'alor").
-        -- VendorAugment is only consulted for coords / faction display,
-        -- NOT for the items list lookup.
-        local acqUI = state.session.ui.acquisition
-        local vendorName = acqUI.selectedVendorName
-        local vendorZone = acqUI.selectedVendorZone
-        local vendorEntry = vendorName
-            and HDG.HousingCatalogObserver:GetItemsByVendor(vendorName, vendorZone)
-        if not vendorEntry then return {} end
+        -- ONE identity rule for the selected vendor: acq.selectedVendor resolves
+        -- npcID first, then the (name, zone) a row click stamps for npcID-less
+        -- vendors. This selector used to read the stamps directly, so a jump
+        -- from another window -- which carries the npcID and no zone -- painted
+        -- the vendor's header but an empty goods list until the row was clicked
+        -- by hand (Vamoose, 2026-09-11). byVendor is keyed by (name, catalogZone):
+        -- the catalog's zone string, which can diverge from VendorAugment.zone
+        -- (catalog ships parent map names like "Zuldazar" where VendorAugment
+        -- has the city "Dazar'alor"), so the key comes from the resolved record,
+        -- never from the augment.
+        local vendor = Selectors:Call("acq.selectedVendor", state, ctx)
+        if not vendor then return {} end  -- exception(nullable): nothing selected yet
+        local vendorEntry = HDG.HousingCatalogObserver:GetItemsByVendor(vendor.name, vendor.catalogZone or vendor.zone)
+        if not vendorEntry then return {} end  -- exception(nullable): catalog-only vendor whose bucket the observer has not baked yet
         local isColl = Selectors:Call("decor.isCollected", state, ctx)
         local out = {}
         for _, itemID in ipairs(vendorEntry.items) do

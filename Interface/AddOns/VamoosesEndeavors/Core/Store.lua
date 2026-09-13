@@ -10,14 +10,18 @@ local DEFAULT_STATE = {
     config = {
         debug = false,
         showMinimapButton = true,
-        showDashboardButton = true,
         theme = "housingtheme",  -- "dark", "light", "housingtheme", etc.
         fontFamily = "ARIALN",  -- FRIZQT__, ARIALN, skurri, MORPHEUS
         fontScale = 0,  -- -4 to +8 offset applied to all font sizes
         uiScale = 1.0,  -- 0.8 to 1.4 multiplier for entire UI
         bgOpacity = 0.9,  -- 0.3 to 1.0 background transparency
         quotesEnabled = true,  -- Squirrel quote talking head
-        quotesOnlyChat = false,  -- true = chat only, false = talking head
+        -- Two INDEPENDENT outputs, not a mode. `quotesOnlyChat` was one boolean
+        -- asked to carry two answers, so "talking head AND chat" -- watch the
+        -- head, read the line after it fades -- was unreachable. Defaults keep
+        -- the old talking-head-only shape.
+        quotesPopup = true,   -- show the talking head
+        quotesChat = false,   -- print the quote in chat
         autoActivateOnSelect = false,  -- auto-set active endeavor when selecting house in dropdown
         pinWindow = false,  -- pin window: survive Escape, auto-open on reload
         showLoginActiveEndeavor = true,  -- announce active endeavor in chat once per login
@@ -26,8 +30,7 @@ local DEFAULT_STATE = {
     -- Current endeavor season info
     endeavor = {
         seasonName = "",           -- "Reaching Beyond the Possible"
-        seasonEndTime = 0,         -- Unix timestamp when season ends
-        daysRemaining = 0,
+        seasonEndTime = 0,         -- Unix timestamp when the endeavor ends (0 = unknown)
         currentProgress = 0,       -- Current endeavor progress points
         maxProgress = 0,           -- Max points for full completion
         milestones = {},           -- Array of { threshold, reached, rewards }
@@ -264,14 +267,14 @@ function VE.Store:SaveToSavedVariables()
     VE_DB.config = {
         debug = self.state.config.debug,
         showMinimapButton = self.state.config.showMinimapButton,
-        showDashboardButton = self.state.config.showDashboardButton,
         theme = self.state.config.theme,
         fontFamily = self.state.config.fontFamily,
         fontScale = self.state.config.fontScale,
         uiScale = self.state.config.uiScale,
         bgOpacity = self.state.config.bgOpacity,
         quotesEnabled = self.state.config.quotesEnabled,
-        quotesOnlyChat = self.state.config.quotesOnlyChat,
+        quotesPopup = self.state.config.quotesPopup,
+        quotesChat = self.state.config.quotesChat,
         autoActivateOnSelect = self.state.config.autoActivateOnSelect,
         pinWindow = self.state.config.pinWindow,
         showLoginActiveEndeavor = self.state.config.showLoginActiveEndeavor,
@@ -354,7 +357,6 @@ VE.Store:RegisterReducer("SET_ENDEAVOR_INFO", function(state, payload)
     newState.endeavor = {
         seasonName = payload.seasonName or state.endeavor.seasonName,
         seasonEndTime = pick(payload.seasonEndTime, state.endeavor.seasonEndTime),
-        daysRemaining = pick(payload.daysRemaining, state.endeavor.daysRemaining),
         currentProgress = pick(payload.currentProgress, state.endeavor.currentProgress),
         maxProgress = pick(payload.maxProgress, state.endeavor.maxProgress),
         milestones = payload.milestones or state.endeavor.milestones,

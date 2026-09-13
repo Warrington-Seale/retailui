@@ -121,36 +121,15 @@ function app:CreateTradeskillAssets()
 
 	-- Create the Track Unlearned Mogs button
 	if not app.TrackNewMogsButton then
-		local modeText = ""
-		if app.Settings["collectMode"] == 1 then
-			modeText = L.MODE_APPEARANCES
-		elseif app.Settings["collectMode"] == 2 then
-			modeText = L.MODE_SOURCES
-		end
-
 		app.TrackNewMogsButton = app:MakeButton(ProfessionsFrame.CraftingPage, L.BUTTON_TRACKNEW)
 		app.TrackNewMogsButton:SetPoint("TOPLEFT", ProfessionsFrame.CraftingPage.SchematicForm, "BOTTOMLEFT", 0, -4)
 		app.TrackNewMogsButton:SetFrameStrata("HIGH")
 		app.TrackNewMogsButton:SetScript("OnClick", function()
-			local recipes = app:GetVisibleRecipes()
-
-			StaticPopupDialogs["PSL_TRACK_NEW_MOGS"] = {
-				text = app.NameLong .. "\n\n" .. L.TRACK_NEW1 .. " " .. #recipes .. " " .. L.TRACK_NEW2 .. "\n" .. modeText .. ".\n\n" .. L.TRACK_NEW3 .. "\n" .. L.CONFIRMATION,
-				button1 = YES,
-				button2 = NO,
-				OnAccept = function()
-					app:TrackUnlearnedMogs()
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				showAlert = true,
-			}
-			StaticPopup_Show("PSL_TRACK_NEW_MOGS")
+			app:TrackUnlearnedMogs()
 		end)
 		app.TrackNewMogsButton:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-			GameTooltip:SetText(L.CURRENT_SETTING .. " " .. modeText)
+			GameTooltip:SetText(L.CURRENT_SETTING .. " " .. (app.Settings["collectMode"] == 1 and L.MODE_APPEARANCES or L.MODE_SOURCES))
 			GameTooltip:Show()
 		end)
 		app.TrackNewMogsButton:SetScript("OnLeave", function()
@@ -709,6 +688,25 @@ app.Event:Register("TRADE_SKILL_SHOW", function()
 	if not InCombatLockdown() then
 		if C_AddOns.IsAddOnLoaded("Blizzard_Professions") then
 			app:CreateTradeskillAssets()
+
+			if app.Settings["filterOptionalReagents"] then
+				function Professions.GenerateItemsFromEligibleItemSlots(reagents, filterAvailable)
+					local items = {}
+					local maxFindCount = 1
+					for index, reagent in ipairs(Professions.FilterReagentsByItemID(reagents)) do
+						local itemID = reagent.itemID
+						local foundItems = Professions.FindItemsInInventorySlots(itemID, maxFindCount)
+						if not app.Settings["filterOptionalReagents"] or not filterAvailable or (itemID ~= 247719 and itemID ~= 247725 and itemID ~= 260630) then
+							tAppendAll(items, foundItems)
+						end
+
+						if not filterAvailable and #foundItems == 0 then
+							table.insert(items, Item:CreateFromItemID(itemID))
+						end
+					end
+					return items
+				end
+			end
 		end
 
 		local function getGUID(id, name)

@@ -6,9 +6,6 @@ local mod, CL = BigWigs:NewBoss("Kystia Manaheart", 2813, 2679)
 if not mod then return end
 mod:SetEncounterID(3101)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{1228198, sound = "alert"}, -- Corroding Spittle
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -30,6 +27,15 @@ mod:SetRenames({
 	[1264095] = {1264095}, -- Mirror Images
 	[474240] = {474240},   -- Fel Nova
 	[1230304] = {1230304}, -- Light Infusion
+})
+
+--------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{1228198, duration = 30, dispel = "magic", soundOnApplied = "alert", tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(1228198))}, -- Corroding Spittle
+	{1253813, soundOnApplied = "underyou", tip = CL.debuffFailureMoveFromCastNote:format(mod:SpellName(1253811))}, -- Fel Spray
 })
 
 --------------------------------------------------------------------------------
@@ -102,8 +108,7 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 	elseif duration == 15 or (not self:IsWiping() and duration == 30) then -- Mirror Images
 		self:CancelBarForSpell(1264095)
 		barInfo = self:MirrorImagesTimeline(eventInfo)
-	elseif duration == 12 or duration == 25 then -- Fel Nova
-		-- XXX 12.1 is always 12, remove duration == 25 (BigWigsLoader.isNext)
+	elseif duration == 12 or duration == 25 then -- Fel Nova (12s in Mythic else 25s)
 		self:CancelBarForSpell(474240)
 		barInfo = self:FelNovaTimeline(eventInfo)
 	elseif not self:IsWiping() then
@@ -181,10 +186,11 @@ end
 
 function mod:ENCOUNTER_WARNING(_, info)
 	if info.severity == 1 then -- Light Infusion
+		-- TODO probably could use a Light Infusion over somewhere.
 		self:Message(1230304, "green", self:GetRename(1230304))
 		self:PlaySound(1230304, "info")
-	-- elseif info.severity == 2 then -- 1253811 Fel Spray (handled via timeline)
-	-- elseif info.severity == 0 then -- 1248184 Escape (fight end, ignored)
+	--elseif info.severity == 2 then -- 1253811 Fel Spray (handled via timeline)
+	--elseif info.severity == 0 then -- 1248184 Escape (fight end, ignored)
 	end
 end
 

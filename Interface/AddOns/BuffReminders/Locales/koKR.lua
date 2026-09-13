@@ -41,6 +41,7 @@ L["Category.SelfNote"] = "(자신에게만 거는 버프)"
 L["Category.PetNote"] = "(소환수 소환 알림)"
 L["Category.CustomNote"] = "(주문 ID로 버프/반짝임 추적)"
 L["Category.LoadoutNote"] = "(장비나 특성이 현재 콘텐츠와 맞지 않을 때 알림)"
+L["Category.LoadoutTLXNote"] = "Talent Loadout Ex 감지됨 - 특성 구성 피커에 이 애드온의 특성 구성이 표시됩니다."
 
 -- Loadout reminders
 L["Loadout.Add"] = "구성 알림 추가"
@@ -54,8 +55,7 @@ L["Loadout.Content"] = "콘텐트"
 L["Loadout.Requirement"] = "필요 조건"
 L["Loadout.EquipmentSet"] = "장비 구성"
 L["Loadout.TalentSpell"] = "특성 주문 ID"
-L["Loadout.NoSets"] =
-    "장비 구성이 없습니다. 캐릭터 정보 (장비 관리) 창에서 먼저 하나를 만드세요."
+L["Loadout.NoSets"] = "장비 구성이 없습니다. 캐릭터 정보 (장비 관리) 창에서 먼저 하나를 만드세요."
 L["Loadout.NoSetSelected"] = "먼저 장비 구성을 선택하세요."
 L["Loadout.NoLoadouts"] = "이 전문화에는 저장된 특성 구성이 없습니다."
 L["Loadout.NoLoadoutSelected"] = "먼저 특성 구성을 선택하세요."
@@ -65,8 +65,6 @@ L["Loadout.CombatBlocked"] = "전투 중에는 장비나 특성을 바꿀 수 �
 L["Loadout.Instances"] = "인스턴스 %d개"
 L["Loadout.LimitRaids"] = "특정 레이드만"
 L["Loadout.LimitDungeons"] = "특정 던전만"
--- Content scope (you can't swap gear/talents once a key or match starts, so the
--- rule only needs the content you're in - no per-difficulty granularity).
 L["Loadout.Scope.OpenWorld"] = "야외"
 L["Loadout.Scope.Raid"] = "레이드"
 L["Loadout.Scope.Dungeon"] = "던전"
@@ -76,6 +74,7 @@ L["Loadout.Scope.Battleground"] = "전장"
 -- Binding label: spec + class, e.g. "Protection Warrior" (reorder for your locale).
 L["Loadout.Require.Gear"] = "장비 구성"
 L["Loadout.Require.Talent"] = "특성"
+L["Loadout.Require.TalentOption"] = "특성 또는 습득한 주문"
 L["Loadout.Require.Loadout"] = "특성 구성"
 -- On-icon "what's wrong" tags (newline wraps them to two lines on the icon)
 L["Loadout.Tag.Gear"] = "잘못된\n장비"
@@ -168,7 +167,7 @@ L["Badge.Hearty"] = "든"
 L["Badge.Fleeting"] = "덧"
 
 -- ============================================================================
--- BUFF NAMES (used in Options panel checkboxes and sound notification list)
+-- BUFF NAMES
 -- ============================================================================
 -- Raid
 L["Buff.ArcaneIntellect"] = "신비한 지능"
@@ -299,8 +298,7 @@ L["Display.FramesLocked"] = "프레임 위치를 고정했습니다."
 L["Display.FramesUnlocked"] = "프레임의 고정이 해제됐습니다."
 L["Display.MinimapHidden"] = "미니맵 아이콘이 숨겨졌습니다."
 L["Display.MinimapShown"] = "미니맵 아이콘이 표시됩니다."
-L["Display.DebugEnabled"] =
-    "디버그 모드가 활성화됐습니다. |cFFFFD100/br debug|r를 다시 실행하면 꺼집니다."
+L["Display.DebugEnabled"] = "디버그 모드가 활성화됐습니다. |cFFFFD100/br debug|r를 다시 실행하면 꺼집니다."
 L["Display.DebugDisabled"] = "디버그 모드가 비활성화됐습니다."
 L["Display.Description"] = "누락된 버프를 한꺼번에 확인하세요."
 L["Display.OpenOptions"] = "옵션 열기"
@@ -320,10 +318,71 @@ L["Tab.DisplayBehavior"] = "표시/동작"
 
 -- Sidebar groups
 L["Sidebar.AddonSettings"] = "애드온 설정"
-L["Sidebar.BuffsReminders"] = "버프 및 리마인더"
+L["Sidebar.Buffs"] = "버프"
 L["Sidebar.Appearance"] = "외형"
 L["Sidebar.Display"] = "디스플레이"
 L["Sidebar.Alerts"] = "알림"
+-- Externals (present-based display)
+L["Externals.Title"] = "외부 버프"
+L["Externals.NoneTracked"] = "먼저 버프 > 외부 버프 페이지에서 최소 하나의 버프를 추적하도록 설정하세요."
+L["Externals.Sound"] = "소리 알림"
+L["Externals.Sound.Tooltip"] =
+    "추적 중인 버프가 걸렸을 때 이 소리가 재생됩니다. 소리를 끄려면 없음을 선택하세요.|n특정 버프에 소리를 따로 설정하려면 해당 버프 항목 끝의 링크를 클릭하세요.|n보스 전투 중 변경한 사항은 전투가 끝난 후 적용됩니다."
+L["Externals.Sound.Hint"] = "각 버프 항목에서 이 설정을 덮어쓸 수 있습니다."
+L["Externals.Sound.Link"] = "소리"
+L["Externals.Sound.Silent"] = "소리 끄기"
+L["Externals.Sound.Change"] = "클릭으로 변경"
+L["Externals.Sound.Plays"] = "이 버프에 걸리면 %s|1이;가; 재생됩니다."
+L["Externals.Sound.Silenced"] = "이 버프엔 소리를 재생하지 않습니다."
+L["Externals.Sound.SilentByDefault"] = "이 버프는 너무 자주 걸려서 공용 소리가 끄기로 설정되어 있습니다. 소리를 추가하면 이 설정이 무시됩니다."
+L["Externals.Sound.NoAlert"] = "설정된 소리 알림이 없습니다. 클릭해서 이 버프에 소리를 지정하세요."
+L["Externals.Sound.Override.Desc"] =
+    "이 버프에 소리를 지정합니다. 이 옵션을 끄면 버프에 페이지의 공용 소리 알림을 사용합니다."
+L["DisabledReason.SoundOverride"] = "이 버프의 소리를 선택하려면 개별 설정을 활성화하세요."
+L["Externals.SelectAll"] = "전체 선택"
+L["Externals.SelectAll.Tooltip"] = "이 그룹의 모든 버프를 추적합니다."
+L["Externals.SelectNone"] = "전체 해제"
+L["Externals.SelectNone.Tooltip"] = "이 그룹의 모든 버프 추적을 중지합니다."
+L["Externals.PersonalDefensives"] = "나에게 걸린 생존기"
+L["Externals.GroupDefensives"] = "그룹 단위 생존기"
+L["Externals.MinorGroupDefensives"] = "하급 그룹 단위 생존기"
+L["Externals.Boosts"] = "공격 및 마나"
+L["Externals.Movement"] = "이동기"
+L["Externals.Aggro"] = "위협 수준 이전"
+L["Externals.Augmentation"] = "증강"
+L["Externals.DurationSize"] = "쿨타임 크기"
+L["Externals.Appearance"] = "외형"
+L["Externals.AppearanceNote"] =
+    "전투 중 변경한 사항은 전투 종료 후 즉시 적용됩니다. 프레임 잠금을 해제하면 버프 줄을 이동할 수 있습니다."
+L["Externals.ShowSwipe"] = "쿨타임 회전 표시"
+L["Externals.ShowSwipe.Desc"] =
+    "아이콘을 덮는 어두운 회전 애니메이션을 그립니다. 회전은 버프 남은 시간에 맞춰서 사라집니다."
+L["Externals.ShowTooltips"] = "툴팁 표시"
+L["Externals.ShowTooltips.Desc"] =
+    "아이콘에 마우스를 올리면 게임 내 버프 툴팁을 표시합니다. 아이콘은 마우스 이동에만 반응하며 클릭은 동작하지 않습니다."
+L["Externals.Sound.Claimed"] = "%s|1이;가; 이 주문 ID의 소리를 이미 사용 중입니다."
+-- Externals: the player's own entries
+L["Externals.Custom"] = "나만의 버프"
+L["Externals.Custom.SpellID"] = "주문 ID"
+L["Externals.Custom.Name"] = "이름"
+L["Externals.Custom.Add"] = "추가"
+L["Externals.Custom.Edit"] = "수정"
+L["Externals.Custom.Delete"] = "이 버프 삭제"
+L["Externals.Custom.Empty"] = "등록된 나만의 버프가 없습니다."
+L["Externals.Custom.SpellIDs"] = "주문 ID"
+L["Externals.Custom.RemoveID"] = "이 주문 ID 제거"
+L["Externals.Custom.Hint"] =
+    "어빌리티 ID가 아닌 버프 툴팁의 오라 ID를 사용하세요. 콤마로 구분해서 여러 ID를 입력하면 하나의 아이콘으로 묶입니다."
+L["Externals.Custom.Unknown"] = "알 수 없는 ID %d"
+L["Externals.Custom.AlreadyIn"] = "이미 %s에 있음"
+L["Externals.Custom.RowTooltip"] = "주문 ID: %s"
+L["Externals.Custom.Grab"] = "내 버프"
+L["Externals.Custom.GrabTitle"] = "지금 나에게 걸린 버프"
+L["Externals.Custom.Grab.Tooltip"] =
+    "지금 걸려있는 버프 중 목록에 없는 것을 선택합니다. 선택한 버프 정보가 입력창에 자동으로 채워집니다."
+L["Externals.Custom.GrabEmpty"] =
+    "걸려있는 새로운 버프가 없습니다. 전투, 보스전, 쐐기돌 중에는 내 버프 정보를 가져올 수 없습니다."
+L["Externals.Custom.GrabMore"] = "및 %d개 더 있음"
 
 -- Page titles
 L["Page.General"] = "일반"
@@ -333,22 +392,19 @@ L["Page.ChatRequests"] = "채팅 요청"
 L["Page.Layout"] = "레이아웃"
 L["Page.Categories"] = "카테고리"
 L["Page.Profiles"] = "프로필"
-L["Page.AllBuffs"] = "모든 버프"
+L["Page.Reminders"] = "리마인더"
+L["Page.CustomAnchors"] = "사용자 지정 앵커"
 
 -- Per-category page section headers
 L["Section.Tracking"] = "추적"
 L["Section.TrackingOverrides"] = "추적 무시"
 L["Section.TrackingOverrides.Desc"] =
     "지정된 상황일 때 추적 모드의 범위를 좁힙니다. 위의 모드를 사용하려면 상황 설정을 기본값으로 두세요. 여러가지 상황(렙업 중 전투중 같은)을 한번에 적용할 경우 가장 제한이 심한 사항이 우선합니다."
-L["DisabledReason.PvPDisabled"] =
-    "이 카테고리는 PvP에서 완전히 숨겨집니다. (표시 설정 페이지 참고)"
+L["DisabledReason.PvPDisabled"] = "이 카테고리는 PvP에서 완전히 숨겨집니다. (표시 설정 페이지 참고)"
 
 -- ============================================================================
 -- OPTIONS: SOUND ALERTS
 -- ============================================================================
--- Sound alerts are set per buff in the buff panel (BuffPanel); the sound
--- dropdown + Preview button live there. The old standalone Sounds page and
--- add/edit dialog were retired, so only the in-panel labels remain.
 L["Options.Sound.Preview"] = "미리듣기"
 L["Options.Preview"] = "미리보기"
 
@@ -356,9 +412,11 @@ L["Options.Preview"] = "미리보기"
 -- OPTIONS: GLOBAL DEFAULTS
 -- ============================================================================
 L["Options.GlobalDefaults"] = "전체 기본값"
-L["Options.GlobalDefaults.Note"] =
-    "(사용자 지정 외형으로 덮어쓰지 않는 한 모든 카테고리에 적용됨)"
+L["Options.GlobalDefaults.Note"] = "(사용자 지정 외형으로 덮어쓰지 않는 한 모든 카테고리에 적용됨)"
 L["Options.Default"] = "기본값"
+L["Options.Text"] = "텍스트"
+L["Options.Text.Note"] =
+    "(크기와 색상은 카테고리별로 설정이 가능하며 글꼴, 외곽선, 위치는 항상 모든 곳에 동일 적용됩니다)"
 L["Options.Font"] = "글꼴"
 L["Options.TextOutline"] = "외곽선"
 L["Options.TextOutline.None"] = "없음"
@@ -418,8 +476,7 @@ L["Options.Glow.YOffset"] = "Y 조정"
 -- ============================================================================
 L["Options.HidePvPMatchStart"] = "PvP 경기 시작 시 숨기기"
 L["Options.HidePvPMatchStart.Title"] = "PvP 경기 시작 시 숨기기"
-L["Options.HidePvPMatchStart.Desc"] =
-    "PvP 경기가 시작되면 (준비 단계 종료 후) 이 카테고리를 숨깁니다."
+L["Options.HidePvPMatchStart.Desc"] = "PvP 경기가 시작되면 (준비 단계 종료 후) 이 카테고리를 숨깁니다."
 L["Options.ReadyCheckOnly"] = "전투 준비 시에만 표시"
 L["Options.ReadyCheckOnly.Desc"] = "전투 준비 후 15초 동안만 이 카테고리의 버프를 표시합니다."
 L["Options.Visibility"] = "표시 설정"
@@ -478,6 +535,9 @@ L["Options.TextPositions"] = "텍스트"
 L["Options.TextPositions.Zone"] = "위치"
 L["Options.TextPositions.OffsetX.Short"] = "X"
 L["Options.TextPositions.OffsetY.Short"] = "Y"
+L["Options.TextPositions.MainText"] = "주 텍스트"
+L["Options.TextPositions.MainText.Note"] =
+    "아이콘의 큰 텍스트 위치 - 17/20 같은 그룹 카운트, 초읽기, 영약 없음 같은 라벨이 해당됩니다."
 L["Options.TextPositions.StackCount"] = "중첩 수"
 L["Options.TextPositions.StatLabel"] = "능력치 라벨"
 L["Options.TextPositions.Badge"] = "표시 (든 / 덧)"
@@ -489,6 +549,9 @@ L["Options.TextPositions.Vertical.Below"] = "아래쪽"
 L["Options.TextPositions.Align.Left"] = "왼쪽"
 L["Options.TextPositions.Align.Center"] = "중앙"
 L["Options.TextPositions.Align.Right"] = "오른쪽"
+L["Options.TextPositions.Align.Left"] = "왼쪽"
+L["Options.TextPositions.Align.Center"] = "중앙"
+L["Options.TextPositions.Align.Right"] = "오른쪽"
 
 -- ============================================================================
 -- OPTIONS: CLICK TO CAST
@@ -496,11 +559,13 @@ L["Options.TextPositions.Align.Right"] = "오른쪽"
 L["Options.ClickToCast"] = "클릭으로 시전"
 L["Options.ClickToCast.DescFull"] =
     "버프 아이콘을 클릭해 해당 주문을 시전할 수 있습니다.(비전투 시에만) 내 캐릭터가 시전 가능한 주문에만 작동합니다."
+L["Options.RightClickSnooze"] = "우클릭으로 알림 일시 중지"
+L["Options.RightClickSnooze.Desc"] =
+    "소모품 아이콘을 우클릭하면 알림을 일시 중지합니다. 이 옵션을 끄면 우클릭으로도 소모품을 사용합니다."
 L["Options.ClickToCast.SnoozeNote"] =
-    "소모품에 우클릭을 하면 다음 로딩 스크린 전까지 리마인더가 일시적으로 해제됩니다. (|cFFFFD100/br snooze|r로도 작동)"
+    "일시 중지하면 다음 로딩 화면이 나올 때까지 소모품 알림이 숨겨집니다. |cFFFFD100/br snooze|r 명령어는 항상 동작합니다."
 L["Options.HoverHighlight"] = "마우스오버 강조"
-L["Options.HoverHighlight.Desc"] =
-    "클릭 가능한 버프 아이콘에 마우스를 올리면 희미한 강조 효과가 표시됩니다."
+L["Options.HoverHighlight.Desc"] = "클릭 가능한 버프 아이콘에 마우스를 올리면 희미한 강조 효과가 표시됩니다."
 L["Options.RequestBuffInChat"] = "없는 버프를 채팅으로 요청"
 L["Options.RequestBuffInChat.Desc"] =
     "내 직업이 걸 수 없는 누락된 버프를 클릭하면 채팅으로 요청합니다. 채널(인스턴스/공격대/파티/일반)을 자동으로 감지합니다. 버프당 30초의 쿨타임이 있습니다."
@@ -510,7 +575,7 @@ L["Options.ChatRequest.Cooldown.Desc"] =
 L["Options.ChatRequest.Cooldown.Hint"] = "채팅 요청이 나오지 않고 있나요? 이 옵션을 끄세요."
 L["Options.ChatRequest.ResetAll"] = "모두 초기화"
 L["ChatRequests.PerBuffMessages"] = "버프별 메시지"
--- Chat request messages (keyed by buff.key, sent as-is via SendChatMessage)
+-- Chat request messages
 -- EU/US translators: leave untranslated so chat messages stay in English.
 -- Asian translators: translate these so chat messages match your locale.
 L["ChatRequest.intellect"] = "신비한 지능 버프 주세요"
@@ -533,8 +598,7 @@ L["Options.PetSpecIcon.Title"] = "마우스를 올리면 소환수 특성 아이
 L["Options.PetSpecIcon.Desc"] =
     "마우스를 올리면 소환수 아이콘이 특성 능력(교활, 야성, 끈기)으로 바뀝니다."
 L["Options.ShowItemTooltips"] = "아이템 툴팁 표시"
-L["Options.ShowItemTooltips.Desc"] =
-    "소모품 아이콘에 마우스를 올리면 아이템 툴팁이 표시됩니다."
+L["Options.ShowItemTooltips.Desc"] = "소모품 아이콘에 마우스를 올리면 아이템 툴팁이 표시됩니다."
 L["Options.ShowBuffTooltips"] = "버프 툴팁 표시"
 L["Options.ShowBuffTooltips.Desc"] =
     "공격대 또는 특수 버프 아이콘에 마우스 커서를 올리면 주문 툴팁과 걸어준 직업이 표시됩니다."
@@ -564,10 +628,10 @@ L["Options.PetLabels.SizePct"] = "크기 %"
 -- ============================================================================
 -- OPTIONS: CONSUMABLE DISPLAY
 -- ============================================================================
-L["Options.ConsumableTextScale"] = "텍스트 크기"
-L["Options.ConsumableTextScale.Title"] = "소모품 텍스트 크기"
+L["Options.ConsumableTextScale"] = "기본 크기"
+L["Options.ConsumableTextScale.Title"] = "기본 텍스트 크기"
 L["Options.ConsumableTextScale.Desc"] =
-    "아이콘 크기 대비 아이템 수량 및 등급(R1/R2/R3) 라벨의 폰트 크기 비율입니다."
+    "아이콘 크기 비율에 따른 개수, 능력치 라벨, 등급의 글꼴 크기입니다. 아래에서 3개 항목을 각자 설정할 수 있습니다."
 L["Options.ConsumableBadgeOnSubIcons"] = "하위 아이콘에 등급 표시"
 L["Options.ConsumableBadgeOnSubIcons.Title"] = "하위 아이콘 등급 표시"
 L["Options.ConsumableBadgeOnSubIcons.Desc"] =
@@ -581,8 +645,7 @@ L["Options.ItemDisplay"] = "아이템 표시"
 L["Options.ItemDisplay.IconOnly"] = "아이콘만 표시"
 L["Options.ItemDisplay.IconOnlyDesc"] = "수량이 가장 많은 아이템 표시"
 L["Options.ItemDisplay.SubIcons"] = "하위 아이콘"
-L["Options.ItemDisplay.SubIconsDesc"] =
-    "각 아이콘 아래에 클릭되는 다른 등급의 작은 아이템을 표시합니다"
+L["Options.ItemDisplay.SubIconsDesc"] = "각 아이콘 아래에 클릭되는 다른 등급의 작은 아이템을 표시합니다"
 L["Options.ItemDisplay.Expanded"] = "확장"
 L["Options.ItemDisplay.ExpandedDesc"] = "다른 등급 아이템 아이콘을 원래 크기로 확장합니다"
 L["Options.ItemDisplay.Mode"] = "소모품 아이템 표시"
@@ -607,6 +670,10 @@ L["Options.HideLegacyConsumables"] = "구 확장팩 소모품 숨기기"
 L["Options.HideLegacyConsumables.Title"] = "구 확장팩 소모품 숨기기"
 L["Options.HideLegacyConsumables.Desc"] =
     "활성화하면 구 확장팩의 음식, 영약, 증강 룬이 액션 버튼에서 제외됩니다. 시간여행, 구 레이드 파밍, 부캐 육성에 예전 소모품을 쓰고 있다면 비활성화하세요."
+L["Options.PreferReusableRunes"] = "무한 증강 룬 우선"
+L["Options.PreferReusableRunes.Title"] = "무한 증강 룬 우선"
+L["Options.PreferReusableRunes.Desc"] =
+    "무한 증강 룬이 있을 경우 그것만 표시합니다. 없을 경우엔 다른 룬을 표시합니다."
 
 -- ============================================================================
 -- OPTIONS: DK RUNEFORGE PREFERENCES
@@ -645,78 +712,31 @@ L["Options.DelveFoodTimer.Desc"] =
 -- ============================================================================
 L["Options.Layout"] = "레이아웃"
 L["Options.SplitFrame"] = "개별 프레임으로 분리"
-L["Options.SplitFrame.Desc"] =
-    "이 카테고리의 버프를 독립적으로 이동 가능한 별도의 프레임에 표시합니다."
+L["Options.SplitFrame.Desc"] = "이 카테고리의 버프를 독립적으로 이동 가능한 별도의 프레임에 표시합니다."
 
--- Display Order section (Defaults page) - drives the same priority field the
--- old per-category slider wrote, but as a single ordered list across all
--- non-split categories.
 L["Options.DisplayOrder"] = "쌓이는 순서"
 
 -- Layout page
-L["Layout.PositionFrames"] = "프레임 위치"
-L["Layout.PositionFrames.Note"] =
-    "잠금 해제 시 게임 내에서 드래그 핸들이 표시됩니다. 핸들을 클릭해서 정확한 좌표를 입력하거나 드래그로 위치를 변경하세요. 고정된 프레임은 드래그 중에도 기준점을 유지합니다."
-L["Layout.SplitFrames"] = "프레임 분리"
-L["Layout.SplitFrames.Note"] =
-    "카테고리를 독립적으로 배치 가능한 자체 프레임으로 분리합니다. 각 카테고리 페이지의 레이아웃 섹션에서 분리할 수 있습니다."
-L["Layout.NoSplitFrames"] = "자체 프레임으로 분리된 카테고리가 없습니다."
 L["Layout.DetachedIcons"] = "분리된 아이콘"
 L["Layout.NoDetached"] =
     '분리된 아이콘이 없습니다. 모든 버프 페이지의 설정 패널에서 버프를 분리하세요. ("자체 프레임")'
-L["Layout.AnchorTargets"] = "고정 대상"
-L["Layout.AnchorFrame.Desc"] = "정해진 화면 위치 대신 다른 프레임에 이 프레임을 부착합니다."
-L["Layout.AnchorPoint.Desc"] = "앵커 프레임의 어느 모서리나 가장자리에 부착할지 선택합니다."
 L["Layout.FrameNotFound"] =
     "이 프레임은 현재 게임 내에 존재하지 않습니다.\n관련 애드온이 프레임을 생성해야 앵커 드롭다운에 표시됩니다."
-L["DisabledReason.AnchorPoint"] =
-    "먼저 앵커 프레임을 선택하세요 - 고정 지점은 프레임에 고정된 경우에만 적용됩니다."
 
--- Buff panel (uniform per-buff settings dialog)
+-- Buff panel
 L["BuffPanel.SettingsLink"] = "설정"
 L["BuffRow.SettingsLink.Tooltip"] = "이 버프에 대한 소리 알림, 표시 모드 및 분리 옵션입니다."
--- Row captions: the gold "option: value" line under buffs with their own
--- options (All Buffs page). %s is the current value. The trailing "clickable
--- link" chevron is appended in code (_BuffRow.lua), not stored here, so
--- translators never handle the raw escape.
-L["BuffRow.Caption.Poisons"] = "독: %s"
-L["BuffRow.Caption.PoisonsUnset"] = "사용할 독을 선택하세요"
-L["BuffRow.Caption.Runeforge"] = "룬벼리기: %s"
-L["BuffRow.Caption.RuneforgeUnset"] = "각 전문화에 룬벼리기를 설정하세요"
-L["BuffRow.Caption.Healthstone"] = "수량 부족 알림: %d개 미만"
-L["BuffRow.Caption.Repair"] = "내구도 %d%% 아래일 때 알림"
-L["BuffRow.Caption.HealthstoneOff"] = "수량 부족 알림: 끄기"
-L["BuffRow.Caption.SoulstoneHidden"] = "쿨타임일 때 숨김"
-L["BuffRow.Caption.SoulstoneShown"] = "쿨타임일 때 표시"
-L["BuffRow.Caption.SoulstonePinned"] = "고정 시전: %s"
-L["BuffRow.Caption.BronzeHidden"] = "전투 중 숨김"
-L["BuffRow.Caption.BronzeShown"] = "전투 중 표시"
-L["BuffRow.Caption.TravelIgnored"] = "날쌘 동물 변신 무시"
-L["BuffRow.Caption.TravelCounts"] = "날쌘 동물 변신을 잘못된 변신으로 간주"
-L["BuffRow.Caption.PetPassiveCombat"] = "전투 시에만 경고"
-L["BuffRow.Caption.PetPassiveAlways"] = "항상 경고"
-L["BuffRow.Caption.FelOn"] = "지옥 지배 사용"
-L["BuffRow.Caption.FelOff"] = "지옥 지배 끄기"
-L["BuffRow.Caption.FoodTimerOn"] = "만료 타이머 표시"
-L["BuffRow.Caption.FoodTimerOff"] = "만료 타이머 없음"
-L["BuffRow.Caption.MageFoodAll"] = "모든 인스턴스에서 표시"
-L["BuffRow.Caption.MageFoodDungeon"] = "던전만"
-L["BuffRow.Caption.MageFoodRaid"] = "공격대만"
--- Trailing link on the All Buffs row: a gold "Extras" for any buff with its own
--- options (vs the gray "Settings" for the rest); the specific option is named
--- inside the drawer. The two rich editors keep their name for the drawer's
--- "Edit X" door.
 L["BuffRow.Extras"] = "추가 설정"
 L["BuffRow.Option.Poisons"] = "독"
 L["BuffRow.Option.Runeforge"] = "룬벼리기"
--- Row state glyph tooltips (the small sound / pin markers left of the link).
+-- Row state glyphs
 L["BuffRow.Glyph.Sound"] = "소리 알림"
 L["BuffRow.Glyph.Detached"] = "분리된 아이콘"
 L["BuffRow.Glyph.Detached.Desc"] =
     "이 아이콘은 화면에 자유롭게 배치됩니다. 버프 설정 또는 레이아웃 페이지에서 관리하세요."
 L["BuffRow.Glyph.New"] = "새 버프"
 L["BuffRow.Glyph.New.Desc"] = "최신 업데이트에 추가됐습니다."
--- Drawer door to a buff's focused editor (poison/runeforge). %s = option name.
+-- %s is the option name
 L["BuffPanel.EditOption"] = "%s 수정"
 L["BuffPanel.Show"] = "표시"
 L["BuffPanel.MageFoodContent"] = "위치"
@@ -736,7 +756,7 @@ L["DisabledReason.CasterAlways"] = '전투 준비 검사 모드에서만 적용�
 L["Options.DisplayOrder.Note"] =
     "조합된 프레임 내에서 카테고리들이 위에서 아래로 쌓이는 순서를 설정합니다. 분리한 카테고리는 별도의 프레임에 있으므로 여기엔 나오지 않습니다."
 
--- Detached Icons (inline manager on the Layout page).
+-- Detached Icons
 L["DetachedIcons.Reattach"] = "카테고리로 돌아가기"
 L["DetachedIcons.ResetPos"] = "위치 초기화"
 
@@ -745,12 +765,14 @@ L["DetachedIcons.ResetPos"] = "위치 초기화"
 -- ============================================================================
 L["Options.Appearance"] = "외형"
 L["Options.Override"] = "개별 설정"
-L["Options.Override.Inherited"] = "기본값 받기"
+L["Options.Override.Inherited"] = "기본값 상속받음"
 L["Options.Override.Overriding"] = "기본값 무시"
 L["Options.Override.Appearance.Desc"] =
     "이 카테고리에 대한 전역 외형 기본값을 다시 설정합니다.\n비활성화 시 아래의 설정들은 기본값 페이지에서 상속된 값을 표시합니다."
 L["Options.Override.Glow.Desc"] =
     "이 카테고리에 대한 전역 반짝임 설정을 다시 설정합니다.\n비활성화 시, 아래 설정들은 기본값 페이지에서 상속된 값을 표시합니다."
+L["Options.Override.Externals.Desc"] =
+    "이 아이콘들에 대한 전역 외형 기본값을 다시 설정합니다.\n비활성화 시, 크기, 확대, 테두리, 간격 조정은 기본값 페이지의 상속값으로 표시됩니다. 초읽기 텍스트 크기와 방향은 항상 별개입니다."
 L["Options.Customize"] = "사용자 지정"
 L["Options.ResetPosition"] = "위치 초기화"
 L["Options.MasqueNote"] = "확대 및 테두리 설정은 Masque에서 관리합니다."
@@ -893,21 +915,33 @@ L["CustomBuff.Empty"] = "사용자 지정 버프가 없습니다. 아래에서 �
 L["CustomBuff.RestrictedNote"] =
     "전투 중, 보스전과 신화+에선 표시되지 않습니다 - WoW가 이 때 오라를 읽지 못하게 막습니다. 액션 바 반짝임 감지는 전투 중에도 작동합니다."
 L["CustomBuff.SpellIDs"] = "주문 ID:"
-L["CustomBuff.Lookup"] = "검색"
 L["CustomBuff.AddSpellID"] = "+ 주문 ID 추가"
-L["CustomBuff.Name"] = "이름:"
-L["CustomBuff.Text"] = "텍스트:"
+L["CustomBuff.Text"] = "오버레이 텍스트"
 L["CustomBuff.LineBreakHint"] = "(\\n을 사용해서 줄바꿈)"
-L["CustomBuff.Appearance"] = "외형"
-L["CustomBuff.BuffTracking"] = "버프 추적"
-L["CustomBuff.Requirements"] = "필요 조건"
-L["CustomBuff.ShowIn"] = "표시 위치"
-L["CustomBuff.ClickAction"] = "클릭 동작"
+
+-- Custom buff dialog tabs
+L["CustomBuff.Tab.Buff"] = "버프"
+L["CustomBuff.Tab.Rules"] = "규칙"
+L["CustomBuff.Tab.Click"] = "클릭"
+
+-- Custom buff dialog section headers
+L["CustomBuff.Section.Track"] = "주문"
+L["CustomBuff.Section.ShowIcon"] = "디스플레이"
+L["CustomBuff.Section.Who"] = "캐릭터"
+L["CustomBuff.Section.Item"] = "필요 아이템"
+L["CustomBuff.Section.Where"] = "표시 위치"
+L["CustomBuff.Section.OnClick"] = "클릭 동작"
+
+-- Custom buff dialog header
+L["CustomBuff.NamePlaceholder"] = "이 알림 이름 설정"
+L["CustomBuff.NoSpellYet"] = "주문 없음 - 아래에서 ID 추가"
 
 -- Custom buff mode toggles
 L["CustomBuff.WhenActive"] = "있을 때"
 L["CustomBuff.WhenMissing"] = "없을 때"
 L["CustomBuff.OnlyIfSpellKnown"] = "주문을 배웠을 때만"
+L["CustomBuff.ShowWhen"] = "표시"
+L["CustomBuff.Expiration.Disabled"] = "만료 경고는 나에게 없을 때 표시되는 버프에만 적용됩니다."
 
 -- Custom buff class dropdown
 L["Class.Any"] = "모두"
@@ -928,7 +962,6 @@ L["Class.Warrior"] = "전사"
 -- Custom buff fields
 L["CustomBuff.Spec"] = "전문화:"
 L["CustomBuff.Class"] = "직업:"
-L["CustomBuff.RequireItem"] = "아이템 필요:"
 L["CustomBuff.RequireItem.EquippedBags"] = "착용 중/소지품"
 L["CustomBuff.RequireItem.Equipped"] = "착용 중"
 L["CustomBuff.RequireItem.InBags"] = "소지품"
@@ -937,6 +970,8 @@ L["CustomBuff.ItemCooldown"] = "쿨타임:"
 L["CustomBuff.ItemCooldown.Any"] = "모두"
 L["CustomBuff.ItemCooldown.OffCooldown"] = "쿨타임 아님"
 L["CustomBuff.ItemCooldown.OnCooldown"] = "쿨타임 상태"
+L["CustomBuff.RequireItem.Mode"] = "위치"
+L["CustomBuff.RequireItem.Disabled"] = "먼저 아이템 ID를 설정하세요."
 
 -- Bar glow options
 L["CustomBuff.BarGlow.WhenGlowing"] = "반짝일 때 감지"
@@ -964,13 +999,29 @@ L["CustomBuff.Action.Title"] = "클릭 동작"
 L["CustomBuff.Action.Desc"] =
     "이 버프 아이콘을 클릭했을 때의 동작을 설정합니다. 주문은 주문 시전, 아이템은 아이템 사용, 매크로는 매크로를 실행합니다."
 L["CustomBuff.Action.MacroHint"] = "예: /사용 item:12345\n/사용 13"
+L["CustomBuff.Action.SpellID"] = "주문 ID"
+L["CustomBuff.Action.ItemID"] = "아이템 ID"
+L["CustomBuff.Action.MacroText"] = "매크로"
+L["CustomBuff.Action.SpellHint"] = "추적한 주문과 다를 수 있습니다. 추적한 것이 버프고 시전은 어빌리티로 하는 경우입니다."
 
 -- Save/Cancel/Delete
 L["CustomBuff.Save"] = "저장"
-L["CustomBuff.ValidateError"] = "유효한 주문 ID가 1개 이상 필요합니다"
+L["CustomBuff.ValidateError"] = "저장하려면 올바른 주문 ID를 하나 추가하세요."
+
+-- Share one custom buff
+L["CustomBuff.Share.Export"] = "내보내기"
+L["CustomBuff.Share.ExportTitle"] = "사용자 지정 버프 내보내기"
+L["CustomBuff.Share.ExportDesc"] = "아래 문자열을 복사해서 다른 사람에게 보내주세요."
+L["CustomBuff.Share.Import"] = "가져오기"
+L["CustomBuff.Share.ImportTitle"] = "사용자 지정 버프 가져오기"
+L["CustomBuff.Share.ImportDesc"] = "아래에 사용자 지정 버프 문자열을 붙여넣으세요. 가져온 것들은 새 항목으로 추가됩니다."
+L["CustomBuff.Share.Invalid"] = "사용자 지정 버프 문자열이 아닙니다."
+L["CustomBuff.Share.ImportDisabled"] = "먼저 사용자 지정 버프 문자열을 붙여넣으세요."
+L["CustomBuff.Share.MacroWarning"] = "이 버프를 클릭하면 위 매크로가 실행됩니다. 신뢰할 수 있는 출처의 설정만 가져오세요."
+L["CustomBuff.Share.Spells"] = "주문:"
+L["CustomBuff.Share.Runs"] = "클릭 실행:"
 
 -- Custom buff status
-L["CustomBuff.InvalidID"] = "잘못된 ID"
 L["CustomBuff.NotFound"] = "찾을 수 없음"
 L["CustomBuff.NotFoundRetry"] = "찾을 수 없음 (다시 시도)"
 L["CustomBuff.Error"] = "오류:"
@@ -987,14 +1038,15 @@ L["Options.JoinDiscord.Desc"] = "피드백, 기능 요청, 버그 신고를 하�
 -- ============================================================================
 L["Options.SupportKofi"] = "Ko-fi에서 후원하기"
 L["Options.SupportKofi.Title"] = "링크를 클릭"
-L["Options.SupportKofi.Desc"] =
-    "BuffReminders를 잘 쓰고 계시나요?\nKo-fi에서 개발 작업을 후원해 주세요!"
+L["Options.SupportKofi.Desc"] = "BuffReminders를 잘 쓰고 계시나요?\nKo-fi에서 개발 작업을 후원해 주세요!"
 
 -- ============================================================================
 -- OPTIONS: CUSTOM ANCHOR FRAMES
 -- ============================================================================
 L["Options.CustomAnchorFrames.Desc"] =
     "앵커 드롭다운에 전역 프레임 이름을 추가합니다. (예: MyAddon_PlayerFrame)\n게임 내에 존재하지 않는 프레임은 자동으로 건너뜁니다."
+L["Options.CustomAnchorFrames.PickNote"] =
+    "선택 버튼을 누르면 이 목록에 프레임을 추가합니다."
 L["Options.Add"] = "추가"
 L["Options.New"] = "새로 제작"
 L["Options.ResetToDefaults"] = "기본값으로 초기화"
@@ -1003,6 +1055,7 @@ L["Options.ResetToDefaults"] = "기본값으로 초기화"
 -- OPTIONS: MISC
 -- ============================================================================
 L["Options.Off"] = "끄기"
+L["Options.Auto"] = "자동"
 L["Options.Always"] = "항상"
 L["Options.ReadyCheck"] = "전투 준비"
 L["Options.Min"] = "분"
@@ -1014,8 +1067,27 @@ L["Options.Min"] = "분"
 L["Content.ClickToFilter"] = "클릭하면 %s 난이도별로 필터 설정을 합니다"
 
 -- Mover labels
-L["Mover.AnchorGrowth"] = "앵커 · 방향 %s"
-L["Mover.AnchorGrowthFrame"] = "앵커 · 방향 %s · > %s"
+L["Mover.AnchorGrowth"] = "앵커 · 증가 방향 %s"
+L["Mover.AnchorGrowthFrame"] = "앵커 · 증가 방향 %s · > %s"
+
+L["Mover.Role.Player"] = "내 프레임"
+L["Mover.Role.Target"] = "대상 프레임"
+L["Mover.Role.Focus"] = "주시 프레임"
+L["Mover.Role.Pet"] = "소환수 프레임"
+L["Mover.Role.Party"] = "파티 프레임"
+L["Mover.Role.Raid"] = "공격대 프레임"
+L["Mover.Role.Boss"] = "보스 프레임"
+L["Mover.Frame.Minimap"] = "미니맵"
+L["Mover.Frame.ObjectiveTracker"] = "퀘스트 추적기"
+L["Mover.PickFrame"] = "선택"
+L["Mover.PickHint"] = "프레임에 커서를 올리고 클릭하세요. 우클릭 또는 ESC를 누르면 취소됩니다."
+L["Mover.PickNone"] = "커서에 프레임 없음"
+L["Mover.Frame.EssentialCooldowns"] = "핵심 능력"
+L["Mover.Frame.UtilityCooldowns"] = "보조 능력"
+L["Mover.Frame.TrackedBuffIcons"] = "추적 중인 강화 효과"
+L["Mover.Frame.TrackedBuffBars"] = "추적 중인 막대"
+L["Mover.AnchorHidden"] = "(숨겨짐)"
+L["Mover.AnchorNotFound"] = "(없음)"
 
 -- Pet labels
 L["Pet.SpiritBeast"] = "야수 정령"
@@ -1027,6 +1099,7 @@ L["Appearance.Zoom"] = "확대"
 L["Appearance.Border"] = "테두리"
 L["Appearance.Spacing"] = "간격"
 L["Appearance.Alpha"] = "불투명도"
+L["Appearance.Text"] = "텍스트 크기"
 
 -- Slider tooltip
 L["Component.AdjustValue"] = "값 조정"
@@ -1039,7 +1112,7 @@ L["Options.GlobalTag.Title"] = "모든 곳에 적용되는 설정"
 L["Options.GlobalTag.Desc"] =
     "설정이 애드온 전체적으로 일괄 저장됩니다.\n여기서 변경된 내역은 이 카테고리뿐만 아니라 모든 카테고리에 적용됩니다."
 
--- Disabled-control explanations (shown on hover while the control is disabled)
+-- Disabled-control explanations
 L["Component.DisabledReason.Title"] = "왜 비활성화가 됐나요?"
 L["DisabledReason.GrowDirection"] =
     '확장 방향은 이 카테고리가 자체 프레임에 있어야 합니다.\n먼저 레이아웃 섹션에서 "개별 프레임으로 분리"를 활성화하세요.'
@@ -1053,8 +1126,9 @@ L["DisabledReason.LevelingOverride"] =
 L["DisabledReason.ExpiringInCombat"] =
     '"전투 중" 숨김이 활성화되있어서 전투 중에는 이미 모든 것이 숨겨집니다.'
 L["DisabledReason.HealthstoneThreshold"] = '먼저 "수량 부족 시 경고"를 활성화하세요.'
-L["DisabledReason.UseDefaultThreshold"] =
-    '카테고리별로 값을 설정하려면 "기본 기준값 사용"을 체크 해제하세요.'
+L["DisabledReason.ClickToCast"] = '먼저 "클릭으로 시전"을 켜세요.'
+L["DisabledReason.UseDefaultThreshold"] = '카테고리별로 값을 설정하려면 "기본 기준값 사용"을 체크 해제하세요.'
+L["DisabledReason.StatLabelsHidden"] = '먼저 "능력치 라벨 숨기기"를 체크 해제하세요.'
 
 -- Direction labels
 L["Direction.Left"] = "왼쪽"

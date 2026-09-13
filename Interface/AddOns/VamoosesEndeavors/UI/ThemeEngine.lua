@@ -508,7 +508,7 @@ VE.Theme.Skinners = {
         end
     end,
 
-    -- Header Text skinner (for seasonName, daysRemaining, etc.)
+    -- Header Text skinner (for seasonName, timeRemaining, etc.)
     HeaderText = function(fs, c)
         local colorType = fs._colorType or "text"
         if colorType == "text" then

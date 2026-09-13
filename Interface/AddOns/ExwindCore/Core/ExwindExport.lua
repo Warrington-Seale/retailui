@@ -3,6 +3,10 @@
 -- =============================================================
 
 local ExwindTools = _G.ExwindTools
+local L = (ExwindTools and ExwindTools.L)
+    or (_G.ExwindLocale and _G.ExwindLocale.GetProxy and _G.ExwindLocale.GetProxy())
+    or setmetatable({}, { __index = function(_, key) return key end })
+
 if not ExwindTools then return end
 
 local LibSerialize = LibStub and LibStub("LibSerialize")
@@ -55,7 +59,7 @@ end
 -- @return string|nil 错误信息
 function Export:ExportModules(selectedModules, profileName, authorName, note)
     if not LibSerialize or not LibDeflate then
-        return nil, "缺少必要的库: LibSerialize 或 LibDeflate"
+        return nil, L["缺少必要的库: LibSerialize 或 LibDeflate"]
     end
 
     -- 确定导出者名称
@@ -64,7 +68,7 @@ function Export:ExportModules(selectedModules, profileName, authorName, note)
     local exportData = {
         meta = {
             formatVersion = FORMAT_VERSION,
-            profileName = profileName or "未命名配置",
+            profileName = profileName or L["未命名配置"],
             author = finalAuthor,
             note = note or "",
             exportTime = time(),
@@ -92,7 +96,7 @@ function Export:ExportModules(selectedModules, profileName, authorName, note)
     exportData.meta.moduleCount = count
 
     if count == 0 then
-        return nil, "未选择任何模块或选中的模块没有保存数据"
+        return nil, L["未选择任何模块或选中的模块没有保存数据"]
     end
 
     -- 序列化 → 压缩 → 编码
@@ -100,17 +104,17 @@ function Export:ExportModules(selectedModules, profileName, authorName, note)
         return LibSerialize:Serialize(exportData)
     end)
     if not ok then
-        return nil, "序列化失败: " .. tostring(serialized)
+        return nil, L["序列化失败: "] .. tostring(serialized)
     end
 
     local compressed = LibDeflate:CompressDeflate(serialized)
     if not compressed then
-        return nil, "压缩失败"
+        return nil, L["压缩失败"]
     end
 
     local encoded = LibDeflate:EncodeForPrint(compressed)
     if not encoded then
-        return nil, "编码失败"
+        return nil, L["编码失败"]
     end
 
     return MAGIC_PREFIX .. encoded, nil
@@ -126,11 +130,11 @@ end
 -- @return string|nil 错误信息
 function Export:ParseImportString(importString)
     if not importString or importString == "" then
-        return nil, "导入字符串为空"
+        return nil, L["导入字符串为空"]
     end
 
     if not LibSerialize or not LibDeflate then
-        return nil, "缺少必要的库: LibSerialize 或 LibDeflate"
+        return nil, L["缺少必要的库: LibSerialize 或 LibDeflate"]
     end
 
     -- 去除首尾空白
@@ -138,39 +142,39 @@ function Export:ParseImportString(importString)
 
     -- 检查前缀
     if not importString:find("^" .. MAGIC_PREFIX:gsub("!", "%%!")) then
-        return nil, "无效的导入字符串格式 (缺少 !EX1! 前缀)"
+        return nil, L["无效的导入字符串格式 (缺少 !EX1! 前缀)"]
     end
 
     local encoded = importString:sub(#MAGIC_PREFIX + 1)
     if encoded == "" then
-        return nil, "导入字符串内容为空"
+        return nil, L["导入字符串内容为空"]
     end
 
     -- 解码 → 解压 → 反序列化
     local decoded = LibDeflate:DecodeForPrint(encoded)
     if not decoded then
-        return nil, "字符串解码失败 (可能已损坏)"
+        return nil, L["字符串解码失败 (可能已损坏)"]
     end
 
     local decompressed = LibDeflate:DecompressDeflate(decoded)
     if not decompressed then
-        return nil, "数据解压失败 (可能已损坏)"
+        return nil, L["数据解压失败 (可能已损坏)"]
     end
 
     local success, data = LibSerialize:Deserialize(decompressed)
     if not success then
-        return nil, "数据反序列化失败: " .. tostring(data)
+        return nil, L["数据反序列化失败: "] .. tostring(data)
     end
 
     -- 验证数据结构
     if type(data) ~= "table" then
-        return nil, "数据结构无效 (不是表)"
+        return nil, L["数据结构无效 (不是表)"]
     end
     if not data.meta then
-        return nil, "数据结构无效 (缺少元数据)"
+        return nil, L["数据结构无效 (缺少元数据)"]
     end
     if not data.modules then
-        return nil, "数据结构无效 (缺少模块数据)"
+        return nil, L["数据结构无效 (缺少模块数据)"]
     end
 
     return data, nil
@@ -179,11 +183,11 @@ end
 --- 获取导入摘要 (用于预览)
 function Export:GetImportSummary(data)
     local summary = {
-        profileName = data.meta.profileName or "未命名",
-        author = data.meta.author or "未知",
+        profileName = data.meta.profileName or L["未命名"],
+        author = data.meta.author or L["未知"],
         note = data.meta.note or "",
-        exportTime = data.meta.exportTimeStr or "未知时间",
-        addonVersion = data.meta.addonVersion or "未知版本",
+        exportTime = data.meta.exportTimeStr or L["未知时间"],
+        addonVersion = data.meta.addonVersion or L["未知版本"],
         formatVersion = data.meta.formatVersion or 1,
         moduleCount = data.meta.moduleCount or 0,
         modules = {},
@@ -215,7 +219,7 @@ function Export:ApplyImport(data, selectedModules, mergeMode)
     mergeMode = mergeMode or "replace"
 
     if not ExwindTools.DB or not ExwindTools.DB.ModuleDB then
-        return 0, "数据库未初始化"
+        return 0, L["数据库未初始化"]
     end
 
     local applied = 0
@@ -282,9 +286,9 @@ end
 -- 导入成功弹窗
 -- =============================================================
 StaticPopupDialogs["EXWIND_IMPORT_SUCCESS"] = {
-    text = "导入成功！已导入 %d 个模块的配置。\n\n配置需要重载界面才能完全生效。",
-    button1 = "立即重载",
-    button2 = "稍后重载",
+    text = L["导入成功！已导入 %d 个模块的配置。\n\n配置需要重载界面才能完全生效。"],
+    button1 = L["立即重载"],
+    button2 = L["稍后重载"],
     OnAccept = function()
         C_UI.Reload()
     end,
@@ -294,4 +298,4 @@ StaticPopupDialogs["EXWIND_IMPORT_SUCCESS"] = {
     preferredIndex = 3,
 }
 
-EXDebug("ExwindExport 核心加载完成")
+EXDebug(L["ExwindExport 核心加载完成"])

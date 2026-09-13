@@ -238,16 +238,23 @@ L.otherDifficultiesNote = "Este texto se usará en todas las demás dificultades
 L.debuffFailureNote = "Se te aplicará este debufo si fallas"
 L.debuffFailureMoveFromExplosionNote = "Se te aplicará este debufo si fallas en moverte de la explosión"
 L.debuffFailureInterruptNote = "Este debufo se te aplicará si fallas al interrumpir el lanzamiento de |cFFFFFFFF%s|r" -- This debuff will apply to you if you fail to interrupt the cast of SPELL_NAME
+--L.debuffFailureMoveFromCastNote = "This debuff will apply to you if you fail to move out of the |cFFFFFFFF%s|r cast" -- This debuff will apply to you if you fail to move out of the SPELL_NAME cast
+--L.debuffFailureGroupSoakNote = "This debuff will apply to you if your group fails to soak |cFFFFFFFF%s|r" -- This debuff will apply to you if your group fails to soak SPELL_NAME
+--L.debuffFailureSafeZoneNote = "This debuff will apply to you if you fail to stand in the safe zone"
+--L.debuffHitByOtherPlayerNote = "This debuff will apply to you if you are hit by another player's |cFFFFFFFF%s|r" -- This debuff will apply to you if you are hit by another player's SPELL_NAME
+--L.debuffTargetedNote = "This debuff will apply to you if you are being targeted for |cFFFFFFFF%s|r" -- This debuff will apply to you if you are being targeted for SPELL_NAME
 L.preDebuffNote = "Este es el bufo previo al bufo principal que se te aplicará"
 L.mainDebuffNote = "Este es el bufo principal que se te aplicará"
 L.postDebuffNote = "Este debufo se te aplicará luego de que |cFFFFFFFF%s|r expire" -- This debuff will apply to you after OTHER_DEBUFF expires
 L.debuffUnderYouNote = "Este debufo se te aplicará cuando te pares en alguna zona peligrosa" -- Usually when a player is standing in a pool of something bad, a debuff will apply to them
-L.debuffDotAfterCastNote = "Este debufo es un efecto de daño por tiempo cuando el jefe lance |cFFFFFFFF%s|r" -- This debuff is a damage over time effect after the boss finishes casting SPELL_NAME
-L.debuffPossibleAfterCastNote = "Este debufo podra aplicarse a ti luego de que el jefe lance |cFFFFFFFF%s|r" -- This debuff might apply to you after the boss finishes casting SPELL_NAME
-L.debuffTankAfterCastNote = "Este debufo se le aplicará al tanque luego de que el jefe lance |cFFFFFFFF%s|r" -- This debuff will apply to the tank after the boss finishes casting SPELL_NAME
+--L.debuffDotAfterCastNote = "This debuff is a damage over time effect after the |cFFFFFFFF%s|r cast" -- This debuff is a damage over time effect after the SPELL_NAME cast
+--L.debuffPossibleAfterCastNote = "This debuff might apply to you after the |cFFFFFFFF%s|r cast" -- This debuff might apply to you after the SPELL_NAME cast
+--L.debuffTankAfterCastNote = "This debuff will apply to the tank after the |cFFFFFFFF%s|r cast" -- This debuff will apply to the tank after the SPELL_NAME cast
+--L.debuffGroupAfterCastNote = "This debuff will apply to the entire group after the |cFFFFFFFF%s|r cast" -- This debuff will apply to the entire group after the SPELL_NAME cast
 L.debuffWalkIntoObjectNote = "Este debufo se te aplicará si caminas hacia |cFFFFFFFF%s|r" -- This debuff will apply to you if you purposely walk into the OBJECT_NAME (e.g. trap, mine, bomb)
 L.debuffHitByCastNote = "Este debufo se te aplicará si eres alcanzado por el lanzamiento de |cFFFFFFFF%s|r" -- This debuff will apply to you if you are hit by the SPELL_NAME cast
 L.debuffAddsCast = "Este bufo te lo aplicará |cFFFFFFFF%s|r" -- This debuff is applied to you by NPC_NAME
+--L.debuffPickupNote = "This debuff will apply to you if you pick up the |cFFFFFFFF%s|r" -- This debuff will apply to you if you pick up the OBJECT_NAME
 
 -- Common ability name replacements
 L.laser = "Láser" -- Used for abilities that act like a laser. Usually from the boss to a player, or, from the boss to a specific area
@@ -334,6 +341,7 @@ L.tentacle = "Tentáculo" -- Used for bosses that summon tentacles
 L.tentacles = "Tentáculos" -- Plural of L.tentacle
 L.vines = "Vides" -- Short for any ability with the name "Vines" in it e.g. "Festering Vines" (1222088) or "Choking Vines" (238593)
 L.waves = "Olas" -- Multiple waves of a bad ability coming from a boss, like waves in the ocean
+L.winds = "Vientos" -- Short for any ability with the name "Winds" in it e.g. "Winds of Change" (381517)
 L.whelp = "Cría" -- Short for Whelpling, a baby dragonkin (Dragon Whelp)
 L.whelps = "Crías" -- Plural of L.whelp
 
@@ -379,3 +387,7 @@ L.tank_hit = "Golpe de Tanque" -- An attack that will only target the tank, usua
 L.tank_knockback = "Empujón de Tanque" -- Similar to L.knockback but only applies to tanks"
 L.tank_soak = "Soak de Tanque" -- Similar to L.soak but only applies to tanks
 L.tank_grip = "Agarre al Tanque" -- When a boss grapples the tank towards them. We use "Grip" because of the Death Knight ability "Death Grip" (49576) but you can use "Grapple" if it makes more sense
+
+-- Aura Sections
+L.important = "Importante" -- High priority debuffs
+L.achievement = "Logro: \"%s\"" -- Debuff related to an achievement

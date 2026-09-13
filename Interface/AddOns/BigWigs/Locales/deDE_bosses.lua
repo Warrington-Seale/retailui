@@ -79,3 +79,49 @@ BigWigsAPI.SetBossModuleLocale("Crown of the Cosmos", {
 	aspect_of_the_end = "Verbindungen",
 	devouring_cosmos = "Nächste Plattform",
 })
+
+-- The Venomous Abyss
+
+BigWigsAPI.SetBossModuleLocale("Nek'zali the Soulcoiler", {
+	possession_barrage = "Sperrfeuer",
+})
+
+BigWigsAPI.SetBossModuleLocale("The Lost Explorers", {
+	trader_gebbo = "Gebbo",
+	first_mate_nama = "Nama",
+	scrollsage_iku = "Iku",
+})
+
+BigWigsAPI.SetBossModuleLocale("Vashnik the Malignant", {
+	malignant_catalyst = "Katalysator", -- Short for Malignant Catalyst
+})
+
+BigWigsAPI.SetBossModuleLocale("The Twin Fangs", {
+	coiling_toxin = "Sekret", -- Short for Coiling Toxin
+	corrosive_spit = "Speichel", -- Short for Corrosive Spit
+})
+
+BigWigsAPI.SetBossModuleLocale("Ula'tek", {
+	mephitic_thrash = "Feger",
+	call_of_the_serpent = "Eier",
+	gore_rattle = "Schwanz",
+	grasping_fangs = "Verbindungen",
+	circling_prey = "Plattform Bruch",
+	p3_knock_up = "Hochschleudern",
+
+	toxic_womb = "Wicht erscheint",
+	fester_burst = "Wicht Schild",
+	toxic_incubation = "Wicht Wellen",
+
+	count_amount_side = "%s (%d/%d) %s",
+	count_side = "%s (%d) %s",
+	fester_burst_count = "%s (%d-%d)",
+
+	custom_select_limit_warnings = "Spektralschlingen Gruppen",
+	custom_select_limit_warnings_desc = "Nur Leisten für Deine Soak Gruppe anzeigen (links oder rechts). Rechte Seite zuerst in Phase 1, linke Seite zuerst in der ersten Unterbrechung.",
+	custom_select_limit_warnings_value1 = "Warnungen für beide Seiten anzeigen.",
+	custom_select_limit_warnings_value2 = "Nur Warnungen für linke Seite anzeigen.",
+	custom_select_limit_warnings_value3 = "Nur Warnungen für rechte Seite anzeigen.",
+	custom_select_limit_warnings_value4 = "Ungerade Gruppen links, gerade Gruppen rechts.",
+	custom_select_limit_warnings_value5 = "Mythisch: Gruppen 1 & 2 sind links, Gruppen 3 & 4 sind rechts. Ansonsten: Gruppen 1/2/3 sind links, Gruppen 4/5/6 sind rechts.",
+})

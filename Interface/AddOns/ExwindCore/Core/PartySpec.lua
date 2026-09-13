@@ -6,6 +6,10 @@
 -- =============================================================
 
 local ExwindTools = _G.ExwindTools
+local L = (ExwindTools and ExwindTools.L)
+    or (_G.ExwindLocale and _G.ExwindLocale.GetProxy and _G.ExwindLocale.GetProxy())
+    or setmetatable({}, { __index = function(_, key) return key end })
+
 if not ExwindTools then return end
 
 local PartySync = ExwindTools.PartySync
@@ -27,5 +31,5 @@ function PartySpec:Debug()
         PartySync:Debug()
         return
     end
-    print("|cffff0000[ExwindTools PartySpec]|r PartySync 未初始化。")
+    print(L["|cffff0000[ExwindTools PartySpec]|r PartySync 未初始化。"])
 end

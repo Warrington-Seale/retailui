@@ -235,19 +235,26 @@ L.mythicOnlyNote = "史诗难度下显示的信息"
 L.otherDifficultiesNote = "非史诗难度下显示的信息"
 
 -- GUI notes for debuffs
-L.debuffFailureNote = "失误时获得此减益"
-L.debuffFailureMoveFromExplosionNote = "未躲开爆炸时获得此减益"
-L.debuffFailureInterruptNote = "打断|cFFFFFFFF%s|r失败时获得此减益" -- This debuff will apply to you if you fail to interrupt the cast of SPELL_NAME
-L.preDebuffNote = "预警减益，主减益即将生效"
-L.mainDebuffNote = "该减益为主要效果"
-L.postDebuffNote = "|cFFFFFFFF%s|r结束后获得此减益" -- This debuff will apply to you after OTHER_DEBUFF expires
-L.debuffUnderYouNote = "站在危险区域内获得此减益" -- Usually when a player is standing in a pool of something bad, a debuff will apply to them
-L.debuffDotAfterCastNote = "首领施放|cFFFFFFFF%s|r后，受到持续伤害" -- This debuff is a damage over time effect after the boss finishes casting SPELL_NAME
-L.debuffPossibleAfterCastNote = "首领施放|cFFFFFFFF%s|r后，可能获得此减益" -- This debuff might apply to you after the boss finishes casting SPELL_NAME
-L.debuffTankAfterCastNote = "首领施放|cFFFFFFFF%s|r后，坦克获得此减益" -- This debuff will apply to the tank after the boss finishes casting SPELL_NAME
-L.debuffWalkIntoObjectNote = "触碰|cFFFFFFFF%s|r获得此减益" -- This debuff will apply to you if you purposely walk into the OBJECT_NAME (e.g. trap, mine, bomb)
-L.debuffHitByCastNote = "被|cFFFFFFFF%s|r击中时获得此减益" -- This debuff will apply to you if you are hit by the the SPELL_NAME cast
-L.debuffAddsCast = "由|cFFFFFFFF%s|r对你施加的减益" -- This debuff is applied to you by NPC_NAME
+L.debuffFailureNote = "失误时获得此减益效果"
+L.debuffFailureMoveFromExplosionNote = "未躲开爆炸时获得此减益效果"
+L.debuffFailureInterruptNote = "打断|cFFFFFFFF%s|r失败时获得此减益效果" -- This debuff will apply to you if you fail to interrupt the cast of SPELL_NAME
+L.debuffFailureMoveFromCastNote = "未能躲开|cFFFFFFFF%s|r的施法时获得此减益效果" -- This debuff will apply to you if you fail to move out of the SPELL_NAME cast
+L.debuffFailureGroupSoakNote = "队伍未能分摊|cFFFFFFFF%s|r时获得此减益效果" -- This debuff will apply to you if your group fails to soak SPELL_NAME
+L.debuffFailureSafeZoneNote = "未能站在安全区域内时获得此减益效果"
+L.debuffHitByOtherPlayerNote = "被其他玩家的|cFFFFFFFF%s|r击中时获得此减益效果" -- This debuff will apply to you if you are hit by another player's SPELL_NAME
+L.debuffTargetedNote = "被指定为|cFFFFFFFF%s|r的目标时获得此减益效果" -- This debuff will apply to you if you are being targeted for SPELL_NAME
+L.preDebuffNote = "预警减益效果，主减益效果即将生效"
+L.mainDebuffNote = "这是施加给你的主要减益效果"
+L.postDebuffNote = "|cFFFFFFFF%s|r结束后获得此减益效果" -- This debuff will apply to you after OTHER_DEBUFF expires
+L.debuffUnderYouNote = "站在危险区域内获得此减益效果" -- Usually when a player is standing in a pool of something bad, a debuff will apply to them
+L.debuffDotAfterCastNote = "|cFFFFFFFF%s|r施放后获得的持续性伤害减益效果" -- This debuff is a damage over time effect after the SPELL_NAME cast
+L.debuffPossibleAfterCastNote = "|cFFFFFFFF%s|r施放后可能会获得此减益效果" -- This debuff might apply to you after the SPELL_NAME cast
+L.debuffTankAfterCastNote = "|cFFFFFFFF%s|r施放后坦克会获得此减益效果" -- This debuff will apply to the tank after the SPELL_NAME cast
+L.debuffGroupAfterCastNote = "|cFFFFFFFF%s|r施放后全队会获得此减益效果" -- This debuff will apply to the entire group after the SPELL_NAME cast
+L.debuffWalkIntoObjectNote = "触碰|cFFFFFFFF%s|r获得此减益效果" -- This debuff will apply to you if you purposely walk into the OBJECT_NAME (e.g. trap, mine, bomb)
+L.debuffHitByCastNote = "被|cFFFFFFFF%s|r击中时获得此减益效果" -- This debuff will apply to you if you are hit by the the SPELL_NAME cast
+L.debuffAddsCast = "由|cFFFFFFFF%s|r对你施加的减益效果" -- This debuff is applied to you by NPC_NAME
+L.debuffPickupNote = "拾取|cFFFFFFFF%s|r时获得此减益效果" -- This debuff will apply to you if you pick up the OBJECT_NAME
 
 -- Common ability name replacements
 L.laser = "激光" -- Used for abilities that act like a laser. Usually from the boss to a player, or, from the boss to a specific area
@@ -334,6 +341,7 @@ L.tentacle = "触手" -- Used for bosses that summon tentacles
 L.tentacles = "触手" -- Plural of L.tentacle
 L.vines = "藤蔓" -- Short for any ability with the name "Vines" in it e.g. "Festering Vines" (1222088) or "Choking Vines" (238593)
 L.waves = "波浪" -- Multiple waves of a bad ability coming from a boss, like waves in the ocean
+L.winds = "风" -- Short for any ability with the name "Winds" in it e.g. "Winds of Change" (381517)
 L.whelp = "雏龙" -- Short for Whelpling, a baby dragonkin (Dragon Whelp)
 L.whelps = "雏龙" -- Plural of L.whelp
 
@@ -379,3 +387,7 @@ L.tank_hit = "命中坦克" -- An attack that will only target the tank, usually
 L.tank_knockback = "坦克击退" -- Similar to L.knockback but only applies to tanks"
 L.tank_soak = "坦克分摊" -- Similar to L.soak but only applies to tanks
 L.tank_grip = "拉拽坦克" -- When a boss grapples the tank towards them. We use "Grip" because of the Death Knight ability "Death Grip" (49576) but you can use "Grapple" if it makes more sense
+
+-- Aura Sections
+L.important = "重要" -- High priority debuffs
+L.achievement = "成就：“%s”" -- Debuff related to an achievement

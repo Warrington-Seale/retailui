@@ -132,7 +132,7 @@ function app:UpdateOrdersQueue()
 
 		if app.OrderState == app.Enum.OrderState.Idle then
 			if questID and not C_QuestLog.IsQuestFlaggedCompleted(questID) and not C_QuestLog.IsOnQuest(questID) then
-				app.OrdersQueueFrame.Warning.Text = "|cffFFFFFF" .. string.format(L.ORDERSQUEUE_WARNING_QUEST, ("|R|Hquest:0|h[%s]|h|cffFFFFFF"):format(C_QuestLog.GetTitleForQuestID(questID)))
+				app.OrdersQueueFrame.Warning.Text = "|cffFFFFFF" .. string.format(L.ORDERSQUEUE_WARNING_QUEST, ("|R|Hquest:0|h[%s]|h|cffFFFFFF"):format(C_QuestLog.GetTitleForQuestID(questID) or ""))
 				app.OrdersQueueFrame.Warning:Show()
 				app.OrdersQueueFrame.Warning.Animation:Play()
 			elseif not app.Flag.HaveAllReagents then
@@ -169,6 +169,11 @@ function app:UpdateOrdersQueue()
 			app.OrdersQueueFrame.Button:SetScript("OnClick", function()
 				ProfessionsFrame.OrdersPage:ViewOrder(app.QueuedOrders[1].view)
 			end)
+			if not app.OrdersQueueFrame.Warning:IsShown() and #app.QueuedOrders > 0 then
+				C_Timer.After(0.2, function()
+					ProfessionsFrame.OrdersPage:ViewOrder(app.QueuedOrders[1].view)
+				end)
+			end
 		elseif app.OrderState == app.Enum.OrderState.Opened then
 			app:UpdateButton(app.OrdersQueueFrame.Button, L.ORDERSQUEUE_CLAIM)
 			app.OrdersQueueFrame.Button:SetScript("OnClick", function()
@@ -210,12 +215,12 @@ function app:UpdateOrdersQueue()
 				app:UpdateOrdersQueue()
 				return
 			end
-			C_Timer.After(0.1, function()
+			C_Timer.After(0.2, function()
 				app:UpdateButton(app.OrdersQueueFrame.Button, L.ORDERSQUEUE_COMPLETE)
-				app.OrdersQueueFrame.Button:SetScript("OnClick", function()
-					C_CraftingOrders.FulfillOrder(app.QueuedOrders[1].orderID, "", professionID)
-					app:Debug("Fulfill")
-				end)
+				app.OrdersQueueFrame.Button:SetScript("OnClick", function() end)
+				C_CraftingOrders.FulfillOrder(app.QueuedOrders[1].orderID, "", professionID)
+				app:Debug("Fulfill")
+				-- app:UpdateOrdersQueue()
 			end)
 		end
 	end)

@@ -16,6 +16,7 @@ f:RegisterEvent("GROUP_ROSTER_UPDATE")
 f:RegisterEvent("PLAYER_ENTERING_WORLD")
 f:RegisterEvent("PLAYER_LOGOUT")
 f:RegisterEvent("PLAYER_REGEN_ENABLED")
+f:RegisterEvent("ADDON_RESTRICTION_STATE_CHANGED")
 f:RegisterEvent("ACTIVE_PLAYER_SPECIALIZATION_CHANGED")
 
 function NSI:UpdateDebugLogEvents()
@@ -56,6 +57,7 @@ function NSI:EventHandler(e, wowevent, internal, ...) -- internal checks whether
             self.MRTNickNamesHook = false
             self.ReminderTimer = {}
             self.GlowStarted = {}
+            self.UnitFrames = {}
             self:InitNickNames()
             if self:GetProfileKey() then
                 self.LoadedProfile = true
@@ -72,6 +74,7 @@ function NSI:EventHandler(e, wowevent, internal, ...) -- internal checks whether
         self:CreateGenericDisplays()
         self:InitLDB()
         self:InitQoL()
+        self:InitPlayerStatsDisplay()
         self:CacheSounds()
         self.NSRTFrame:SetAllPoints(UIParent)
         local MyFrame = self.LGF.GetUnitFrame("player") -- need to call this once to init the library properly I think
@@ -130,7 +133,7 @@ function NSI:EventHandler(e, wowevent, internal, ...) -- internal checks whether
         self.TestingReminder = false
         self.IsInPreview = false
         self:UpdateAuraTrackingEncounterVisibility()
-        for _, v in ipairs({"IconMover", "BarMover", "TextMover", "CircleMover"}) do
+        for _, v in ipairs({"IconMover", "BarMover", "TextMover", "CircleMover", "DebuffOverviewMover"}) do
             self:MakeDraggable(self[v], nil, false)
         end
         self.Phase = 1
@@ -221,7 +224,11 @@ function NSI:EventHandler(e, wowevent, internal, ...) -- internal checks whether
         local initiator = ...
         self.ProcessDone = false
         if self:DifficultyCheck({14, 15, 16, 23}) then
-            self:ShowReadyCheckConsumables(initiator)
+            if NSRT.ReadyCheckSettings.ConsumablesDisplay then
+                self:ShowReadyCheckConsumables(initiator)
+            else
+                self:HideReadyCheckConsumables()
+            end
             C_Timer.After(1, function()
                 self:EventHandler("NSI_READY_CHECK", false, true)
             end)
@@ -257,8 +264,15 @@ function NSI:EventHandler(e, wowevent, internal, ...) -- internal checks whether
             if assigntable then self.Assignments = assigntable end
         end
     elseif e == "NSI_READY_CHECK" and internal then
-        self:InitAuraSystem()
+        self:InitAuraSystem(false, true)
         self:RebuildAuraSounds()
+        if self:DifficultyCheck({14, 15, 16}) then
+            self:CacheUnitFrames()
+            for containerName in pairs(self.DebuffOverviewContainerSetsByName or {}) do
+                local shown = self.DebuffOverviewShownSets and self.DebuffOverviewShownSets[containerName] or false
+                self:SetDebuffOverviewContainersShown(shown, containerName)
+            end
+        end
         if not self.ProcessDone then -- fallback do this here if no addon comms were received because the setting is disabled
             self:ProcessReminder()
             self:UpdateReminderFrame(true)
@@ -335,7 +349,11 @@ function NSI:EventHandler(e, wowevent, internal, ...) -- internal checks whether
         if self.GroupUpdateTimer then self.GroupUpdateTimer:Cancel() end
         self.GroupUpdateTimer = C_Timer.After(2, function()
             self.GroupUpdateTimer = nil
-            self:InitAuraSystem()
+            self:InitAuraSystem(false, true)
+            if self:DifficultyCheck({14, 15, 16}) then
+                self:RefreshDebuffOverviewContainers()
+                self:CacheUnitFrames()
+            end
             self:UpdateRaidBuffFrame()
         end)
         if self:Restricted() then return end
@@ -350,10 +368,22 @@ function NSI:EventHandler(e, wowevent, internal, ...) -- internal checks whether
                 end)
             end
         end
+    elseif e == "ADDON_RESTRICTION_STATE_CHANGED" and wowevent then
+        local restrictionType, restrictionState = ...
+        if (restrictionType == Enum.AddOnRestrictionType.Combat or restrictionType == Enum.AddOnRestrictionType.Encounter) and restrictionState == Enum.AddOnRestrictionState.Inactive then
+            if self.PendingAuraTrackingUpdate then
+                self:InitAuraTracking(false, self.PendingAuraTrackingReconfigure)
+            end
+            if self.PendingUnitFramesUpdate then
+                self:CacheUnitFrames()
+            end
+            self:RefreshDebuffOverviewContainers()
+        end
     elseif e == "PLAYER_REGEN_ENABLED" and wowevent then
         if self.PendingAuraTrackingUpdate then
             self:InitAuraTracking(false, self.PendingAuraTrackingReconfigure)
         end
+        self:RefreshDebuffOverviewContainers()
     elseif e == "ACTIVE_PLAYER_SPECIALIZATION_CHANGED" and wowevent then
         self:InitAuraTracking()
     elseif e == "ENCOUNTER_TIMELINE_EVENT_ADDED" and wowevent then

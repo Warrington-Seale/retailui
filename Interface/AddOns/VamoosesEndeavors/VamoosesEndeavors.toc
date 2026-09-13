@@ -2,7 +2,8 @@
 ## Title: Vamoose's Endeavors
 ## Notes: Track Housing Endeavor progress across all your characters
 ## Author: Vamoose
-## Version: 1.19.0
+## X-License: All Rights Reserved
+## Version: 1.22.1
 ## SavedVariables: VE_DB
 ## IconTexture: Interface\AddOns\VamoosesEndeavors\Textures\ve_icon
 ## AddonCompartmentFunc: VE_OnAddonCompartmentClick

@@ -2,10 +2,16 @@ local _, BR = ...
 local L = BR.L
 
 -- Lookup tables of known consumable item IDs, keyed by consumable type.
--- Values: `true` for simple membership, or a table with `label` (stat abbreviation) and optional fields.
--- Food tables: `{ label, badge, legacy }`. Flask tables: `{ label, badge, priority, legacy }`.
--- `badge`: bottom-left overlay text ("H" for hearty food, "R1"/"R2"/"R3" for flask quality).
--- `legacy`: true for items from prior expansions; hidden by the hideLegacyConsumables setting.
+
+---@class ConsumableItemInfo
+---@field label? string Stat abbreviation drawn on the icon
+---@field badge? string Bottom-left overlay text
+---@field priority? number Sort order. The lowest number sorts first.
+---@field legacy? boolean Item of a prior expansion. The hideLegacyConsumables setting hides it.
+---@field permanent? boolean A use does not consume the item. It has no meaningful stack count.
+---@field feast? boolean A feast placed on the ground. The feastAtPlayer setting drops it at the player.
+
+---@type table<string, table<number, ConsumableItemInfo|boolean>>
 BR.CONSUMABLE_ITEMS = {
     food = {
         -- TWW 11.0.0 (legacy)
@@ -39,8 +45,8 @@ BR.CONSUMABLE_ITEMS = {
         [222729] = { label = L["Label.HighSecondary"], legacy = true }, -- Empress' Farewell
         [222730] = { label = L["Label.HighSecondary"], legacy = true }, -- Jester's Board
         [222731] = { label = L["Label.HighSecondary"], legacy = true }, -- Outsider's Provisions
-        [222732] = { label = L["Label.Feast"], legacy = true }, -- Feast of the Divine Day
-        [222733] = { label = L["Label.Feast"], legacy = true }, -- Feast of the Midnight Masquerade
+        [222732] = { label = L["Label.Feast"], legacy = true, feast = true }, -- Feast of the Divine Day
+        [222733] = { label = L["Label.Feast"], legacy = true, feast = true }, -- Feast of the Midnight Masquerade
         [222735] = { label = L["Label.LowSecondary"], legacy = true }, -- Everything Stew
         [222736] = { label = L["Label.MasteryHaste"], legacy = true }, -- Chippy Tea
         [222750] = { label = L["Label.LowSecondary"], badge = L["Badge.Hearty"], legacy = true }, -- Hearty Skewered Fillet
@@ -73,8 +79,8 @@ BR.CONSUMABLE_ITEMS = {
         [222777] = { label = L["Label.HighSecondary"], badge = L["Badge.Hearty"], legacy = true }, -- Hearty Empress' Farewell
         [222778] = { label = L["Label.HighSecondary"], badge = L["Badge.Hearty"], legacy = true }, -- Hearty Jester's Board
         [222779] = { label = L["Label.HighSecondary"], badge = L["Badge.Hearty"], legacy = true }, -- Hearty Outsider's Provisions
-        [222780] = { label = L["Label.Feast"], badge = L["Badge.Hearty"], legacy = true }, -- Hearty Feast of the Divine Day
-        [222781] = { label = L["Label.Feast"], badge = L["Badge.Hearty"], legacy = true }, -- Hearty Feast of the Midnight Masquerade
+        [222780] = { label = L["Label.Feast"], badge = L["Badge.Hearty"], legacy = true, feast = true }, -- Hearty Feast of the Divine Day
+        [222781] = { label = L["Label.Feast"], badge = L["Badge.Hearty"], legacy = true, feast = true }, -- Hearty Feast of the Midnight Masquerade
         [222783] = { label = L["Label.LowSecondary"], badge = L["Badge.Hearty"], legacy = true }, -- Hearty Everything Stew
         [222784] = { label = L["Label.MasteryHaste"], badge = L["Badge.Hearty"], legacy = true }, -- Hearty Chippy Tea
         [223966] = { label = L["Label.Random"], legacy = true }, -- Everything-on-a-Stick (random Khaz Algar meal)
@@ -154,13 +160,13 @@ BR.CONSUMABLE_ITEMS = {
         [242774] = { label = L["Label.HasteVers"], badge = L["Badge.Hearty"] }, -- Hearty Quick Sandwich
         [242775] = { label = L["Label.HasteCrit"], badge = L["Badge.Hearty"] }, -- Hearty Portable Snack
         [242776] = { label = L["Label.MasteryHaste"], badge = L["Badge.Hearty"] }, -- Hearty Farstrider Rations
-        [255845] = { label = L["Label.Feast"] }, -- Silvermoon Parade
-        [255846] = { label = L["Label.Feast"] }, -- Harandar Celebration
+        [255845] = { label = L["Label.Feast"], feast = true }, -- Silvermoon Parade
+        [255846] = { label = L["Label.Feast"], feast = true }, -- Harandar Celebration
         [255847] = { label = L["Label.HighPrimary"] }, -- Impossibly Royal Roast
         [255848] = { label = L["Label.HighSecondary"] }, -- Flora Frenzy
-        [266985] = { label = L["Label.Feast"], badge = L["Badge.Hearty"] }, -- Hearty Silvermoon Parade
+        [266985] = { label = L["Label.Feast"], badge = L["Badge.Hearty"], feast = true }, -- Hearty Silvermoon Parade
         [266986] = { label = L["Label.HighSecondary"], badge = L["Badge.Hearty"] }, -- Hearty Quel'dorei Medley
-        [266996] = { label = L["Label.Feast"], badge = L["Badge.Hearty"] }, -- Hearty Harandar Celebration
+        [266996] = { label = L["Label.Feast"], badge = L["Badge.Hearty"], feast = true }, -- Hearty Harandar Celebration
         [267000] = { label = L["Label.HighSecondary"], badge = L["Badge.Hearty"] }, -- Hearty Flora Frenzy
         [268679] = { label = L["Label.HighPrimary"], badge = L["Badge.Hearty"] }, -- Hearty Impossibly Royal Roast
         [268680] = { label = L["Label.HighSecondary"], badge = L["Badge.Hearty"] }, -- Hearty Flora Frenzy
@@ -169,9 +175,9 @@ BR.CONSUMABLE_ITEMS = {
         [275258] = { label = L["Label.HighSecondary"] }, -- Venom-Spiced Cutlets
         [275260] = { label = L["Label.HighSecondary"] }, -- Puffer Plate
         [275261] = { label = L["Label.HighSecondary"] }, -- Sweet-And-Sour Skewers
-        [275264] = { label = L["Label.Feast"] }, -- Amani Cornucopia
-        [275265] = { label = L["Label.Feast"] }, -- Loa's Gathering
-        [275266] = { label = L["Label.Feast"] }, -- Feast of Knowledge
+        [275264] = { label = L["Label.Feast"], feast = true }, -- Amani Cornucopia
+        [275265] = { label = L["Label.Feast"], feast = true }, -- Loa's Gathering
+        [275266] = { label = L["Label.Feast"], feast = true }, -- Feast of Knowledge
         -- Recovery-only (no Well Fed buff, just health/mana restore). Not tracked, listed here for reference.
         -- [260264] = true, -- Quel'Danas Rations
         -- [260275] = true, -- Mukleech Curry
@@ -180,9 +186,7 @@ BR.CONSUMABLE_ITEMS = {
         -- [260286] = true, -- Shrooms and Nectar
         -- [260299] = true, -- Roasted Abyssal Eel
     },
-    -- Flask entries: { label } for regular, { label, priority } for fleeting/cauldron
-    -- Quality is detected dynamically from item link atlas (shows tier icons instead of R1/R2/R3 text)
-    -- priority = sort order (fleeting sort first)
+    -- The addon reads flask quality from the item link atlas, not from these entries.
     flask = {
         -- TWW 11.0.0 (3 quality tiers, legacy)
         [212269] = { label = L["Label.Crit"], legacy = true }, -- Flask of Tempered Aggression
@@ -243,13 +247,13 @@ BR.CONSUMABLE_ITEMS = {
         [245932] = { label = L["Label.Mastery"], badge = L["Badge.Fleeting"], priority = 1 }, -- Fleeting Flask of the Magisters (quality 2)
         [245933] = { label = L["Label.Mastery"], badge = L["Badge.Fleeting"], priority = 1 }, -- Fleeting Flask of the Magisters
     },
-    -- Rune priority: lower number = use first (Midnight > TWW > Dragonflight > Shadowlands)
+    -- Rune order: Midnight > TWW > Dragonflight > Shadowlands
     rune = {
         -- Tidesworn is conjured and free, so it spends before Void-Touched
         [274797] = { priority = 1 }, -- Tidesworn Augment Rune (Midnight, CN-only)
         [259085] = { priority = 2 }, -- Void-Touched Augment Rune (Midnight)
-        -- Ethereal is TWW but permanent/infinite (see permanentRuneItemIDs in Buffs.lua), so not flagged legacy
-        [243191] = { priority = 3 }, -- Ethereal Augment Rune (TWW permanent)
+        -- Ethereal is TWW but permanent, so it is not flagged legacy
+        [243191] = { priority = 3, permanent = true }, -- Ethereal Augment Rune (TWW permanent)
         -- TWW (legacy)
         [246492] = { priority = 4, legacy = true }, -- Soulgorged Augment Rune (TWW, persists through death)
         [224572] = { priority = 5, legacy = true }, -- Crystallized Augment Rune (TWW single use)
@@ -279,8 +283,6 @@ BR.CONSUMABLE_ITEMS = {
     },
 }
 
--- Fleeting flask item IDs. These sort first by numeric priority but should NOT be
--- remembered - they would overwrite the user's regular flask preference.
 BR.FLEETING_FLASK_ITEMS = {
     [245926] = true, -- Fleeting Flask of Thalassian Resistance (quality 2)
     [245927] = true, -- Fleeting Flask of Thalassian Resistance

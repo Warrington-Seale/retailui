@@ -3,7 +3,7 @@
 ## Title: BuffReminders
 ## Notes: Track missing buffs at a glance
 ## Author: zerbi
-## Version: v6.5.1
+## Version: v6.8.3
 ## SavedVariables: BuffRemindersDB
 ## X-Curse-Project-ID: 1441094
 ## X-Wago-ID: qGYZZjNg
@@ -45,20 +45,24 @@ Locales\zhCN.lua
 Locales\zhTW.lua
 
 Core\Core.lua
+Core\Restrictions.lua
 Core\TextPositions.lua
 Core\Profiles.lua
 Core\Migrations.lua
 Data\Buffs.lua
 Data\Defaults.lua
 Data\Beneficiaries.lua
-Data\AuraWhitelist.lua
 Data\ConsumableItems.lua
 Data\Pets.lua
 Data\Externals.lua
+Data\AlertSounds.lua
+Core\Sounds.lua
 Core\ChatRequest.lua
 Core\ConsumableMemory.lua
 Core\TargetMemory.lua
+Core\TalentLoadoutEx.lua
 Core\Loadouts.lua
+Core\LoadoutActions.lua
 Core\State.lua
 UI\Components.lua
 UI\Glow.lua
@@ -69,11 +73,14 @@ Core\ImportExport.lua
 Display\Movers.lua
 Display\SecureButtons.lua
 Display\AuraTracker.lua
+Display\AuraSounds.lua
+Display\Debug.lua
 Core\Bootstrap.lua
 Options\Context.lua
 Options\WhatsNew.lua
 Options\Dialogs\Glow.lua
 Options\Dialogs\CustomBuff.lua
+Options\Dialogs\CustomBuffShare.lua
 Options\Dialogs\LoadoutReminder.lua
 Options\Dialogs\RoguePoison.lua
 Options\Dialogs\Runeforge.lua

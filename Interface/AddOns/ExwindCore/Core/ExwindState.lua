@@ -1,3 +1,5 @@
+-- 12.1 DEV
+
 --[[
     ExwindState.lua - 状态管理系统
 
@@ -22,6 +24,7 @@
     - MythicPlusLevel (number)
     - MythicPlusAffixIDs (number[])
     - MythicPlusWasCharged (boolean)
+    - MythicPlusRunStartRevision (number, 每次大秘境开始递增)
     - IsMounted (boolean)
     - MythicPlusForcesCurrent (number)
     - MythicPlusForcesTotal (number)
@@ -35,6 +38,9 @@
     - RoleKey (string: tank/heal/dps/unknown)
     - RoleName (string)
     - DevMode (boolean)
+    - UIReplacementLoaded (boolean: ElvUI / NDui / EllesmereUI 任一主插件已加载)
+    - UIReplacementName (string: ElvUI / NDui / EllesmereUI / none)
+    - PanelProviders (table: tools/boss/aura 的 installed/enabled/loaded/registered 快照)
     - PStat_Str, PStat_Agi, PStat_Sta, PStat_Int (主属性)
     - PStat_Major (智能主属性)
     - PStat_Crit, PStat_Haste, PStat_Mastery, PStat_Versa (二级属性 %)
@@ -43,19 +49,24 @@
     - PStat_EquippedItemLevel, PStat_MaxHealth, PStat_Movement, PStat_Durability
     - DungeonBossKilledCount (number)
     - DungeonBossProgressIndex (number, 1=1号前, 2=2号前 ...)
-    - PlayerDebuffCount (number)
-    - PlayerDebuffRevision (number)
-    - PlayerDebuffAddedCount (number)
-    - PlayerDebuffLastAddedAt (number)
-    - PlayerDebuffLastAddedRevision (number)
+    -- 12.1 暂停：旧版 Debuff 快照状态链已停用
+    -- - PlayerDebuffCount (number)
+    -- - PlayerDebuffRevision (number)
+    -- - PlayerDebuffAddedCount (number)
+    -- - PlayerDebuffLastAddedAt (number)
+    -- - PlayerDebuffLastAddedRevision (number)
     - ShadowmeldAvailable (boolean)
     - ShadowmeldCD (boolean)
     - ShadowmeldExpiration (number)
 --]]
 
 local ExwindTools = _G.ExwindTools
+local L = (ExwindTools and ExwindTools.L)
+    or (_G.ExwindLocale and _G.ExwindLocale.GetProxy and _G.ExwindLocale.GetProxy())
+    or setmetatable({}, { __index = function(_, key) return key end })
+
 if not ExwindTools then
-    error("[ExwindState] ExwindTools 核心未加载！请检查 .toc 加载顺序。")
+    error(L["[ExwindState] ExwindTools 核心未加载！请检查 .toc 加载顺序。"])
     return
 end
 
@@ -79,6 +90,7 @@ ExwindTools.State = {
     MythicPlusLevel = 0,
     MythicPlusAffixIDs = {},
     MythicPlusWasCharged = false,
+    MythicPlusRunStartRevision = 0,
     IsMounted = false,
     MythicPlusForcesCurrent = 0,
     MythicPlusForcesTotal = 0,
@@ -88,25 +100,44 @@ ExwindTools.State = {
     IsInParty = false,
     IsInRaid = false,
     AuraSecretsActive = false,
+    -- 已加载的整套 UI。名称来自 Retail 插件目录/主 TOC：ElvUI、NDui、EllesmereUI。
+    -- 仅由 ExwindState 刷新，模块应通过 GetLoadedUIReplacement() 只读查询。
+    UIReplacementLoaded = false,
+    UIReplacementName = "none",
+    -- UnifiedPanel Provider 可用性快照。仅供 UI 显示；探测与路由由 ExwindPanelRouter 负责。
+    PanelProviders = {
+        tools = { installed = false, enabled = false, loaded = false, registered = false, available = false },
+        boss = { installed = false, enabled = false, loaded = false, registered = false, available = false },
+        aura = { installed = false, enabled = false, loaded = false, registered = false, available = false },
+    },
     -- 首领战状态
     IsBossEncounter = false,
     EncounterID = 0,
     DungeonBossKilledCount = 0,
     DungeonBossProgressIndex = 0,
+    -- 密谋小径 1 号（3101）专用：已进入易伤次数 / 首领当前减伤百分比。
+    ["3101dmgtimes"] = 0,
+    ["3101dmgtaken"] = 0,
+    -- 毒牙祭坛 2 号（3457）专用：938 事件窗口中的第几断，以及未来玩家名预留。
+    ["3457interrupt"] = 0,
+    ["3457interrupt1name"] = "",
+    ["3457interrupt2name"] = "",
+    ["3457interrupt3name"] = "",
 
     -- 身份状态
     ClassID = 0,
-    ClassName = "未知",
+    ClassName = L["未知"],
     SpecID = 0,
-    SpecName = "未知",
+    SpecName = L["未知"],
     RoleKey = "unknown",
-    RoleName = "未知职责",
+    RoleName = L["未知职责"],
     Level = 0,
     PlayerName = "",
     RealmName = "",
 
     -- 开发者模式
     DevMode = false,
+    TimelineTestMode = false,
 
     -- 玩家属性 (PStat_*)
     PStat_Str = 0,
@@ -136,33 +167,6 @@ ExwindTools.State = {
 
     -- 打断技能状态
     InterruptReady = true,
-    PlayerDebuffCount = 0,
-    PlayerDebuffRevision = 0,
-    PlayerDebuffAddedCount = 0,
-    PlayerDebuffLastAddedAt = 0,
-    PlayerDebuffLastAddedRevision = 0,
-    PartyDebuffLastAddedAt = 0,
-    PartyDebuffLastAddedUnit = "",
-    Party1DebuffCount = 0,
-    Party1DebuffRevision = 0,
-    Party1DebuffAddedCount = 0,
-    Party1DebuffLastAddedAt = 0,
-    Party1DebuffLastAddedRevision = 0,
-    Party2DebuffCount = 0,
-    Party2DebuffRevision = 0,
-    Party2DebuffAddedCount = 0,
-    Party2DebuffLastAddedAt = 0,
-    Party2DebuffLastAddedRevision = 0,
-    Party3DebuffCount = 0,
-    Party3DebuffRevision = 0,
-    Party3DebuffAddedCount = 0,
-    Party3DebuffLastAddedAt = 0,
-    Party3DebuffLastAddedRevision = 0,
-    Party4DebuffCount = 0,
-    Party4DebuffRevision = 0,
-    Party4DebuffAddedCount = 0,
-    Party4DebuffLastAddedAt = 0,
-    Party4DebuffLastAddedRevision = 0,
     ShadowmeldAvailable = false,
     ShadowmeldCD = false,
     ShadowmeldExpiration = 0,
@@ -176,9 +180,10 @@ local function IsSecretValue(value)
     return type(issecretvalue) == "function" and issecretvalue(value)
 end
 
-local MAX_TRACKED_PLAYER_DEBUFFS = 255
-local playerDebuffSnapshot = {}
-local partyDebuffSnapshots = {}
+-- 12.1 暂停：旧版 Debuff 快照状态链已停用
+-- local MAX_TRACKED_PLAYER_DEBUFFS = 255
+-- local playerDebuffSnapshot = {}
+-- local partyDebuffSnapshots = {}
 local SHADOWMELD_SPELL_ID = 58984
 local SHADOWMELD_ICON_ID = 132089
 local SHADOWMELD_COOLDOWN_SECONDS = 120
@@ -244,137 +249,7 @@ local function RefreshShadowmeldState()
     SetShadowmeldCooldownState(false, 0)
 end
 
-local function ScanUnitDebuffSnapshot(unit)
-    local snapshot = {}
-    local count = 0
-    local fn = C_UnitAuras and C_UnitAuras.GetDebuffDataByIndex
 
-    if type(fn) == "function" then
-        for index = 1, MAX_TRACKED_PLAYER_DEBUFFS do
-            local ok, aura = pcall(fn, unit, index, "HARMFUL")
-            if not ok or not aura then
-                break
-            end
-            count = count + 1
-            local auraInstanceID = tonumber(aura.auraInstanceID)
-            if auraInstanceID then
-                snapshot[auraInstanceID] = true
-            end
-        end
-        return snapshot, count
-    end
-
-    if type(UnitDebuff) == "function" then
-        for index = 1, MAX_TRACKED_PLAYER_DEBUFFS do
-            local ok, name = pcall(UnitDebuff, unit, index)
-            if not ok or not name then
-                break
-            end
-            count = count + 1
-        end
-    end
-
-    return snapshot, count
-end
-
-local function ScanPlayerDebuffSnapshot()
-    return ScanUnitDebuffSnapshot("player")
-end
-
-local function UpdatePlayerDebuffState(_, unit)
-    if unit and unit ~= "player" then
-        return
-    end
-
-    local snapshot, count = ScanPlayerDebuffSnapshot()
-    local addedCount = 0
-    local changed = count ~= (tonumber(ExwindTools.State.PlayerDebuffCount) or 0)
-
-    for auraInstanceID in pairs(snapshot) do
-        if playerDebuffSnapshot[auraInstanceID] ~= true then
-            addedCount = addedCount + 1
-            changed = true
-        end
-    end
-    if not changed then
-        for auraInstanceID in pairs(playerDebuffSnapshot) do
-            if snapshot[auraInstanceID] ~= true then
-                changed = true
-                break
-            end
-        end
-    end
-
-    playerDebuffSnapshot = snapshot
-    ExwindTools:UpdateState("PlayerDebuffCount", count)
-    ExwindTools:UpdateState("PlayerDebuffAddedCount", addedCount)
-
-    if changed then
-        local nextRevision = (tonumber(ExwindTools.State.PlayerDebuffRevision) or 0) + 1
-        ExwindTools:UpdateState("PlayerDebuffRevision", nextRevision)
-        if addedCount > 0 then
-            local now = GetTime and GetTime() or 0
-            ExwindTools:UpdateState("PlayerDebuffLastAddedAt", now)
-            ExwindTools:UpdateState("PlayerDebuffLastAddedRevision", nextRevision)
-            ExwindTools:UpdateState("PartyDebuffLastAddedAt", now)
-            ExwindTools:UpdateState("PartyDebuffLastAddedUnit", "player")
-        end
-    end
-end
-
-local PARTY_UNIT_INDEX = { party1 = 1, party2 = 2, party3 = 3, party4 = 4 }
-
-local function UpdatePartyDebuffState(_, unit)
-    if type(unit) ~= "string" or not unit:match("^party[1-4]$") then
-        return
-    end
-
-    local idx = PARTY_UNIT_INDEX[unit]
-    local prefix = "Party" .. idx .. "Debuff"
-
-    if not (UnitExists and UnitExists(unit)) then
-        partyDebuffSnapshots[unit] = nil
-        ExwindTools:UpdateState(prefix .. "Count", 0)
-        ExwindTools:UpdateState(prefix .. "AddedCount", 0)
-        return
-    end
-
-    local snapshot, count = ScanUnitDebuffSnapshot(unit)
-    local old = partyDebuffSnapshots[unit] or {}
-    local addedCount = 0
-    local changed = count ~= (tonumber(ExwindTools.State[prefix .. "Count"]) or 0)
-
-    for auraInstanceID in pairs(snapshot) do
-        if not old[auraInstanceID] then
-            addedCount = addedCount + 1
-            changed = true
-        end
-    end
-    if not changed then
-        for auraInstanceID in pairs(old) do
-            if not snapshot[auraInstanceID] then
-                changed = true
-                break
-            end
-        end
-    end
-
-    partyDebuffSnapshots[unit] = snapshot
-    ExwindTools:UpdateState(prefix .. "Count", count)
-    ExwindTools:UpdateState(prefix .. "AddedCount", addedCount)
-
-    if changed then
-        local nextRevision = (tonumber(ExwindTools.State[prefix .. "Revision"]) or 0) + 1
-        ExwindTools:UpdateState(prefix .. "Revision", nextRevision)
-        if addedCount > 0 then
-            local now = GetTime and GetTime() or 0
-            ExwindTools:UpdateState(prefix .. "LastAddedAt", now)
-            ExwindTools:UpdateState(prefix .. "LastAddedRevision", nextRevision)
-            ExwindTools:UpdateState("PartyDebuffLastAddedAt", now)
-            ExwindTools:UpdateState("PartyDebuffLastAddedUnit", unit)
-        end
-    end
-end
 
 local VERSA_ESTIMATE_SPELL_ID = 1271074
 local MOVEMENT_SPEED_ABBREV_OPTIONS = {
@@ -561,34 +436,32 @@ local function TryGetScenarioCriteriaInfo(index)
     end
 
     if type(GetCriteriaInfo) == "function" then
-        local ok, description, _, _, quantityString, currentQuantity, totalQuantity = pcall(GetCriteriaInfo, index)
+        local ok, description, criteriaType, completed, quantity, totalQuantity, flags, assetID, quantityString,
+        criteriaID = pcall(GetCriteriaInfo, index)
         if ok then
             return {
                 description = description,
+                criteriaType = criteriaType,
+                completed = completed,
                 quantityString = quantityString,
-                quantity = currentQuantity,
+                quantity = quantity,
                 totalQuantity = totalQuantity,
+                flags = flags,
+                assetID = assetID,
+                criteriaID = criteriaID,
             }
         end
     end
 end
 
+
+local CRITERIA_TYPE_DEFEAT_DUNGEON_BOSS = 165
+
 local function IsBossScenarioCriteria(info)
     if type(info) ~= "table" then
         return false
     end
-    local description = tostring(info.description or info.criteriaString or info.name or "")
-    if description == "" then
-        return false
-    end
-    if description:find("击败", 1, true) ~= 1 then
-        return false
-    end
-    local totalQuantity = tonumber(info.totalQuantity or info.maxQuantity or 0) or 0
-    if totalQuantity > 0 and totalQuantity ~= 1 then
-        return false
-    end
-    return true
+    return tonumber(info.criteriaType) == CRITERIA_TYPE_DEFEAT_DUNGEON_BOSS
 end
 
 local MPLUS_FORCES_KEYWORDS = {
@@ -642,7 +515,8 @@ local function NormalizeForcesCriteriaRecord(info)
 end
 
 local function MatchesForcesCriteria(info)
-    local haystack = string.lower(tostring(info and info.description or "") .. " " .. tostring(info and info.quantityString or ""))
+    local haystack = string.lower(tostring(info and info.description or "") ..
+        " " .. tostring(info and info.quantityString or ""))
     for _, keyword in ipairs(MPLUS_FORCES_KEYWORDS) do
         if haystack:find(keyword, 1, true) then
             return true
@@ -711,7 +585,8 @@ local function GetActiveMythicPlusInfo()
         return nil
     end
 
-    local ok, activeKeystoneLevel, activeAffixIDs, wasActiveKeystoneCharged = pcall(C_ChallengeMode.GetActiveKeystoneInfo)
+    local ok, activeKeystoneLevel, activeAffixIDs, wasActiveKeystoneCharged = pcall(C_ChallengeMode
+        .GetActiveKeystoneInfo)
     if not ok then
         return nil
     end
@@ -829,7 +704,8 @@ local function RefreshDungeonBossProgressState()
         return
     end
 
-    local order = GetSpecialDungeonBossProgressOrder(state and state.InstanceID, state and state.MapID, state and state.MapGroup)
+    local order = GetSpecialDungeonBossProgressOrder(state and state.InstanceID, state and state.MapID,
+        state and state.MapGroup)
     local orderedKilledCount, orderedProgressIndex = ResolveDungeonBossProgressFromOrder(bossCriteria, order)
     if orderedKilledCount and orderedProgressIndex then
         ExwindTools:UpdateState("DungeonBossKilledCount", orderedKilledCount)
@@ -857,11 +733,23 @@ end
 --========================== 状态订阅系统 ===============================
 --=======================================================================
 
+-- DatabaseChanged 已被 GUI 的 NotifyModuleValueChanged 正式合同取代。它不再是
+-- 兼容事件；任何旧发送、订阅、解除订阅或手工派发都必须立即暴露调用栈。
+local function RejectRetiredDatabaseChanged(key, api)
+    if type(key) == "string" and key:match("%.DatabaseChanged$") then
+        local message = api .. " rejects retired DatabaseChanged key: " .. key
+            .. "; use EXUI:NotifyModuleValueChanged for GUI display refresh"
+        print("|cffff0000[ExwindState]|r " .. message)
+        error(message, 3)
+    end
+end
+
 --- 订阅状态变化
 --- @param key string 状态键名
 --- @param owner string 模块标识
 --- @param func function 回调函数 func(newValue, oldValue)
 function ExwindTools:WatchState(key, owner, func)
+    RejectRetiredDatabaseChanged(key, "ExwindTools:WatchState")
     if not self.StateCallbacks[key] then
         self.StateCallbacks[key] = {}
     end
@@ -872,6 +760,7 @@ end
 --- @param key string 状态键名
 --- @param owner string 模块标识
 function ExwindTools:UnwatchState(key, owner)
+    RejectRetiredDatabaseChanged(key, "ExwindTools:UnwatchState")
     if self.StateCallbacks[key] then
         self.StateCallbacks[key][owner] = nil
     end
@@ -881,6 +770,7 @@ end
 --- @param key string 状态键名
 --- @param newValue any 新值
 function ExwindTools:UpdateState(key, newValue)
+    RejectRetiredDatabaseChanged(key, "ExwindTools:UpdateState")
     local oldValue = self.State[key]
 
     -- secret value 禁止插件侧比较；只对普通值做相等跳过
@@ -908,6 +798,53 @@ function ExwindTools:UpdateState(key, newValue)
     end
 end
 
+--=======================================================================
+--===================== 第三方整套 UI 检测（只读） =======================
+--=======================================================================
+-- Retail 主插件 folder / addon 名（不是 Options、Libraries 或 EllesmereUI 子模块）。
+local UI_REPLACEMENT_ADDONS = {
+    { addon = "ElvUI",       name = "ElvUI" },
+    { addon = "NDui",        name = "NDui" },
+    { addon = "EllesmereUI", name = "EllesmereUI" },
+}
+
+local function IsAddOnLoadedCompat(addonName)
+    local modern = _G.C_AddOns and _G.C_AddOns.IsAddOnLoaded
+    if type(modern) == "function" then
+        local ok, loaded = pcall(modern, addonName)
+        if ok and loaded then
+            return true
+        end
+    end
+
+    if type(_G.IsAddOnLoaded) == "function" then
+        local ok, loaded = pcall(_G.IsAddOnLoaded, addonName)
+        return ok and loaded and true or false
+    end
+
+    return false
+end
+
+--- 返回当前已加载的整套 UI 主插件名；无则返回 nil。该方法不加载插件、不写状态。
+function ExwindTools:GetLoadedUIReplacement()
+    for _, candidate in ipairs(UI_REPLACEMENT_ADDONS) do
+        if IsAddOnLoadedCompat(candidate.addon) then
+            return candidate.name
+        end
+    end
+    return nil
+end
+
+function ExwindTools:HasLoadedUIReplacement()
+    return self:GetLoadedUIReplacement() ~= nil
+end
+
+local function RefreshUIReplacementState()
+    local name = ExwindTools:GetLoadedUIReplacement()
+    ExwindTools:UpdateState("UIReplacementLoaded", name ~= nil)
+    ExwindTools:UpdateState("UIReplacementName", name or "none")
+end
+
 -- =======================================================================
 -- 自定义差值计算器 (解决乘法叠加属性的增量识别问题)
 -- =======================================================================
@@ -928,6 +865,7 @@ ExwindTools.DeltaCalculators = {
 
 --- 触发状态回调
 function ExwindTools:TriggerCallbacks(key, newValue, oldValue)
+    RejectRetiredDatabaseChanged(key, "ExwindTools:TriggerCallbacks")
     local callbacks = self.StateCallbacks[key]
     if not callbacks then return end
 
@@ -936,15 +874,40 @@ function ExwindTools:TriggerCallbacks(key, newValue, oldValue)
         if not ok then
             local source = string.format("State[%s][%s]", key, tostring(owner))
             if self.LogError then self:LogError(source, err) end
-            print(string.format("|cffff0000[ExwindState] 回调错误 [%s][%s]: %s|r",
+            print(string.format(L["|cffff0000[ExwindState] 回调错误 [%s][%s]: %s|r"],
                 key, tostring(owner), tostring(err)))
         end
     end
 end
 
+--=======================================================================
+--========================== 结算防抖工具 ===============================
+--=======================================================================
+-- 与 TriggerCallbacks 的"同步立即触发"不同：DebounceCall 用于把一连串高频调用
+-- （例如拖动 Slider 期间每帧一次的 DatabaseChanged 广播）合并成"停止调用 delaySeconds 秒
+-- 之后才真正执行一次"，而不是"本帧内只触发一次"那种帧级合并。
+
+local pendingDebounceTimers = {}
+
+--- 结算防抖：取消上一个等待中的定时器，重新排一个新的。
+--- 只有在 debounceKey 对应的这一串调用停止 delaySeconds 秒之后，fn 才会真正执行一次。
+--- @param debounceKey string 防抖分组键，同一个 key 的连续调用会互相取消
+--- @param delaySeconds number 防抖延迟（秒）
+--- @param fn function 防抖结束后要执行的函数
+function ExwindTools:DebounceCall(debounceKey, delaySeconds, fn)
+    local pending = pendingDebounceTimers[debounceKey]
+    if pending then
+        pending:Cancel()
+    end
+    pendingDebounceTimers[debounceKey] = C_Timer.NewTimer(delaySeconds, function()
+        pendingDebounceTimers[debounceKey] = nil
+        fn()
+    end)
+end
+
 --- 性能压测：单纯测试当前属性采集逻辑的耗时
 function ExwindTools:TestStatePerformance()
-    print("|cff00ffff[ExwindState]|r 12.0.5 起属性可能为 secret value，已停用属性运算压测")
+    print(L["|cff00ffff[ExwindState]|r 12.0.5 起属性可能为 secret value，已停用属性运算压测"])
 end
 
 --=======================================================================
@@ -963,7 +926,7 @@ ExwindTools.DeltaMinThreshold = {} -- { [state] = 所有订阅中最小的 min �
 --- @param onFade function (仅当 config 为数值时可选) 消失回调
 function ExwindTools:WatchStateDelta(state, owner, config, arg4, arg5, arg6)
     if self.StateDeltaDisabled then
-        EXDebug("差值监控已停用: %s [%s]", tostring(state), tostring(owner))
+        EXDebug(L["差值监控已停用: %s [%s]"], tostring(state), tostring(owner))
         return false
     end
 
@@ -1005,7 +968,7 @@ function ExwindTools:WatchStateDelta(state, owner, config, arg4, arg5, arg6)
     end
 
     if type(config) ~= "table" or not config.min or not config.max then
-        error("ExwindTools:WatchStateDelta: config 必须包含 min 和 max", 2)
+        error(L["ExwindTools:WatchStateDelta: config 必须包含 min 和 max"], 2)
     end
 
     if not self.DeltaWatchers[state] then
@@ -1016,7 +979,7 @@ function ExwindTools:WatchStateDelta(state, owner, config, arg4, arg5, arg6)
     -- 更新最小阈值缓存
     self:UpdateDeltaMinThreshold(state)
 
-    EXDebug("差值监控注册: %s [%s] 范围 %.1f-%.1f", state, owner, config.min, config.max)
+    EXDebug(L["差值监控注册: %s [%s] 范围 %.1f-%.1f"], state, owner, config.min, config.max)
 end
 
 --- 取消差值监控
@@ -1097,7 +1060,7 @@ function ExwindTools:CheckDeltaWatchers(key, delta, newVal, oldVal)
             if config.onTrigger then
                 local ok, err = pcall(config.onTrigger, logicalDelta, newVal, oldVal)
                 if not ok then
-                    print(string.format("|cffff0000[ExwindState] Delta 回调错误 [%s][%s]: %s|r",
+                    print(string.format(L["|cffff0000[ExwindState] Delta 回调错误 [%s][%s]: %s|r"],
                         key, owner, tostring(err)))
                 end
             end
@@ -1106,7 +1069,7 @@ function ExwindTools:CheckDeltaWatchers(key, delta, newVal, oldVal)
             if config.onFade then
                 local ok, err = pcall(config.onFade, logicalDelta, newVal, oldVal)
                 if not ok then
-                    print(string.format("|cffff0000[ExwindState] Delta Fade 回调错误 [%s][%s]: %s|r",
+                    print(string.format(L["|cffff0000[ExwindState] Delta Fade 回调错误 [%s][%s]: %s|r"],
                         key, owner, tostring(err)))
                 end
             end
@@ -1121,6 +1084,13 @@ end
 local function InitializeStateMonitors()
     local OWNER = "ExwindState"
 
+    RefreshUIReplacementState()
+    ExwindTools:RegisterEvent("ADDON_LOADED", OWNER .. "_UIReplacement", function(_, addonName)
+        if addonName == "ElvUI" or addonName == "NDui" or addonName == "EllesmereUI" then
+            RefreshUIReplacementState()
+        end
+    end)
+
     local function NormalizeRoleKey(role)
         local r = tostring(role or ""):lower()
         if r == "tank" then return "tank" end
@@ -1130,10 +1100,10 @@ local function InitializeStateMonitors()
     end
 
     local function RoleNameFromKey(roleKey)
-        if roleKey == "tank" then return "坦克" end
-        if roleKey == "heal" then return "治疗" end
-        if roleKey == "dps" then return "输出" end
-        return "未知职责"
+        if roleKey == "tank" then return L["坦克"] end
+        if roleKey == "heal" then return L["治疗"] end
+        if roleKey == "dps" then return L["输出"] end
+        return L["未知职责"]
     end
 
     local function ResolveRoleFromSpec(specID, specIndex)
@@ -1236,22 +1206,32 @@ local function InitializeStateMonitors()
     -- 1. 基础状态监听 (战斗/副本/天赋)
     --===================================================================
 
+    local function RefreshMountedState()
+        ExwindTools:UpdateState("IsMounted", IsMounted() and true or false)
+    end
+
     local function UpdateBaseState(event, ...)
         if event == "PLAYER_REGEN_DISABLED" then
             ExwindTools:UpdateState("InCombat", true)
         elseif event == "PLAYER_REGEN_ENABLED" then
             ExwindTools:UpdateState("InCombat", false)
-        elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" or event == "UNIT_AURA" then
-            local unit = ...
-            if event == "UNIT_AURA" and unit and unit ~= "player" then
-                return
+        elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
+            RefreshMountedState()
+        elseif event == "COMPANION_UPDATE" then
+            local companionType = ...
+            if companionType == "MOUNT" then
+                RefreshMountedState()
             end
-            ExwindTools:UpdateState("IsMounted", IsMounted() and true or false)
         elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA"
             or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS"
             or event == "GROUP_ROSTER_UPDATE" or event == "PLAYER_DIFFICULTY_CHANGED"
+            or event == "NEW_WMO_CHUNK"
             or event == "CHALLENGE_MODE_START" or event == "CHALLENGE_MODE_RESET"
+            or event == "MINIMAP_UPDATE_ZOOM" or event == "AREA_POIS_UPDATED"
             or event == "CHALLENGE_MODE_COMPLETED" then
+            if event == "PLAYER_ENTERING_WORLD" then
+                RefreshMountedState()
+            end
             local inInstance, instanceType = IsInInstance()
             local _, _, difficultyID, _, _, _, _, instanceID = GetInstanceInfo()
             local mapID, mapGroup = GetPlayerMapState("player")
@@ -1291,6 +1271,10 @@ local function InitializeStateMonitors()
             UpdateSecretState()
             RefreshActiveMythicPlusState()
             RefreshMythicPlusForcesState()
+            if event == "CHALLENGE_MODE_START" and inMythicPlus == true then
+                ExwindTools:UpdateState("MythicPlusRunStartRevision",
+                    (tonumber(ExwindTools.State.MythicPlusRunStartRevision) or 0) + 1)
+            end
 
             -- 触发变更回调
             if inInstance ~= oldII then ExwindTools:TriggerCallbacks("InInstance", inInstance, oldII) end
@@ -1303,13 +1287,19 @@ local function InitializeStateMonitors()
             if mapGroup ~= oldMapGroup then ExwindTools:TriggerCallbacks("MapGroup", mapGroup, oldMapGroup) end
             if zoneText ~= oldZoneText then ExwindTools:TriggerCallbacks("ZoneText", zoneText, oldZoneText) end
             if difficultyID ~= oldDI then ExwindTools:TriggerCallbacks("DifficultyID", difficultyID, oldDI) end
-            if inFivePlayerInstance ~= oldIFPI then ExwindTools:TriggerCallbacks("InFivePlayerInstance", inFivePlayerInstance, oldIFPI) end
+            if inFivePlayerInstance ~= oldIFPI then
+                ExwindTools:TriggerCallbacks("InFivePlayerInstance",
+                    inFivePlayerInstance, oldIFPI)
+            end
             if inMythicPlus ~= oldIMP then ExwindTools:TriggerCallbacks("InMythicPlus", inMythicPlus, oldIMP) end
             local newMPL = tonumber(ExwindTools.State.MythicPlusLevel) or 0
             local newMPA = ExwindTools.State.MythicPlusAffixIDs
             local newMPWC = ExwindTools.State.MythicPlusWasCharged == true
             if newMPL ~= oldMPL then ExwindTools:TriggerCallbacks("MythicPlusLevel", newMPL, oldMPL) end
-            if not AreNumberArraysEqual(newMPA, oldMPA) then ExwindTools:TriggerCallbacks("MythicPlusAffixIDs", newMPA, oldMPA) end
+            if not AreNumberArraysEqual(newMPA, oldMPA) then
+                ExwindTools:TriggerCallbacks("MythicPlusAffixIDs", newMPA,
+                    oldMPA)
+            end
             if newMPWC ~= oldMPWC then ExwindTools:TriggerCallbacks("MythicPlusWasCharged", newMPWC, oldMPWC) end
             if inGroup ~= oldIP then ExwindTools:TriggerCallbacks("IsInParty", inGroup, oldIP) end
             if inRaid ~= oldIR then ExwindTools:TriggerCallbacks("IsInRaid", inRaid, oldIR) end
@@ -1320,14 +1310,17 @@ local function InitializeStateMonitors()
     ExwindTools:RegisterEvent("PLAYER_REGEN_ENABLED", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("PLAYER_ENTERING_WORLD", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED", OWNER, UpdateBaseState)
-    ExwindTools:RegisterEvent("UNIT_AURA", OWNER .. "_Mounted", UpdateBaseState)
+    ExwindTools:RegisterEvent("COMPANION_UPDATE", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("ZONE_CHANGED_NEW_AREA", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("ZONE_CHANGED", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("ZONE_CHANGED_INDOORS", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("GROUP_ROSTER_UPDATE", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("PLAYER_DIFFICULTY_CHANGED", OWNER, UpdateBaseState)
+    ExwindTools:RegisterEvent("NEW_WMO_CHUNK", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("CHALLENGE_MODE_START", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("CHALLENGE_MODE_RESET", OWNER, UpdateBaseState)
+    ExwindTools:RegisterEvent("MINIMAP_UPDATE_ZOOM", OWNER, UpdateBaseState)
+    ExwindTools:RegisterEvent("AREA_POIS_UPDATED", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("CHALLENGE_MODE_COMPLETED", OWNER, UpdateBaseState)
     ExwindTools:RegisterEvent("SCENARIO_UPDATE", OWNER, UpdateBaseState)
 
@@ -1361,8 +1354,8 @@ local function InitializeStateMonitors()
         end
 
         -- 从 EXDB 获取中文名称
-        local specName = "未知"
-        local className = "未知"
+        local specName = L["未知"]
+        local className = L["未知"]
 
         if classID and _G.EXDB and _G.EXDB.Classes[classID] then
             className = _G.EXDB.Classes[classID].name
@@ -1384,7 +1377,7 @@ local function InitializeStateMonitors()
         ExwindTools:UpdateState("RealmName", GetRealmName() or "")
 
         if isComplete and retryCount > 0 then
-            EXDebug("职业专精信息获取成功: %s (%s)", className, specName)
+            EXDebug(L["职业专精信息获取成功: %s (%s)"], className, specName)
         end
     end
 
@@ -1475,11 +1468,11 @@ local function InitializeStateMonitors()
         ExwindTools:UpdateState("PStat_Int", int)
 
         local primaryStat = _G.EXDB and _G.EXDB.GetPlayerPrimaryStat and _G.EXDB:GetPlayerPrimaryStat()
-        if primaryStat == "力量" then
+        if primaryStat == L["力量"] then
             ExwindTools:UpdateState("PStat_Major", str)
-        elseif primaryStat == "敏捷" then
+        elseif primaryStat == L["敏捷"] then
             ExwindTools:UpdateState("PStat_Major", agi)
-        elseif primaryStat == "智力" then
+        elseif primaryStat == L["智力"] then
             ExwindTools:UpdateState("PStat_Major", int)
         end
     end
@@ -1556,6 +1549,102 @@ local function InitializeStateMonitors()
         end
     end
 
+    -- 属性类事件在短时间内常成簇出现（尤其是玩家 UNIT_AURA）。这里保留每类事件的
+    -- 精细更新语义，但把实际采样与 State 广播统一限制为每 0.5 秒最多一次；窗口内的
+    -- 不同精细事件会合并，完整刷新优先于精细刷新。移动速度走下方独立的 1 秒 ticker。
+    local PLAYER_STATS_REFRESH_INTERVAL_SECONDS = 0.5
+    local PLAYER_STATS_TARGETED_EVENT_ORDER = {
+        "MASTERY_UPDATE",
+        "COMBAT_RATING_UPDATE",
+        "UNIT_STATS",
+        "UNIT_MAXHEALTH",
+        "AVOIDANCE_UPDATE",
+        "LIFESTEAL_UPDATE",
+        "UPDATE_INVENTORY_DURABILITY",
+    }
+    local PLAYER_STATS_TARGETED_EVENTS = {}
+    for _, eventName in ipairs(PLAYER_STATS_TARGETED_EVENT_ORDER) do
+        PLAYER_STATS_TARGETED_EVENTS[eventName] = true
+    end
+
+    local playerStatsLastRefreshAt = -math.huge
+    local playerStatsRefreshPending = false
+    local playerStatsPendingFullEvent = nil
+    local playerStatsPendingItemLevelRetry = false
+    local playerStatsPendingTargetedEvents = {}
+
+    local function GetPlayerStatsRefreshTime()
+        return (GetTimePreciseSec and GetTimePreciseSec()) or GetTime()
+    end
+
+    local FlushPlayerStatsRefresh
+
+    local function SchedulePlayerStatsRefresh(delaySeconds)
+        playerStatsRefreshPending = true
+        C_Timer.After(delaySeconds, function()
+            playerStatsRefreshPending = false
+            FlushPlayerStatsRefresh()
+        end)
+    end
+
+    FlushPlayerStatsRefresh = function()
+        local now = GetPlayerStatsRefreshTime()
+        local remaining = PLAYER_STATS_REFRESH_INTERVAL_SECONDS - (now - playerStatsLastRefreshAt)
+        if remaining > 0 then
+            SchedulePlayerStatsRefresh(remaining)
+            return
+        end
+
+        local fullEvent = playerStatsPendingFullEvent
+        local needsItemLevelRetry = playerStatsPendingItemLevelRetry
+        local targetedEvents = playerStatsPendingTargetedEvents
+
+        playerStatsPendingFullEvent = nil
+        playerStatsPendingItemLevelRetry = false
+        playerStatsPendingTargetedEvents = {}
+        playerStatsLastRefreshAt = now
+
+        if fullEvent then
+            -- 保留装备/登录/天赋变动后的延迟装等复采样合同。
+            if needsItemLevelRetry then
+                fullEvent = "PLAYER_EQUIPMENT_CHANGED"
+            end
+            UpdatePlayerStats(fullEvent)
+            return
+        end
+
+        for _, eventName in ipairs(PLAYER_STATS_TARGETED_EVENT_ORDER) do
+            if targetedEvents[eventName] then
+                UpdatePlayerStats(eventName)
+            end
+        end
+    end
+
+    local function RequestPlayerStatsRefresh(event, unit)
+        -- 先在事件进入限频器前过滤非玩家 UNIT_*，不把无关事件放入队列。
+        if (event == "UNIT_STATS" or event == "UNIT_MAXHEALTH" or event == "UNIT_AURA") and unit and unit ~= "player" then
+            return
+        end
+
+        if PLAYER_STATS_TARGETED_EVENTS[event] then
+            playerStatsPendingTargetedEvents[event] = true
+        else
+            -- 未列为精细事件的调用保持原有“全量刷新”语义；nil 用于初始化同步。
+            playerStatsPendingFullEvent = playerStatsPendingFullEvent or event or "__INITIAL_SYNC"
+            if event == "PLAYER_EQUIPMENT_CHANGED" or event == "PLAYER_ENTERING_WORLD" or event == "TRAIT_CONFIG_UPDATED" then
+                playerStatsPendingItemLevelRetry = true
+            end
+        end
+
+        if playerStatsRefreshPending then
+            return
+        end
+
+        local now = GetPlayerStatsRefreshTime()
+        local delay = math.max(0, PLAYER_STATS_REFRESH_INTERVAL_SECONDS - (now - playerStatsLastRefreshAt))
+        SchedulePlayerStatsRefresh(delay)
+    end
+
     -- 移速计时器 (每秒更新一次，脱离事件以降低开销)
     C_Timer.NewTicker(1, function()
         local _, runSpeed = GetUnitSpeed("player")
@@ -1573,9 +1662,11 @@ local function InitializeStateMonitors()
         "PLAYER_TALENT_UPDATE", "PLAYER_SPECIALIZATION_CHANGED"
     }
     for _, e in ipairs(statEvents) do
-        ExwindTools:RegisterEvent(e, OWNER, UpdatePlayerStats)
+        ExwindTools:RegisterEvent(e, OWNER, RequestPlayerStatsRefresh)
     end
 
+    --[[
+    12.1 暂停：旧版 Debuff 快照状态链已停用
     ExwindTools:RegisterEvent("UNIT_AURA", OWNER .. "_PlayerDebuff", UpdatePlayerDebuffState)
     ExwindTools:RegisterEvent("UNIT_AURA", OWNER .. "_PartyDebuff", UpdatePartyDebuffState)
     ExwindTools:RegisterEvent("PLAYER_ENTERING_WORLD", OWNER .. "_PlayerDebuffInit", UpdatePlayerDebuffState)
@@ -1584,13 +1675,14 @@ local function InitializeStateMonitors()
             partyDebuffSnapshots[k] = nil
         end
     end)
+    ]]
     ExwindTools:RegisterEvent("PLAYER_ENTERING_WORLD", OWNER .. "_ShadowmeldInit", RefreshShadowmeldState)
 
     --===================================================================
     -- 3.5 玩家打断技能状态监控
     --===================================================================
     ExwindTools:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED", OWNER .. "_Interrupt", function(event, unit, castID, spellID)
-        if unit ~= "player" then return end
+        if unit ~= "player" and unit ~= "pet" then return end
 
         -- 获取当前专精
         local specIndex = GetSpecialization()
@@ -1632,14 +1724,14 @@ local function InitializeStateMonitors()
         SetEncounterState(true, id)
         RefreshMythicPlusForcesState()
         ScheduleDungeonBossProgressRefresh(1.0)
-        EXDebug("进入首领战: %d", id)
+        EXDebug(L["进入首领战: %d"], id)
     end)
 
     ExwindTools:RegisterEvent("ENCOUNTER_END", OWNER, function(event)
         SetEncounterState(false, 0)
         RefreshMythicPlusForcesState()
         ScheduleDungeonBossProgressRefresh(1.0)
-        EXDebug("离开首领战")
+        EXDebug(L["离开首领战"])
     end)
 
     ExwindTools:RegisterEvent("BOSS_KILL", OWNER .. "_BossProgress", function()
@@ -1690,7 +1782,7 @@ local function InitializeStateMonitors()
         local ok, value = pcall(_G.C_Secrets.ShouldAurasBeSecret)
         ExwindTools:UpdateState("AuraSecretsActive", ok and value and true or false)
     else
-    ExwindTools:UpdateState("AuraSecretsActive", false)
+        ExwindTools:UpdateState("AuraSecretsActive", false)
     end
     RefreshMythicPlusForcesState()
 
@@ -1705,14 +1797,14 @@ local function InitializeStateMonitors()
 
         if inProgress and liveEncounterID > 0 then
             SetEncounterState(true, liveEncounterID)
-            EXDebug("实时恢复首领战状态: encounterID=%d", liveEncounterID)
+            EXDebug(L["实时恢复首领战状态: encounterID=%d"], liveEncounterID)
         elseif inProgress and cachedID > 0 and (cachedInstanceID == 0 or currentInstanceID == 0 or cachedInstanceID == currentInstanceID) then
             SetEncounterState(true, cachedID)
-            EXDebug("重载恢复首领战状态: encounterID=%d", cachedID)
+            EXDebug(L["重载恢复首领战状态: encounterID=%d"], cachedID)
         elseif inProgress then
             -- 能确定在首领战中，但缺少可靠 encounterID
             SetEncounterState(true, 0)
-            EXDebug("首领战进行中，但未能恢复 EncounterID")
+            EXDebug(L["首领战进行中，但未能恢复 EncounterID"])
         else
             SetEncounterState(false, 0)
         end
@@ -1720,8 +1812,9 @@ local function InitializeStateMonitors()
 
     -- 强制触发一次全量更新
     UpdateSpecInfo()
-    UpdatePlayerStats()
-    UpdatePlayerDebuffState()
+    RequestPlayerStatsRefresh()
+    -- 12.1 暂停：旧版 Debuff 快照状态链已停用
+    -- UpdatePlayerDebuffState()
     RefreshActiveMythicPlusState()
     RefreshMythicPlusForcesState()
     RefreshDungeonBossProgressState()
@@ -1729,15 +1822,16 @@ local function InitializeStateMonitors()
     -- 额外延迟检查，防止登录瞬间数据未就绪
     C_Timer.After(2, function()
         UpdateSpecInfo()
-        UpdatePlayerStats()
-        UpdatePlayerDebuffState()
+        RequestPlayerStatsRefresh()
+        -- 12.1 暂停：旧版 Debuff 快照状态链已停用
+        -- UpdatePlayerDebuffState()
         RefreshActiveMythicPlusState()
         RefreshMythicPlusForcesState()
         RefreshDungeonBossProgressState()
-        EXDebug("二次状态同步完成")
+        EXDebug(L["二次状态同步完成"])
     end)
 
-    EXDebug("ExwindState 初始化完成")
+    EXDebug(L["ExwindState 初始化完成"])
 end
 
 -- 延迟初始化（确保 ExwindTools 核心已完全加载）

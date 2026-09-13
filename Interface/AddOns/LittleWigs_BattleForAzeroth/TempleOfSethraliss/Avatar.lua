@@ -6,7 +6,7 @@ local mod, CL = BigWigs:NewBoss("Avatar of Sethraliss", 1877, 2145)
 if not mod then return end
 mod:RegisterEnableMob(133392, 137204) -- Avatar of Sethraliss, Hoodoo Hexer (boss add)
 mod:SetEncounterID(2127)
-if BigWigsLoader.isNext then -- Midnight+ XXX swap to mod:Retail() in 12.1
+if mod:Retail() then -- Midnight+
 	mod:SetRespawnTime(30)
 else
 	mod:SetRespawnTime(20)
@@ -23,10 +23,9 @@ local hexerCount = 4
 -- Localization
 --
 
-local L = mod:GetLocale()
-if L then
-	L.heal_boss = "The Avatar can be healed"
-end
+local L = mod:SetDefaultLocale({
+	heal_boss = "The Avatar can be healed",
+})
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -88,7 +87,7 @@ local backupBars = {}
 -- Midnight Renames
 --
 
-if BigWigsLoader.isNext then -- Midnight+ XXX swap to mod:Retail() in 12.1
+if mod:Retail() then -- Midnight+
 	mod:SetRenames({
 		[1301202] = {1301202, L.heal_boss, notes = {CL.generalNote, CL.messageCastOverNote}, original = {1301202, CL.removed:format(mod:SpellName(1301202))}}, -- Defiling Taint
 		[1273408] = {1273408}, -- Stage One
@@ -96,10 +95,26 @@ if BigWigsLoader.isNext then -- Midnight+ XXX swap to mod:Retail() in 12.1
 end
 
 --------------------------------------------------------------------------------
+-- Midnight Auras
+--
+
+if mod:Retail() then -- Midnight+
+	mod:SetAuraData({
+		{1300714, duration = 20, soundOnAppliedDose = "none", tip = CL.debuffTargetedNote:format(mod:SpellName(1300702))}, -- Shadowlash
+		{1300877, duration = 15, soundOnAppliedDose = "none", tip = CL.debuffWalkIntoObjectNote:format(mod:SpellName(1300869))}, -- Corruption
+		{1303446, duration = 10, tip = CL.debuffTankAfterCastNote:format(mod:SpellName(1300803))}, -- Tainted Strike
+		{1302618, duration = 8, tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(1302616))}, -- Vile Charge
+		{1311979, duration = 4, tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(1302153))}, -- Latent Hex
+		{1302158, duration = 8, tip = CL.debuffFailureInterruptNote:format(mod:SpellName(1302158))}, -- Flame Shock
+		{1302826, duration = 3, soundOnAppliedDose = "none", tip = CL.debuffGroupAfterCastNote:format(mod:SpellName(1302826))}, -- Corruption Burst
+	})
+end
+
+--------------------------------------------------------------------------------
 -- Midnight Initialization
 --
 
-if BigWigsLoader.isNext then -- Midnight+ XXX swap to mod:Retail() in 12.1
+if mod:Retail() then -- Midnight+
 	function mod:GetOptions()
 		return {
 			autotalk,
@@ -239,8 +254,9 @@ end
 --
 
 function mod:GOSSIP_SHOW() -- called from Trash module
-	if self:GetOption(autotalk) and self:GetGossipID(107065) then
-		self:SelectGossipID(107065)
+	if self:GetOption(autotalk) and self:GetGossipID(48126) then -- Avatar of Sethraliss, start encounter
+		-- 48126:We will restore you!
+		self:SelectGossipID(48126)
 	end
 end
 

@@ -79,6 +79,11 @@ local function NewConfig()
         -- merchantQtyPicker: right-click decor at a vendor -> quantity picker (Helpers > Vendors).
         -- Ships OFF (opt-in): the picker changes right-click behaviour on every vendor decor row.
         merchantQtyPicker      = false,
+        -- materialTooltipItemData: render Blizzard's item tooltip above HDG's stock
+        -- roster on material rows, which also lets other addons' item-data processors
+        -- add their lines there. Ships OFF -- it makes every material hover much
+        -- taller, the reason those rows were title-only to begin with.
+        materialTooltipItemData = false,
         -- catalogDecorOverlay: red plus on uncollected decor in Blizzard's catalog (Helpers > Catalog).
         catalogDecorOverlay    = true,
         -- autoDepositLumber: on a banker open with Warband Bank access, move all
@@ -121,6 +126,12 @@ local function NewAccountUI()
         -- Flipped by SHOPPING_WIDGET_TOGGLE; the MainFrame reconciler
         -- subscriber overrides `view` to "shoppingList" when this is true.
         shoppingWidgetShown = false,
+        -- Which housing neighborhood the shopping list should send you to when
+        -- BOTH sell the same decor. "" = follow this character's faction; the
+        -- player's own pick ("alliance"/"horde") persists over it. Both
+        -- neighborhoods are shoppable by either faction, so this is travel
+        -- convenience -- it reorders vendors, it never hides one.
+        shoppingNeighborhood = "",
         -- Zone Scanner popup visibility (parallel slot to shoppingWidgetShown).
         -- Flipped by ZONE_POPUP_TOGGLE; also set true by HDGR_ZoneAlertEngine
         -- when a zone-entry alert fires AND zoneScannerPopup is true. Persists
@@ -145,6 +156,25 @@ local function NewAccountUI()
         -- Persisted so a collapsed group stays collapsed across /reload.
         nav             = {
             collapsedGroups = {},
+        },
+        -- Blueprints picker: which of the two list sections ("pasted" | "catalog")
+        -- are folded. Sparse set, persisted, like nav.collapsedGroups.
+        blueprints      = {
+            collapsedSections = {},
+            -- Library: leave the game's automatic saves out of the All list. On by
+            -- default -- four "Automatic Save" rows buried the owner's own list on
+            -- first use; the Backups chip still shows them on request.
+            hideBackups = true,
+        },
+        -- Styles tab Browse list: which sections and which categories are open.
+        -- Persisted so the tree survives /reload; a category that has never been
+        -- toggled is absent = collapsed, which is the "collapsed on first render"
+        -- ruling with no code. "loose" is the fold of styles not in a category.
+        styles          = {
+            landing = {
+                expandedSections   = { style = true },
+                expandedCategories = {},
+            },
         },
     }
 end
@@ -344,7 +374,7 @@ local function NewStylesSessionUI()
     return {
         view       = "landing",   -- "landing" | "detail" | "curator" | "smartset" | "import" | "export"
         selectedID = nil,         -- collectionID currently viewed in Detail
-        landing    = { filter = "all", search = "", expandedSections = {} },
+        landing    = { filter = "all", search = "" },   -- expandedSections moved to account.ui.styles.landing (spec 6.2)
         detail     = {
             selectedItemID = nil,
             search         = "",
@@ -438,6 +468,11 @@ local function NewCompanionAccountUI()
     return {
         window   = { x = nil, y = nil },   -- nil = default-anchor; numeric = user-positioned
         launcher = { x = nil, y = nil },   -- in-editor launcher button position (nil = default top-left)
+        -- Your Styles sidebar group folds. Sparse: present = FOLDED, so a group
+        -- the user has never touched is open -- a picker has to show everything
+        -- until the user says otherwise. Deliberately NOT Browse's set (which is
+        -- present = OPEN): the two lists fold independently.
+        collapsedGroups = {},   -- [groupKey] = true; keys "loose" | "cat:<n>" | "smartsets"
     }
 end
 
@@ -518,6 +553,7 @@ local function NewProjectsSessionUI()
     return {
         activeView      = "landing",   -- "landing" | "architect"
         selectedFloor   = 1,
+        canvasMode      = "plan",      -- "plan" (top-down floor) | "section" (isometric whole-house)
         selectedRoomID  = nil,
         selectedCrateID = nil,
         -- Layouts tab: the version whose floors the preview/detail show (NOT the
@@ -567,7 +603,12 @@ local function NewBlueprintsSession()
         -- false at mint on ALL builds (keeps golden-state build-independent);
         -- BlueprintObserver dispatches BLUEPRINT_AVAILABLE_SET(true) at enable on 12.1.
         available       = false,
-        slots           = { used = 0, max = 0 },   -- from COLLECTION_RECEIVED
+        -- used/max is the 50-slot catalog budget. An import's automatic save
+        -- lands in a separate "Backups" group that does NOT spend a catalog
+        -- slot, so it needs its own pair. All four arrive from
+        -- COLLECTION_RECEIVED, which replaces this table wholesale -- the
+        -- observer has to send all four or the backup pair reads nil.
+        slots           = { used = 0, max = 0 },
         groups          = {},                      -- HousingBlueprintInfo rows, grouped
         manifests       = {},                      -- [shareCode] = { status, reasonCode?, requestedAt?, raw? }
         selectedCode    = nil,
@@ -576,8 +617,52 @@ local function NewBlueprintsSession()
     }
 end
 
+-- The Menagerie (House > Pets). ALL transient; UI_SET_TRANSIENT(view="menagerie")
+-- is the only writer -- zero feature-specific actions by design
+-- (HDGR_MENAGERIE_LATTICE_PLAN_2026-08-24 section 3).
+--
+-- One mode, By Pet. The room mode and its captured roomQuery were removed
+-- 2026-08-27: the game enumerates placed decor per AREA, and indoors is ONE
+-- area, so a capture could only ever describe the whole interior while calling
+-- itself a room. See the closing section of docs/HDGR_BY_ROOM_SPEC_2026-08-25.md.
+local function NewMenagerieSessionUI()
+    return {
+        axis = "clade", axval = "all", -- the two-row identity filter
+        -- Search reaches the KIND tail that no chip row can hold: 712 kinds, 509
+        -- of them with four pets or fewer. Typing "squirrel" is the surface that
+        -- scales where a nested axis did not (the drill was reverted 2026-08-25).
+        search = "",
+        scene = { decorID = nil, withYou = false },
+        selectedSpeciesID = nil,
+    }
+end
+
 local function NewBlueprintsSessionUI()
-    return { missingOnly = false, collapsedGroups = {}, pasteError = false }
+    -- exportNeighborhood: which neighborhood the COPIED requirements list names
+    -- its vendors for. "" = follow the shopping preference, which is only the
+    -- opening position; the copy window's own switch moves it from there.
+    --
+    -- SESSION, not account, and it deliberately does not write back to the
+    -- shopping preference. Choosing who a shared list is written for is a
+    -- decision about that export, and it must not quietly change where your own
+    -- shopping list sends you.
+    --
+    -- Library mode (design 2026-09-11, D5-D7): the sub-view, the filter text,
+    -- the source chip and the table sort are all session-only; a reload lands
+    -- on the picker. subView / libraryQuery / libraryChip are written by
+    -- UI_SET_TRANSIENT; the sort has its own action because a header click
+    -- flips or resets, which is reducer logic.
+    --
+    -- librarySelectedKey: the ENTRY key of the Library row last clicked (nil =
+    -- resolve the detail strip by code alone). The selected CODE is shared with
+    -- the picker, but one code can render two Library rows -- an own blueprint
+    -- pasted back in -- and only the clicked row's source says whether "remove"
+    -- means Forget or Delete.
+    return { missingOnly = false, collapsedGroups = {}, pasteError = false,
+             exportNeighborhood = "",
+             subView = "inspect", libraryQuery = "", libraryChip = "all",
+             librarySortCol = "date", librarySortDir = "desc",
+             librarySelectedKey = nil }
 end
 
 local function NewSessionUI()
@@ -599,6 +684,7 @@ local function NewSessionUI()
         data         = NewDataSessionUI(),         -- Your Data tab: achievement-group collapse
         catalogIntro = { phase = "hidden" },        -- initial-load overlay: "hidden"|"loading"|"success"
         blueprints   = NewBlueprintsSessionUI(),    -- Blueprints tab transients (12.1)
+        menagerie    = NewMenagerieSessionUI(),     -- House > Pets (the Menagerie)
     }
 end
 
@@ -818,6 +904,12 @@ end
 -- "Name-Realm"):
 --   { name, realm, class, classFile, hidden, lastSeen,
 --     essenceStock = { bag, bank },   -- Essence of Lumber snapshot (soulbound; no warband)
+--     reagentStock = { bag = {[itemID]=n}, bank = {[itemID]=n}, bagAt, bankAt },
+--                                     -- decor reagents; sparse, nonzero only.
+--                                     -- NO warband slot: shared stash, counted
+--                                     -- once live rather than per character.
+--                                     -- bagAt/bankAt are separate because bank
+--                                     -- counts only refresh once a bank opens.
 --     professions = { [profName] = {          -- keyed by LOCALIZED name (back-compat)
 --         professionID = <TradeSkillLineID>,  -- stable, locale-invariant join key
 --         skillLines   = { [expName] = { current, max } },
@@ -1047,6 +1139,8 @@ local function NewDefaultState()
             prices               = NewPrices(),       -- price cache
             collections          = {},                -- Styles / Snapshots / Shopping / etc., keyed by "<type>:<id>" (crates retired in v7)
             collectionSeq        = 0,                 -- monotonic counter -> collision-free smartset ids + "<Char> Style N" labels
+            styleCategories      = {},                -- [categoryID] = { id, seq, name, createdAt } -- My Styles groupings (spec 2.1)
+            styleCategorySeq     = 0,                 -- monotonic counter -> "cat:<n>" ids; never name-derived, never random
             -- Furnishings model (v7, docs/crate-redesign/10-FINAL-MODEL.md):
             -- free-standing quantified sets + persistent rooms; layouts hold placements.
             furnishingSets       = {},                -- [setID "set:N"] = { id, name, items = {{id,count},...}, isLocal, ownerRoom, createdAt }
@@ -1186,6 +1280,7 @@ local function EnsureSession(state)
         or { phase = "idle", active = false, done = 0, total = 0, name = "" }
     state.session.blueprints    = state.session.blueprints    or NewBlueprintsSession()
     state.session.ui.blueprints = state.session.ui.blueprints or NewBlueprintsSessionUI()
+    state.session.ui.menagerie  = state.session.ui.menagerie  or NewMenagerieSessionUI()
     -- session.house + session.daily are seeded by NewDefaultSession; EnsureSession
     -- does not need or-guards for them (strict reads from here forward).
 end
@@ -1279,6 +1374,8 @@ local function EnsureStateShape(state)
     state.account.prices.directQtyCache = state.account.prices.directQtyCache or {}
     state.account.prices.ownedAuctions  = state.account.prices.ownedAuctions  or {}
     state.account.collections = state.account.collections or {}   -- exception(boundary): SavedVariables migration for Styles tab + Crates
+    state.account.styleCategories  = state.account.styleCategories  or {}  -- exception(boundary): SV migration -- style categories added post-3.31
+    state.account.styleCategorySeq = state.account.styleCategorySeq or 0   -- exception(boundary): pre-counter saved accounts lack styleCategorySeq
     -- Projects topology: re-ensure sub-fields so saves predating a field get it backfilled (SV migration).
     state.account.projects = state.account.projects or NewProjectsState()
     state.account.projects.houses      = state.account.projects.houses      or {}
@@ -1321,6 +1418,7 @@ local function EnsureStateShape(state)
     state.account.ui.companion = state.account.ui.companion or NewCompanionAccountUI()
     state.account.ui.companion.window = state.account.ui.companion.window or { x = nil, y = nil }
     state.account.ui.companion.launcher = state.account.ui.companion.launcher or { x = nil, y = nil }
+    state.account.ui.companion.collapsedGroups = state.account.ui.companion.collapsedGroups or {}  -- exception(boundary): SV migration -- companion group folds added post-3.31
     -- Recent Activity (HDG parity). boundary: SV migration -- guarantees the
     -- slice for saves created before edit-session history existed.
     state.account.recentActivity = state.account.recentActivity or NewRecentActivity()
@@ -1332,6 +1430,12 @@ local function EnsureStateShape(state)
     state.account.blueprints.pasted      = state.account.blueprints.pasted      or {}  -- exception(boundary): SV migration
     state.account.blueprints.pastedTypes = state.account.blueprints.pastedTypes or {}  -- exception(boundary): SV migration
     state.account.blueprints.factions    = state.account.blueprints.factions    or {}  -- exception(boundary): SV migration (shareCode -> "Alliance"|"Horde")
+    state.account.blueprints.pastedAt    = state.account.blueprints.pastedAt    or {}  -- exception(boundary): SV migration (shareCode -> time())
+    state.account.blueprints.notes       = state.account.blueprints.notes       or {}  -- exception(boundary): SV migration (shareCode -> note text)
+    state.account.blueprints.applied     = state.account.blueprints.applied     or {}  -- exception(boundary): SV migration (shareCode -> { at, houseGUID, houseLabel })
+    state.account.ui.blueprints = state.account.ui.blueprints or { collapsedSections = {} }  -- exception(boundary): SV migration
+    state.account.ui.blueprints.collapsedSections = state.account.ui.blueprints.collapsedSections or {}  -- exception(boundary): SV migration
+    if state.account.ui.blueprints.hideBackups == nil then state.account.ui.blueprints.hideBackups = true end  -- exception(boundary): SV migration (false is a real value)
     state.account.recentActivity.houses = state.account.recentActivity.houses or {}
     state.account.ui.houseTab = state.account.ui.houseTab or NewHouseTabAccountUI()
     state.account.ui.houseTab.enabled         = state.account.ui.houseTab.enabled         or {}
@@ -2036,6 +2140,7 @@ HDG.Actions:Register{ name = "COLLECTION_BULK_LOAD",
 
 HDG.Actions:Register{ name = "COLLECTION_ITEM_LEARNED",
     persists = true,  combatUnsafe = false,
+    retainsScroll = true,  -- one piece changed in place; a grid that resets to the top loses the player's place mid-placement (Discord 2026-09-06)
             invalidates = { "account.collection.ownedDecorIDs" },
     reduce = function(state, payload)
         if payload.decorID then
@@ -2045,6 +2150,7 @@ HDG.Actions:Register{ name = "COLLECTION_ITEM_LEARNED",
 
 HDG.Actions:Register{ name = "COLLECTION_ITEM_REMOVED",
     persists = true,  combatUnsafe = false,
+    retainsScroll = true,  -- one piece changed in place; a grid that resets to the top loses the player's place mid-placement (Discord 2026-09-06)
             invalidates = { "account.collection.ownedDecorIDs" },
     reduce = function(state, payload)
         if payload.decorID then
@@ -2418,6 +2524,31 @@ HDG.Actions:Register{ name = "RECIPE_HARVEST_PROGRESS",
         h.name   = payload.name or ""   -- exception(optional): phase-dependent payload
     end }
 
+-- Upsert the roster record for a character-scoped snapshot action and return it.
+-- Every such action carries the same identity fields, so the create-then-refresh
+-- block lives here once instead of being copied per action. Identity is refreshed
+-- on every call because a rename or a faction-change class swap has to land
+-- somewhere, and the scan that notices it is whichever one runs first.
+local function _upsertCharacter(state, payload)
+    local chars = state.account.characters
+    chars[payload.charKey] = chars[payload.charKey] or {
+        name        = payload.name,
+        realm       = payload.realm,
+        class       = payload.class,
+        classFile   = payload.classFile,
+        hidden      = false,
+        lastSeen    = 0,
+        professions = {},
+    }
+    local c = chars[payload.charKey]
+    c.name      = payload.name      or c.name
+    c.realm     = payload.realm     or c.realm
+    c.class     = payload.class     or c.class
+    c.classFile = payload.classFile or c.classFile
+    c.lastSeen  = (_G.time and _G.time()) or c.lastSeen or 0  -- exception(boundary): time() absent in headless tests
+    return c
+end
+
 HDG.Actions:Register{ name = "CHARACTER_PROFESSION_UPDATED",
     persists = true, combatUnsafe = false,
             invalidates = function(action) return { HDG.Paths.Join("account.characters", action.payload and action.payload.charKey) } end,
@@ -2426,26 +2557,8 @@ HDG.Actions:Register{ name = "CHARACTER_PROFESSION_UPDATED",
         -- in full (skill ladder + known recipes). Other professions on the
         -- same char survive untouched -- each profession scan only carries
         -- its own data.
-        local chars = state.account.characters
-        local key   = payload.charKey
-        if key then
-            chars[key] = chars[key] or {
-                name        = payload.name,
-                realm       = payload.realm,
-                class       = payload.class,
-                classFile   = payload.classFile,
-                hidden      = false,
-                lastSeen    = 0,
-                professions = {},
-            }
-            local c = chars[key]
-            -- Refresh identity fields on each scan (rename, class change
-            -- via faction change service, etc.).
-            c.name      = payload.name      or c.name
-            c.realm     = payload.realm     or c.realm
-            c.class     = payload.class     or c.class
-            c.classFile = payload.classFile or c.classFile
-            c.lastSeen  = (_G.time and _G.time()) or c.lastSeen or 0
+        if payload.charKey then
+            local c = _upsertCharacter(state, payload)
             -- Char-level knowsFindLumber: scanner captures via C_SpellBook
             -- on every prof scan. Tracks per-char awareness of Find Lumber
             -- (the achievement-gated find-spell), surfaced as a cyan
@@ -2471,26 +2584,43 @@ HDG.Actions:Register{ name = "CHARACTER_ESSENCE_UPDATED",
     persists = true, combatUnsafe = false,
             invalidates = function(action) return { HDG.Paths.Join("account.characters", action.payload and action.payload.charKey) } end,
     reduce = function(state, payload)
-        local key = payload.charKey
-        if key then
-            local chars = state.account.characters
-            chars[key] = chars[key] or {
-                name        = payload.name,
-                realm       = payload.realm,
-                class       = payload.class,
-                classFile   = payload.classFile,
-                hidden      = false,
-                lastSeen    = 0,
-                professions = {},
-            }
-            local c = chars[key]
-            c.name         = payload.name      or c.name
-            c.realm        = payload.realm     or c.realm
-            c.class        = payload.class     or c.class
-            c.classFile    = payload.classFile or c.classFile
-            c.lastSeen     = (_G.time and _G.time()) or c.lastSeen or 0
-            c.essenceStock = { bag = payload.bag or 0, bank = payload.bank or 0 }
+        if payload.charKey then
+            _upsertCharacter(state, payload).essenceStock =
+                { bag = payload.bag or 0, bank = payload.bank or 0 }
         end
+    end }
+
+-- Decor-reagent stock, per character, per stash. `counts` REPLACES the slot
+-- wholesale so an item spent to zero disappears instead of lingering at its old
+-- figure. Only the logged-in character is ever live; alts sit at their last-login
+-- snapshot, because WoW cannot read another character's bags.
+--
+-- No warband slot, deliberately: that stash is shared across the account, so a
+-- per-character copy would report one pile once per character.
+local function _reduceReagentStock(state, payload, slot, stamp)
+    if not payload.charKey then return end
+    local c = _upsertCharacter(state, payload)
+    c.reagentStock = c.reagentStock or {}   -- exception(nullable): absent on every record predating this feature
+    c.reagentStock[slot]  = payload.counts
+    c.reagentStock[stamp] = payload.at
+end
+
+HDG.Actions:Register{ name = "CHARACTER_REAGENT_BAGS_UPDATED",
+    persists = true, combatUnsafe = false,
+            invalidates = function(action) return { HDG.Paths.Join("account.characters", action.payload and action.payload.charKey) } end,
+    reduce = function(state, payload)
+        _reduceReagentStock(state, payload, "bag", "bagAt")
+    end }
+
+-- Dispatched ONLY after a BANKFRAME_OPENED this session -- see
+-- Modules/HDGR_ReagentStockObserver.lua. Blizzard's bank counts come from a cache
+-- that is empty until the bank frame opens, so an ungated sweep would overwrite a
+-- good bank map with zeros every time an alt logged in without visiting a bank.
+HDG.Actions:Register{ name = "CHARACTER_REAGENT_BANK_UPDATED",
+    persists = true, combatUnsafe = false,
+            invalidates = function(action) return { HDG.Paths.Join("account.characters", action.payload and action.payload.charKey) } end,
+    reduce = function(state, payload)
+        _reduceReagentStock(state, payload, "bank", "bankAt")
     end }
 
 HDG.Actions:Register{ name = "CHARACTER_DELETED",
@@ -2589,9 +2719,18 @@ HDG.Actions:Register{ name = "COMPANION_SET_LAUNCHER_POSITION",
     reduce = function(state, payload)
         state.account.ui.companion.launcher.x = payload.x
         state.account.ui.companion.launcher.y = payload.y
-
-    -- ===== HouseTab dashboard =====
     end }
+
+HDG.Actions:Register{ name = "COMPANION_TOGGLE_GROUP",
+    persists = true,  combatUnsafe = false,  -- writes account.ui -> must QueueSave
+    retainsScroll = true,  -- folding a group halfway down must not yank the sidebar to the top
+    invalidates = function(action) return { HDG.Paths.Join("account.ui.companion.collapsedGroups", action.payload.key) } end,
+    reduce = function(state, payload)
+        -- Sparse set, present = folded; the Companion's own set, deliberately not Browse's.
+        _toggleSetMember(state.account.ui.companion.collapsedGroups, payload.key)
+    end }
+
+-- ===== HouseTab dashboard =====
 
 HDG.Actions:Register{ name = "HOUSE_SNAPSHOT_UPDATED",
     persists = false, combatUnsafe = false,
@@ -3281,14 +3420,28 @@ HDG.Actions:Register{ name = "STYLES_LANDING_SET_FILTER",
 
 
 HDG.Actions:Register{ name = "STYLES_LANDING_TOGGLE_SECTION",
-    persists = false, combatUnsafe = false, 
-    invalidates = function(action) return { HDG.Paths.Join("session.ui.styles.landing.expandedSections", action.payload and action.payload.type) } end,
+    persists = true,  combatUnsafe = false,  -- writes account.ui -> must QueueSave
+    retainsScroll = true,  -- collapsing a section halfway down must not yank the list to the top
+    invalidates = function(action) return { HDG.Paths.Join("account.ui.styles.landing.expandedSections", action.payload.type) } end,
     reduce = function(state, payload)
-        local t = payload.type
-        if t then
-            local expanded = state.session.ui.styles.landing.expandedSections
-            _toggleSetMember(expanded, t)
-        end
+        -- payload.type comes off a header row the selector emitted a frame earlier.
+        _toggleSetMember(state.account.ui.styles.landing.expandedSections, payload.type)
+    end }
+
+HDG.Actions:Register{ name = "STYLES_LANDING_TOGGLE_CATEGORY",
+    persists = true,  combatUnsafe = false,  -- writes account.ui -> must QueueSave
+    retainsScroll = true,  -- a fold is clicked mid-list; yanking to the top loses the user's place
+    invalidates = function(action) return { HDG.Paths.Join("account.ui.styles.landing.expandedCategories", action.payload.key) } end,
+    reduce = function(state, payload)
+        -- key is a categoryID or "loose"; sparse set, present = open.
+        _toggleSetMember(state.account.ui.styles.landing.expandedCategories, payload.key)
+    end }
+
+HDG.Actions:Register{ name = "STYLES_LANDING_SET_SEARCH",
+    persists = false, combatUnsafe = false, noisy = true,   -- per keystroke; stays out of the dispatch log like STYLES_DETAIL_SET_SEARCH
+    invalidates = { "session.ui.styles.landing.search" },
+    reduce = function(state, payload)
+        state.session.ui.styles.landing.search = payload.text
     end }
 
 HDG.Actions:Register{ name = "STYLES_SELECT_COLLECTION",
@@ -3472,6 +3625,7 @@ HDG.Actions:Register{ name = "STYLES_DUPLICATE_STYLE",
             type        = "style",
             displayName = (src.displayName or srcID) .. " (copy)",
             description = src.description or "",
+            categoryID  = src.categoryID,   -- a copy stays beside its source (spec 2.2)
             items       = items,
             createdAt   = (_G.time and _G.time()) or 0,
         }
@@ -3507,6 +3661,86 @@ HDG.Actions:Register{ name = "STYLES_DELETE_STYLE",
         end
         if cur and cur.selectedTargetID == id then
             cur.selectedTargetID = nil
+        end
+    end }
+
+-- ===== Style categories (spec HDGR_STYLE_CATEGORIES_SPEC_2026-09-04 s2.2 / s3.1) =====
+
+-- The ONE code path that writes a style's categoryID. Strict on purpose: every
+-- collectionID that reaches it came off a landing row or the loose-styles menu a
+-- frame earlier, so a nil index here is a bug to surface, not a boundary.
+local function _setStyleCategory(state, collectionID, categoryID)
+    state.account.collections[collectionID].categoryID = categoryID
+end
+
+-- Case-insensitive name match over the registry. Rename can leave two categories
+-- with one name; the lowest seq (= oldest) wins so the same dispatch always lands
+-- in the same place (spec 2.4).
+local function _findStyleCategoryByName(cats, name)
+    local needle, found = name:lower(), nil
+    for _, cat in pairs(cats) do
+        if cat.name:lower() == needle and (not found or cat.seq < found.seq) then found = cat end
+    end
+    return found and found.id
+end
+
+HDG.Actions:Register{ name = "STYLE_CATEGORY_CREATE",
+    persists = true,  combatUnsafe = false,  -- writes account.* -> must QueueSave
+    invalidates = { "account.styleCategories", "account.styleCategorySeq",
+                    "account.ui.styles.landing.expandedCategories", "account.collections" },
+    reduce = function(state, payload)
+        local cats = state.account.styleCategories
+        local id = _findStyleCategoryByName(cats, payload.name)
+        if not id then
+            state.account.styleCategorySeq = state.account.styleCategorySeq + 1
+            local seq = state.account.styleCategorySeq
+            id = "cat:" .. seq
+            cats[id] = { id = id, seq = seq, name = payload.name,
+                         createdAt = (_G.time and _G.time()) or 0 }  -- exception(boundary): time() absent in headless tests
+        end
+        -- Born (or re-targeted) expanded so what the user just did is visible.
+        state.account.ui.styles.landing.expandedCategories[id] = true
+        if payload.fileStyleID then _setStyleCategory(state, payload.fileStyleID, id) end
+    end }
+
+HDG.Actions:Register{ name = "STYLE_CATEGORY_RENAME",
+    persists = true,  combatUnsafe = false,  -- writes account.* -> must QueueSave
+    invalidates = { "account.styleCategories" },
+    reduce = function(state, payload)
+        -- Members point by id, so they need no touch.
+        state.account.styleCategories[payload.categoryID].name = payload.name
+    end }
+
+HDG.Actions:Register{ name = "STYLE_CATEGORY_DELETE",
+    persists = true,  combatUnsafe = false,  -- writes account.* -> must QueueSave
+    invalidates = { "account.styleCategories", "account.collections",
+                    "account.ui.styles.landing.expandedCategories",
+                    "account.ui.companion.collapsedGroups" },
+    reduce = function(state, payload)
+        local id = payload.categoryID
+        -- Styles are never deleted with their category; they drop back to loose.
+        for collID, coll in pairs(state.account.collections) do
+            if coll.categoryID == id then _setStyleCategory(state, collID, nil) end
+        end
+        state.account.styleCategories[id] = nil
+        state.account.ui.styles.landing.expandedCategories[id] = nil
+        -- The Companion sidebar keeps its OWN fold set, so it needs its own line
+        -- here; without it a deleted category leaves an orphan key in SavedVariables
+        -- that nothing will ever read or clear again.
+        state.account.ui.companion.collapsedGroups[id] = nil
+    end }
+
+HDG.Actions:Register{ name = "STYLE_SET_CATEGORY",
+    persists = true,  combatUnsafe = false,  -- writes account.* -> must QueueSave
+    retainsScroll = true,  -- filed from a row menu; don't yank the list to the top
+    invalidates = function(action)
+        return { HDG.Paths.Join("account.collections", action.payload.collectionID),
+                 "account.ui.styles.landing.expandedCategories" }
+    end,
+    reduce = function(state, payload)
+        _setStyleCategory(state, payload.collectionID, payload.categoryID)
+        if payload.categoryID then
+            state.account.ui.styles.landing.expandedCategories[payload.categoryID] = true
         end
     end }
 
@@ -3674,6 +3908,7 @@ HDG.Actions:Register{ name = "STYLES_SMARTSET_CANCEL",
 
 HDG.Actions:Register{ name = "STYLES_PLACED_DECOR_OBSERVED",
     persists = false, combatUnsafe = false,
+    retainsScroll = true,  -- one piece changed in place; a grid that resets to the top loses the player's place mid-placement (Discord 2026-09-06)
     invalidates = { "session.styles.placedDecor" },
     reduce = function(state, payload)
         local guid = payload.decorGUID
@@ -3697,6 +3932,7 @@ HDG.Actions:Register{ name = "STYLES_PLACED_DECOR_OBSERVED",
 
 HDG.Actions:Register{ name = "STYLES_PLACED_DECOR_REMOVED",
     persists = true, combatUnsafe = false,
+    retainsScroll = true,  -- one piece changed in place; a grid that resets to the top loses the player's place mid-placement (Discord 2026-09-06)
             invalidates = { "session.styles.placedDecor", "account.recentActivity" },
     reduce = function(state, payload)
         local guid = payload.decorGUID
@@ -3742,6 +3978,7 @@ HDG.Actions:Register{ name = "RECENT_SESSION_START",
 
 HDG.Actions:Register{ name = "RECENT_DECOR_PLACED",
     persists = true, combatUnsafe = false,
+    retainsScroll = true,  -- one piece changed in place; a grid that resets to the top loses the player's place mid-placement (Discord 2026-09-06)
             invalidates = { "account.recentActivity" },
     reduce = function(state, payload)
         _recentAppend(state, payload.houseKey, payload.itemID, "placed")
@@ -4523,7 +4760,13 @@ HDG.Actions:Register{ name = "SHOPPING_RESOLVE_VENDORS",
         for i = #list.items, 1, -1 do
             local entry = list.items[i]
             local npc = res[entry.itemID]   -- resolved vendor for this itemID, or nil
-            if (not entry.npcID) and npc then
+            -- Applies to entries that ALREADY carry an npcID, not just blanks:
+            -- flipping the neighborhood toggle has to move a list that was
+            -- resolved under the old preference, or the setting would only ever
+            -- affect the next import. The CALLER decides what is safe to move --
+            -- ShoppingController only ever proposes a swap between the two
+            -- housing neighborhoods, so a vendor picked anywhere else stands.
+            if npc and npc ~= entry.npcID then
                 _resolveVendorForEntry(list, i, entry, npc)
             end
         end
@@ -4531,6 +4774,17 @@ HDG.Actions:Register{ name = "SHOPPING_RESOLVE_VENDORS",
     -- =========================================================================
     -- Catalog lifecycle
     -- =========================================================================
+    end }
+
+HDG.Actions:Register{ name = "SHOPPING_SET_NEIGHBORHOOD",
+    persists = true, combatUnsafe = false,
+            invalidates = { "account.ui.shoppingNeighborhood" },
+    reduce = function(state, payload)
+        -- Preference only. The npcIDs already stored on the lists are rewritten
+        -- by ShoppingController's enrich pass, which subscribes to this action --
+        -- it needs the catalog and VendorAugment to find the twin vendor, and
+        -- neither belongs in a reducer.
+        state.account.ui.shoppingNeighborhood = payload.value
     end }
 
 HDG.Actions:Register{ name = "CATALOG_LOAD_REQUESTED",
@@ -4715,12 +4969,14 @@ HDG.Actions:Register{ name = "BLUEPRINT_SELECT", persists = false,
     end }
 
 HDG.Actions:Register{ name = "BLUEPRINT_PASTE_ADD", persists = true,
-    invalidates = { "account.blueprints.pasted", "account.blueprints.pastedTypes" },
+    invalidates = { "account.blueprints.pasted", "account.blueprints.pastedTypes", "account.blueprints.pastedAt" },
     reduce = function(state, payload)
         local ab = state.account.blueprints
         if payload.blueprintType then ab.pastedTypes[payload.shareCode] = payload.blueprintType end
         for i = 1, #ab.pasted do if ab.pasted[i] == payload.shareCode then return end end
         ab.pasted[#ab.pasted + 1] = payload.shareCode
+        -- First paste wins the stamp: a re-paste of a known code is a no-op above.
+        if payload.pastedAt then ab.pastedAt[payload.shareCode] = payload.pastedAt end  -- exception(optional): callers that predate the stamp (tests, API) omit it
     end }
 
 HDG.Actions:Register{ name = "BLUEPRINT_SET_TARGET_HOUSE", persists = false,
@@ -4736,17 +4992,67 @@ HDG.Actions:Register{ name = "BLUEPRINT_SET_LABEL", persists = true,
 -- ONLY on pasted rows (controller), so there is no HDG path to delete a saved blueprint.
 HDG.Actions:Register{ name = "BLUEPRINT_FORGET", persists = true,
     invalidates = { "account.blueprints.pasted", "account.blueprints.pastedTypes",
-                    "account.blueprints.labels", "session.blueprints.selectedCode",
-                    "session.blueprints.manifests" },
+                    "account.blueprints.labels", "account.blueprints.factions",
+                    "account.blueprints.pastedAt", "account.blueprints.notes",
+                    "account.blueprints.applied",
+                    "session.blueprints.selectedCode", "session.blueprints.manifests" },
     reduce = function(state, payload)
         local ab, sb, np = state.account.blueprints, state.session.blueprints, {}
         for i = 1, #ab.pasted do if ab.pasted[i] ~= payload.shareCode then np[#np + 1] = ab.pasted[i] end end
         ab.pasted = np
         ab.pastedTypes[payload.shareCode] = nil
         ab.labels[payload.shareCode] = nil
+        ab.factions[payload.shareCode] = nil
+        ab.pastedAt[payload.shareCode] = nil
+        ab.notes[payload.shareCode]    = nil
+        ab.applied[payload.shareCode]  = nil
         sb.manifests[payload.shareCode] = nil
         if sb.selectedCode == payload.shareCode then sb.selectedCode = np[1] end  -- exception(nullable): may be no codes left
     end }
+
+-- Picker fold sections ("Pasted codes" / "Your catalog"). Sparse set: only
+-- folded sections are present, so a never-toggled section reads open.
+HDG.Actions:Register{ name = "BLUEPRINT_TOGGLE_SECTION", persists = true,
+    retainsScroll = true,  -- a section header is clicked mid-list; yanking to the top loses the user's place
+    invalidates = { "account.ui.blueprints.collapsedSections" },
+    reduce = function(state, payload)
+        _toggleSetMember(state.account.ui.blueprints.collapsedSections, payload.section)
+    end }
+
+-- Library preference: leave automatic saves out of the All list.
+HDG.Actions:Register{ name = "BLUEPRINT_SET_HIDE_BACKUPS", persists = true,
+    invalidates = { "account.ui.blueprints.hideBackups" },
+    reduce = function(state, payload) state.account.ui.blueprints.hideBackups = payload.hide == true end }
+
+-- Library column-header click: same column flips direction, a new column
+-- resets to the first sort direction declared for it on
+-- HDG.Constants.BLUEPRINT_LIBRARY_COLUMNS (text ascending, dates newest first).
+HDG.Actions:Register{ name = "BLUEPRINT_LIBRARY_SET_SORT", persists = false,
+    invalidates = { "session.ui.blueprints.librarySortCol", "session.ui.blueprints.librarySortDir" },
+    reduce = function(state, payload)
+        local ui = state.session.ui.blueprints
+        if ui.librarySortCol == payload.col then
+            ui.librarySortDir = (ui.librarySortDir == "desc") and "asc" or "desc"
+        else
+            ui.librarySortCol = payload.col
+            -- The column table owns each column's first direction, so this
+            -- reducer and the header widgets can never disagree about it.
+            for _, c in ipairs(HDG.Constants.BLUEPRINT_LIBRARY_COLUMNS) do
+                if c.col == payload.col then ui.librarySortDir = c.firstDir end
+            end
+        end
+    end }
+
+-- Free-text note per share code, edited in the Library detail pane. An emptied
+-- box dispatches CLEAR rather than SET "" (Mech.WireNoteBox), so `notes` only
+-- ever holds codes that still carry text.
+HDG.Actions:Register{ name = "BLUEPRINT_SET_NOTE", persists = true,
+    invalidates = { "account.blueprints.notes" },
+    reduce = function(state, payload) state.account.blueprints.notes[payload.shareCode] = payload.text end }
+
+HDG.Actions:Register{ name = "BLUEPRINT_CLEAR_NOTE", persists = true,
+    invalidates = { "account.blueprints.notes" },
+    reduce = function(state, payload) state.account.blueprints.notes[payload.shareCode] = nil end }
 
 HDG.Actions:Register{ name = "BLUEPRINT_EXPORT_SUCCESS", persists = false,
     invalidates = { "session.blueprints.selectedCode", "account.blueprints.labels" },
@@ -5080,6 +5386,7 @@ HDG.Actions:Register{ name = "STYLES_CURATOR_MOVE",
 
 HDG.Actions:Register{ name = "STYLES_PLACED_DECOR_OBSERVED_BATCH",
     persists = false, combatUnsafe = false,
+    retainsScroll = true,  -- one piece changed in place; a grid that resets to the top loses the player's place mid-placement (Discord 2026-09-06)
     invalidates = { "session.styles.placedDecor", "session.styles.currentArea" },
     reduce = function(state, payload)
         -- Bulk variant used by HousingObserver to coalesce the
@@ -5109,7 +5416,19 @@ HDG.Actions:Register{ name = "STYLES_PLACED_DECOR_OBSERVED_BATCH",
                 }
                 -- Last burst wins: entering an area re-bursts that area, so the
                 -- final entry of the batch names where the player now is.
-                if e.areaID then state.session.styles.currentArea = e.areaID end
+                --
+                -- CAVEAT (review 2026-08-23, NOT fully closed): batch order is Blizzard's
+                -- event order, not a statement about where the player stands, and a burst
+                -- can carry decor from several areas including neighbouring plots. The
+                -- dispatcher now refuses to retarget while the player is not in an owned
+                -- house or on an owned plot (HousingObserver stamps payload.ownedContext),
+                -- which stops a neighbour's plot hijacking the view from outside. It does NOT settle the
+                -- case where a mixed burst arrives while you ARE inside your own house --
+                -- areaID is parsed from the decor GUID and no API answers "which area am I
+                -- in", so closing that needs a live probe of what a real burst contains.
+                if e.areaID and payload.ownedContext ~= false then
+                    state.session.styles.currentArea = e.areaID
+                end
             end
         end
     end }
@@ -5333,8 +5652,10 @@ HDG.Resolver:Register{ name = "pets", facade = "PetObserver",
 HDG.Resolver:Register{ name = "catalog", facade = "HousingCatalogObserver",
     actions = {
         { name = "DECOR_CATALOG_READY",                   bump = false },
-        { name = "COLLECTION_CATALOG_ROW_ADDED",          bump = false },
-        { name = "COLLECTION_CATALOG_ROW_COUNTS_UPDATED", bump = false },
+        -- retainsScroll: a per-row patch re-pushes every grid reading the tick;
+        -- resetting them to the top loses the player's place mid-placement.
+        { name = "COLLECTION_CATALOG_ROW_ADDED",          bump = false, retainsScroll = true },
+        { name = "COLLECTION_CATALOG_ROW_COUNTS_UPDATED", bump = false, retainsScroll = true },
         { name = "COLLECTION_CATALOG_ROW_REMOVED",        bump = false,
           invalidates = { "account.collection.ownedDecorIDs" },
           -- Observer calls RemoveRow on its index; reducer only scrubs
@@ -5369,6 +5690,18 @@ HDG.Resolver:Register{ name = "catalog", facade = "HousingCatalogObserver",
 -- TOC-shipped tables behind HDG.StaticData are IMMUTABLE within a session;
 -- selectors declare the read so shipped-data deps flow through read-tracking
 -- like any state path (ADR-003c). Reserved for hot-reload / dev-tool override.
+-- Recipe acquisition text. ProfessionScanner:GetRecipeSource reads the live
+-- (undocumented) C_TradeSkillUI.GetRecipeSourceText and parses it.
+--
+-- STATIC (species D marker, tick stays 0): the getter is synchronous and answers
+-- cold, so the first read already has the answer and nothing arrives later to
+-- repaint for. Registering it with a bump action instead meant a dispatch per
+-- newly-seen recipe from inside a paint -- the 3.31.0 lag. The marker still
+-- exists so selectors declare the dependency and the sweep's facade cross-check
+-- keeps working.
+HDG.Resolver:RegisterStatic{ name = "recipeSource",
+    facade = { module = "ProfessionScanner", method = "GetRecipeSource" } }
+
 HDG.Resolver:RegisterStatic{ name = "staticData", facade = "StaticData" }
 
 -- Prices (the species A+B hybrid, split per TICK_REVALIDATION). A-side: the

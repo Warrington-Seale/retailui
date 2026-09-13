@@ -136,6 +136,17 @@ end
 
 local function ResolveDelveNameFromPoiName(poiName, mapId)
     if not poiName or poiName == "" then return nil end
+    local strippedPoiName = StripStorySuffix(poiName)
+
+    -- Delve table keys are the actual English delve names, which is what the
+    -- POI displays — try this direct match before the achievement-title path.
+    for delveName, delveInfo in pairs(DST.delves) do
+        if (not mapId or delveInfo.mapId == mapId)
+            and StripStorySuffix(delveName) == strippedPoiName then
+            return delveName
+        end
+    end
+
     BuildAchievementDelveNameMap()
     local rev = namespace.achievementDelveNameMapReverse
     if rev and rev[poiName] then
@@ -143,7 +154,6 @@ local function ResolveDelveNameFromPoiName(poiName, mapId)
     end
     local map = namespace.achievementDelveNameMap
     if not map then return nil end
-    local strippedPoiName = StripStorySuffix(poiName)
     for en, loc in pairs(map) do
         if (not mapId or (DST.delves[en] and DST.delves[en].mapId == mapId))
             and StripStorySuffix(loc) == strippedPoiName then
@@ -291,38 +301,7 @@ local function TryAddPoiToActiveVariants(activeVariants, delveInfo, areaPoiID, p
             return true
         end
     end
-    if poiName and poiName ~= "" then
-        local delveName = ResolveDelveNameFromPoiName(poiName, delveInfo and delveInfo.mapId)
-        if delveName then
-            local info = DST.delves[delveName]
-            if info then
-                local unlistedKey = GetUnlistedVariantKey(info)
-                if unlistedKey then
-                    activeVariants[unlistedKey] = {
-                        bountiful = isBountiful,
-                        mapId = info.mapId or delveInfo.mapId,
-                        areaPoiID = areaPoiID,
-                        poiName = poiName,
-                        poiX = poiX,
-                        poiY = poiY,
-                    }
-                    return true
-                end
-                local firstKey = info.variantOrder and info.variantOrder[1]
-                if firstKey and info.variants and info.variants[firstKey] then
-                    activeVariants[firstKey] = {
-                        bountiful = isBountiful,
-                        mapId = info.mapId or delveInfo.mapId,
-                        areaPoiID = areaPoiID,
-                        poiName = poiName,
-                        poiX = poiX,
-                        poiY = poiY,
-                    }
-                    return true
-                end
-            end
-        end
-    end
+    
     -- Safeguard: if the delve POI is known but the story variant text could not be resolved,
     -- keep the delve visible and use an average fallback rank ("B", unknown story).
     local resolvedDelveName = ResolveDelveNameFromPoiName(poiName, delveInfo and delveInfo.mapId)

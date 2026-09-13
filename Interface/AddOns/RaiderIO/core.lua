@@ -874,8 +874,29 @@ local function issecretvaluekey(tbl, ...)
     return false
 end
 
+-- `UnitTokenFromGUID` resolves interaction tokens such as `target` and `mouseover`, but returns nil for a party or raid member's guid while a unit tooltip is being built, so unit frames showing group members supply no token there.
+-- This routine will attempt to resolve the player, party and raid members by checking against their UnitGUID. If a match is found, we use that as the unit token for the return value.
+---@param guid string
+---@return UnitToken? unit
+local function GetGroupUnitTokenFromGUID(guid)
+    if UnitGUID("player") == guid then
+        return "player"
+    end
+    local prefix, count = "party", GetNumSubgroupMembers()
+    if IsInRaid() then
+        prefix, count = "raid", GetNumGroupMembers()
+    end
+    for i = 1, count do
+        local unit = format("%s%d", prefix, i)
+        local unitGuid = UnitGUID(unit)
+        if not issecretvalue(unitGuid) and unitGuid == guid then
+            return unit
+        end
+    end
+end
+
 -- The `GameTooltip.IsTooltipType` doesn't exist in older flavors. In which case we will call the legacy `GetUnit` as those flavors don't have the secret value system.
----@param tooltip GameTooltip | { IsTooltipType: (fun(self: GameTooltip, type: Enum.TooltipDataType): boolean)?, GetPrimaryTooltipData: fun(self: GameTooltip): { guid: string? } }
+---@param tooltip GameTooltip | { IsTooltipType: (fun(self: GameTooltip, type: Enum.TooltipDataType): boolean)?, GetPrimaryTooltipData: fun(self: GameTooltip): { guid: string? }? }
 ---@return nil nil, UnitToken? unit, string? guid
 local function GetTooltipUnit(tooltip)
     if not tooltip.IsTooltipType then
@@ -885,11 +906,17 @@ local function GetTooltipUnit(tooltip)
         return
     end
     local tooltipData = tooltip:GetPrimaryTooltipData()
+    if not tooltipData then
+        return
+    end
     local guid = tooltipData.guid
     if issecretvalue(guid) or not guid then
         return
     end
     local unit = UnitTokenFromGUID(guid)
+    if issecretvalue(unit) or not unit then
+        unit = GetGroupUnitTokenFromGUID(guid)
+    end
     return nil, unit, guid
 end
 
@@ -2476,8 +2503,8 @@ do
             return
         end
         local useEnglishAbbreviations = config:Get("useEnglishAbbreviations")
-        for i = 1, #DUNGEONS do
-            local dungeon = DUNGEONS[i]
+        for i = 1, #ALL_DUNGEONS do
+            local dungeon = ALL_DUNGEONS[i]
             if useEnglishAbbreviations then
                 dungeon.shortNameLocale = dungeon.shortName
             else
@@ -3950,8 +3977,9 @@ do
     ---@generic T
     ---@param tbl T[]
     ---@param func TableFilterFunc
+    ---@param max? number
     ---@return T[]
-    function util:TableFilter(tbl, func)
+    function util:TableFilter(tbl, func, max)
         local isArray = tbl[1] ~= nil
         local iter, curr, next
         if isArray then
@@ -3966,6 +3994,9 @@ do
                 if isArray then
                     i = i + 1
                     temp[i] = v
+                    if max and i >= max then
+                        return temp
+                    end
                 else
                     temp[k] = v
                 end
@@ -5324,12 +5355,12 @@ do
         }
         results.mplusWarbandCurrent = {
             score = results.warbandCurrentScore or 0,
-            roles = ORDERED_ROLES[results.warbandPreviousRoleOrdinalIndex] or ORDERED_ROLES[1]
+            roles = ORDERED_ROLES[results.warbandCurrentRoleOrdinalIndex] or ORDERED_ROLES[1]
         }
         results.mplusWarbandPrevious = {
             season = results.warbandPreviousScoreSeason,
             score = results.warbandPreviousScore or 0,
-            roles = ORDERED_ROLES[results.warbandCurrentRoleOrdinalIndex] or ORDERED_ROLES[1]
+            roles = ORDERED_ROLES[results.warbandPreviousRoleOrdinalIndex] or ORDERED_ROLES[1]
         }
     end
 
@@ -5404,7 +5435,7 @@ do
                 value, bitOffset = ReadBitsFromString(bucket, bitOffset, 7)
                 results.currentRoleOrdinalIndex = 1 + value -- indexes are one-based
             elseif field == ENCODER_MYTHICPLUS_FIELDS.PREVIOUS_SCORE then
-                results.previousScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 12)
+                results.previousScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 13)
                 results.previousScoreSeason, bitOffset = ReadBitsFromString(bucket, bitOffset, 2)
                 results.hasRenderableData = results.hasRenderableData or results.previousScore > 0
             elseif field == ENCODER_MYTHICPLUS_FIELDS.PREVIOUS_ROLES then
@@ -5443,14 +5474,14 @@ do
                 results.warbandCurrentScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 13)
                 results.hasRenderableData = results.hasRenderableData or results.warbandCurrentScore > 0
             elseif field == ENCODER_MYTHICPLUS_FIELDS.WARBAND_PREVIOUS_SCORE then
-                results.warbandPreviousScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 12)
+                results.warbandPreviousScore, bitOffset = ReadBitsFromString(bucket, bitOffset, 13)
                 results.warbandPreviousScoreSeason, bitOffset = ReadBitsFromString(bucket, bitOffset, 2)
                 results.hasRenderableData = results.hasRenderableData or results.warbandPreviousScore > 0
             elseif field == ENCODER_MYTHICPLUS_FIELDS.WARBAND_DUNGEON_LEVELS then
                 bitOffset = ReadDungeonLevelStats(results, bucket, bitOffset, true)
             elseif field == ENCODER_MYTHICPLUS_FIELDS.WARBAND_CURRENT_ROLES then
                 value, bitOffset = ReadBitsFromString(bucket, bitOffset, 7)
-                results.warbandPreviousRoleOrdinalIndex = 1 + value -- indexes are one-based
+                results.warbandCurrentRoleOrdinalIndex = 1 + value -- indexes are one-based
             elseif field == ENCODER_MYTHICPLUS_FIELDS.WARBAND_PREVIOUS_ROLES then
                 value, bitOffset = ReadBitsFromString(bucket, bitOffset, 7)
                 results.warbandPreviousRoleOrdinalIndex = 1 + value -- indexes are one-based
@@ -7028,28 +7059,30 @@ do
                             end
                         end
                     end
-                    local hasShownWarbandScore = false
+                    local hasShownWarbandCurrentScore = false
+                    local hasShownWarbandPreviousScore = false
                     local warbandText = format("%s %s", L.WARBAND_SCORE, ns.PROFILE_TOOLTIP_COLUMN_TEXTURE.WARBAND)
                     if config:Get("showWarbandScore") then
                         local warbandPreviousScoreThreshold = (ns.PREVIOUS_SEASON_MAIN_SCORE_RELEVANCE_THRESHOLD * keystoneProfile.mplusWarbandPrevious.score)
-                        local isWarbandPreviousScoreRelevant = warbandPreviousScoreThreshold > keystoneProfile.mplusWarbandCurrent.score and warbandPreviousScoreThreshold > keystoneProfile.mplusWarbandCurrent.score
+                        local isWarbandPreviousScoreRelevant = warbandPreviousScoreThreshold > keystoneProfile.mplusWarbandCurrent.score and warbandPreviousScoreThreshold > keystoneProfile.mplusCurrent.score
                         local isWarbandCurrentScoreBetter = keystoneProfile.mplusWarbandCurrent.score > keystoneProfile.mplusCurrent.score
                         if isWarbandCurrentScoreBetter or isWarbandPreviousScoreRelevant then
-                            hasShownWarbandScore = true
                             if isWarbandPreviousScoreRelevant then
+                                hasShownWarbandPreviousScore = true
                                 tooltip:AddDoubleLine(GetSeasonLabel(L.WARBAND_BEST_SCORE_BEST_SEASON, keystoneProfile.mplusWarbandPrevious.season), GetScoreText(keystoneProfile.mplusWarbandPrevious, true), 1, 1, 1, util:GetScoreColor(keystoneProfile.mplusWarbandPrevious.score, true))
                             end
                             if keystoneProfile.mplusWarbandCurrent.score > 0 or hasMod or hasModSticky then
+                                hasShownWarbandCurrentScore = true
                                 tooltip:AddDoubleLine(warbandText, GetScoreText(keystoneProfile.mplusWarbandCurrent), 1, 1, 1, util:GetScoreColor(keystoneProfile.mplusWarbandCurrent.score))
                             end
                         end
                     elseif keystoneProfile.mplusWarbandCurrent.score > keystoneProfile.mplusCurrent.score then
-                        hasShownWarbandScore = true
+                        hasShownWarbandCurrentScore = true
                         tooltip:AddDoubleLine(warbandText, GetScoreText(keystoneProfile.mplusWarbandCurrent), 1, 1, 1, util:GetScoreColor(keystoneProfile.mplusWarbandCurrent.score))
                     end
-                    if not hasShownWarbandScore and config:Get("showMainsScore") then
+                    if config:Get("showMainsScore") then
                         if not config:Get("showMainBestScore") then
-                            if keystoneProfile.mplusMainCurrent.score > keystoneProfile.mplusCurrent.score then
+                            if not hasShownWarbandCurrentScore and keystoneProfile.mplusMainCurrent.score > keystoneProfile.mplusCurrent.score then
                                 tooltip:AddDoubleLine(L.MAINS_SCORE, GetScoreText(keystoneProfile.mplusMainCurrent), 1, 1, 1, util:GetScoreColor(keystoneProfile.mplusMainCurrent.score))
                             end
                         else
@@ -7057,10 +7090,10 @@ do
                             local isMainPreviousScoreRelevant = mainPreviousScoreThreshold > keystoneProfile.mplusMainCurrent.score and mainPreviousScoreThreshold > keystoneProfile.mplusCurrent.score
                             local isMainCurrentScoreBetter = keystoneProfile.mplusMainCurrent.score > keystoneProfile.mplusCurrent.score
                             if isMainCurrentScoreBetter or isMainPreviousScoreRelevant then
-                                if isMainPreviousScoreRelevant then
+                                if not hasShownWarbandPreviousScore and isMainPreviousScoreRelevant then
                                     tooltip:AddDoubleLine(GetSeasonLabel(L.MAINS_BEST_SCORE_BEST_SEASON, keystoneProfile.mplusMainPrevious.season), GetScoreText(keystoneProfile.mplusMainPrevious, true), 1, 1, 1, util:GetScoreColor(keystoneProfile.mplusMainPrevious.score, true))
                                 end
-                                if keystoneProfile.mplusMainCurrent.score > 0 or hasMod or hasModSticky then
+                                if not hasShownWarbandCurrentScore and (keystoneProfile.mplusMainCurrent.score > 0 or hasMod or hasModSticky) then
                                     tooltip:AddDoubleLine(L.MAINS_SCORE, GetScoreText(keystoneProfile.mplusMainCurrent), 1, 1, 1, util:GetScoreColor(keystoneProfile.mplusMainCurrent.score))
                                 end
                             end
@@ -7655,16 +7688,23 @@ if IS_RETAIL then
         return text
     end
 
+    ---@param event WowEvent
+    ---@param text string
     local function EventFilter(self, event, text, ...)
         if event ~= "CHAT_MSG_SYSTEM" or not config:Get("enableWhoMessages") then
             return false
         end
+        if issecretvalue(text) then
+            return false
+        end
+        ---@type string?, string?, string?, string?, string?, string?, string?
         local nameLink, name, level, race, class, guild, zone = text:match(FORMAT_GUILD)
         if not nameLink then
             return false
         end
         if not zone then
             guild = nil
+            ---@type string?, string?, string?, string?, string?, string?
             nameLink, name, level, race, class, zone = text:match(FORMAT)
         end
         if not nameLink or not level or not util:IsMaxLevel(tonumber(level)) then
@@ -11298,7 +11338,11 @@ if IS_RETAIL then
         ---@return FramePoint point, Region relativeTo, FramePoint relativePoint, number offsetX, number offsetY
         function ReplayFrameMixin:GetTrackerPoint()
             if self.trackerFrame:GetParent() ~= self.trackerFrameParent or self.trackerFrame == self.trackerFrameParent then
-                local offsetX = -32 - self.trackerFrameParent:GetWidth()
+                local offsetX = self.trackerFrameOffsetX
+                local width = self.trackerFrameParent:GetWidth()
+                if not issecretvalue(width) then
+                    offsetX = -32 - width
+                end
                 self.trackerFramePoint, self.trackerFrame, self.trackerFrameRelativePoint, self.trackerFrameOffsetX, self.trackerFrameOffsetY = "TOPRIGHT", self.trackerFrameParent, "TOPRIGHT", offsetX, 0
             end
             return self.trackerFramePoint, self.trackerFrame, self.trackerFrameRelativePoint, self.trackerFrameOffsetX, self.trackerFrameOffsetY
@@ -15225,27 +15269,39 @@ if IS_RETAIL then
     ---@class TalentBuildsMenuOption : DropDownUtilDynamicMenuOption
     ---@field public text string
 
+    ---@alias TalentBuildsMenuOptionForInstanceArg1InstanceType "raid"|"dungeon"
+    ---@alias TalentBuildsMenuOptionForInstanceArg2InstanceID "all"|number
+    ---@alias TalentBuildsMenuOptionForInstanceArg3EncounterID "all"|number
+
     ---@class TalentBuildsMenuOptionForInstance : TalentBuildsMenuOption
     ---@field public radiogroup? "instance"
-    ---@field public arg1? "raid"|"dungeon" instanceType
-    ---@field public arg2? "all"|number instanceID
-    ---@field public arg3? "all"|number encounterID
+    ---@field public arg1? TalentBuildsMenuOptionForInstanceArg1InstanceType
+    ---@field public arg2? TalentBuildsMenuOptionForInstanceArg2InstanceID
+    ---@field public arg3? TalentBuildsMenuOptionForInstanceArg3EncounterID
+
+    ---@alias TalentBuildsMenuOptionForDifficultyArg1DifficultyText TalentBuildsRaidDifficultyKey|TalentBuildsDungeonDifficultyKey
+    ---@alias TalentBuildsMenuOptionForDifficultyArg2DifficultyIDs number[]
 
     ---@class TalentBuildsMenuOptionForDifficulty : TalentBuildsMenuOption
     ---@field public radiogroup "raid"|"dungeon"
-    ---@field public arg1 TalentBuildsRaidDifficultyKey|TalentBuildsDungeonDifficultyKey difficultyText
-    ---@field public arg2? number[] difficultyIDs
+    ---@field public arg1 TalentBuildsMenuOptionForDifficultyArg1DifficultyText
+    ---@field public arg2? TalentBuildsMenuOptionForDifficultyArg2DifficultyIDs
     ---@field public arg3? nil
+
+    ---@alias TalentBuildsMenuOptionForWeaponArg1WeaponKey TalentBuildsWeaponKey
+    ---@alias TalentBuildsMenuOptionForWeaponArg2WeaponSpecID number
 
     ---@class TalentBuildsMenuOptionForWeapon : TalentBuildsMenuOption
     ---@field public radiogroup "instance"
-    ---@field public arg1 TalentBuildsWeaponKey weaponKey
-    ---@field public arg2? number weaponSpecID
+    ---@field public arg1 TalentBuildsMenuOptionForWeaponArg1WeaponKey
+    ---@field public arg2? TalentBuildsMenuOptionForWeaponArg2WeaponSpecID
     ---@field public arg3? nil
+
+    ---@alias TalentBuildsMenuOptionForSpeedArg1SpeedText TalentBuildsRaidSpeedKey
 
     ---@class TalentBuildsMenuOptionForSpeed : TalentBuildsMenuOption
     ---@field public radiogroup "raid"
-    ---@field public arg1 TalentBuildsRaidSpeedKey speedText
+    ---@field public arg1 TalentBuildsMenuOptionForSpeedArg1SpeedText
     ---@field public arg2? nil
     ---@field public arg3? nil
 
@@ -15260,17 +15316,36 @@ if IS_RETAIL then
     local currentWeapon ---@type TalentBuildsMenuOptionForWeapon?
     local currentSpeed ---@type TalentBuildsMenuOptionForSpeed?
 
-    local function updateDataProvider()
-        dataProvider:Flush()
+    ---@class TalentBuildsCompiledProfileBuildQuery
+    ---@field public instanceType? TalentBuildsMenuOptionForInstanceArg1InstanceType
+    ---@field public instanceID? TalentBuildsMenuOptionForInstanceArg2InstanceID
+    ---@field public encounterID? TalentBuildsMenuOptionForInstanceArg3EncounterID
+    ---@field public difficulty? TalentBuildsMenuOptionForDifficultyArg1DifficultyText
+    ---@field public weapon? TalentBuildsMenuOptionForWeaponArg1WeaponKey
+    ---@field public weaponSpecID? TalentBuildsMenuOptionForWeaponArg2WeaponSpecID
+    ---@field public raidSpeed? TalentBuildsMenuOptionForSpeedArg1SpeedText
+    ---@field public specID? number
+
+    ---@type TalentBuildsCompiledProfileBuildQuery
+    local currentRelevantBuildQuery = {}
+
+    ---@param probeDifficulty? TalentBuildsMenuOptionForDifficultyArg1DifficultyText
+    ---@return TalentBuildsCompiledProfileBuild[]?, TalentBuildsCompiledProfileBuildQuery
+    local function getRelevantBuilds(probeDifficulty)
+        local updateBuildQuery = probeDifficulty == nil
+
+        if updateBuildQuery then
+            table.wipe(currentRelevantBuildQuery)
+        end
 
         if not compiledPlayerProfile or not currentInstance or not currentDifficulty then
-            return
+            return nil, currentRelevantBuildQuery
         end
 
         local instanceType = currentInstance.arg1
         local instanceID = currentInstance.arg2
         local encounterID = currentInstance.arg3
-        local difficulty = currentDifficulty.arg1
+        local difficulty = probeDifficulty or currentDifficulty.arg1
         local weapon = currentWeapon and currentWeapon.arg1
         local weaponSpecID = currentWeapon and currentWeapon.arg2
         local raidSpeed = currentSpeed and currentSpeed.arg1
@@ -15304,18 +15379,30 @@ if IS_RETAIL then
                     return difficulty == build.dungeonBracket
                 end
                 return false
-            end
+            end,
+            probeDifficulty and 1 or nil
         )
 
-        dataProvider:InsertTable(relevantBuilds)
-
-        if not frame or not dataProvider:IsEmpty() then
-            return
+        if updateBuildQuery then
+            currentRelevantBuildQuery.instanceType = instanceType
+            currentRelevantBuildQuery.instanceID = instanceID
+            currentRelevantBuildQuery.encounterID = encounterID
+            currentRelevantBuildQuery.difficulty = difficulty
+            currentRelevantBuildQuery.weapon = weapon
+            currentRelevantBuildQuery.weaponSpecID = weaponSpecID
+            currentRelevantBuildQuery.raidSpeed = raidSpeed
+            currentRelevantBuildQuery.specID = specID
         end
 
-        local hasWeaponFilter = weapon ~= nil and weapon ~= "all"
-        local hasRaidSpeedFilter = raidSpeed ~= nil and raidSpeed ~= "all"
-        frame:ResetWeaponAndRaidSpeedFilters(hasWeaponFilter, hasRaidSpeedFilter)
+        return relevantBuilds, currentRelevantBuildQuery
+    end
+
+    local function updateDataProvider()
+        dataProvider:Flush()
+        local relevantBuilds = getRelevantBuilds()
+        if relevantBuilds then
+            dataProvider:InsertTable(relevantBuilds)
+        end
     end
 
     ---@param option DropDownUtilDynamicMenuOption
@@ -15942,16 +16029,24 @@ if IS_RETAIL then
             end
         end
 
-        ---@param option TalentBuildsMenuOptionForWeapon|TalentBuildsMenuOptionForSpeed
-        local function selectAllOptionPredicate(option)
-            return option.arg1 == "all" and DropDownUtil:IsDynamicMenuOptionShown(option)
+        ---@param option DropDownUtilDynamicMenuOption
+        local function selectOptionPredicate(option, arg1)
+            return option.arg1 == arg1 and DropDownUtil:IsDynamicMenuOptionShown(option)
         end
 
         ---@param menu WowStyle1DropdownTemplatePolyfill
-        ---@param resetToAllOption? boolean
-        local function updateMenu(menu, resetToAllOption)
-            if resetToAllOption and menu:DynamicMenuSelectOption(selectAllOptionPredicate) == 0 then
-                return
+        ---@param resetToAllOrSelectOption? boolean|TalentBuildsMenuOptionForDifficultyArg1DifficultyText|TalentBuildsMenuOptionForWeaponArg1WeaponKey|TalentBuildsMenuOptionForSpeedArg1SpeedText
+        local function updateMenu(menu, resetToAllOrSelectOption)
+            if resetToAllOrSelectOption then
+                local numUpdated = menu:DynamicMenuSelectOption(
+                    function(option)
+                        local arg1 = resetToAllOrSelectOption == true and "all" or resetToAllOrSelectOption
+                        return selectOptionPredicate(option, arg1)
+                    end
+                )
+                if numUpdated == 0 then
+                    return
+                end
             end
             menu:TriggerEvent(menu.Event.OnUpdate, menu:DynamicMenuCollectSelectionOptions())
             local function toggle()
@@ -15963,16 +16058,56 @@ if IS_RETAIL then
             C_Timer.After(0, toggle)
         end
 
-        ---@param resetWeapon? boolean Defaults as `true`. Must be `false` to skip resetting the weapon filter.
-        ---@param resetRaidSpeed? boolean Defaults as `true`. Must be `false` to skip resetting the raid speed filter.
-        function self:ResetWeaponAndRaidSpeedFilters(resetWeapon, resetRaidSpeed)
+        ---@param setDifficulty? TalentBuildsMenuOptionForDifficultyArg1DifficultyText Defaults as `nil` and skips changing the difficulty filter, unless set to a value.
+        ---@param resetWeapon? boolean|TalentBuildsMenuOptionForWeaponArg1WeaponKey Defaults as `true`. Must be `false` to skip resetting the weapon filter. Set to a specific value to set the filter to that value.
+        ---@param resetRaidSpeed? boolean|TalentBuildsMenuOptionForSpeedArg1SpeedText Defaults as `true`. Must be `false` to skip resetting the raid speed filter. Set to a specific value to set the filter to that value.
+        local function updateDropDownFilters(setDifficulty, resetWeapon, resetRaidSpeed)
+            if setDifficulty ~= nil then
+                updateMenu(self.DifficultyMenu, setDifficulty or true)
+            end
             if resetWeapon ~= false then
-                updateMenu(self.WeaponMenu, true)
+                updateMenu(self.WeaponMenu, resetWeapon or true)
             end
             if resetRaidSpeed ~= false then
-                updateMenu(self.SpeedMenu, true)
+                updateMenu(self.SpeedMenu, resetRaidSpeed or true)
             end
             updateMenu(self.InstanceMenu)
+        end
+
+        ---@param specChanged? boolean
+        function self:UpdateDropDownFilters(specChanged)
+            if specChanged then
+                updateDropDownFilters()
+            end
+
+            if not self:IsShown() or not dataProvider:IsEmpty() then
+                return
+            end
+
+            local difficulty = currentRelevantBuildQuery.difficulty
+            local weapon = currentRelevantBuildQuery.weapon
+            local raidSpeed = currentRelevantBuildQuery.raidSpeed
+            local hasWeaponFilter = weapon ~= nil and weapon ~= "all"
+            local hasRaidSpeedFilter = raidSpeed ~= nil and raidSpeed ~= "all"
+
+            local setDifficulty ---@type TalentBuildsMenuOptionForDifficultyArg1DifficultyText?
+            if difficulty then
+                local probeNext = false
+                for _, difficultyOrder in ipairs(relevantEncounterDifficulties) do
+                    local difficultykey = difficultyOrder.key
+                    if probeNext then
+                        local difficultyBuilds = getRelevantBuilds(difficultykey)
+                        if difficultyBuilds and difficultyBuilds[1] then
+                            setDifficulty = difficultykey
+                            break
+                        end
+                    elseif difficultykey == difficulty then
+                        probeNext = true
+                    end
+                end
+            end
+
+            updateDropDownFilters(setDifficulty, hasWeaponFilter, hasRaidSpeedFilter)
         end
 
         self.CloseButton:HookScript("OnClick", function() talentbuilds:HideFrame() end)
@@ -16046,6 +16181,7 @@ if IS_RETAIL then
         end
 
         self:HookScript("OnShow", function()
+            self:UpdateDropDownFilters()
             forceUpdateDelayed()
             callback:RegisterEvent(forceUpdateDelayed, unpack(forceUpdateEvents))
         end)
@@ -16596,11 +16732,11 @@ if IS_RETAIL then
     end
 
     local function OnPlayerSpecializationChange()
-        if frame then
-            frame:ResetWeaponAndRaidSpeedFilters()
-        end
         compileTalentBuilds()
         updateDataProvider()
+        if frame then
+            frame:UpdateDropDownFilters(true)
+        end
     end
 
     local onChangeHandler ---@type FunctionContainer?

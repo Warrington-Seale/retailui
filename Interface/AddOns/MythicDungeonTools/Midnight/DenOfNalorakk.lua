@@ -26,7 +26,16 @@ MDT.dungeonSubLevels[dungeonIndex] = {
 
 MDT.dungeonTotalCount[dungeonIndex] = { normal = 729 }
 
-MDT.mapPOIs[dungeonIndex] = {};
+MDT.mapPOIs[dungeonIndex] = {
+  [1] = {
+    [1] = {
+      ["type"] = "dungeonEntrance",
+      ["x"] = 40.9,
+      ["y"] = -313.6,
+      ["sizeMult"] = 1.5,
+    },
+  },
+};
 
 MDT.dungeonEnemies[dungeonIndex] = {
   [1] = {
@@ -134,12 +143,6 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 5,
         ["sublevel"] = 1,
       },
-      [4] = {
-        ["x"] = 117.1822927011,
-        ["y"] = -360.72051912892,
-        ["g"] = 5,
-        ["sublevel"] = 1,
-      },
       [5] = {
         ["x"] = 205.46594984529,
         ["y"] = -316.11405364603,
@@ -149,12 +152,6 @@ MDT.dungeonEnemies[dungeonIndex] = {
       [6] = {
         ["x"] = 202.67853765858,
         ["y"] = -343.99320670775,
-        ["g"] = 7,
-        ["sublevel"] = 1,
-      },
-      [7] = {
-        ["x"] = 211.50696323925,
-        ["y"] = -343.52849496415,
         ["g"] = 7,
         ["sublevel"] = 1,
       },
@@ -295,18 +292,6 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 10,
         ["sublevel"] = 1,
       },
-      [13] = {
-        ["x"] = 44.538558147264,
-        ["y"] = -383.06447334173,
-        ["g"] = 8,
-        ["sublevel"] = 1,
-      },
-      [14] = {
-        ["x"] = 45.93303773386,
-        ["y"] = -393.7553255214,
-        ["g"] = 8,
-        ["sublevel"] = 1,
-      },
       [15] = {
         ["x"] = 139.46598236154,
         ["y"] = -422.07793136133,
@@ -322,13 +307,13 @@ MDT.dungeonEnemies[dungeonIndex] = {
       [17] = {
         ["x"] = 372.64307092802,
         ["y"] = -382.43168977505,
-        ["g"] = 29,
+        ["g"] = 76,
         ["sublevel"] = 1,
       },
       [18] = {
         ["x"] = 377.75420166815,
         ["y"] = -378.24983285652,
-        ["g"] = 29,
+        ["g"] = 76,
         ["sublevel"] = 1,
       },
       [19] = {
@@ -431,14 +416,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [9] = {
-        ["x"] = 446.98717175142,
-        ["y"] = -427.5027796966,
+        ["x"] = 440.5,
+        ["y"] = -417.5,
         ["g"] = 28,
         ["sublevel"] = 1,
       },
       [10] = {
-        ["x"] = 441.41142904476,
-        ["y"] = -421.46232524634,
+        ["x"] = 434.1,
+        ["y"] = -420.1,
         ["g"] = 28,
         ["sublevel"] = 1,
       },
@@ -455,14 +440,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [13] = {
-        ["x"] = 585.6,
-        ["y"] = -327.9,
+        ["x"] = 583.5,
+        ["y"] = -320.9,
         ["g"] = 41,
         ["sublevel"] = 1,
       },
       [14] = {
-        ["x"] = 528.2,
-        ["y"] = -346.4,
+        ["x"] = 526.7,
+        ["y"] = -341.6,
         ["g"] = 40,
         ["sublevel"] = 1,
       },
@@ -473,8 +458,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [16] = {
-        ["x"] = 582,
-        ["y"] = -361.9,
+        ["x"] = 581.4,
+        ["y"] = -361.2,
         ["g"] = 38,
         ["sublevel"] = 1,
       },
@@ -642,7 +627,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 7,
     ["health"] = 2918930,
     ["scale"] = 1,
-    ["displayId"] = 35201,
+    ["displayId"] = 73034,
     ["creatureType"] = "Elemental",
     ["level"] = 90,
     ["spells"] = {
@@ -714,6 +699,12 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 34,
         ["sublevel"] = 1,
       },
+      [11] = {
+        ["x"] = 516.9,
+        ["y"] = -261.6,
+        ["g"] = 45,
+        ["sublevel"] = 1,
+      },
     },
   },
   [8] = {
@@ -748,13 +739,13 @@ MDT.dungeonEnemies[dungeonIndex] = {
       [3] = {
         ["x"] = 497.92456799893,
         ["y"] = -216.95786400173,
-        ["g"] = 47,
+        ["g"] = 77,
         ["sublevel"] = 1,
       },
       [4] = {
         ["x"] = 504.71998573176,
         ["y"] = -219.22311907484,
-        ["g"] = 47,
+        ["g"] = 77,
         ["sublevel"] = 1,
       },
       [5] = {
@@ -1203,13 +1194,97 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 15,
         ["sublevel"] = 1,
       },
+      [20] = {
+        ["x"] = 429.3,
+        ["y"] = -418.4,
+        ["g"] = 28,
+        ["sublevel"] = 1,
+      },
+      [21] = {
+        ["x"] = 431.5,
+        ["y"] = -414.1,
+        ["g"] = 28,
+        ["sublevel"] = 1,
+      },
+      [22] = {
+        ["x"] = 435.4,
+        ["y"] = -411.5,
+        ["g"] = 28,
+        ["sublevel"] = 1,
+      },
+      [23] = {
+        ["x"] = 440.1,
+        ["y"] = -410.3,
+        ["g"] = 28,
+        ["sublevel"] = 1,
+      },
+      [24] = {
+        ["x"] = 548.4,
+        ["y"] = -393.4,
+        ["g"] = 33,
+        ["sublevel"] = 1,
+      },
+      [25] = {
+        ["x"] = 546.2,
+        ["y"] = -388.9,
+        ["g"] = 33,
+        ["sublevel"] = 1,
+      },
+      [26] = {
+        ["x"] = 537.7,
+        ["y"] = -375.3,
+        ["g"] = 37,
+        ["sublevel"] = 1,
+      },
+      [27] = {
+        ["x"] = 542.4,
+        ["y"] = -372.4,
+        ["g"] = 37,
+        ["sublevel"] = 1,
+      },
+      [28] = {
+        ["x"] = 524,
+        ["y"] = -338.2,
+        ["g"] = 40,
+        ["sublevel"] = 1,
+      },
+      [29] = {
+        ["x"] = 528.8,
+        ["y"] = -345.1,
+        ["g"] = 40,
+        ["sublevel"] = 1,
+      },
+      [30] = {
+        ["x"] = 586.4,
+        ["y"] = -362,
+        ["g"] = 38,
+        ["sublevel"] = 1,
+      },
+      [31] = {
+        ["x"] = 584.6,
+        ["y"] = -357.4,
+        ["g"] = 38,
+        ["sublevel"] = 1,
+      },
+      [32] = {
+        ["x"] = 588.1,
+        ["y"] = -318.1,
+        ["g"] = 41,
+        ["sublevel"] = 1,
+      },
+      [33] = {
+        ["x"] = 584.6,
+        ["y"] = -315.3,
+        ["g"] = 41,
+        ["sublevel"] = 1,
+      },
     },
   },
   [16] = {
     ["name"] = "The Hoardmonger",
     ["id"] = 241812,
     ["count"] = 0,
-    ["health"] = 23648733,
+    ["health"] = 23648734,
     ["scale"] = 1,
     ["displayId"] = 129344,
     ["creatureType"] = "Humanoid",
@@ -1309,16 +1384,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 4,
         ["sublevel"] = 1,
       },
-      [6] = {
-        ["x"] = 64.525364214664,
-        ["y"] = -363.54186684214,
-        ["g"] = 6,
-        ["sublevel"] = 1,
-      },
       [7] = {
         ["x"] = 101.71141184339,
         ["y"] = -421.64459980508,
-        ["g"] = 16,
         ["sublevel"] = 1,
       },
       [8] = {
@@ -1375,13 +1443,25 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 31,
         ["sublevel"] = 1,
       },
+      [17] = {
+        ["x"] = 44.5,
+        ["y"] = -383,
+        ["g"] = 8,
+        ["sublevel"] = 1,
+      },
+      [18] = {
+        ["x"] = 45.9,
+        ["y"] = -393.7,
+        ["g"] = 8,
+        ["sublevel"] = 1,
+      },
     },
   },
   [18] = {
     ["name"] = "Sentinel of Winter",
     ["id"] = 244100,
     ["count"] = 0,
-    ["health"] = 21283860,
+    ["health"] = 21283861,
     ["scale"] = 1,
     ["displayId"] = 129418,
     ["creatureType"] = "Humanoid",
@@ -1514,7 +1594,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Grizzled Warbringer",
     ["id"] = 245148,
     ["count"] = 0,
-    ["health"] = 698700,
+    ["health"] = 606102,
     ["scale"] = 1.5,
     ["displayId"] = 129564,
     ["creatureType"] = "Humanoid",
@@ -1593,7 +1673,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Starvation Effigy",
     ["id"] = 245567,
     ["count"] = 0,
-    ["health"] = 557514,
+    ["health"] = 589867,
     ["scale"] = 1,
     ["displayId"] = 129707,
     ["creatureType"] = "Not specified",
@@ -1654,7 +1734,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Nalorakk",
     ["id"] = 246404,
     ["count"] = 0,
-    ["health"] = 21891970,
+    ["health"] = 21891972,
     ["scale"] = 1,
     ["displayId"] = 129989,
     ["creatureType"] = "Beast",
@@ -1707,7 +1787,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Zul'jarra",
     ["id"] = 246409,
     ["count"] = 0,
-    ["health"] = 21891970,
+    ["health"] = 21891972,
     ["scale"] = 1,
     ["displayId"] = 125149,
     ["creatureType"] = "Humanoid",
@@ -1794,7 +1874,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Volatile Totem",
     ["id"] = 272074,
     ["count"] = 0,
-    ["health"] = 698699,
+    ["health"] = 462070,
     ["scale"] = 1,
     ["displayId"] = 30762,
     ["creatureType"] = "Not specified",
@@ -1816,7 +1896,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "The Pale Eye",
     ["id"] = 245076,
     ["count"] = 0,
-    ["health"] = 537461,
+    ["health"] = 457907,
     ["scale"] = 1,
     ["displayId"] = 129498,
     ["creatureType"] = "Not specified",
@@ -1857,9 +1937,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
     ["clones"] = {
       [1] = {
-        ["x"] = 151.23171671607,
-        ["y"] = -64.321981075329,
-        ["g"] = 64,
+        ["x"] = 64.3,
+        ["y"] = -363.3,
+        ["sublevel"] = 1,
+      },
+      [2] = {
+        ["x"] = 51.1,
+        ["y"] = -452.1,
+        ["g"] = 75,
         ["sublevel"] = 1,
       },
     },
@@ -1868,7 +1953,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Magma Totem",
     ["id"] = 248666,
     ["count"] = 0,
-    ["health"] = 692461,
+    ["health"] = 589867,
     ["scale"] = 1,
     ["displayId"] = 30762,
     ["creatureType"] = "Not specified",

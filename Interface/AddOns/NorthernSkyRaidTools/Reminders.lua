@@ -450,7 +450,7 @@ local function GetCircleTexture(info)
     return (s and s.Texture) or DefaultCircleTexture
 end
 
-local function PositionCircleText(text, F, s)
+function NSI:PositionCircleText(text, F, s)
     text:ClearAllPoints()
     local position = s.TextPosition
     local x, y = s.xTextOffset, s.yTextOffset
@@ -578,7 +578,7 @@ function NSI:UpdateExistingFrames() -- called when user changes settings to not 
                 F.Swipe:SetSwipeColor(unpack(info.ringColors or s.ringColors))
             end
             F.Text:SetFont(self.LSM:Fetch("font", s.Font), s.FontSize, GetReminderFontFlags(s))
-            PositionCircleText(F.Text, F, s)
+            self:PositionCircleText(F.Text, F, s)
             F.Text:SetTextColor(unpack(info.textColors or s.textColors))
         end
     end
@@ -586,6 +586,63 @@ function NSI:UpdateExistingFrames() -- called when user changes settings to not 
     if self.CircleMover then
         self:MoveFrameSettings(self.CircleMover, NSRT.ReminderSettings.CircleSettings, nil, true)
     end
+    local F = self.DebuffOverviewMover
+    if F then
+        local s = NSRT.ReminderSettings.DebuffOverviewSettings
+        local previewDurations = {8, 7, 6}
+        F:SetSize(s.Width, s.Height)
+        F.Border:SetBackdropBorderColor(unpack(s.borderColors))
+        local iconOnRight = s.IconPosition == "Right"
+        local growUp = s.GrowDirection == "Up"
+        for index, row in ipairs(F.PreviewRows) do
+            row:SetSize(s.Width, s.Height)
+            row:ClearAllPoints()
+            if growUp then
+                row:SetPoint("BOTTOMLEFT", F, "TOPLEFT", 0, 8 + (index - 1) * (s.Height + s.Spacing))
+            else
+                row:SetPoint("TOPLEFT", F, "BOTTOMLEFT", 0, -8 - (index - 1) * (s.Height + s.Spacing))
+            end
+            row.Bar:SetStatusBarTexture(self.LSM:Fetch("statusbar", s.Texture))
+            row.Bar:SetStatusBarColor(unpack(s.barColors))
+            row.Bar:SetBackdropColor(unpack(s.backgroundColors))
+            row.Bar:SetMinMaxValues(0, previewDurations[index])
+            row.Border:SetBackdropBorderColor(unpack(s.borderColors))
+            row.Icon:ClearAllPoints()
+            row.Icon:SetPoint(iconOnRight and "LEFT" or "RIGHT", row.Bar, iconOnRight and "RIGHT" or "LEFT", 0, 0)
+            row.Icon:SetSize(s.Height, s.Height)
+            row.LeftText:ClearAllPoints()
+            row.LeftText:SetPoint("LEFT", row.Bar, "LEFT", s.xTextOffset, s.yTextOffset)
+            row.LeftText:SetFont(self.LSM:Fetch("font", s.Font), s.FontSize, GetReminderFontFlags(s))
+            row.LeftText:SetTextColor(unpack(s.textColors))
+            row.RightText:ClearAllPoints()
+            row.RightText:SetPoint("RIGHT", row.Bar, "RIGHT", s.xTimer, s.yTimer)
+            row.RightText:SetFont(self.LSM:Fetch("font", s.Font), s.TimerFontSize, GetReminderFontFlags(s))
+            row.RightText:SetTextColor(unpack(s.textColors))
+        end
+        if not F.PreviewUpdateInitialized then
+            F.PreviewUpdateInitialized = true
+            F.PreviewTicker = 0
+            F:SetScript("OnUpdate", function(frame, elapsed)
+                if not NSI.IsInPreview then return end
+                frame.PreviewTicker = frame.PreviewTicker + elapsed
+                if frame.PreviewTicker < 0.025 then return end
+                frame.PreviewTicker = 0
+                local elapsedTime = GetTime() - (frame.PreviewStartedAt or GetTime())
+                for index, row in ipairs(frame.PreviewRows) do
+                    local remaining = math.max(0, previewDurations[index] - elapsedTime)
+                    row.Bar:SetValue(remaining)
+                    row.RightText:SetText(string.format("%.0f", remaining))
+                end
+            end)
+        end
+        F.Border:ClearAllPoints()
+        local borderTop = growUp and 3 * (s.Height + s.Spacing) - s.Spacing + 6 or -6
+        local borderBottom = growUp and 6 or -(3 * (s.Height + s.Spacing) - s.Spacing + 6)
+        F.Border:SetPoint("TOPLEFT", F, "TOPLEFT", iconOnRight and -6 or -6 - s.Height, borderTop)
+        F.Border:SetPoint("BOTTOMRIGHT", F, "BOTTOMRIGHT", iconOnRight and 6 + s.Height or 6, borderBottom)
+        self:MoveFrameSettings(F, s, false, false)
+    end
+    self:UpdateDebuffOverviewContainers()
 end
 
 function NSI:ArrangeStates(DisplayType)
@@ -700,8 +757,7 @@ function NSI:SetProperties(F, info, s)
         end
     end)
     local spellInfo = info.spellID and C_Spell.GetSpellInfo(info.spellID)
-    local iconTextInfo = (info.customIcon and C_Spell.GetSpellInfo(info.customIcon)) or spellInfo
-    F.SpellIconText = iconTextInfo and "|T"..iconTextInfo.iconID..":0:0:0:0:64:64:4:60:4:60|t " or ""
+    F.SpellIconText = spellInfo and "|T"..spellInfo.iconID..":0:0:0:0:64:64:4:60:4:60|t " or ""
     if F.IsUnitFrameIcon then
         F.Icon:SetTexture(spellInfo and spellInfo.iconID or 134400)
     elseif info.DisplayType == "Text" then
@@ -710,7 +766,7 @@ function NSI:SetProperties(F, info, s)
         local s = NSRT.ReminderSettings.CircleSettings
         local r, g, b, a = unpack(info.textColors or s.textColors)
         F.Text:SetFont(self.LSM:Fetch("font", s.Font), s.FontSize, GetReminderFontFlags(s))
-        PositionCircleText(F.Text, F, s)
+        self:PositionCircleText(F.Text, F, s)
         F.Text:SetTextColor(r, g, b, a)
         local texture = GetCircleTexture(info)
         if F.ring then
@@ -872,9 +928,7 @@ function NSI:CreateUnitFrameIcon(info, name)
     self.UnitIcon = self.UnitIcon or {}
     local spellInfo = info.spellID and C_Spell.GetSpellInfo(info.spellID)
     if not spellInfo then return end
-    local unit = NSAPI:GetChar(name, true)
-    if (not UnitExists(unit)) then return end
-    local UnitFrame = self.LGF.GetUnitFrame(unit)
+    local UnitFrame = self.UnitFrames and self.UnitFrames[name]
     if not UnitFrame then return end
     local s = NSRT.ReminderSettings.UnitIconSettings
     for i=1, #self.UnitIcon+1 do
@@ -986,8 +1040,11 @@ function NSI:CreateCircle(info)
             F.Swipe:SetSwipeTexture(circleTexture)
             F.Swipe:SetSwipeColor(unpack(info.ringColors or s.ringColors))
 
-            F.Text = F:CreateFontString(nil, "OVERLAY")
-            PositionCircleText(F.Text, F, s)
+            F.TextFrame = CreateFrame("Frame", nil, F)
+            F.TextFrame:SetAllPoints(F)
+            F.TextFrame:SetFrameLevel(F.Swipe:GetFrameLevel() + 1)
+            F.Text = F.TextFrame:CreateFontString(nil, "OVERLAY")
+            self:PositionCircleText(F.Text, F, s)
             F.Text:SetFont(self.LSM:Fetch("font", s.Font), s.FontSize, GetReminderFontFlags(s))
             F.Text:SetTextColor(unpack(info.textColors or s.textColors))
             local xoff = (s.GrowDirection == "Right" and (i-1)*(s.Size+s.Spacing)) or (s.GrowDirection == "Left" and -(i-1)*(s.Size+s.Spacing)) or 0
@@ -1165,6 +1222,9 @@ end
 
 function NSI:GetDisplayedText(remString, info, F, timerHidden)
     local reminderText = info.text or ""
+    if issecretvalue(info.SecretDisplayText) then
+        return string.format("%s (%s)", info.SecretDisplayText, remString), ""
+    end
     if issecretvalue(reminderText) then
         return reminderText, ""
     end
@@ -1314,6 +1374,44 @@ function NSI:DisplayReminder(info, bypass)
     end
     self:FireCallback("NSRT_REMINDER_SHOW", info, F)
     return F
+end
+
+function NSI:PreviewReminderCircle(previewKey, duration, ringColors, texture)
+    local frame = self[previewKey]
+    if frame and frame:IsShown() then
+        frame:Hide()
+        self[previewKey] = nil
+        return false
+    end
+
+    local info = {
+        DisplayType = "Circle",
+        text = "",
+        dur = duration,
+        Decimals = duration,
+        sticky = 0,
+        ringColors = ringColors,
+        Texture = texture,
+    }
+    self[previewKey] = self:DisplayReminder(info, true)
+    return true
+end
+
+function NSI:UpdateReminderCirclePreview(previewKey, ringColors, texture)
+    local frame = self[previewKey]
+    if not frame or not frame:IsShown() then return end
+
+    frame.info.ringColors = ringColors
+    frame.info.Texture = texture
+    self:UpdateExistingFrames()
+end
+
+function NSI:HideReminderCirclePreview(previewKey)
+    local frame = self[previewKey]
+    if frame then
+        frame:Hide()
+        self[previewKey] = nil
+    end
 end
 
 function NSI:UpdateReminderDisplay(info, F)
@@ -1915,13 +2013,9 @@ function NSI:GlowFrame(unit, id, F, colors)
         self.LCG.ButtonGlow_Start(F, nil, nil, 1000)
         return
     end
-    local color = {0, 1, 0, 1}
     if not unit then return end
-    unit = NSAPI:GetChar(unit, true)
-    local i = UnitInRaid(unit) or UnitInParty(unit) or "player"
-    if (not UnitExists(unit)) or (not i) then return end
     id = unit..id
-    local F = self.LGF.GetUnitFrame(unit)
+    local F = self.UnitFrames and self.UnitFrames[unit]
     if not F then return end
     self.LCG.PixelGlow_Stop(F, id) -- hide any preivous glows first
     self.AllGlows = self.AllGlows or {}
@@ -1937,14 +2031,35 @@ function NSI:HideGlows(units, id, F)
     end
     if not units then return end
     for i, unit in ipairs(units) do
-        unit = NSAPI:GetChar(unit, true)
-        local i = UnitInRaid(unit) or UnitInParty(unit) or "player"
-        if (not UnitExists(unit)) or (not i) then return end
         local newid = unit..id
-        local F = self.LGF.GetUnitFrame(unit)
-        if not F then return end
-        self.AllGlows[F] = nil
-        self.LCG.PixelGlow_Stop(F, newid)
+        local F = self.UnitFrames and self.UnitFrames[unit]
+        if F then
+            self.AllGlows[F] = nil
+            self.LCG.PixelGlow_Stop(F, newid)
+        end
+    end
+end
+
+function NSI:CacheUnitFrames()
+    if self:Restricted() then
+        self.PendingUnitFramesUpdate = true
+        return
+    end
+    self.PendingUnitFramesUpdate = false
+    self.UnitFrames = {}
+    for unit in self:IterateGroupMembers() do
+        local frame = self.LGF.GetUnitFrame(unit)
+        if frame then
+            self.UnitFrames[unit] = frame
+            local name, realm = UnitFullName(unit)
+            if name then
+                self.UnitFrames[name] = frame
+                if realm then self.UnitFrames[name.."-"..realm] = frame end
+            end
+            local nickname = NSAPI:GetName(unit, nil, true)
+            if nickname then self.UnitFrames[nickname] = frame end
+            if UnitIsUnit(unit, "player") then self.UnitFrames.player = frame end
+        end
     end
 end
 
@@ -1953,16 +2068,60 @@ function NSI:CreateMoveFrames()
     self:CreateReminderMoverFrame("BarMover",    NSRT.ReminderSettings.BarSettings,    "BarSettings")
     self:CreateReminderMoverFrame("TextMover",   NSRT.ReminderSettings.TextSettings,   "TextSettings", true)
     self:CreateReminderMoverFrame("CircleMover", NSRT.ReminderSettings.CircleSettings, "CircleSettings")
+    self:CreateReminderMoverFrame("DebuffOverviewMover", NSRT.ReminderSettings.DebuffOverviewSettings, "DebuffOverviewSettings")
     self:CreateNoteMoverFrame("ReminderFrame", NSRT.ReminderSettings.ReminderFrame, true, false, false)
     self:CreateNoteMoverFrame("PersonalReminderFrame", NSRT.ReminderSettings.PersonalReminderFrame, false, true, false)
     self:CreateNoteMoverFrame("ExtraReminderFrame", NSRT.ReminderSettings.ExtraReminderFrame, false, false, true)
 end
 
-local ANCHOR_TITLES = {IconMover="Icons", BarMover="Bars", TextMover="Texts", CircleMover="Circles"}
+local ANCHOR_TITLES = {IconMover="Icons", BarMover="Bars", TextMover="Texts", CircleMover="Circles", DebuffOverviewMover="Debuff Overview"}
 
 function NSI:CreateReminderMoverFrame(Name, SettingsTable, SettingsName, IsText)
     if not self[Name] then
         self[Name] = CreateFrame("Frame", 'NSUIReminder'..Name, UIParent, "BackdropTemplate")
+        local IsDebuffOverview = SettingsName == "DebuffOverviewSettings"
+        self[Name].IsDebuffOverview = IsDebuffOverview
+        if IsDebuffOverview then
+            local F = self[Name]
+            F.PreviewRows = {}
+            local previewSpellIDs = {1311611, 1311611, 1311611}
+            local coloredPlayerName = NSAPI:Shorten("player", nil, false, "GlobalNickNames", true, true) or UnitName("player") or "Player"
+            for index, spellID in ipairs(previewSpellIDs) do
+                local row = CreateFrame("Frame", nil, F)
+                row:SetFrameLevel(F:GetFrameLevel() + 10)
+                row:SetSize(SettingsTable.Width, SettingsTable.Height)
+                row.Bar = CreateFrame("StatusBar", nil, row, "BackdropTemplate")
+                row.Bar:SetAllPoints(row)
+                row.Bar:SetFrameLevel(row:GetFrameLevel())
+                row.Bar:SetStatusBarTexture(self.LSM:Fetch("statusbar", SettingsTable.Texture))
+                row.Bar:SetStatusBarColor(unpack(SettingsTable.barColors))
+                row.Bar:SetMinMaxValues(0, 8)
+                row.Bar:SetValue(8 - index)
+                row.Bar:SetBackdrop({bgFile = "Interface\\Buttons\\WHITE8x8", tileSize = 0})
+                row.Bar:SetBackdropColor(unpack(SettingsTable.backgroundColors))
+                row.Border = CreateFrame("Frame", nil, row, "BackdropTemplate")
+                row.Border:SetAllPoints(row)
+                row.Border:SetFrameLevel(row:GetFrameLevel() + 1)
+                row.Border:SetBackdrop({edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 1})
+                row.Border:SetBackdropBorderColor(unpack(SettingsTable.borderColors))
+                row.TextLayer = CreateFrame("Frame", nil, row)
+                row.TextLayer:SetAllPoints(row)
+                row.TextLayer:SetFrameLevel(row:GetFrameLevel() + 2)
+                row.Icon = row:CreateTexture(nil, "ARTWORK")
+                local spellInfo = C_Spell.GetSpellInfo(spellID)
+                row.Icon:SetTexture(spellInfo and spellInfo.iconID)
+                row.LeftText = row.TextLayer:CreateFontString(nil, "OVERLAY")
+                row.LeftText:SetFont(self.LSM:Fetch("font", SettingsTable.Font), SettingsTable.FontSize, GetReminderFontFlags(SettingsTable))
+                row.LeftText:SetTextColor(unpack(SettingsTable.textColors))
+                row.LeftText:SetText(coloredPlayerName)
+                row.RightText = row.TextLayer:CreateFontString(nil, "OVERLAY")
+                row.RightText:SetFont(self.LSM:Fetch("font", SettingsTable.Font), SettingsTable.TimerFontSize, GetReminderFontFlags(SettingsTable))
+                row.RightText:SetTextColor(unpack(SettingsTable.textColors))
+                row.RightText:SetText(tostring(8 - index))
+                row:Hide()
+                F.PreviewRows[index] = row
+            end
+        end
         if IsText then
             self[Name].Text = self[Name]:CreateFontString(Name..'Text', "OVERLAY")
             self[Name].Text:SetFont(self.LSM:Fetch("font", SettingsTable.Font), SettingsTable.FontSize, GetReminderFontFlags(SettingsTable))
@@ -1971,7 +2130,7 @@ function NSI:CreateReminderMoverFrame(Name, SettingsTable, SettingsName, IsText)
             self[Name].Text:SetTextColor(1, 1, 1, 0)
         end
         self:MoveFrameInit(self[Name], SettingsName)
-        self:MoveFrameSettings(self[Name], SettingsTable, IsText, true)
+        self:MoveFrameSettings(self[Name], SettingsTable, IsText, not IsDebuffOverview)
 
         -- Title label (shown when unlocked)
         local title = ANCHOR_TITLES[Name] or Name
@@ -2000,7 +2159,7 @@ function NSI:CreateReminderMoverFrame(Name, SettingsTable, SettingsName, IsText)
         gear:SetScript("OnLeave", function(self) gearTexture:SetVertexColor(0.8, 0.8, 0.8, 1) end)
         gear:SetScript("OnClick", function()
             -- Close any other open windows first
-            for _, n in ipairs({"IconMover","BarMover","TextMover","CircleMover"}) do
+            for _, n in ipairs({"IconMover","BarMover","TextMover","CircleMover","DebuffOverviewMover"}) do
                 if NSI[n] and NSI[n].SettingsWindow and NSI[n] ~= self[Name] then
                     NSI[n].SettingsWindow:Hide()
                 end
@@ -2011,27 +2170,48 @@ function NSI:CreateReminderMoverFrame(Name, SettingsTable, SettingsName, IsText)
         end)
         self[Name].GearButton = gear
     else
-        self:MoveFrameSettings(self[Name], SettingsTable, IsText, true)
+        self:MoveFrameSettings(self[Name], SettingsTable, IsText, not self[Name].IsDebuffOverview)
     end
-    self[Name]:Show()
+    if self[Name].IsDebuffOverview then
+        self[Name]:Hide()
+    else
+        self[Name]:Show()
+    end
 end
 
 function NSI:CreateNoteMoverFrame(Name, SettingsTable, Shared, Personal, Extra)
-    if not self[Name.."Mover"] then
-        self[Name.."Mover"] = CreateFrame("Frame", "NSUI"..Name.."Mover", UIParent, "BackdropTemplate")
-        self:MoveFrameInit(self[Name.."Mover"], Name, SettingsTable.BGcolor)
-        self:MoveFrameSettings(self[Name.."Mover"], SettingsTable)
-        if SettingsTable.enabled and SettingsTable.Moveable then
-            self:UpdateReminderFrame(false, Shared, Personal, Extra)
-            self:MakeDraggable(self[Name.."Mover"], SettingsTable, true, true)
-            self[Name.."Mover"].Resizer:Show()
-            self[Name.."Mover"]:SetResizable(true)
-            self[Name.."Mover"]:SetResizeBounds(100, 100, 2000, 2000)
-        end
-    else
-        self:MoveFrameSettings(self[Name.."Mover"], SettingsTable)
+    local mover = self[Name.."Mover"]
+    if not mover then
+        mover = CreateFrame("Frame", "NSUI"..Name.."Mover", UIParent, "BackdropTemplate")
+        self[Name.."Mover"] = mover
+        self:MoveFrameInit(mover, Name, SettingsTable.BGcolor)
     end
-    self[Name.."Mover"]:Show()
+
+    self:MoveFrameSettings(mover, SettingsTable)
+    if not SettingsTable.enabled then
+        self:MakeDraggable(mover, SettingsTable, false, true)
+        if mover.Resizer then mover.Resizer:Hide() end
+        mover:SetResizable(false)
+        mover:StopMovingOrSizing()
+        mover:Hide()
+        return
+    end
+
+    if not self[Name] then
+        self:UpdateReminderFrame(false, Shared, Personal, Extra)
+    end
+    if SettingsTable.Moveable then
+        self:MakeDraggable(mover, SettingsTable, true, true)
+        mover.Resizer:Show()
+        mover:SetResizable(true)
+        mover:SetResizeBounds(100, 100, 2000, 2000)
+    else
+        self:MakeDraggable(mover, SettingsTable, false, true)
+        mover.Resizer:Hide()
+        mover:SetResizable(false)
+        mover:StopMovingOrSizing()
+    end
+    mover:Show()
 end
 
 function NSI:MoveFrameSettings(F, s, IsText, isAnchor)
@@ -2051,9 +2231,17 @@ end
 function NSI:MoveFrameInit(F, s, ReminderColor)
     if F then
         F.Border = CreateFrame("Frame", nil, F, "BackdropTemplate")
-        local x = s == "BarSettings" and -6-NSRT.ReminderSettings[s].Height or -6 -- extra offset for bars to account for the icon
-        F.Border:SetPoint("TOPLEFT", F, "TOPLEFT", x, 6)
-        F.Border:SetPoint("BOTTOMRIGHT", F, "BOTTOMRIGHT", 6, -6)
+        local isDebuffOverview = s == "DebuffOverviewSettings"
+        local iconOnRight = isDebuffOverview and NSRT.ReminderSettings[s].IconPosition == "Right"
+        local leftOffset = -6
+        local rightOffset = 6
+        if s == "BarSettings" or (isDebuffOverview and not iconOnRight) then
+            leftOffset = -6 - NSRT.ReminderSettings[s].Height
+        elseif isDebuffOverview then
+            rightOffset = 6 + NSRT.ReminderSettings[s].Height
+        end
+        F.Border:SetPoint("TOPLEFT", F, "TOPLEFT", leftOffset, 6)
+        F.Border:SetPoint("BOTTOMRIGHT", F, "BOTTOMRIGHT", rightOffset, -6)
         F.Border:SetBackdrop({
                 bgFile = "Interface\\Buttons\\WHITE8x8",
                 tileSize = 0,
@@ -2098,7 +2286,7 @@ function NSAPI:DebugTimeline(e, dur)
     NSRT.Settings.Debug = current
 end
 
-function NSI:CreateDefaultAlert(text, DisplayType, spellID, dur, phase, encID) -- only used for Assignments now
+function NSI:CreateDefaultAlert(text, DisplayType, spellID, dur, phase, encID, isAssignment) -- only used for Assignments now
     local id = self.DefaultAlertID or 10000
     self.DefaultAlertID = self.DefaultAlertID and self.DefaultAlertID + 1 or 10001
     local info =
@@ -2113,7 +2301,7 @@ function NSI:CreateDefaultAlert(text, DisplayType, spellID, dur, phase, encID) -
         phase = phase or self.Phase,
         id = id,
         startTime = GetTime(),
-        IsAssignment = IsAssignment,
+        IsAssignment = isAssignment,
         countdown = false,
         DisplayType = DisplayType,
     }
@@ -2233,7 +2421,7 @@ function NSI:CreateNoteFrame(Name, SettingsTable)
         SettingsTable.Height = mover:GetHeight()
         local anchor, _, relativeTo, xOffset, yOffset = mover:GetPoint(nil, UIParent)
         SettingsTable.Anchor = anchor
-        SettingsTable.relativeTo = relativeTos
+        SettingsTable.relativeTo = relativeTo
         SettingsTable.xOffset = Round(xOffset)
         SettingsTable.yOffset = Round(yOffset)
     end)
@@ -2244,8 +2432,21 @@ end
 
 function NSI:UpdateNoteFrame(Name, SettingsTable, text)
     if not self[Name] then return end
+    local mover = self[Name.."Mover"]
     if SettingsTable.enabled then
-        self[Name]:SetAllPoints(self[Name.."Mover"])
+        self[Name]:SetAllPoints(mover)
+        if SettingsTable.Moveable then
+            self:MakeDraggable(mover, SettingsTable, true, true)
+            mover.Resizer:Show()
+            mover:SetResizable(true)
+            mover:SetResizeBounds(100, 100, 2000, 2000)
+        else
+            self:MakeDraggable(mover, SettingsTable, false, true)
+            mover.Resizer:Hide()
+            mover:SetResizable(false)
+            mover:StopMovingOrSizing()
+        end
+        mover:Show()
         self[Name].Text:SetFont(self.LSM:Fetch("font", SettingsTable.Font), SettingsTable.FontSize, GetReminderFontFlags(SettingsTable))
         self[Name].Text:SetWidth(SettingsTable.Width)
         if text ~= "skip" then
@@ -2262,6 +2463,11 @@ function NSI:UpdateNoteFrame(Name, SettingsTable, text)
         end
     elseif self[Name] then
         self[Name]:Hide()
+        self:MakeDraggable(mover, SettingsTable, false, true)
+        mover.Resizer:Hide()
+        mover:SetResizable(false)
+        mover:StopMovingOrSizing()
+        mover:Hide()
     end
 end
 

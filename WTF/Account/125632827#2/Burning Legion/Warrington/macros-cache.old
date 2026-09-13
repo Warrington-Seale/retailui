@@ -1,3 +1,7 @@
+VER 3 0100000000000015 "/amoreg" "134400"
+#showtooltip
+/use [@mouseover, noharm, nodead, exists] [] regrowth
+END
 VER 3 0100000000000013 "bear" "134400"
 #showtooltip
 /use [nostance:1] Bear Form

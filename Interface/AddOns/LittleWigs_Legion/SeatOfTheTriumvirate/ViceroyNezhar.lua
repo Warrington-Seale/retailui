@@ -7,11 +7,6 @@ if not mod then return end
 mod:RegisterEnableMob(122056) -- Viceroy Nezhar
 mod:SetEncounterID(2067)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{1263532, sound = "underyou", note = CL.debuffUnderYouNote}, -- Void Storm
-	{1263542, sound = "none", note = CL.group_damage}, -- Mass Void Infusion
-	{1268733, sound = "none", note = CL.debuffAddsCast:format(CL.extra:format(mod:SpellName(1263538), CL.adds))}, -- Mind Flay
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -26,11 +21,10 @@ local nextDarkBulwark = 0
 -- Localization
 --
 
-local L = mod:GetLocale()
-if L then
-	L.guards = "Guards"
-	L.interrupted = "%s interrupted %s (%.1fs left)!"
-end
+local L = mod:SetDefaultLocale({
+	guards = "Guards",
+	interrupted = "%s interrupted %s (%.1fs left)!",
+})
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -105,6 +99,18 @@ if mod:Retail() then -- Midnight+
 		[1263542] = {CL.group_damage}, -- Mass Void Infusion (Group Damage)
 		[1263538] = {CL.adds}, -- Umbral Tentacles (Adds)
 		[1263528] = {CL.knockback}, -- Repulse (Knockback)
+	})
+end
+
+--------------------------------------------------------------------------------
+-- Midnight Auras
+--
+
+if mod:Retail() then -- Midnight+
+	mod:SetAuraData({
+		{1263532, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Void Storm
+		{1263542, duration = 5, note = CL.group_damage}, -- Mass Void Infusion
+		{1268733, duration = 10, tip = CL.debuffAddsCast:format(CL.extra:format(mod:SpellName(1263538), CL.adds))}, -- Mind Flay
 	})
 end
 

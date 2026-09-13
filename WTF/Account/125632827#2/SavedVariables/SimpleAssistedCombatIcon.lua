@@ -3,8 +3,8 @@ SCAIDB = {
 ["namespaces"] = {
 },
 ["profileKeys"] = {
-["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
 ["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
+["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
 },
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
@@ -15,7 +15,11 @@ SCAIDB = {
 ["border"] = {
 ["thickness"] = 1,
 },
-["alpha"] = 0.9,
+["display"] = {
+["HideInVehicle"] = true,
+["ALWAYS"] = false,
+["HideAsHealer"] = false,
+},
 ["DBVERSION"] = 5,
 ["position"] = {
 ["strata"] = 2,
@@ -24,36 +28,32 @@ SCAIDB = {
 ["parent"] = "ElvUF_Player",
 ["parentFrame"] = "__other",
 },
-["display"] = {
-["HideInVehicle"] = true,
-["ALWAYS"] = false,
-["HideAsHealer"] = false,
-},
+["iconSize"] = 47,
 ["locked"] = true,
 ["cooldown"] = {
 ["HideNumbers"] = true,
 ["chargeCooldown"] = {
-["showSwipe"] = true,
 ["text"] = {
 ["font"] = "Merfin Font 1",
 },
+["showSwipe"] = true,
 ["showCount"] = true,
 },
 },
-["iconSize"] = 47,
+["alpha"] = 0.9,
 },
 ["Default"] = {
 ["DBVERSION"] = 5,
 },
 ["MerfinUI (1440) v7.8"] = {
 ["Keybind"] = {
-["fontSize"] = 17,
 ["font"] = "Merfin Font 1",
+["fontSize"] = 17,
 },
 ["border"] = {
 ["thickness"] = 1,
 },
-["iconSize"] = 47,
+["alpha"] = 0.9,
 ["DBVERSION"] = 5,
 ["position"] = {
 ["strata"] = 2,
@@ -78,7 +78,7 @@ SCAIDB = {
 ["showCount"] = true,
 },
 },
-["alpha"] = 0.9,
+["iconSize"] = 47,
 },
 },
 }

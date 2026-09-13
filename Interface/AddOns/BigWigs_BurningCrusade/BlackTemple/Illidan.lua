@@ -8,6 +8,7 @@ if not mod then return end
 mod:RegisterEnableMob(22917, 23089, 22997) -- Illidan Stormrage, Akama, Flame of Azzinoth
 mod:SetEncounterID(609)
 mod:SetRespawnTime(10)
+mod:SetStage(1)
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -22,6 +23,8 @@ local isCaged = false
 local timer1, timer2 = nil, nil
 local fixateList = {}
 local castCollector = {}
+local yellTracker = 0
+local darkBarrageInProgress = false
 
 --------------------------------------------------------------------------------
 -- Localization
@@ -55,7 +58,7 @@ function mod:GetOptions()
 		40611, -- Blaze
 
 		--[[ Stage Three: The Demon Within ]]--
-		{40932, "PROXIMITY"}, -- Agonizing Flames
+		40932, -- Agonizing Flames
 		41126, -- Flame Burst
 		41117, -- Summon Shadow Demons
 		40506, -- Demon Form
@@ -72,6 +75,8 @@ function mod:GetOptions()
 end
 
 function mod:OnBossEnable()
+	yellTracker = 0
+
 	--[[ Stage One: You Are Not Prepared ]]--
 	self:Log("SPELL_AURA_APPLIED", "Shear", 41032)
 	self:Log("SPELL_AURA_APPLIED", "ParasiticShadowfiend", 41917)
@@ -112,6 +117,7 @@ function mod:OnBossEnable()
 end
 
 function mod:OnEngage()
+	self:SetStage(1)
 	timer1, timer2 = nil, nil
 	burstCount = 0
 	flamesDead = 0
@@ -121,7 +127,10 @@ function mod:OnEngage()
 	playerList = self:NewTargetList()
 	fixateList = {}
 	castCollector = {}
+	yellTracker = 0
+	darkBarrageInProgress = false
 
+	self:UnregisterEvent("CHAT_MSG_MONSTER_YELL")
 	self:Berserk(1500)
 	self:RegisterTargetEvents("CheckForFixate")
 end
@@ -168,24 +177,12 @@ end
 
 --[[ Stage Two: Flames of Azzinoth ]]--
 function mod:ThrowGlaive() -- Stage 2
+	self:SetStage(2)
 	flamesDead = 0
 
 	self:PrimaryIcon(41917) -- Parasitic Shadowfiend
 	self:CDBar(40585, 95) -- Dark Barrage
 	self:MessageOld("stages", "cyan", nil, CL.stage:format(2), false)
-end
-
-function mod:DarkBarrage(args)
-	self:TargetMessageOld(args.spellId, args.destName, "red", "alert")
-	self:PrimaryIcon(args.spellId, args.destName)
-	barrageCount = barrageCount + 1
-	self:CDBar(args.spellId, 50) -- Varies between 50 and 70 depending on Eye Blast
-	self:TargetBar(args.spellId, 10, args.destName, L.barrage_bar)
-end
-
-function mod:DarkBarrageRemoved(args)
-	self:PrimaryIcon(args.spellId)
-	self:StopBar(L.barrage_bar, args.destName)
 end
 
 function mod:UncagedWrath(args)
@@ -203,17 +200,46 @@ do
 	end
 end
 
---[[ Stage Three: The Demon Within ]]--
-function mod:FlameDeath() -- Stage 3
-	flamesDead = flamesDead + 1
-	if flamesDead == 2 then
+function mod:DarkBarrage(args)
+	darkBarrageInProgress = true
+	self:TargetMessageOld(args.spellId, args.destName, "red", "alert")
+	self:PrimaryIcon(args.spellId, args.destName)
+	barrageCount = barrageCount + 1
+	self:CDBar(args.spellId, 50) -- Varies between 50 and 70 depending on Eye Blast
+	self:TargetBar(args.spellId, 10, args.destName, L.barrage_bar)
+end
+
+do
+	local function IntermissionIntoStage3(self)
+		self:SetStage(2.5)
 		self:StopBar(40585) -- Dark Barrage
-		self:MessageOld("stages", "cyan", "alarm", CL.stage:format(3), false)
-		self:Bar(40506, 75) -- Demon Form
-		self:OpenProximity(40932, 5) -- Agonizing Flames
+		self:Bar("stages", 14, CL.intermission, "inv_weapon_glave_01")
+		self:ScheduleTimer(function()
+			self:SetStage(3)
+			self:Message("stages", "cyan", CL.stage:format(3), false)
+			self:Bar(40506, 61) -- Demon Form (75-14=61)
+			self:PlaySound("stages", "alarm")
+		end, 14)
+	end
+
+	function mod:DarkBarrageRemoved(args)
+		darkBarrageInProgress = false
+		self:PrimaryIcon(args.spellId)
+		self:StopBar(L.barrage_bar, args.destName)
+		if flamesDead == 2 then
+			IntermissionIntoStage3(self)
+		end
+	end
+
+	function mod:FlameDeath() -- Intermission into Stage 3
+		flamesDead = flamesDead + 1
+		if flamesDead == 2 and not darkBarrageInProgress then
+			IntermissionIntoStage3(self)
+		end
 	end
 end
 
+--[[ Stage Three: The Demon Within ]]--
 function mod:AgonizingFlames(args)
 	playerList[#playerList+1] = args.destName
 	if #playerList == 1 then
@@ -235,12 +261,14 @@ end
 
 --[[ Stage Four: The Long Hunt ]]--
 function mod:ShadowPrison(args) -- Pre Stage 4 Intermission
+	self:SetStage(3.5)
 	self:MessageOld("stages", "cyan", nil, CL.intermission, false)
 	self:Bar("stages", 30, CL.intermission, args.spellId)
 end
 
 function mod:ShadowPrisonRemoved(args) -- Stage 4
 	if self:MobId(args.destGUID) == 23089 then -- When debuff drops from Akama (downstairs)
+		self:SetStage(4)
 		self:MessageOld("stages", "cyan", nil, CL.stage:format(4), false)
 
 		self:Bar(40683, 45) -- Frenzy
@@ -296,12 +324,21 @@ function mod:UNIT_AURA(_, unit)
 	end
 end
 
-function mod:CHAT_MSG_MONSTER_YELL(_, msg)
-	if not self:IsSecret(msg) and msg == L.warmup_trigger then
-		if self:Classic() then
-			self:Bar("warmup", 36, CL.active, "inv_weapon_glave_01")
-		else
-			self:Bar("warmup", 41.5, CL.active, "achievement_boss_illidan")
+function mod:CHAT_MSG_MONSTER_YELL(_, msg, npc)
+	if not self:IsSecret(msg) and npc == self.displayName then
+		yellTracker = yellTracker + 1
+		if yellTracker == 1 then
+			if self:Classic() then
+				self:Bar("warmup", 40.5, CL.active, "inv_weapon_glave_01")
+			else
+				self:Bar("warmup", 41.5, CL.active, "achievement_boss_illidan")
+			end
+		elseif yellTracker == 2 then
+			if self:Classic() then
+				self:Bar("warmup", {16, 40.5}, CL.active, "inv_weapon_glave_01")
+			else
+				self:Bar("warmup", {16, 41.5}, CL.active, "achievement_boss_illidan")
+			end
 		end
 	end
 end
@@ -309,9 +346,10 @@ end
 do
 	local prev = 0
 	function mod:DemonFireDamage(args) -- Demon Fire (Eye Blast)
-		if self:Me(args.destGUID) and args.time-prev > 1.5 then
+		if self:Me(args.destGUID) and args.time - prev > 2 then
 			prev = args.time
-			self:MessageOld(40018, "blue", "alert", CL.underyou:format(self:SpellName(40018)))
+			self:PersonalMessage(40018, "underyou")
+			self:PlaySound(40018, "underyou")
 		end
 	end
 end
@@ -319,9 +357,10 @@ end
 do
 	local prev = 0
 	function mod:Damage(args)
-		if self:Me(args.destGUID) and args.time-prev > 1.5 then
+		if self:Me(args.destGUID) and args.time - prev > 2 then
 			prev = args.time
-			self:MessageOld(args.spellId, "blue", "alert", CL.underyou:format(args.spellName))
+			self:PersonalMessage(args.spellId, "underyou")
+			self:PlaySound(args.spellId, "underyou")
 		end
 	end
 end

@@ -1,0 +1,19 @@
+Vamoose's Endeavors
+Copyright (c) 2026 Vamoose. All Rights Reserved.
+
+This addon is distributed free of charge for use with World of Warcraft.
+You may download, install, and use it for that purpose.
+
+All other rights are reserved. Without the prior written permission of the
+copyright holder, you may not:
+
+  * copy, redistribute, or republish this addon or any part of it, including
+    on any addon host, package manager, or mirror;
+  * modify it, or create derivative or adapted works from it;
+  * incorporate any part of its source into another project;
+  * charge any fee for it, or bundle it with anything sold.
+
+Nothing here restricts what the game's own terms already permit, and nothing
+here is a grant of trademark rights in the Vamoose's Endeavors name.
+
+Requests for permission: https://discord.gg/RWZaxJaHFP

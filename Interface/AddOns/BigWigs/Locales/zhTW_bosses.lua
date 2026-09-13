@@ -79,3 +79,49 @@ BigWigsAPI.SetBossModuleLocale("Crown of the Cosmos", {
 	aspect_of_the_end = "拉斷", -- 終結守護
 	devouring_cosmos = "下個平台", -- 換場地/換平台/下個平台
 })
+
+-- The Venomous Abyss
+
+BigWigsAPI.SetBossModuleLocale("Nek'zali the Soulcoiler", {
+	possession_barrage = "彈幕",
+})
+
+BigWigsAPI.SetBossModuleLocale("The Lost Explorers", {
+	trader_gebbo = "商人",
+	first_mate_nama = "大副",
+	scrollsage_iku = "先知",
+})
+
+BigWigsAPI.SetBossModuleLocale("Vashnik the Malignant", {
+	malignant_catalyst = "催化", -- Short for Malignant Catalyst
+})
+
+BigWigsAPI.SetBossModuleLocale("The Twin Fangs", {
+	coiling_toxin = "射線", -- Short for Coiling Toxin
+	corrosive_spit = "紅圈", -- Short for Corrosive Spit
+})
+
+BigWigsAPI.SetBossModuleLocale("Ula'tek", {
+	mephitic_thrash = "痛擊",
+	call_of_the_serpent = "蛇蛋",
+	gore_rattle = "尾巴",
+	--grasping_fangs = "Tethers",
+	circling_prey = "平台破裂",
+	p3_knock_up = "擊退",
+
+	toxic_womb = "疫鱗", -- 疫鱗渣滓
+	--fester_burst = "Wretch Bubble",
+	toxic_incubation = "腐蝕波",
+
+	--count_amount_side = "%s (%d/%d) %s",
+	--count_side = "%s (%d) %s",
+	--fester_burst_count = "%s (%d-%d)",
+
+	custom_select_limit_warnings = "幽魂之纏分組",
+	custom_select_limit_warnings_desc = "只顯示你所屬分攤組別的計時條。第一階段右側先分攤，中場階段左側先分攤。",
+	custom_select_limit_warnings_value1 = "顯示雙側警報。",
+	custom_select_limit_warnings_value2 = "只顯示左側警報。",
+	custom_select_limit_warnings_value3 = "只顯示右側警報。",
+	custom_select_limit_warnings_value4 = "奇數隊左，偶數隊右。",
+	custom_select_limit_warnings_value5 = "傳奇模式：一二隊左，三四隊右。其他模式：一二三隊左，四五六隊右。",
+})

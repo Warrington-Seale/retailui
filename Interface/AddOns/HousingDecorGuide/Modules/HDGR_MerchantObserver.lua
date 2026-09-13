@@ -12,6 +12,28 @@ local A   -- ACTIONS alias, bound lazily in handlers (Constants loads before Mod
 -- (e.g. MOTHER in the Chamber of Heart) and throws on :match under addon taint
 -- (Reference/MIDNIGHT_SECRET_VALUES.md). The scan keys everything off itemID, so
 -- npcID was never read -- don't reintroduce the GUID parse.
+-- Coupons per unit, or nil when this slot is not bought with them.
+--
+-- Deliberately narrow: EXACTLY ONE cost component, and that component is the
+-- Community Coupons currency. A slot with two components, or an item-token cost,
+-- returns nil and stays out of the bulk-buy path -- the point of this gate is
+-- that HDG never spends a currency it did not recognise. Asked for by
+-- madaileinhatter (Discord 2026-08-12); the picker previously refused every
+-- coupon-priced item because it tested for gold.
+--
+-- GetMerchantItemCostItem(index, costIndex) -> texture, value, link, currencyName.
+-- A currency component carries currencyName and a currency link; an item
+-- component carries an item link and no currencyName (Blizzard's own test,
+-- MerchantFrame.lua:692).
+local function _couponCost(index, costCount)
+    if costCount ~= 1 then return nil end   -- exception(nullable): gold-only or a multi-part cost
+    local _, value, link, currencyName = GetMerchantItemCostItem(index, 1)  -- exception(boundary): classic non-namespaced merchant global
+    if not (link and currencyName and value and value > 0) then return nil end  -- exception(boundary): item-token cost, or a slot still streaming in
+    local currencyID = _G.C_CurrencyInfo.GetCurrencyIDFromLink(link)
+    if currencyID ~= HDG.Constants.COUPON_CURRENCY_ID then return nil end   -- exception(nullable): some other currency
+    return value
+end
+
 local function _scan()
     local byItemID = {}
     for i = 1, GetMerchantNumItems() do
@@ -25,8 +47,12 @@ local function _scan()
                                  -- components -> bulk-buyable. hasCost: has a currency/token
                                  -- cost -> distinguishes currency items from free ones so
                                  -- Buy All's "sold for a currency" skip note is accurate.
-                                 goldOnly = (info.price or 0) > 0 and costCount == 0,
-                                 hasCost  = costCount > 0 }
+                                 -- numAvailable is carried for display only. Do NOT
+                                 -- cap a bulk buy with it: housing decor is
+                                 -- unlimited stock (see HDGR_QuantityPicker:Open).
+                                 goldOnly    = (info.price or 0) > 0 and costCount == 0,
+                                 hasCost     = costCount > 0,
+                                 couponPrice = _couponCost(i, costCount) }
         end
     end
     return byItemID
@@ -45,21 +71,35 @@ end
 -- delegates to Blizzard's original handler. Restored verbatim on close so the
 -- frame is never left altered. Gated behind MERCHANT_QTY_PICKER so a patch that
 -- re-templates the buttons can be worked around with one toggle.
-local MERCHANT_PAGE_BUTTONS = 10   -- MerchantItem1..10ItemButton (Blizzard fixed set)
+-- DISCOVER the buttons; do not assume how many there are. Blizzard's stock page
+-- is MERCHANT_ITEMS_PER_PAGE = 10, but a UI that widens the merchant frame gets
+-- MerchantItem11ItemButton and beyond -- and a hardcoded 1..10 left those without
+-- the override, so the quantity picker worked on the first ten items of a page
+-- and fell through to ordinary buying on every one after them. At Dennia
+-- Silvertongue that was the picker opening for slot 1 and not for slot 11 of the
+-- same page (owner, in-game 2026-09-01).
+--
+-- The cap is a runaway guard, not a page size: stop at the first missing button.
+-- Removal iterates _origClicks by button, so it restores exactly what was
+-- installed however many that turned out to be.
+local MERCHANT_BUTTON_SCAN_CAP = 60
 
 local function _installClickOverrides()
     if not HDG.Config:Get("MERCHANT_QTY_PICKER") then return end
     MO._origClicks = MO._origClicks or {}
-    for i = 1, MERCHANT_PAGE_BUTTONS do
+    for i = 1, MERCHANT_BUTTON_SCAN_CAP do
         local btn = _G["MerchantItem" .. i .. "ItemButton"]
-        if btn and not MO._origClicks[btn] then   -- exception(boundary): Blizzard may re-template merchant buttons in a patch
+        if not btn then break end   -- exception(boundary): first gap ends the frame's button run
+        if not MO._origClicks[btn] then   -- exception(boundary): Blizzard may re-template merchant buttons in a patch
             local orig = btn:GetScript("OnClick")
             MO._origClicks[btn] = orig or false   -- false = "had no handler" (still restore to nil)
             btn:SetScript("OnClick", function(self, mouseButton, down)
                 local itemID = GetMerchantItemID(self:GetID())
                 local stock  = itemID and HDG.Store:GetState().session.merchant.byItemID[itemID]
-                if mouseButton == "RightButton" and stock and stock.goldOnly   -- gold-only decor -> picker
-                   and HDG.HousingCatalogObserver:GetRow(itemID) then          -- exception(nullable): non-decor / non-gold rows delegate to Blizzard
+                local buyable = stock and (stock.goldOnly or (stock.couponPrice or 0) > 0)
+                    and not HDG.QuantityPicker:IsOptedOut()                    -- X'd away at this vendor -> Blizzard's own buying
+                if mouseButton == "RightButton" and buyable                    -- gold- or coupon-priced decor -> picker
+                   and HDG.HousingCatalogObserver:GetRow(itemID) then          -- exception(nullable): non-decor rows delegate to Blizzard
                     HDG.QuantityPicker:Open(itemID)
                 elseif orig then
                     orig(self, mouseButton, down)
@@ -97,8 +137,18 @@ HDG.Modules:Declare({
         MERCHANT_SHOW   = { handler = "OnMerchantShow" },
         MERCHANT_UPDATE = { handler = "OnMerchantUpdate", debounce = 0.3 },   -- filter/page changes fire bursts
         MERCHANT_CLOSED = { handler = "OnMerchantClosed" },
+        -- Coupon-bought decor lands in BAGS, not decor storage, so the buy queue
+        -- has no storage row to wait on. This is its confirmation signal, and it
+        -- lives here rather than on BagObserver because that module gates its bag
+        -- scan on requiresMainWindow -- and buying at a vendor with the main
+        -- window closed is the normal case. Debounced: a purchase fires a burst.
+        -- 0.1s, not BagObserver's 0.2: this debounce is the per-item WAIT in a
+        -- coupon buy, so it sets the pace of the whole run. Halving it halves the
+        -- run without giving up the confirmation.
+        BAG_UPDATE      = { handler = "OnBagUpdate", debounce = 0.1 },
     },
     OnMerchantShow   = function(self) MO:OnMerchantShow() end,
     OnMerchantUpdate = function(self) MO:OnMerchantUpdate() end,
     OnMerchantClosed = function(self) MO:OnMerchantClosed() end,
+    OnBagUpdate      = function(self) HDG.BuyQueue:_OnBagLanded() end,
 })

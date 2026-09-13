@@ -15,32 +15,13 @@ local ADDON_VERSION = GetAddonMetadataSafe(ADDON_NAME, "Version") or "unknown"
 local MuteSoundAPI = type(MuteSoundFile) == "function" and MuteSoundFile or nil
 local UnmuteSoundAPI = type(UnmuteSoundFile) == "function" and UnmuteSoundFile or nil
 local GetCVarAPI = type(GetCVar) == "function" and GetCVar or nil
-local GetCVarBoolAPI = type(GetCVarBool) == "function" and GetCVarBool or nil
 local SetCVarAPI = type(SetCVar) == "function" and SetCVar or nil
-local UnitGUIDAPI = type(UnitGUID) == "function" and UnitGUID or nil
-local UnitExistsAPI = type(UnitExists) == "function" and UnitExists or nil
 local tinsert, tsort, tconcat, wipe = table.insert, table.sort, table.concat, table.wipe
 local pairs, ipairs, tonumber = pairs, ipairs, tonumber
 local unpack = unpack or table.unpack
 
 local warnedMissingSoundAPI = false
 local CHAT_BUBBLE_CVAR = "chatBubbles"
-local VALEERA_COMPANION_UNIT_TOKENS = {
-  "companion",
-  "delvecompanion",
-  "follower",
-}
-local BUBBLE_SOURCE_GUID_METHODS = {
-  "GetSourceGUID",
-  "GetGUID",
-}
-local BUBBLE_SOURCE_TOKEN_METHODS = {
-  "GetSourceUnit",
-  "GetSourceUnitToken",
-  "GetUnitToken",
-}
-
-local RefreshBubbleState
 
 local function SetSoundMuted(soundId, shouldMute)
   local fn = shouldMute and MuteSoundAPI or UnmuteSoundAPI
@@ -67,11 +48,9 @@ local isInitialized = false
 local settingsCategory
 local isInDelve = false
 local activeBubbleStrategy = "off"
-local bubbleTicker
 local forcedBubbleCVar = false
 local bubbleCVarBackup
 local suppressOwnCVarUpdate = false
-local selectiveBubbleSupport = nil
 
 local DEFAULTS = {
   isMuted = true,
@@ -79,14 +58,16 @@ local DEFAULTS = {
   muteBubbles = true,
   muteDundun = true,
   muteNanea = true,
-  bubbleFallbackMode = "auto",
   version = ADDON_VERSION,
   customList = {},
 }
 
 -- Built-in Valeera sound IDs come from the Wago Tools Valeera file search on
--- pages 9-15. This set is limited to vo_120 companion assets that were updated
--- after build 12.0.0.63534 while staying in that audited candidate pool.
+-- pages 9-15. The first 150 entries are vo_120 companion assets audited at
+-- builds 12.0.0.63534-.64741. The trailing 6 entries are the patch-12.1
+-- vo_121_valeera_sanguinar_* voice lines first seen in build 12.1.0.68209
+-- (owner-approved scope expansion, re-audited against Wago Tools build
+-- 12.1.0.69404).
 local baseMuteList = {
   7243762, 7243934, 7329273, 7430043, 7430047, 7430050, 7430053, 7430056, 7430059, 7430063,
   7430066, 7430069, 7430072, 7430075, 7430078, 7430082, 7430086, 7430089, 7430092, 7430095,
@@ -103,6 +84,8 @@ local baseMuteList = {
   7430751, 7430754, 7430778, 7430781, 7430784, 7430787, 7430790, 7430793, 7430796, 7430799,
   7430864, 7430867, 7430870, 7430881, 7430973, 7430985, 7430989, 7431077, 7431084, 7431087,
   7431093, 7431103, 7431106, 7431109, 7431112, 7431115, 7431119, 7431123, 7440991, 7461759,
+  7825546,
+  8026028, 8026044, 8026045, 8026061, 8026646,
 }
 
 -- Keep the partial/full UX intact even though no verified critical subset exists yet.
@@ -110,7 +93,7 @@ local criticalMuteList = {}
 
 -- Dundun (rat companion + Abundance-event VO). All 39 entries audited from Wago Tools
 -- search "Dundun", builds 12.0.0.63534 and 12.0.0.64741. Gaps at _15 and _27 confirmed
--- absent in the community listfile.
+-- absent in the community listfile. Re-verified unchanged at build 12.1.0.69404.
 local dundunMuteList = {
   7249707, 7251759, 7251762, 7251765, 7251768, 7251771, 7251774, 7251777,
   7251784, 7251787, 7251790, 7251793, 7251796, 7251799,
@@ -123,6 +106,7 @@ local dundunMuteList = {
 
 -- Nanea (Loa Speaker Nanea Revantusk — Nalorakk's Den). All 33 entries audited from
 -- Wago Tools search "Nanea", builds 12.0.0.63534, 12.0.0.63854, and 12.0.0.64741.
+-- Re-verified unchanged at build 12.1.0.69404.
 local naneaMuteList = {
   7272801, 7272803, 7272804, 7272805, 7272806, 7272807, 7272808, 7272809, 7272810,
   7329285, 7329286, 7329292, 7329293, 7329294, 7329295, 7329296, 7329297, 7329298,
@@ -130,64 +114,6 @@ local naneaMuteList = {
   7490224, 7490227, 7490229, 7490232, 7490242, 7490245,
   7633293,
 }
-
-local function GetTrackedValeeraCompanion()
-  for _, unitToken in ipairs(VALEERA_COMPANION_UNIT_TOKENS) do
-    local guid = UnitGUIDAPI and UnitGUIDAPI(unitToken)
-    if guid then
-      return guid, unitToken
-    end
-
-    if UnitExistsAPI and UnitExistsAPI(unitToken) then
-      return nil, unitToken
-    end
-  end
-end
-
-local function GetBubbleSourceGUID(bubble)
-  if not bubble then
-    return nil
-  end
-
-  for _, methodName in ipairs(BUBBLE_SOURCE_GUID_METHODS) do
-    local method = bubble[methodName]
-    if type(method) == "function" then
-      local ok, value = pcall(method, bubble)
-      if ok and type(value) == "string" and value ~= "" then
-        return value
-      end
-    end
-  end
-end
-
-local function GetBubbleSourceUnitToken(bubble)
-  if not bubble then
-    return nil
-  end
-
-  for _, methodName in ipairs(BUBBLE_SOURCE_TOKEN_METHODS) do
-    local method = bubble[methodName]
-    if type(method) == "function" then
-      local ok, value = pcall(method, bubble)
-      if ok and type(value) == "string" and value ~= "" then
-        return string.lower(value)
-      end
-    end
-  end
-end
-
-local function HideBubbleFrame(bubble)
-  if bubble and type(bubble.Hide) == "function" then
-    pcall(bubble.Hide, bubble)
-  end
-end
-
-local function StopSelectiveBubbleSuppression()
-  if bubbleTicker then
-    bubbleTicker:Cancel()
-    bubbleTicker = nil
-  end
-end
 
 local function RestoreBubbleCVars()
   if forcedBubbleCVar and bubbleCVarBackup and SetCVarAPI then
@@ -219,113 +145,6 @@ local function ApplyDelveWideBubbleFallback()
 
   forcedBubbleCVar = ok
   return ok
-end
-
-local function EvaluateSelectiveBubbleSupport()
-  if selectiveBubbleSupport == false then
-    return false
-  end
-
-  if not (C_ChatBubbles and type(C_ChatBubbles.GetAllChatBubbles) == "function") then
-    selectiveBubbleSupport = false
-    return false
-  end
-
-  if not (C_Timer and type(C_Timer.NewTicker) == "function") then
-    selectiveBubbleSupport = false
-    return false
-  end
-
-  local companionGuid, companionUnitToken = GetTrackedValeeraCompanion()
-  if not (companionGuid or companionUnitToken) then
-    return nil
-  end
-
-  local ok, bubbles = pcall(C_ChatBubbles.GetAllChatBubbles)
-  if not ok or type(bubbles) ~= "table" then
-    selectiveBubbleSupport = false
-    return false
-  end
-
-  local sawBubble = false
-  for _, bubble in ipairs(bubbles) do
-    sawBubble = true
-    if GetBubbleSourceGUID(bubble) or GetBubbleSourceUnitToken(bubble) then
-      selectiveBubbleSupport = true
-      return true
-    end
-  end
-
-  if sawBubble then
-    selectiveBubbleSupport = false
-    return false
-  end
-
-  return nil
-end
-
-local function HideSelectiveValeeraBubbles()
-  local companionGuid, companionUnitToken = GetTrackedValeeraCompanion()
-  if not (companionGuid or companionUnitToken) then
-    return true
-  end
-
-  local ok, bubbles = pcall(C_ChatBubbles.GetAllChatBubbles)
-  if not ok or type(bubbles) ~= "table" then
-    selectiveBubbleSupport = false
-    return false
-  end
-
-  local sawBubble = false
-  local sawOwnerMetadata = false
-
-  for _, bubble in ipairs(bubbles) do
-    sawBubble = true
-
-    local sourceUnitToken = GetBubbleSourceUnitToken(bubble)
-    local sourceGuid = GetBubbleSourceGUID(bubble)
-    if not sourceGuid and sourceUnitToken and UnitGUIDAPI then
-      sourceGuid = UnitGUIDAPI(sourceUnitToken)
-    end
-
-    if sourceUnitToken or sourceGuid then
-      sawOwnerMetadata = true
-    end
-
-    local tokenMatch = sourceUnitToken and sourceUnitToken == companionUnitToken
-    local guidMatch = companionGuid and sourceGuid and sourceGuid == companionGuid
-    if tokenMatch or guidMatch then
-      HideBubbleFrame(bubble)
-    end
-  end
-
-  if sawBubble and not sawOwnerMetadata then
-    selectiveBubbleSupport = false
-    return false
-  end
-
-  return true
-end
-
-local function StartSelectiveBubbleSuppression()
-  if bubbleTicker then
-    return true
-  end
-
-  if EvaluateSelectiveBubbleSupport() ~= true then
-    return false
-  end
-
-  bubbleTicker = C_Timer.NewTicker(0.2, function()
-    if not HideSelectiveValeeraBubbles() then
-      StopSelectiveBubbleSuppression()
-      if RefreshBubbleState then
-        RefreshBubbleState("selective-unsupported")
-      end
-    end
-  end)
-
-  return HideSelectiveValeeraBubbles()
 end
 
 local function IsDelveScenarioType(scenarioType)
@@ -378,32 +197,21 @@ local function UpdateDelveState()
 end
 
 local function ApplyBubbleStrategy(strategy)
-  if strategy ~= activeBubbleStrategy then
-    StopSelectiveBubbleSuppression()
-    RestoreBubbleCVars()
-    activeBubbleStrategy = "off"
+  if strategy == activeBubbleStrategy then
+    return
   end
 
-  if strategy == "valeera-only" then
-    if StartSelectiveBubbleSuppression() then
-      activeBubbleStrategy = "valeera-only"
-      return
-    end
+  RestoreBubbleCVars()
 
-    strategy = isInDelve and "delve-wide" or "off"
-  end
-
-  if strategy == "delve-wide" then
-    if ApplyDelveWideBubbleFallback() then
-      activeBubbleStrategy = "delve-wide"
-      return
-    end
+  if strategy == "delve-wide" and ApplyDelveWideBubbleFallback() then
+    activeBubbleStrategy = "delve-wide"
+    return
   end
 
   activeBubbleStrategy = "off"
 end
 
-RefreshBubbleState = function(reason)
+local function RefreshBubbleState(reason)
   if not isInitialized then
     return
   end
@@ -412,13 +220,8 @@ RefreshBubbleState = function(reason)
 
   local shouldSuppressBubbles = settings.isMuted and settings.muteBubbles
   local strategy = "off"
-  if shouldSuppressBubbles then
-    local support = EvaluateSelectiveBubbleSupport()
-    if support == true then
-      strategy = "valeera-only"
-    elseif isInDelve then
-      strategy = "delve-wide"
-    end
+  if shouldSuppressBubbles and isInDelve then
+    strategy = "delve-wide"
   end
 
   ApplyBubbleStrategy(strategy)
@@ -497,39 +300,18 @@ local function ParseIdList(input)
   return results
 end
 
--- Bulk operations helper for large ID lists
-local function ProcessBulkIds(validIds, operation)
-  local BATCH_SIZE = 50 -- Process in batches to avoid chat spam
+-- Bulk operations helper for custom ID lists
+local function ProcessBulkIds(validItems, operation)
   local processed = 0
-  
-  for i = 1, #validIds, BATCH_SIZE do
-    local batch = {}
-    local batchEnd = math.min(i + BATCH_SIZE - 1, #validIds)
-    
-    for j = i, batchEnd do
-      tinsert(batch, validIds[j])
-    end
-    
+  for _, item in ipairs(validItems) do
     if operation == "add" then
-      for _, item in ipairs(batch) do
-        settings.customList[item.id] = true
-        processed = processed + 1
-      end
-    elseif operation == "remove" then
-      for _, item in ipairs(batch) do
-        if settings.customList[item.id] then
-          settings.customList[item.id] = nil
-          processed = processed + 1
-        end
-      end
-    end
-    
-    -- Show progress for large operations
-    if #validIds > BATCH_SIZE and i > 1 then
-      print(("  Processing... %d/%d"):format(batchEnd, #validIds))
+      settings.customList[item.id] = true
+      processed = processed + 1
+    elseif operation == "remove" and settings.customList[item.id] then
+      settings.customList[item.id] = nil
+      processed = processed + 1
     end
   end
-  
   return processed
 end
 
@@ -573,9 +355,8 @@ local function InitializeSettings()
   local oldVersion = settings.version
   CopyMissingDefaults(settings, DEFAULTS)
 
-  if settings.bubbleFallbackMode ~= "auto" then
-    settings.bubbleFallbackMode = "auto"
-  end
+  -- bubbleFallbackMode was removed in 1.2.0; scrub it from older saved variables.
+  settings.bubbleFallbackMode = nil
 
   if oldVersion ~= ADDON_VERSION then
     settings.version = ADDON_VERSION
@@ -592,7 +373,21 @@ local function InitializeSettings()
   isInitialized = true
 end
 
+local finalMuteListCache
+
 local function GetFinalMuteList()
+  -- The composed list only changes when one of these inputs changes, so this
+  -- signature lets repeated calls (toggles, status checks) reuse the cached,
+  -- already-sorted result instead of rebuilding it every time.
+  local customCount = 0
+  for _ in pairs(settings.customList) do
+    customCount = customCount + 1
+  end
+  local signature = tconcat({ tostring(muteCritical), tostring(muteDundun), tostring(muteNanea), customCount }, "|")
+  if finalMuteListCache and finalMuteListCache.signature == signature then
+    return finalMuteListCache.ids
+  end
+
   local seen = {}
   
   -- Add base sounds
@@ -635,19 +430,43 @@ local function GetFinalMuteList()
     tinsert(result, id) 
   end
   tsort(result)
-  
+
+  finalMuteListCache = { signature = signature, ids = result }
   return result
 end
 
+-- Tracks what is currently muted in the audio engine so repeated toggles only
+-- touch sound IDs whose muted state actually changed.
+local lastAppliedMutes = {}
+
 local function ApplyMuteState()
-  if not isInitialized then 
-    return 
+  if not isInitialized then
+    return
   end
-  
-  local muteList = GetFinalMuteList()
-  for _, id in ipairs(muteList) do
-    SetSoundMuted(id, isMuted)
+
+  if not isMuted then
+    for id in pairs(lastAppliedMutes) do
+      SetSoundMuted(id, false)
+    end
+    wipe(lastAppliedMutes)
+    return
   end
+
+  local desired = {}
+  for _, id in ipairs(GetFinalMuteList()) do
+    desired[id] = true
+    if not lastAppliedMutes[id] then
+      SetSoundMuted(id, true)
+    end
+  end
+
+  for id in pairs(lastAppliedMutes) do
+    if not desired[id] then
+      SetSoundMuted(id, false)
+    end
+  end
+
+  lastAppliedMutes = desired
 end
 
 local function TryOpenSettingsCategory()
@@ -822,8 +641,10 @@ local function HandleSlashCommand(msg)
     
     -- Create lookup tables for built-in lists
     local builtInLookup = {}
-    for _, id in ipairs(baseMuteList) do builtInLookup[id] = "base" end
+    for _, id in ipairs(baseMuteList) do builtInLookup[id] = "Valeera" end
     for _, id in ipairs(criticalMuteList) do builtInLookup[id] = "critical" end
+    for _, id in ipairs(dundunMuteList) do builtInLookup[id] = "Dundun" end
+    for _, id in ipairs(naneaMuteList) do builtInLookup[id] = "Nanea" end
     
     -- Process valid IDs
     for _, item in ipairs(parseResults.valid) do
@@ -880,33 +701,20 @@ local function HandleSlashCommand(msg)
     end
     
     if #inBuiltIn > 0 then
-      -- Group by list type
-      local baseIds, criticalIds = {}, {}
+      -- Group by list name
+      local groupedByIds = {}
       for _, item in ipairs(inBuiltIn) do
-        if item.list == "base" then
-          tinsert(baseIds, item.id)
-        else
-          tinsert(criticalIds, item.id)
-        end
+        groupedByIds[item.list] = groupedByIds[item.list] or {}
+        tinsert(groupedByIds[item.list], item.id)
       end
       
-      if #baseIds > 0 then
-        tsort(baseIds)
-        if #baseIds <= 10 then
-          print(("  ℹ Already in base mute list (%d): %s"):format(#baseIds, tconcat(baseIds, ", ")))
+      for listName, ids in pairs(groupedByIds) do
+        tsort(ids)
+        if #ids <= 10 then
+          print(("  ℹ Already in %s mute list (%d): %s"):format(listName, #ids, tconcat(ids, ", ")))
         else
-          print(("  ℹ Already in base mute list (%d IDs, showing first 10): %s..."):format(
-            #baseIds, tconcat({unpack(baseIds, 1, 10)}, ", ")))
-        end
-      end
-      
-      if #criticalIds > 0 then
-        tsort(criticalIds)
-        if #criticalIds <= 10 then
-          print(("  ℹ Already in critical mute list (%d): %s"):format(#criticalIds, tconcat(criticalIds, ", ")))
-        else
-          print(("  ℹ Already in critical mute list (%d IDs, showing first 10): %s..."):format(
-            #criticalIds, tconcat({unpack(criticalIds, 1, 10)}, ", ")))
+          print(("  ℹ Already in %s mute list (%d IDs, showing first 10): %s..."):format(
+            listName, #ids, tconcat({unpack(ids, 1, 10)}, ", ")))
         end
       end
     end
@@ -1460,56 +1268,63 @@ local function RegisterSettings()
       hideOnEscape = true,
     }
     
-    local idLines = {}
-    
-    function panel.refreshCustomList()
-      -- Clear existing lines
-      for _, line in ipairs(idLines) do
-        line:Hide()
+    -- Reusable row pool: avoids recreating frames and fontstrings on every refresh.
+    local idRows = {}
+    local emptyText = scrollChild:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+    emptyText:SetPoint("TOPLEFT", 8, -8)
+    emptyText:SetText("|cff888888No custom sound IDs configured.|r")
+
+    local function AcquireIdRow(index)
+      local row = idRows[index]
+      if not row then
+        row = CreateFrame("Frame", nil, scrollChild)
+        row:SetSize(320, 24)
+        local idText = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+        idText:SetPoint("LEFT", 4, 0)
+        local removeBtn = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+        removeBtn:SetPoint("RIGHT", -4, 0)
+        removeBtn:SetSize(60, 20)
+        removeBtn:SetText("Remove")
+        row.idText = idText
+        row.removeBtn = removeBtn
+        idRows[index] = row
       end
-      wipe(idLines)
-      
+      return row
+    end
+
+    function panel.refreshCustomList()
       -- Get sorted custom IDs
       local customIds = {}
       for id in pairs(settings.customList) do
         tinsert(customIds, id)
       end
       tsort(customIds)
-      
+
       if #customIds == 0 then
-        local emptyText = scrollChild:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-        emptyText:SetPoint("TOPLEFT", 8, -8)
-        emptyText:SetText("|cff888888No custom sound IDs configured.|r")
-        tinsert(idLines, emptyText)
+        for _, row in ipairs(idRows) do
+          row:Hide()
+        end
+        emptyText:Show()
         scrollChild:SetHeight(30)
         return
       end
-      
-      -- Create a line for each ID
-      local yOffset = -4
+
+      emptyText:Hide()
       for i, id in ipairs(customIds) do
-        local line = CreateFrame("Frame", nil, scrollChild)
-        line:SetSize(320, 24)
-        line:SetPoint("TOPLEFT", 4, yOffset)
-        
-        local idText = line:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-        idText:SetPoint("LEFT", 4, 0)
-        idText:SetText(tostring(id))
-        
-        local removeBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
-        removeBtn:SetPoint("RIGHT", -4, 0)
-        removeBtn:SetSize(60, 20)
-        removeBtn:SetText("Remove")
-        removeBtn:SetScript("OnClick", function()
+        local row = AcquireIdRow(i)
+        row:SetPoint("TOPLEFT", 4, -4 - (i - 1) * 24)
+        row.idText:SetText(tostring(id))
+        row.removeBtn:SetScript("OnClick", function()
           settings.customList[id] = nil
           ApplyMuteState()
           panel.refreshCustomList()
         end)
-        
-        tinsert(idLines, line)
-        yOffset = yOffset - 24
+        row:Show()
       end
-      
+      for i = #customIds + 1, #idRows do
+        idRows[i]:Hide()
+      end
+
       scrollChild:SetHeight(math.max(150, #customIds * 24 + 8))
     end
     
@@ -1544,7 +1359,6 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     RefreshBubbleState("addon-loaded")
     
   elseif event == "PLAYER_LOGIN" then
-    UpdateDelveState()
     RefreshBubbleState("player-login")
     C_Timer.After(1, function()
       RegisterSettings()
@@ -1554,7 +1368,6 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     self:UnregisterEvent("PLAYER_LOGIN")
 
   elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" or event == "SCENARIO_UPDATE" or event == "SCENARIO_CRITERIA_UPDATE" then
-    UpdateDelveState()
     RefreshBubbleState(event)
 
   elseif event == "CVAR_UPDATE" then
@@ -1564,7 +1377,6 @@ eventFrame:SetScript("OnEvent", function(self, event, addonName)
     end
 
   elseif event == "PLAYER_LOGOUT" then
-    StopSelectiveBubbleSuppression()
     RestoreBubbleCVars()
   end
 end)

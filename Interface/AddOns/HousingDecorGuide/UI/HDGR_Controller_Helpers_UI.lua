@@ -79,6 +79,15 @@ end
 
 -- ===== Workflow dialogs ==================================================
 -- StaticPopup confirm: id, text, accept, cancel, onAccept, input (bool), maxLetters, data.
+
+-- Resolve a StaticPopup dialog's edit box. Retail 12.0 renamed the frame field
+-- (self.editBox -> self.EditBox) and Blizzard's own StaticPopup.lua reaches it
+-- through the dialog method instead. One resolver so OnShow and OnAccept can
+-- never end up reading different boxes.
+local function _popupEditBox(dlg)
+    return dlg.EditBox or dlg.editBox or (dlg.GetEditBox and dlg:GetEditBox())  -- exception(boundary): Blizzard renamed the dialog's edit-box field in 12.0
+end
+
 function UI.Confirm(opts)
     if type(opts) ~= "table" then return end
     local popupDialogs = _G.StaticPopupDialogs
@@ -93,7 +102,7 @@ function UI.Confirm(opts)
         maxLetters = opts.maxLetters or 64,  -- exception(boundary): opts API default
         OnAccept   = function(self, data)
             if opts.input then
-                local box = self.editBox or (self.GetEditBox and self:GetEditBox())
+                local box = _popupEditBox(self)
                 local val = box and box.GetText and box:GetText() or ""
                 if opts.onAccept then opts.onAccept(val, data) end
             else
@@ -101,12 +110,21 @@ function UI.Confirm(opts)
             end
         end,
         EditBoxOnEnterPressed = opts.input and function(self)
+            -- Enter must do exactly what the accept button does, data included:
+            -- the dialog frame carries the per-show data StaticPopup_Show stored.
+            local dlg = self:GetParent()
             local val = self:GetText() or ""
-            if opts.onAccept then opts.onAccept(val) end
-            self:GetParent():Hide()
+            if opts.onAccept then opts.onAccept(val, dlg.data) end
+            dlg:Hide()
         end or nil,
         EditBoxOnEscapePressed = opts.input and function(self)
             self:GetParent():Hide()
+        end or nil,
+        OnShow = opts.input and function(self, data)
+            local box = _popupEditBox(self)
+            -- HighlightText() selects the whole prefill: SetText leaves the caret
+            -- at the end, so without it typing a new name APPENDS to the old one.
+            if box and data and data.prefill then box:SetText(data.prefill); box:HighlightText() end  -- exception(optional): prefill is an optional field of the caller's data table
         end or nil,
         timeout = 0, whileDead = true, hideOnEscape = true,
     }
@@ -115,6 +133,7 @@ end
 
 -- Modern MenuUtil-based context menu. Auto-scroll cap at 20 items (480px default).
 -- items: { text, callback } | { isTitle } | { isDivider } | { kind="radio", text, value, selected, callback }
+--        | { kind="checkbox", text, isSelected=fn, callback=fn }
 -- opts: maxHeight (explicit cap), noAutoScroll.
 local SCROLL_AUTO_THRESHOLD  = 20
 local SCROLL_AUTO_MAX_HEIGHT = 480
@@ -128,6 +147,9 @@ function UI.ShowMenu(owner, items, opts)
                 root:CreateDivider()
             elseif item.isTitle then
                 root:CreateTitle(item.text or "")
+            elseif item.kind == "checkbox" then
+                -- Stays open across toggles; isSelected is polled live (MenuUtil re-asks).
+                root:CreateCheckbox(item.text or "", item.isSelected, item.callback)
             elseif item.kind == "radio" and root.CreateRadio then
                 root:CreateRadio(item.text or "",
                     function() return item.selected == true end,
@@ -147,6 +169,38 @@ function UI.ShowMenu(owner, items, opts)
             if maxH then root:SetScrollMode(maxH) end
         end
     end)
+end
+
+-- ===== Item links ========================================================
+
+-- Shift-click an item row: hand the link to Blizzard's own link chain.
+--
+-- ChatFrameUtil.InsertLink walks its listeners in order -- a focused macro
+-- editor, the professions search, a Communities chat box, the active chat
+-- window -- and ends at AuctionHouseFrame:SetSearchText when the AH is open on
+-- a Buy tab. That last hop is how a material row searches the auction house.
+-- HDG never touches the search box itself, so the gesture keeps working when
+-- Blizzard moves it (HDG classic poked SearchBar.SearchBox directly).
+--
+-- Returns false when the item has no link yet OR nothing was listening, so a
+-- caller whose whole point is the auction house can say so instead of looking
+-- broken. The AH is not a Vamoose surface: a no-op there is indistinguishable
+-- from a dead button.
+function UI.LinkItem(itemID)
+    local _, link = C_Item.GetItemInfo(itemID)  -- exception(boundary): itemLink nil on cold item cache
+    if not link then return false end
+    return _G.ChatFrameUtil.InsertLink(link) and true or false
+end
+
+-- The material-list flavour: same link, plus the notice when it goes nowhere.
+-- Both materials lists (Warehouse and Recipes) use this so the gesture reads
+-- the same in either place. Named for the surface, not the mechanism -- decor
+-- and acquisition rows link too, but silently, because linking a piece of
+-- decor to chat is the point there and the auction house rarely is.
+function UI.LinkMaterial(itemID, name)
+    if UI.LinkItem(itemID) then return true end
+    HDG.Log:Notify("warn", HDG.Locale:Get("MAT_LINK_NO_TARGET"):format(name or "this material"))
+    return false
 end
 
 -- ===== Row factory builders ==============================================

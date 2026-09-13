@@ -1,6 +1,6 @@
 # Auctionator
 
-## [334](https://github.com/TheMouseNest/Auctionator/tree/334) (2026-08-11)
-[Full Changelog](https://github.com/TheMouseNest/Auctionator/compare/333...334) 
+## [336](https://github.com/TheMouseNest/Auctionator/tree/336) (2026-08-26)
+[Full Changelog](https://github.com/TheMouseNest/Auctionator/compare/335...336) 
 
-- Update toc for 12.1.0  
+- Prevent showing auction prices on WuE gear  

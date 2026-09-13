@@ -1,7 +1,7 @@
 -- HDGR_CatalogOverrides -- itemID-keyed field-level overrides applied to
 -- catalog rows at HousingCatalogObserver:BuildRow time.
 --
--- Two override categories supported per entry:
+-- Three override categories supported per entry:
 --
 --   1. Field-level field corrections -- correct KNOWN-WRONG values the
 --      catalog ships (typo, mis-tagged zone, faction-gate the catalog claims
@@ -18,7 +18,13 @@
 --        [256923] = { sources = { { type = 5, name = "Chel the Chip",
 --                                    detail = "Found at active Abundant Harvest" } } }
 --
--- Both can coexist on the same itemID. Sparse: items without overrides have
+--   3. Vendor removal -- the catalog names a merchant who does NOT stock the
+--      piece. `notSoldBy` lists that merchant's name(s) as the catalog spells
+--      them, and BuildRow drops those records from the item's vendor list.
+--      Nothing is added: the catalog keeps naming the real seller itself.
+--        [245405] = { notSoldBy = { "Ransa Greyfeather" } }
+--
+-- All three can coexist on the same itemID. Sparse: items without overrides have
 -- no entry. Override application is transparent to selectors -- observer
 -- applies inside BuildRow so downstream sees the corrected row directly.
 
@@ -37,14 +43,77 @@ HDGR_CatalogOverrides = {
     -- The catalog has no vocabulary for ranks, and inventing one to model three
     -- items would be a schema for a special case.
     --
-    -- CURATION IS THE STOPGAP, NOT THE ANSWER. Enum.TooltipDataLineType
-    -- .UsageRequirement (43) marks these lines structurally, so the whole class
-    -- is detectable without hand-listing it -- see the tooltip-gate scanner in
-    -- TODO_HousingDecorGuide.md. These three entries stay useful even then:
-    -- an override is still the right answer for anything the scan cannot see.
+    -- CURATION IS THE ONLY ANSWER FOR THIS CLASS (settled 2026-08-15 at the
+    -- Deeprun Tram vendor, re-confirmed 2026-09-07 with the Loveseat below). The
+    -- red line reaches TooltipData only in MERCHANT context, as ErrorLine(41)
+    -- with no requirementType, and only for a character who still LACKS the
+    -- rank; GetItemByID / GetHyperlink / GetOwnedItemByID all return a reduced
+    -- tooltip without it. So no catalog sweep can find these, and an account
+    -- that already has the rank cannot even re-read the text -- a tester's
+    -- reading of the line at the vendor is the evidence there is.
     [263026] = { factionGate = { factionName = "Brawl'gar Arena", standing = "Rank 2" } },  -- Brawler's Barricade
     [259071] = { factionGate = { factionName = "Brawl'gar Arena", standing = "Rank 5" } },  -- Brawler's Guild Punching Bag
     [255840] = { factionGate = { factionName = "Brawl'gar Arena", standing = "Rank 7" } },  -- Champion Brawler's Gloves
+
+    -- ===== Gallagio: Ando the Gat's Loveseat needs Loyalty Rewards Club renown 12 ==
+    -- Same shape as Brawl'gar: the catalog sourceText is Vendor:/Zone:/Cost:
+    -- only (costdump 239213, 2026-09-07) and the three tooltip getters show five
+    -- clean lines. The item tooltip itself reads "Requires Renown rank 12 with
+    -- the Gallagio Loyalty Rewards Club" (ReganB at the vendor, Discord
+    -- 2026-09-07; wording confirmed from the item tooltip the same day), so the
+    -- standing uses HDG's renown vocabulary, which _standingStringToCode already
+    -- encodes. Unlike Brawl'gar the club IS a faction -- 2685, a friendship rep
+    -- whose ranks RepObserver compares with that same encoding -- so this
+    -- becomes a LIVE gate the day 2685 joins REP_FACTIONS; kept text-only to
+    -- match the Brawl'gar entries (owner ruling, 2026-09-07). His other piece,
+    -- the Gallagio L.U.C.K. Spinner, needs no entry: the catalog already names
+    -- its gate, "Achievement: One Rank Higher".
+    [239213] = { factionGate = { factionName = "Gallagio Loyalty Rewards Club", standing = "Renown 12" } },  -- Well-Lit Incontinental Loveseat
+
+    -- ===== Thunder Totem: Ransa Greyfeather does not sell Torv Dubstomp's stock ==
+    -- The catalog's sourceText names Ransa Greyfeather, the Highmountain Tribe
+    -- emissary, as the FIRST seller of these twelve Highmountain pieces, with
+    -- Torv Dubstomp -- Thunder Totem's Decor Specialist, a few steps from her --
+    -- second at the same price (ProfTools catalog scan, 2026-09-02). She stocks
+    -- only the eight reputation-gated pieces (Tauren Waterwheel, Tauren
+    -- Windmill, Thunder Totem Kiln, Highmountain Totem, Stonebull Canoe, Small
+    -- Highmountain Drum, Riverbend Jar, Tauren Hanging Brazier); these twelve
+    -- are Torv's alone -- reganart bought them from him (Discord, 2026-09-02),
+    -- and Wowhead's merchant scans list them under Torv and not under her.
+    -- Two vendors of equal rank keep the catalog's order, so her name won the
+    -- decor card, the source line and a Shop by Vendor page. The three other
+    -- pieces he sells (Skyhorn Banner, Hanging Arrow Kite, Thunder Totem
+    -- Mailbox) already name him alone in the 12.1 catalog and need no entry.
+    [245405] = { notSoldBy = { "Ransa Greyfeather" } },  -- Large Highmountain Drum
+    [245409] = { notSoldBy = { "Ransa Greyfeather" } },  -- Dried Whitewash Corn
+    [245453] = { notSoldBy = { "Ransa Greyfeather" } },  -- Whitewash River Basket
+    [245456] = { notSoldBy = { "Ransa Greyfeather" } },  -- Warbrave's Brazier
+    [245457] = { notSoldBy = { "Ransa Greyfeather" } },  -- Riverbend Netting
+    [245460] = { notSoldBy = { "Ransa Greyfeather" } },  -- Skyhorn Storage Chest
+    [245461] = { notSoldBy = { "Ransa Greyfeather" } },  -- Tauren Vertical Windmill
+    [256913] = { notSoldBy = { "Ransa Greyfeather" } },  -- Tauren Jeweler's Roller
+    [257397] = { notSoldBy = { "Ransa Greyfeather" } },  -- Tauren Storyteller's Frame
+    [257721] = { notSoldBy = { "Ransa Greyfeather" } },  -- Skyhorn Arrow Kite
+    [257723] = { notSoldBy = { "Ransa Greyfeather" } },  -- Skyhorn Eagle Kite
+    [260698] = { notSoldBy = { "Ransa Greyfeather" } },  -- Kobold Trassure Pile
+
+    -- ===== Neighbourhood pet decor vendors: Perry Winkles / Agratha ============
+    -- The catalog gives these eight no source line at all (sourceType 0, blank
+    -- sourceName in the 12.1 catalog scan), yet both <Pet Decor Vendor> NPCs stock
+    -- every one of them for 50 gold: Perry Winkles in Founder's Point and Agratha
+    -- in Razorwind Shores (KevinW on CurseForge, 2026-09-09, with a /way for each;
+    -- Wowhead's merchant lists for the two NPCs agree). The ninth thing on their
+    -- counters, Mechanically Indistinguishable Pepe, is left out on purpose: it
+    -- needs the Pepe decor collected first, so it is a spare copy for people who
+    -- already have one, not a way to get it.
+    [263880] = { sources = { { type = 5, name = 'Perry Winkles', detail = "Founder's Point", cost = { gold = 500000 } }, { type = 5, name = 'Agratha', detail = 'Razorwind Shores' } } },  -- Cherished Pet's Rug
+    [277121] = { sources = { { type = 5, name = 'Perry Winkles', detail = "Founder's Point", cost = { gold = 500000 } }, { type = 5, name = 'Agratha', detail = 'Razorwind Shores' } } },  -- Cozy Bird Nest
+    [277138] = { sources = { { type = 5, name = 'Perry Winkles', detail = "Founder's Point", cost = { gold = 500000 } }, { type = 5, name = 'Agratha', detail = 'Razorwind Shores' } } },  -- Silvermoon Dragonhawk Incubator
+    [277142] = { sources = { { type = 5, name = 'Perry Winkles', detail = "Founder's Point", cost = { gold = 500000 } }, { type = 5, name = 'Agratha', detail = 'Razorwind Shores' } } },  -- Westfall Pet Cage
+    [277144] = { sources = { { type = 5, name = 'Perry Winkles', detail = "Founder's Point", cost = { gold = 500000 } }, { type = 5, name = 'Agratha', detail = 'Razorwind Shores' } } },  -- Crossroads Pet Cage
+    [277149] = { sources = { { type = 5, name = 'Perry Winkles', detail = "Founder's Point", cost = { gold = 500000 } }, { type = 5, name = 'Agratha', detail = 'Razorwind Shores' } } },  -- Crude Pet Cage
+    [277160] = { sources = { { type = 5, name = 'Perry Winkles', detail = "Founder's Point", cost = { gold = 500000 } }, { type = 5, name = 'Agratha', detail = 'Razorwind Shores' } } },  -- Cozy Lightbloom Lilypad
+    [277163] = { sources = { { type = 5, name = 'Perry Winkles', detail = "Founder's Point", cost = { gold = 500000 } }, { type = 5, name = 'Agratha', detail = 'Razorwind Shores' } } },  -- Loyal Companion's Plinth
 
     -- Wooden Mug
     [239162] = { sources = { { type = 5, name = 'Peter', detail = 'Lunarfall', cost = { gold = 500000, currencies = { { id = 824, amount = 100 } } } }, { type = 5, name = 'Vora Strongarm', detail = 'Frostwall' } } },
@@ -176,43 +245,43 @@ HDGR_CatalogOverrides = {
     -- Lush Garden Fungal Fountain
     [258888] = { sources = { { type = 12, name = 'In-Game Shop' } } },
     -- Paw Pal Water Dish
-    [259044] = { sources = { { type = 12, name = 'In-Game Shop' } } },
+    [259044] = { sources = { { type = 12, name = 'In-Game Shop' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Paw Pal Bed and Blanket
-    [259045] = { sources = { { type = 12, name = 'In-Game Shop' } } },
+    [259045] = { sources = { { type = 12, name = 'In-Game Shop' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Paw Pal Bed
-    [259046] = { sources = { { type = 12, name = 'In-Game Shop' } } },
+    [259046] = { sources = { { type = 12, name = 'In-Game Shop' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary's Chess Match
-    [259057] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259057] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary's Chess Board
-    [259058] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259058] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Dark Bishop
-    [259059] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259059] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Dark Rook
-    [259060] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259060] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Dark Queen
-    [259061] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259061] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Dark Pawn
-    [259062] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259062] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Dark Knight
-    [259063] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259063] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Dark King
-    [259064] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259064] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Light Bishop
-    [259065] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259065] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Light Rook
-    [259066] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259066] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Light Queen
-    [259067] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259067] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Light Pawn
-    [259068] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259068] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Light Knight
-    [259069] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259069] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sanctuary Chess Light King
-    [259070] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' } } },
+    [259070] = { sources = { { type = 10, name = 'Promotional', detail = 'Diablo IV: Lord of Hatred' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Paw Pal Dog House Frame
-    [259093] = { sources = { { type = 12, name = 'In-Game Shop' } } },
+    [259093] = { sources = { { type = 12, name = 'In-Game Shop' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Paw Pal Dog House Elwynn Roof
-    [259094] = { sources = { { type = 12, name = 'In-Game Shop' } } },
+    [259094] = { sources = { { type = 12, name = 'In-Game Shop' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Miniature Replica Dark Portal
     [260785] = { sources = { { type = 5, name = 'Gabbi', detail = 'Orgrimmar', cost = { gold = 15000000 } }, { type = 5, name = 'Tuuran', detail = 'Stormwind City' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Spring Blossom Tree
@@ -220,7 +289,7 @@ HDGR_CatalogOverrides = {
     -- Spring Blossom Tree Pond
     [263291] = { sources = { { type = 12, name = 'In-Game Shop' } } },
     -- Corked Bottle of Liquid Mystery (promo, NOT Shop -- catalog mis-tags as Shop/World Vendors)
-    [263383] = { shop = false, sources = { { type = 10, name = 'Promotional' } } },
+    [263383] = { shop = false, sources = { { type = 10, name = 'Promotional' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Midnight Alchemist's Shop Sign
     [263997] = { sources = { { type = 5, name = 'Melaris', detail = 'Silvermoon City', cost = { gold = 50000 } }, { type = 1, name = 'Alchemizing at Midnight', detail = 'Professions' } } },
     -- Midnight Blacksmith's Shop Sign
@@ -246,17 +315,19 @@ HDGR_CatalogOverrides = {
     -- Three-Tier Zul'Aman Shelf
     [264254] = { sources = { { type = 5, name = 'Chel the Chip', detail = 'Found at active Abundant Harvest', cost = { currencies = { { id = 3377, amount = 800 } } } } } },
     -- Paw Pal Dog House Durotar Roof
-    [264275] = { sources = { { type = 12, name = 'In-Game Shop' } } },
+    [264275] = { sources = { { type = 12, name = 'In-Game Shop' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Paw Pal Dog House Eversong Roof
-    [264276] = { sources = { { type = 12, name = 'In-Game Shop' } } },
+    [264276] = { sources = { { type = 12, name = 'In-Game Shop' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Paw Pal Dog House Shadowglen Roof
-    [264277] = { sources = { { type = 12, name = 'In-Game Shop' } } },
+    [264277] = { sources = { { type = 12, name = 'In-Game Shop' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Sturdy Portable Ice Chest (promo, NOT Shop -- catalog mis-tags as Shop/World Vendors)
-    [264278] = { shop = false, sources = { { type = 10, name = 'Promotional' } } },
+    [264278] = { shop = false, sources = { { type = 10, name = 'Promotional' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
+    -- Perch of the Dawnfire Phoenix
+    [276873] = { sources = { { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Tall Corked Bottle of Liquid Mystery (promo)
-    [264279] = { shop = false, sources = { { type = 10, name = 'Promotional' } } },
+    [264279] = { shop = false, sources = { { type = 10, name = 'Promotional' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Short Corked Bottle of Liquid Mystery (promo)
-    [264280] = { shop = false, sources = { { type = 10, name = 'Promotional' } } },
+    [264280] = { shop = false, sources = { { type = 10, name = 'Promotional' }, { type = 5, name = 'Dennia Silvertongue', detail = 'Silvermoon City' } } },
     -- Bluebird's Golden Cage
     [264282] = { sources = { { type = 12, name = 'In-Game Shop' } } },
     -- Amani Ritual Altar

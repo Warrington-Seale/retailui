@@ -69,23 +69,24 @@ NSI.AuraSoundCategories = {
         -- Season 2
         {key = 3379, entries = { -- Nymrissa Wavecaller
             {spellID = 1258901, sound = "Targeted"}, -- Water Jet
-            {spellID = 1257608, sound = "Targeted"}, -- Frost Barrage
+            {spellID = 1313393, sound = "Debuff"}, -- Chilling Frost
         }},
         {key = 3470, entries = { -- Nek'zali the Soulcoiler
             {spellID = 1306666, sound = "Targeted"}, -- Hungering Pyre
             {spellID = 1294933, sound = "Clear"}, -- Slithering Flame
-            {spellID = 1287434, sound = "Debuff"}, -- Essence Rend
+            {spellID = 1287427, sound = "Debuff"}, -- Essence Rend
         }},
         {key = 3445, entries = { -- Entombed Sentinels
             {spellID = 1288260, sound = "Targeted"}, -- Unstable Miasma
             {spellID = 1288297, sound = "DropPool"}, -- Clinging Murk
+            {spellID = 1288297, sound = "Move", eventType = "removed"}, -- Clinging Murk
             {spellID = 1296880, sound = "Debuff"}, -- Shifting Protovenom
         }},
         {key = 3455, entries = { -- Vashnik the Malignant
             {spellID = 1295224, sound = "Suck"}, -- Siphoning Infection
-            {spellID = 1295173, sound = "RunOut"}, -- Exploding Infection
-            {spellID = 1294994, sound = "HealAbsorb"}, -- Stygian Infusion
-            {spellID = 1281908, sound = "Targeted"}, -- Plague Froth
+            {spellID = 1294994, sound = "Move"}, -- Stygian Infusion
+            {spellID = 1281913, sound = "Targeted"}, -- Plague Froth
+            {spellID = 1295173, sound = "empty"}, -- Exploding Infection
         }},
         {key = 3497, entries = { -- The Lost Explorers
             {spellID = 1295886, sound = "Fire"}, -- Frostfire Volley (Fire)
@@ -101,8 +102,8 @@ NSI.AuraSoundCategories = {
             {spellID = 1297096, sound = "West"}, -- Raging Crosswinds East Debuff (so we tell player to go West)
             {spellID = 1297111, sound = "East"}, -- Raging Crosswinds West Debuff (so we tell player to go East)
             {spellID = 1305621, sound = "Targeted"}, -- Serpent's Fury
-            {spellID = 1297707, sound = "Spread"}, -- Virulence
-            {spellID = 1299899, sound = "Spread"}, -- Virulence - both debuffs are real, similar to Starsplinters
+            {spellID = 1297707, sound = "Left"}, -- Virulence
+            {spellID = 1299899, sound = "Right"}, -- Virulence - both debuffs are real, similar to Starsplinters
         }},
         {key = 3421, entries = { -- The Twin Fangs
             {spellID = 1293979, sound = "Targeted"}, -- Corrosive Spit
@@ -110,12 +111,16 @@ NSI.AuraSoundCategories = {
         }},
         {key = 3429, entries = { -- The Coiled Altar
             {spellID = 1283485, sound = "Targeted"}, -- Guillotine
-            {spellID = 1282419, sound = "Orb"}, -- Volatile Venom
-            {spellID = 1310498, sound = "Spread"}, -- Mutagenic Venom
+            {spellID = 1299266, sound = "Targeted"}, -- Grim Guillotine
+            {spellID = 1297435, sound = "Targeted"}, -- Dreadmarch
+            {spellID = 1282419, sound = "5seconds321"}, -- Volatile Venom
+            {spellID = 1310498, sound = "5seconds321"}, -- Mutagenic Venom
             {spellID = 1282419, sound = "Move", eventType = "removed"}, -- Volatile Venom
             {spellID = 1310498, sound = "Move", eventType = "removed"}, -- Mutagenic Venom
             {spellID = 1286901, sound = "Bomb"}, -- Gloombomb
-            {spellID = 1286901, sound = "Collect", eventType = "removed"}, -- Gloombomb
+            {spellID = 1310881, sound = "Bomb"}, -- Gloombomb
+            {spellID = 1286837, sound = "Collect"}, -- Gravebound
+            {spellID = 1286837, sound = "Done", eventType = "removed"}, -- Gravebound
             {spellID = 1285911, sound = "Fixate"}, -- Unnerving Fixation
         }},
         {key = 3492, entries = { -- Ula'tek
@@ -184,7 +189,6 @@ NSI.AuraSoundCategories = {
             {spellID = 1297876, sound = "Spread"}, -- Triple Shot
         }},
         {key = "temple_of_sethraliss", label = "Temple of Sethraliss", entries = {
-            {spellID = 1300704, sound = "Fixate"}, -- Fixate
             {spellID = 1311979, sound = "Spread"}, -- Latent Hex
             {spellID = 1311981, sound = "Spread"}, -- Latent Hex
             {spellID = 1290030, sound = "Stack"}, -- A Knot of Snakes

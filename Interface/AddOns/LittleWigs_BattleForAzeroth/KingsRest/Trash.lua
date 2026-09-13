@@ -1,4 +1,3 @@
-if BigWigsLoader.isRetail then return end -- don't load in Midnight+
 --------------------------------------------------------------------------------
 -- TODO
 --
@@ -50,36 +49,35 @@ local prevTable = {}
 -- Localization
 --
 
-local L = mod:GetLocale()
-if L then
-	L.guardian = "Animated Guardian"
-	L.minion = "Minion of Zul"
-	L.champion = "Shadow-Borne Champion"
-	L.shadow_witchdoctor = "Shadow-Borne Witchdoctor"
-	L.warrior = "Shadow-Borne Warrior"
-	L.timalji = "King Timalji"
-	L.wasi = "Queen Wasi"
-	L.rahuai = "King Rahu'ai"
-	L.atu = "Guard Captain Atu"
-	L.mbara = "Seneschal M'bara"
-	L.patla = "Queen Patla"
-	L.raptor = "Skeletal Hunting Raptor"
-	L.aakul = "King A'akul"
-	L.agent = "Bloodsworn Agent"
-	L.purification_construct = "Purification Construct"
-	L.fluid = "Embalming Fluid"
-	L.interment_construct = "Interment Construct"
-	L.hex_priest = "Spectral Hex Priest"
-	L.berserker = "Spectral Berserker"
-	L.spectral_witchdoctor = "Spectral Witch Doctor"
-	L.beastmaster = "Spectral Beastmaster"
-	L.brute = "Spectral Brute"
-	L.zul = "Shadow of Zul"
+local L = mod:SetDefaultLocale({
+	guardian = "Animated Guardian",
+	minion = "Minion of Zul",
+	champion = "Shadow-Borne Champion",
+	shadow_witchdoctor = "Shadow-Borne Witchdoctor",
+	warrior = "Shadow-Borne Warrior",
+	timalji = "King Timalji",
+	wasi = "Queen Wasi",
+	rahuai = "King Rahu'ai",
+	atu = "Guard Captain Atu",
+	mbara = "Seneschal M'bara",
+	patla = "Queen Patla",
+	raptor = "Skeletal Hunting Raptor",
+	aakul = "King A'akul",
+	agent = "Bloodsworn Agent",
+	purification_construct = "Purification Construct",
+	fluid = "Embalming Fluid",
+	interment_construct = "Interment Construct",
+	hex_priest = "Spectral Hex Priest",
+	berserker = "Spectral Berserker",
+	spectral_witchdoctor = "Spectral Witch Doctor",
+	beastmaster = "Spectral Beastmaster",
+	brute = "Spectral Brute",
+	zul = "Shadow of Zul",
 
-	L.healing_tide_totem = 270497
-	L.healing_tide_totem_desc = 270497
-	L.healing_tide_totem_icon = "ability_shaman_healingtide"
-end
+	healing_tide_totem = 270497,
+	healing_tide_totem_desc = 270497,
+	healing_tide_totem_icon = "ability_shaman_healingtide",
+})
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -279,6 +277,52 @@ end
 
 function mod:OnBossDisable()
 	prevTable = {}
+end
+
+--------------------------------------------------------------------------------
+-- Midnight Auras
+--
+
+if mod:Retail() then -- Midnight+
+	mod:SetAuraData({
+		{270003, header = 133935, duration = 2.5, tip = CL.debuffFailureMoveFromCastNote:format(mod:SpellName(270003))}, -- Suppression Slam (Animated Guardian)
+		{269936, header = 133943, duration = 10, tip = CL.debuffTargetedNote:format(mod:SpellName(269936))}, -- Fixate (Minion of Zul)
+		{276031, duration = 6, dispel = "magic", mechanic = "fleeing", tip = CL.debuffFailureMoveFromCastNote:format(mod:SpellName(269936))}, -- Pit of Despair (Minion of Zul)
+		{269972, header = 134174, duration = 12, dispel = "curse", tip = CL.debuffFailureInterruptNote:format(mod:SpellName(269972))}, -- Hex Volley (Risen Hexer)
+		{1306763, header = 137486, duration = 8, dispel = "poison", tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(1306763))}, -- Serpent Strike (Queen Patlaa)
+		{270931, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Shadow Volley (Queen Patlaa)
+		{1297918, header = 137484, duration = 18, dispel = "bleed", mechanic = "bleeding", soundOnAppliedDose = "none", tip = CL.debuffTankAfterCastNote:format(mod:SpellName(1297918))}, -- Mortal Bleed (King A'akul)
+		{1297781, header = 137485, duration = 18, dispel = "bleed", mechanic = "bleeding", soundOnAppliedDose = "none", tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(1297781))}, -- Sudden Rupture (Bloodsworn Assassin)
+		{270927, header = 137474, duration = 6, tip = CL.debuffTargetedNote:format(mod:SpellName(270927))}, -- Bladestorm (King Timalji)
+		{270292, header = 134739, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Purifying Flame (Purification Construct)
+		{271555, header = 137969, duration = 30, tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(271555))}, -- Entomb (Interment Construct)
+		{267763, header = 270502, duration = 12, dispel = "disease", tip = CL.debuffFailureInterruptNote:format(mod:SpellName(267763))}, -- Wretched Discharge (Half-Finished Mummy)
+		{1298104, header = 137989, duration = 12, dispel = "poison", tip = CL.debuffFailureMoveFromCastNote:format(mod:SpellName(1298104))}, -- Putrid Seekers (Embalming Fluid)
+		{1301851, header = 135167, duration = 12, dispel = "bleed", mechanic = "bleeding", soundOnAppliedDose = "none", tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(1301851))}, -- Bloodthirsty Axe (Royal Berserker)
+		{270492, header = 135204, duration = 5, dispel = "curse", mechanic = "polymorphed", tip = CL.debuffFailureInterruptNote:format(mod:SpellName(270492))}, -- Hex (Phantom Hex Priest)
+		{1302028, header = 135231, duration = 15, soundOnAppliedDose = "none", tip = CL.debuffTankAfterCastNote:format(mod:SpellName(1302028))}, -- Soul Crush (Ghostly Brute)
+		{272388, header = 138489, duration = 4, tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(272388))}, -- Shadow Barrage (Shadow of Zul)
+		{1298304, duration = 5, tip = CL.debuffTargetedNote:format(mod:SpellName(1298304))}, -- Dark Revelation (Shadow of Zul)
+		{272021, duration = 30, soundOnAppliedDose = "none", tip = CL.debuffFailureGroupSoakNote:format(mod:SpellName(1309385))}, -- Erupting Darkness (Shadow of Zul)
+		{274387, tip = CL.debuffWalkIntoObjectNote:format(mod:SpellName(1309385))}, -- Absorbed in Darkness (Shadow of Zul)
+	})
+end
+
+--------------------------------------------------------------------------------
+-- Midnight Initialization
+--
+
+if mod:Retail() then -- Midnight+
+	function mod:GetOptions()
+		return {
+		}
+	end
+
+	function mod:OnBossEnable()
+	end
+
+	function mod:OnBossDisable()
+	end
 end
 
 --------------------------------------------------------------------------------

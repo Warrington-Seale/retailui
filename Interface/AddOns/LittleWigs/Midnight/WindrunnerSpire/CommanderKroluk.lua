@@ -7,15 +7,6 @@ if not mod then return end
 mod:SetEncounterID(3058)
 mod:SetRespawnTime(30)
 mod:SetStage(1)
-mod:SetPrivateAuraSounds({
-	{467620, sound = "none", note = CL.tank_hit}, -- Rampage
-	{468659, sound = "alert", note = CL.bleed}, -- Throw Axe
-	{1283247, sound = "none", note = CL.preDebuffNote}, -- Reckless Leap
-	{472054, sound = "none", note = CL.mainDebuffNote}, -- Reckless Leap
-	{1253030, sound = "warning", note = CL.soak}, -- Intimidating Shout
-	{470966, sound = "warning", note = CL.fixate}, -- Bladestorm
-	{468924, sound = "underyou", note = CL.debuffUnderYouNote}, -- Bladestorm
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -39,6 +30,20 @@ mod:SetRenames({
 	[472081] = {CL.leap, CL.you:format(CL.leap), notes = {CL.generalNote, CL.messageOnYouNote}, original = {472081, CL.you:format(mod:SpellName(472081))}}, -- Reckless Leap (Leap)
 	[1253272] = {CL.soak}, -- Intimidating Shout (Soak)
 	[470963] = {470963}, -- Bladestorm
+})
+
+--------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{467620, duration = 5, note = CL.tank_hit}, -- Rampage
+	{468659, duration = 6, dispel = "bleed", mechanic = "bleeding", soundOnApplied = "alert", note = CL.bleed}, -- Throw Axe
+	{1283247, duration = 10, tip = CL.preDebuffNote}, -- Reckless Leap
+	{472054, duration = 12, tip = CL.mainDebuffNote}, -- Reckless Leap
+	{1253030, duration = 6, mechanic = "fleeing", soundOnApplied = "warning", note = CL.soak}, -- Intimidating Shout
+	{470966, duration = 3, soundOnApplied = "warning", note = CL.fixate}, -- Bladestorm
+	{468924, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Bladestorm
 })
 
 --------------------------------------------------------------------------------

@@ -1,0 +1,12 @@
+# track only the UI backup folders; ignore everything else
+*
+!.gitignore
+!.gitattributes
+!Interface/
+!Interface/AddOns/
+!Interface/AddOns/**
+!WTF/
+!WTF/**
+
+# WoW mirrors every saved variable as a .bak on login; not needed
+WTF/**/*.bak

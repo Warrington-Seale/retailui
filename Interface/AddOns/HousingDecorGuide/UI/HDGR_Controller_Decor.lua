@@ -160,8 +160,7 @@ local function _wireDecorClicks(row, ed)
                 return
             end
             if IsShiftKeyDown() then
-                local _, link = C_Item.GetItemInfo(itemID)  -- exception(boundary): itemLink nil on cold item cache
-                if link then _G.ChatFrameUtil.InsertLink(link) end
+                HDG.UI.LinkItem(itemID)
                 return
             end
             -- selectedItemID drives the detail pane (base item data); the
@@ -530,14 +529,10 @@ function DecorController:_wireVendorHyperlink(rootFrame)
     hyperHost:SetScript("OnHyperlinkClick", function(_, link)
         local npcID = _parseVendorLink(link)
         if not npcID then return end
-        -- Transients first so the acquisition view paints in vendor mode with the
-        -- vendor already selected when the view switch lands.
-        CH.Mechanics.SetUITransientView("acquisition", "viewMode", "vendor")
-        CH.Mechanics.SetUITransientView("acquisition", "selectedNpcID", npcID)
-        HDG.Store:Dispatch({
-            type    = HDG.Constants.ACTIONS.UI_SET_PERSISTENT,
-            payload = { key = "view", value = "acquisition" },
-        })
+        -- One code path with the zone scanner + shopping list jumps: filter
+        -- reset, vendor mode, the full SelectVendor stamp (this used to set only
+        -- selectedNpcID, so the previous vendor's item selection survived the jump).
+        CH.Mechanics.JumpToVendor(npcID, nil, nil)
     end)
     hyperHost:SetScript("OnHyperlinkEnter", function(self, link)
         if not _parseVendorLink(link) then return end
@@ -573,7 +568,7 @@ function DecorController:_wireListBox(rootFrame)
     -- SelectionBehaviorMixin sync. Highlight syncs on variantKey (variant rows share an itemID).
     if listBox and listBox.WireStoreSelectionSync then
         listBox:WireStoreSelectionSync("session.ui.decor.selectedVariantKey",
-            function(ed, key) return ed.variantKey == key end)
+            function(ed, key) return key ~= nil and ed.variantKey == key end)
     end
 end
 
@@ -585,7 +580,8 @@ local TAG_TOOLTIP_RECIPE = { Redeemable = "RedeemableTag" }
 local function _makeTagTooltipDef(slot)
     return function()
         -- exception(false-positive): top-level controller def fn (not a row factory)
-        local tags = HDG.Selectors:Call("decor.tagsForFilter", HDG.Store:GetState(), {}) or {}
+        -- Strict: decor.tagsForFilter returns a table on every branch.
+        local tags = HDG.Selectors:Call("decor.tagsForFilter", HDG.Store:GetState(), {})
         local name = tags[slot] and TAG_TOOLTIP_RECIPE[tags[slot]]
         return name and { recipe = name } or nil
     end

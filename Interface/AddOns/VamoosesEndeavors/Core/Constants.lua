@@ -274,6 +274,11 @@ VE.Constants.CURRENCY_IDS = {
     COMMUNITY_COUPONS = 3363,
 }
 
+-- Community Coupons have no cap in 12.1 -- nothing is wasted by banking them,
+-- so this is advice rather than a ceiling: past this balance the header nudges
+-- you to spend instead of hoarding.
+VE.Constants.COUPON_HOARD_THRESHOLD = 10000
+
 -- How long a task completion stays eligible for coupon correlation. The coupon
 -- CURRENCY_DISPLAY_UPDATE lands shortly after INITIATIVE_TASK_COMPLETED, so
 -- anything older than this window can no longer belong to an incoming gain.

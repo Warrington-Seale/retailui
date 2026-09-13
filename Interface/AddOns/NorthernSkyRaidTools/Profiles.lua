@@ -317,6 +317,30 @@ function NSI:AddMissingDefaults()
                 Spacing = -1,
                 Decimals = 3,
             },
+            DebuffOverviewSettings = {
+                GrowDirection = "Up",
+                Anchor = "LEFT",
+                relativeTo = "LEFT",
+                xOffset = 100,
+                yOffset = 0,
+                Width = 300,
+                Height = 40,
+                IconPosition = "Left",
+                textColors = { 1, 1, 1, 1 },
+                barColors = { 1, 0, 0, 1 },
+                backgroundColors = { 0, 0, 0, 0.8 },
+                borderColors = { 0, 0, 0, 1 },
+                Texture = "Atrocity",
+                xTextOffset = 2,
+                yTextOffset = 0,
+                xTimer = -2,
+                yTimer = 0,
+                Font = "Expressway",
+                FontFlags = "OUTLINE",
+                FontSize = 22,
+                TimerFontSize = 22,
+                Spacing = -1,
+            },
             TextSettings = {
                 textColors = { 1, 1, 1, 1 },
                 TextFormat = "%icon%text (%p)",
@@ -467,6 +491,23 @@ function NSI:AddMissingDefaults()
             },
         },
 
+        -- Player Stats Display
+        PlayerStatsDisplay = {
+            enabled = false,
+            Anchor = "CENTER",
+            relativeTo = "CENTER",
+            CustomAnchorFrame = "UIParent",
+            xOffset = 0,
+            yOffset = 250,
+            FrameStrata = "MEDIUM",
+            TextFont = "Expressway",
+            TextFontFlags = "OUTLINE",
+            TextAlign = "CENTER",
+            FontSize = 14,
+            Stats = { Crit = true, Haste = true, Mastery = true },
+            TextColor = { 1, 1, 1, 1 },
+        },
+
         -- Encounter Alerts
         EncounterAlerts = {
             [3176] = {},
@@ -570,6 +611,22 @@ local ignored = {
     ["AuraTrackingSettings"] = true,
     ["AuraSounds"]       = true,
     ["NickNames"]        = true,
+}
+
+local ProfileNoteKeys = {
+    PersonalReminders = true,
+    Reminders = true,
+    PersonalNotes = true,
+    SharedNotes = true,
+    ActivePersonalReminder = true,
+    StoredPersonalReminder = true,
+    StoredSharedReminder = true,
+}
+
+local ProfileSharedDataKeys = {
+    EncounterAlerts = true,
+    AuraSounds = true,
+    AuraTrackingSettings = true,
 }
 
 local function CopyProfileValue(key, value)
@@ -687,7 +744,7 @@ function NSI:CopyFromProfile(name)
     end
 end
 
-function NSI:ExportProfileString()
+function NSI:ExportProfileString(includeSharedData)
     local profileData = NSRT.Profiles[NSRT.CurrentProfile]
     if not profileData then return nil end
     local exportData = {}
@@ -700,12 +757,47 @@ function NSI:ExportProfileString()
         profileName = NSRT.CurrentProfile,
         data = exportData,
     }
+    if includeSharedData then
+        local sharedData = {}
+        for key in pairs(ProfileSharedDataKeys) do
+            sharedData[key] = CopyProfileValue(key, NSRT[key])
+        end
+        exportTable.sharedData = sharedData
+    end
     return self:EncodeExportData(exportTable)
 end
 
-function NSAPI:ImportProfileString(importString, name) -- name is optional
+function NSAPI:ProfileExists(name)
+    return name and NSRT.Profiles and NSRT.Profiles[name] ~= nil
+end
+
+function NSAPI:DeleteProfile(name)
+    if not name then return false end
+    if not NSRT.Profiles or not NSRT.Profiles[name] then
+        return false
+    end
+
+    NSI:DeleteProfile(name)
+    return true
+end
+
+function NSAPI:SetMainProfile(name)
+    if not name then return false end
+    if not NSRT.Profiles or not NSRT.Profiles[name] then
+        return false
+    end
+
+    NSI:SetMainProfile(name)
+    return true
+end
+
+function NSAPI:ImportProfileString(importString, name, allowSharedData) -- name is optional
     local exportTable = NSI:DecodeExportData(importString)
     if type(exportTable) ~= "table" then return nil end
+    local sharedData = type(exportTable.sharedData) == "table" and exportTable.sharedData or nil
+    if sharedData and next(sharedData) and not allowSharedData then
+        return nil, "shared_data"
+    end
     local name = name or exportTable.profileName or "Imported"
     local function EnsureUniqueName(name)
         if NSRT.Profiles[name] then
@@ -724,6 +816,102 @@ function NSAPI:ImportProfileString(importString, name) -- name is optional
         end
     end
     NSI:LoadProfile(name)
+    if sharedData then
+        for key in pairs(ProfileSharedDataKeys) do
+            if sharedData[key] ~= nil then
+                NSRT[key] = CopyProfileValue(key, sharedData[key])
+            end
+        end
+        if sharedData.EncounterAlerts then
+            NSI:FireCallback("NSRT_ALERT_FULL_UPDATE")
+        end
+        if sharedData.AuraSounds then
+            NSI:RebuildAuraSounds()
+        end
+        if sharedData.AuraTrackingSettings then
+            NSI:InitAuraTracking()
+            NSI:RefreshAuraTrackingUI()
+        end
+    end
+    return name
+end
+
+function NSAPI:OverrideProfile(importString, name, options)
+    if not name then
+        return nil, "missing_name"
+    end
+
+    if not NSAPI:ProfileExists(name) then
+        return nil, "profile_not_found"
+    end
+
+    local exportTable = NSI:DecodeExportData(importString)
+    if type(exportTable) ~= "table" then
+        return nil, "invalid_import"
+    end
+
+    options = options or {}
+
+    local sharedData = type(exportTable.sharedData) == "table" and exportTable.sharedData or nil
+    if sharedData and next(sharedData) and not options.allowSharedData then
+        return nil, "shared_data"
+    end
+
+    local preserved = {}
+
+    -- Preserve existing notes if requested.
+    if options.preserveNotes then
+        local source = name == NSRT.CurrentProfile and NSRT or NSRT.Profiles[name]
+
+        for key in pairs(ProfileNoteKeys) do
+            if source[key] ~= nil then
+                preserved[key] = CopyProfileValue(key, source[key])
+            end
+        end
+    end
+
+
+    -- Build the new profile from export
+    local importedProfile = {}
+
+    if type(exportTable.data) == "table" then
+        for key, value in pairs(exportTable.data) do
+            if not ignored[key] then
+                importedProfile[key] = CopyProfileValue(key, value)
+            end
+        end
+    end
+
+    -- Restore preserved notes
+    for key, value in pairs(preserved) do
+        importedProfile[key] = value
+    end
+
+    NSRT.Profiles[name] = importedProfile
+    NSI:LoadProfile(name, true)
+
+    -- Apply shared data if explicitly allowed
+    if sharedData then
+        for key in pairs(ProfileSharedDataKeys) do
+            if sharedData[key] ~= nil then
+                NSRT[key] = CopyProfileValue(key, sharedData[key])
+            end
+        end
+
+        if sharedData.EncounterAlerts ~= nil then
+            NSI:FireCallback("NSRT_ALERT_FULL_UPDATE")
+        end
+
+        if sharedData.AuraSounds ~= nil then
+            NSI:RebuildAuraSounds()
+        end
+
+        if sharedData.AuraTrackingSettings ~= nil then
+            NSI:InitAuraTracking()
+            NSI:RefreshAuraTrackingUI()
+        end
+    end
+
     return name
 end
 
@@ -803,6 +991,26 @@ function NSAPI:ImportAlertsString(importString)
     local t = NSI:DecodeExportData(importString)
     if type(t) ~= "table" then return nil end
 
+    local function ResolveImportedAlertKey(destDiff, alertKey, alert)
+        if alert.ReloeReminder then return alertKey end
+
+        local importedID = alert.internalID or alertKey
+        local existing = alertKey and destDiff[alertKey]
+        if not existing then return alertKey or NSI:UniqueAlertID(destDiff, false) end
+        if type(existing) == "table" and not existing.ReloeReminder and existing.internalID == importedID then
+            return alertKey
+        end
+
+        if importedID then
+            for existingKey, existingAlert in pairs(destDiff) do
+                if type(existingAlert) == "table" and not existingAlert.ReloeReminder and existingAlert.internalID == importedID then
+                    return existingKey
+                end
+            end
+        end
+        return NSI:UniqueAlertID(destDiff, false)
+    end
+
     if t.type == "alerts" then
         local count = 0
         NSRT.EncounterAlerts = NSRT.EncounterAlerts or {}
@@ -818,13 +1026,8 @@ function NSAPI:ImportAlertsString(importString)
                         end
                         for alertKey, alert in pairs(diffData) do
                             if type(alert) == "table" then
-                                if alert.ReloeReminder then
-                                    destDiff[alertKey] = alert
-                                else
-                                    alert.ReloeReminder = nil
-                                    local newKey = NSI:UniqueAlertID(destDiff, false)
-                                    destDiff[newKey] = alert
-                                end
+                                local importKey = ResolveImportedAlertKey(destDiff, alertKey, alert)
+                                destDiff[importKey] = alert
                                 count = count + 1
                             end
                         end
@@ -847,13 +1050,8 @@ function NSAPI:ImportAlertsString(importString)
                         end
                         for alertKey, alert in pairs(diffData) do
                             if type(alert) == "table" then
-                                if alert.ReloeReminder then
-                                    destDiff[alertKey] = alert
-                                else
-                                    alert.ReloeReminder = nil
-                                    local newKey = NSI:UniqueAlertID(destDiff, false)
-                                    destDiff[newKey] = alert
-                                end
+                                local importKey = ResolveImportedAlertKey(destDiff, alertKey, alert)
+                                destDiff[importKey] = alert
                                 count = count + 1
                             end
                         end
@@ -901,13 +1099,8 @@ function NSAPI:ImportAlertsString(importString)
                     local destDiff = NSRT.EncounterAlerts[encID][diffID]
                     for alertKey, alert in pairs(diffData) do
                         if type(alert) == "table" then
-                            if alert.ReloeReminder then
-                                destDiff[alertKey] = alert
-                            else
-                                alert.ReloeReminder = nil
-                                local importKey = alertKey or NSI:UniqueAlertID(destDiff, false)
-                                destDiff[importKey] = alert
-                            end
+                            local importKey = ResolveImportedAlertKey(destDiff, alertKey, alert)
+                            destDiff[importKey] = alert
                             count = count + 1
                         end
                     end

@@ -1,9 +1,10 @@
-## Interface: 120001
+## Interface: 120100
 ## Title: Mute Valeera
 ## Notes: Silences Valeera Sanguinar, Dundun, and Nanea's repetitive voice lines and speech bubbles.
-## Version: 1.1.0
+## Version: 1.2.0
 ## Author: Italist
 ## X-Category: Audio & Video
+## X-Curse-Project-ID: 1475450
 ## SavedVariables: MuteValeeraSettings
 ## Category: Expansion Features
 ## Category-deDE: Erweiterungsfeatures

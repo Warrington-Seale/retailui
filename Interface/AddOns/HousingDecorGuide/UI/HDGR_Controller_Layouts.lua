@@ -23,13 +23,8 @@ local _deleteBtn
 
 -- ===== helpers =============================================================
 
-local function _dispatchTransient(key, value)
-    HDG.Store:Dispatch({ type = A.UI_SET_TRANSIENT,
-        payload = { view = "projects", key = key, value = value } })
-end
-
 local function _selectVersion(vid)
-    _dispatchTransient("layoutSelectedVersionID", vid)
+    HDG.ControllerHelpers.Mechanics.SetUITransientView("projects", "layoutSelectedVersionID", vid)
 end
 
 -- Find the live default version: the first isLive row in the sorted group list.
@@ -487,7 +482,7 @@ local function _renameSelected()
     local state  = HDG.Store:GetState()  -- exception(false-positive): top-level controller helper, not a row factory
     local detail = HDG.Selectors:Call("projects.layoutDetail", state, {})
     if not detail.hasSelection then return end
-    _G.StaticPopup_Show("HDGR_LAYOUTS_RENAME", nil, nil, { name = detail.name, versionID = detail.versionID })
+    _G.StaticPopup_Show("HDGR_LAYOUTS_RENAME", nil, nil, { prefill = detail.name, versionID = detail.versionID })   -- prefill: the box opens on the current name
 end
 
 local function _duplicateSelected()
@@ -511,9 +506,8 @@ local function _deleteSelected()
     local state  = HDG.Store:GetState()  -- exception(false-positive): top-level controller helper, not a row factory
     local detail = HDG.Selectors:Call("projects.layoutDetail", state, {})
     if not detail.hasSelection or not detail.canDelete then return end
-    HDG.Store:Dispatch({ type = A.PROJECTS_DELETE_VERSION,
-        payload = { houseID = detail.houseID, versionID = detail.versionID } })
-    _ensureSelection()
+    HDG.ControllerHelpers.Mechanics.ConfirmDeleteVersion(detail.houseID, detail.versionID, detail.name,
+        function() _ensureSelection() end)
 end
 
 -- ===== Wire ================================================================

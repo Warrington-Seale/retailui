@@ -56,29 +56,39 @@ local function _entryFor(petID)
         speciesID  = info.speciesID,
         name       = info.name,
         customName = info.customName,   -- exception(boundary): nil unless the player renamed it
+        -- The name the player actually SEES, derived once. It is the list's sort
+        -- key and its search key, and four call sites used to each re-derive it --
+        -- one of them disagreeing would sort a renamed pet away from where the
+        -- eye looks for it.
+        displayName = info.customName or info.name,
         icon       = info.icon,
         petType    = info.petType,
         displayID  = info.displayID,    -- exception(boundary): nil for a species with no display
         -- nil for a species that was never measured. NOT defaulted: see
         -- StaticData.PetSizes -- there is nothing honest to substitute.
         height     = HDG.StaticData.PetSizes:Get(info.speciesID),
+        -- Menagerie taxonomy baked at row build (_bakeSourceTypes for pets --
+        -- plan section 2): selectors strict-read these, no per-paint joins.
+        -- nil,nil = a species newer than the last data build; the card shows "?".
+        kind       = HDG.StaticData.PetFacts:Taxonomy(info.speciesID),
+        clade      = select(2, HDG.StaticData.PetFacts:Taxonomy(info.speciesID)),
     }
 end
 
--- Height-ascending, unmeasured last, then name, then speciesID. Unmeasured sorts
--- to the end because the ordering IS the feature; a nil cannot take part in it.
+-- Alphabetical by the DISPLAYED name. The list was height-ascending while the row
+-- carried a size bar and the ordering was itself the reading -- ruling 13 took the
+-- bar off the row and moved scale into the card's scene, which left the order
+-- saying nothing a player could use. A browse surface of ~2,000 rows that you
+-- arrive at knowing the name you want sorts by that name.
+--
+-- displayName, not name: a renamed pet must sit where its rendered label puts it.
 --
 -- speciesID is the final tie-break so this is a TOTAL order. The list is built by
 -- iterating a species-keyed table, and pairs() order is not deterministic under
 -- LuaJIT -- without a total order, table.sort (which is not stable) would let that
 -- non-determinism surface as rows shuffling between reloads.
-local function _byHeight(a, b)
-    if a.height and b.height then
-        if a.height ~= b.height then return a.height < b.height end
-    elseif a.height then return true
-    elseif b.height then return false
-    end
-    if a.name ~= b.name then return a.name < b.name end
+local function _byDisplayName(a, b)
+    if a.displayName ~= b.displayName then return a.displayName < b.displayName end
     return a.speciesID < b.speciesID
 end
 
@@ -120,7 +130,7 @@ function P:Rebuild()
     end
     local list = {}
     for _, entry in pairs(bySpecies) do list[#list + 1] = entry end
-    table.sort(list, _byHeight)
+    table.sort(list, _byDisplayName)
     self._attachable = list
     self._bySpecies  = bySpecies
     self._families   = _families()
@@ -162,7 +172,11 @@ function P:Dismiss()
     return true
 end
 
-function P:OnCompanionUpdate()
+-- companionType is "CRITTER" / "MOUNT" / ... -- Blizzard's own pet collection filters
+-- on it. Without the filter, mounting up re-ran every pets.* selector for a summoned
+-- GUID that had not changed.
+function P:OnCompanionUpdate(companionType)
+    if companionType and companionType ~= "CRITTER" then return end  -- exception(boundary): arg absent on some fires
     self._summonedGUID = _G.C_PetJournal.GetSummonedPetGUID()
     HDG.Store:Dispatch({ type = HDG.Constants.ACTIONS.PETS_SUMMONED_CHANGED, payload = {} })
 end
@@ -189,9 +203,40 @@ function P:Resolve(speciesID)
     return {
         petDisplayID   = entry.displayID,
         uiModelSceneID = cardSceneID,
-        name           = entry.customName or entry.name,
+        name           = entry.displayName,
         iconTexture    = entry.icon,
     }
+end
+
+-- Widget-seam resolve for petScene: the animation kit the species' authored
+-- card scene drives its actor with. A raw created actor loops sequence 0 by
+-- restarting it, which re-fires one-shot particle emitters -- a pet whose idle
+-- is one short sequence (Mote of Nasz'uro: 334ms Stand) strobes ~3x/sec.
+-- PlayAnimationKit(kit) is what stops it (isolated via /papro reg/regscene/kit,
+-- 2026-08-24: the C_ModelInfo registrations changed nothing; the kit did).
+-- Memoized: authored data, stable for the session.
+function P:CardAnimKit(speciesID)
+    if not speciesID then return nil end
+    local memo = self._kitBySpecies
+    if not memo then memo = {}; self._kitBySpecies = memo end
+    if memo[speciesID] ~= nil then
+        return memo[speciesID] or nil   -- false memoizes "no kit"
+    end
+    local kit = false
+    local sceneID = _G.C_PetJournal.GetPetModelSceneInfoBySpeciesID(speciesID)
+    if sceneID then
+        local _, _, actorIDs = _G.C_ModelInfo.GetModelSceneInfoByID(sceneID)
+        for _, aid in ipairs(actorIDs or {}) do
+            local info = _G.C_ModelInfo.GetModelSceneActorInfoByID(aid)
+            if info and info.scriptTag == "unwrapped" and info.modelActorDisplayID then
+                local disp = _G.C_ModelInfo.GetModelSceneActorDisplayInfoByID(info.modelActorDisplayID)
+                kit = (disp and disp.animationKitID) or false
+                break
+            end
+        end
+    end
+    memo[speciesID] = kit
+    return kit or nil
 end
 
 -- PET_JOURNAL_LIST_UPDATE -> debounced rebuild + tick bump.
@@ -207,22 +252,23 @@ end
 
 HDG.Modules:Declare({
     name = "PetObserver",
-    ownsBlizzardNamespaces = { "C_PetJournal" },
+    -- Sole owner for the production path. Core/HDGR_Debug.lua's /hdg petscale probe
+    -- reads the namespace directly and is the one annotated carve-out.
+    ownsBlizzardNamespaces = { "C_PetJournal", "C_ModelInfo" },
     dependencies = {},
     blizzardEvents = {
         PET_JOURNAL_LIST_UPDATE = { handler = "OnListUpdate" },
         COMPANION_UPDATE        = { handler = "OnCompanionUpdate" },
     },
-    OnEnable = function()
+    onEnable = function()
         P:Rebuild()
         -- Seed it: a pet already out at login must paint "Dismiss" before any
         -- COMPANION_UPDATE arrives.
         P._summonedGUID = _G.C_PetJournal.GetSummonedPetGUID()
     end,
-    OnListUpdate = function()
-        P:OnListUpdate()
-    end,
-    OnCompanionUpdate = function()
-        P:OnCompanionUpdate()
-    end,
+    -- BlizzardEvents resolves handlers on this def table (module = the def), so the
+    -- first arg is the def and the event payload follows. Forward it: COMPANION_UPDATE's
+    -- companionType is the whole point of the filter in P:OnCompanionUpdate.
+    OnListUpdate      = function(_, ...) P:OnListUpdate(...) end,
+    OnCompanionUpdate = function(_, ...) P:OnCompanionUpdate(...) end,
 })

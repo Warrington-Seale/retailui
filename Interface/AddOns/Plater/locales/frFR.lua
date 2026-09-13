@@ -62,69 +62,40 @@ L["OPTIONS_AURAS_SORT_DESC"] = "Les auras sont triées par temps restant (par d�
 L["OPTIONS_AUTO_ALWAYS_SHOW_IN_ARENA_BG"] = "En Arène / CdB"
 L["OPTIONS_AUTO_ALWAYS_SHOW_IN_ARENA_BG_DESC"] = "Activez l'option « Toujours afficher les plaques de nom » lorsque vous êtes dans l'arène ou en champ de bataille."
 L["OPTIONS_AUTO_ALWAYS_SHOW_IN_DUNGEONS"] = "En donjons"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ALWAYS_SHOW_IN_DUNGEONS_DESC"] = "Set 'always show nameplates' on when inside dungeons."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ALWAYS_SHOW_IN_MAJOR_CITIES"] = "In Major Cities"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ALWAYS_SHOW_IN_MAJOR_CITIES_DESC"] = "Set 'always show nameplates' on when inside a major city."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ALWAYS_SHOW_IN_OPEN_WORLD"] = "In Open World"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ALWAYS_SHOW_IN_OPEN_WORLD_DESC"] = "Set 'always show nameplates' on when at any place not listed on the other options."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ALWAYS_SHOW_IN_RAID"] = "In Raid"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ALWAYS_SHOW_IN_RAID_DESC"] = "Set 'always show nameplates' on when inside raids."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_ARENA_BG"] = "In Arena / BG"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_ARENA_BG_DESC"] = "Show enemy nameplates when inside arena or battleground."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_DUNGEONS"] = "In Dungeons"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_DUNGEONS_DESC"] = "Show enemy nameplates when inside dungeons."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_MAJOR_CITIES"] = "In Major Cities"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_MAJOR_CITIES_DESC"] = "Show enemy nameplates when inside a major city."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_OPEN_WORLD"] = "In Open World"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_OPEN_WORLD_DESC"] = "Show enemy nameplates when at any place not listed on the other options."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_RAID"] = "In Raid"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_IN_RAID_DESC"] = "Show enemy nameplates when inside raids."
+L["OPTIONS_AUTO_ALWAYS_SHOW_IN_DUNGEONS_DESC"] = "Activez l'option « Toujours afficher les plaques d'identification » lorsque vous êtes dans des donjons."
+L["OPTIONS_AUTO_ALWAYS_SHOW_IN_MAJOR_CITIES"] = "Dans les grandes villes"
+L["OPTIONS_AUTO_ALWAYS_SHOW_IN_MAJOR_CITIES_DESC"] = "Activez l'option « Toujours afficher les plaques signalétiques » lorsque vous vous trouvez dans une grande ville."
+L["OPTIONS_AUTO_ALWAYS_SHOW_IN_OPEN_WORLD"] = "Dans le monde ouvert"
+L["OPTIONS_AUTO_ALWAYS_SHOW_IN_OPEN_WORLD_DESC"] = [=[Activez l'option « Toujours afficher les plaques signalétiques » lorsque vous vous trouvez dans un lieu qui ne figure pas parmi les autres options.
+
+]=]
+L["OPTIONS_AUTO_ALWAYS_SHOW_IN_RAID"] = "En Raid"
+L["OPTIONS_AUTO_ALWAYS_SHOW_IN_RAID_DESC"] = "Activez l'option « Toujours afficher les plaques d'identification » lorsque vous participez à des raids."
+L["OPTIONS_AUTO_ENEMY_IN_ARENA_BG"] = "Dans l'Arène / Champ de bataille"
+L["OPTIONS_AUTO_ENEMY_IN_ARENA_BG_DESC"] = "Afficher les noms des ennemis lorsqu'on se trouve dans une arène ou sur un champ de bataille."
+L["OPTIONS_AUTO_ENEMY_IN_DUNGEONS"] = "En Donjons"
+L["OPTIONS_AUTO_ENEMY_IN_DUNGEONS_DESC"] = "Afficher les noms des ennemis à l'intérieur des donjons."
+L["OPTIONS_AUTO_ENEMY_IN_MAJOR_CITIES"] = "Dans les grandes villes"
+L["OPTIONS_AUTO_ENEMY_IN_MAJOR_CITIES_DESC"] = "Afficher les noms des ennemis lorsqu'on se trouve dans une grande ville."
+L["OPTIONS_AUTO_ENEMY_IN_OPEN_WORLD"] = "Dans le  monde ouvert"
+L["OPTIONS_AUTO_ENEMY_IN_OPEN_WORLD_DESC"] = "Afficher les noms des ennemis partout ailleurs que dans les emplacements mentionnés dans les autres options."
+L["OPTIONS_AUTO_ENEMY_IN_RAID"] = "En Raid"
+L["OPTIONS_AUTO_ENEMY_IN_RAID_DESC"] = "Afficher les noms des ennemis lors des raids."
 L["OPTIONS_AUTO_ENEMY_NAMEPLATES_IC"] = "Barres d’unités ennemies en combat"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_NAMEPLATES_IC_DESC"] = "Automatically enable / disable enemy nameplates in combat."
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_NAMEPLATES_OOC"] = "Enemy Nameplates out of combat"
---[[Translation missing --]]
-L["OPTIONS_AUTO_ENEMY_NAMEPLATES_OOC_DESC"] = "Automatically enable / disable enemy nameplates out of combat."
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_ARENA_BG"] = "In Arena / BG"
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_ARENA_BG_DESC"] = "Show friendly nameplates when inside arena or battleground."
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_DUNGEONS"] = "In Dungeons"
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_DUNGEONS_DESC"] = "Show friendly nameplates when inside dungeons."
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_MAJOR_CITIES"] = "In Major Cities"
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_MAJOR_CITIES_DESC"] = "Show friendly nameplates when inside a major city."
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_OPEN_WORLD"] = "In Open World"
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_OPEN_WORLD_DESC"] = "Show friendly nameplates when at any place not listed on the other options."
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_RAID"] = "In Raid"
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_IN_RAID_DESC"] = "Show friendly nameplates when inside raids."
---[[Translation missing --]]
-L["OPTIONS_AUTO_FRIENDLY_NAMEPLATES_IC"] = "Friendly Nameplates in combat"
+L["OPTIONS_AUTO_ENEMY_NAMEPLATES_IC_DESC"] = "Activer / désactiver automatiquement l'affichage des noms des ennemis pendant les combats."
+L["OPTIONS_AUTO_ENEMY_NAMEPLATES_OOC"] = "Plaques d'identification des ennemis hors combat"
+L["OPTIONS_AUTO_ENEMY_NAMEPLATES_OOC_DESC"] = "Activer / désactiver automatiquement l'affichage des noms des ennemis hors combat."
+L["OPTIONS_AUTO_FRIENDLY_IN_ARENA_BG"] = "Dans l'Arène / Champ de bataille"
+L["OPTIONS_AUTO_FRIENDLY_IN_ARENA_BG_DESC"] = "Afficher les noms d'amis à l'intérieur d'une arène ou d'un champ de bataille."
+L["OPTIONS_AUTO_FRIENDLY_IN_DUNGEONS"] = "Dans les Donjons"
+L["OPTIONS_AUTO_FRIENDLY_IN_DUNGEONS_DESC"] = "Afficher les noms des personnages amis à l'intérieur des donjons."
+L["OPTIONS_AUTO_FRIENDLY_IN_MAJOR_CITIES"] = "Dans les grandes villes"
+L["OPTIONS_AUTO_FRIENDLY_IN_MAJOR_CITIES_DESC"] = "Afficher des panneaux indicateurs conviviaux lorsque l'on se trouve dans une grande ville."
+L["OPTIONS_AUTO_FRIENDLY_IN_OPEN_WORLD"] = "En monde ouvert"
+L["OPTIONS_AUTO_FRIENDLY_IN_OPEN_WORLD_DESC"] = "Afficher les libellés conviviaux dans tous les cas non mentionnés dans les autres options."
+L["OPTIONS_AUTO_FRIENDLY_IN_RAID"] = "En Raid"
+L["OPTIONS_AUTO_FRIENDLY_IN_RAID_DESC"] = "Afficher les noms d'alliés lors des raids."
+L["OPTIONS_AUTO_FRIENDLY_NAMEPLATES_IC"] = "Plaques d'identification amies au combat"
 --[[Translation missing --]]
 L["OPTIONS_AUTO_FRIENDLY_NAMEPLATES_IC_DESC"] = "Automatically enable / disable friendly nameplates in combat."
 --[[Translation missing --]]

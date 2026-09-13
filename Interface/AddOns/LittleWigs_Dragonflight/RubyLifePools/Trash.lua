@@ -7,10 +7,10 @@ if not mod then return end
 mod:SetTrashModule(true)
 mod:RegisterEnableMob(
 	188244, -- Primal Juggernaut
-	187969, -- Flashfrost Earthshaper
+	187969, -- Deepstone Earthshaper / Flashfrost Earthshaper
 	188067, -- Flashfrost Chillweaver
 	187897, -- Defier Draghar
-	190206, -- Primalist Flamedancer
+	190206, -- Ashseer Flamelasher / Primalist Flamedancer
 	190034, -- Blazebound Destroyer
 	195119, -- Primalist Shockcaster
 	197698, -- Thunderhead
@@ -24,23 +24,22 @@ mod:RegisterEnableMob(
 -- Localization
 --
 
-local L = mod:GetLocale()
-if L then
-	L.primal_juggernaut = "Primal Juggernaut"
-	L.flashfrost_earthshaper = "Flashfrost Earthshaper"
-	L.flashfrost_chillweaver = "Flashfrost Chillweaver"
-	L.defier_draghar = "Defier Draghar"
-	L.primalist_flamedancer = "Primalist Flamedancer"
-	L.blazebound_destroyer = "Blazebound Destroyer"
-	L.primalist_shockcaster = "Primalist Shockcaster"
-	L.thunderhead = "Thunderhead"
-	L.flamegullet = "Flamegullet"
-	L.tempest_channeler = "Tempest Channeler"
-	L.flame_channeler = "Flame Channeler"
-	L.high_channeler_ryvati = "High Channeler Ryvati"
+local L = mod:SetDefaultLocale({
+	primal_juggernaut = "Primal Juggernaut",
+	flashfrost_earthshaper = "Flashfrost Earthshaper",
+	flashfrost_chillweaver = "Flashfrost Chillweaver",
+	defier_draghar = "Defier Draghar",
+	primalist_flamedancer = "Primalist Flamedancer",
+	blazebound_destroyer = "Blazebound Destroyer",
+	primalist_shockcaster = "Primalist Shockcaster",
+	thunderhead = "Thunderhead",
+	flamegullet = "Flamegullet",
+	tempest_channeler = "Tempest Channeler",
+	flame_channeler = "Flame Channeler",
+	high_channeler_ryvati = "High Channeler Ryvati",
 
-	L.kyrakka_and_erkhart_warmup_trigger = "Your false queen cannot stop us. We are the truth."
-end
+	kyrakka_and_erkhart_warmup_trigger = "Your false queen cannot stop us. We are the truth.",
+})
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -148,6 +147,30 @@ function mod:OnBossEnable()
 
 	-- High Channeler Ryvati
 	self:Log("SPELL_CAST_START", "TempestStormshield", 391050)
+end
+
+--------------------------------------------------------------------------------
+-- Midnight Auras
+--
+
+if mod:Retail() then -- Midnight+
+	mod:SetAuraData({
+		{1305201, header = 188244, duration = 8, tip = CL.debuffGroupAfterCastNote:format(mod:SpellName(1305201))}, -- Excavating Blast (Primal Juggernaut)
+		{1307205, header = 188011, duration = 8, tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(1307205))}, -- Earthbound's Imprint (Earthbound Guardian)
+		{1305225, header = 187969, duration = 8, soundOnAppliedDose = "none", tip = CL.debuffTankAfterCastNote:format(mod:SpellName(1305225))}, -- Tectonic Strike (Deepstone Earthshaper)
+		{1305234, header = 187894, duration = 10, dispel = "magic", mechanic = "snared", soundOnAppliedDose = "none", tip = CL.debuffTankAfterCastNote:format(mod:SpellName(1305234))}, -- Cold Claws (Infused Whelp)
+		{373593, duration = 5, mechanic = "stunned", tip = CL.debuffFailureNote}, -- Frozen Solid (Infused Whelp)
+		{372047, header = 187897, duration = 3, tip = CL.debuffTankAfterCastNote:format(mod:SpellName(372047))}, -- Steel Barrage (Defier Draghar)
+		{374927, header = mod:SpellName(374927), soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Wall of Flames (environmental)
+		{373693, header = 190207, duration = 6, tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(373693))}, -- Living Bomb (Primalist Cinderweaver)
+		{385536, header = 190206, duration = 10, tip = CL.debuffTankAfterCastNote:format(mod:SpellName(385536))}, -- Flaming Barrage (Ashseer Flamelasher)
+		{373692, header = 190034, duration = 5, tip = CL.debuffGroupAfterCastNote:format(mod:SpellName(373692))}, -- Inferno (Blazebound Destroyer)
+		{395292, header = 197697, duration = 6, tip = CL.debuffTankAfterCastNote:format(mod:SpellName(395292))}, -- Fire Maw (Flamegullet)
+		{392641, header = 197698, duration = 45, dispel = "magic", soundOnAppliedDose = "none", tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(392641))}, -- Rolling Thunder (Thunderhead)
+		{1310599, duration = 10, soundOnAppliedDose = "none", tip = CL.debuffPossibleAfterCastNote:format(mod:SpellName(1310599))}, -- Electrical Discharge (Thunderhead)
+		{1307372, header = 190205, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Fiery Demise (Scorchling)
+		{1306366, header = 198047, duration = 7, tip = CL.debuffTargetedNote:format(mod:SpellName(1306366))}, -- Lightning Torrent (Tempest Channeler)
+	})
 end
 
 --------------------------------------------------------------------------------

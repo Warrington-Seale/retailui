@@ -252,18 +252,26 @@ local function _showAhButtons(row)
     row._ahCraftBtn:Show()
 end
 
--- wishItem "where to buy" tooltip: standard item tooltip + the resolved vendor.
--- Only resolved wishlist rows stamp _shopVendor; every other row (items, headers,
--- unresolved wishlist) leaves it nil -> no tooltip, behaviour unchanged.
+-- Mouse-action hints on every item row's tooltip. The header glyphs carry the
+-- same words, but the row is where a player hovers when deciding what to do
+-- with an item, so the gesture has to be readable there too.
+local SHOP_ITEM_HINTS = {
+    shiftText = "locale:SHOP_HINT_SHIFT",
+    rightText = "locale:SHOP_HINT_RIGHT",
+}
+
+-- Item-row tooltip: Blizzard's item body, the resolved vendor when a wishlist
+-- row knows one, then the click hints. Headers stamp no _shopItemID -> no tooltip.
 local function _shoppingRowTooltip(self)
     if not self._shopItemID then return nil end  -- exception(nullable): header / non-item rows don't stamp it
     local af = self._shopVendor
-    local extraLines
+    local extraLines = {}
     if af then  -- exception(nullable): only resolved rows know a vendor; the item tooltip shows regardless
         local zone = (af.zone and af.zone ~= "") and (" -- " .. af.zone) or ""
-        extraLines = { { text = "Available from: " .. (af.name or "?") .. zone,
-                         r = 0.6, g = 0.78, b = 0.95 } }
+        extraLines[1] = { text = "Available from: " .. (af.name or "?") .. zone,
+                          r = 0.6, g = 0.78, b = 0.95 }
     end
+    HDG.TooltipEngine.AppendClickHints(extraLines, SHOP_ITEM_HINTS)
     return {
         itemID     = self._shopItemID,
         anchor     = "ANCHOR_RIGHT",
@@ -349,8 +357,15 @@ local function _configureItemRow(row, ed)
     row._shopItemID = ed.itemID
     row._shopVendor = ed.availableFrom  -- exception(nullable): AH-only / unresolved items have no vendor
     _showItemChrome(row, ed)
-    -- Right-click context menu (Set qty / Remove [/ Open vendor]).
-    HDG.UI.WireLeftRightClick(row, nil, function()
+    -- Shift-click links the item, which lands in the Auction House search bar
+    -- when the AH is open on a Buy tab -- the Warehouse and Recipes materials
+    -- gesture. The Crafting / Auction House section is where a player goes to
+    -- buy what they cannot make, so its rows carry it (owner, 2026-09-07);
+    -- wishlist and vendor items take it too so one gesture reads the same on
+    -- every row. A plain left click stays a no-op; right-click owns the menu.
+    HDG.UI.WireLeftRightClick(row, function()
+        if IsShiftKeyDown() then HDG.UI.LinkMaterial(ed.itemID, HDG.UI.ItemName(ed.itemID)) end
+    end, function()
         ShoppingController:_OpenItemContextMenu(row, ed)
     end)
 end
@@ -512,23 +527,50 @@ local function _importShoppingList(value)
     end
 end
 
--- Resolve + persist vendor npcIDs for a list's wishlist (npcID-less) entries, so
--- vendor-buyable items leave the Wishlist, bucket under their vendor, and carry
--- the npcID into Export. The catalog bakes npcID onto row.vendors[1] at sweep
--- time; items with no catalog vendor (crafted / drops / quests / achievements)
+-- True when moving an entry from one vendor to another only changes WHICH
+-- housing neighborhood you walk into -- both ends stand in Founder's Point or
+-- Razorwind Shores.
+--
+-- This is the whole safety rule for re-resolving a list that already has
+-- vendors on it. An entry pointing at a vendor anywhere else was either bought
+-- deliberately from that merchant or is only sold there, and the neighborhood
+-- toggle has no business moving it. Inside the pair, moving is free: 18
+-- merchants stand in both, so it is usually the same person and always the
+-- same stock.
+local function _isNeighborhoodMove(fromNpc, toNpc)
+    local Aug  = HDG.StaticData.VendorAugment
+    local from, to = Aug:Get(fromNpc), Aug:Get(toNpc)
+    if not (from and to) then return false end  -- exception(nullable): vendor not in VendorAugment -- unroutable, so not ours to move
+    local N = HDG.Constants.NEIGHBORHOOD_MAP_IDS
+    return N[from.mapID] == true and N[to.mapID] == true
+end
+
+-- Resolve + persist vendor npcIDs for a list's entries, so vendor-buyable items
+-- leave the Wishlist, bucket under their vendor, and carry the npcID into
+-- Export. Items with no catalog vendor (crafted / drops / quests / achievements)
 -- resolve to nothing and correctly stay in the Wishlist. No-op until the catalog
 -- has swept (sweepGeneration 0 = no baked vendors yet).
+--
+-- Runs for entries that ALREADY have a vendor too, not only blanks: flipping the
+-- neighborhood toggle has to move a list that was resolved under the old
+-- preference. `_isNeighborhoodMove` is what keeps that from touching anything
+-- else on the list.
 function ShoppingController:_EnrichListVendors(listID)
     local state = HDG.Store:GetState()  -- exception(false-positive): top-level controller method (not a row factory)
     if state.session.resolvers.catalog.tick == 0 then return end  -- exception(nullable): catalog not swept yet
     local list = listID and state.account.vendorShoppingLists[listID] or nil
     if not list then return end  -- exception(nullable): list may be missing/empty
+    local prefFaction  = HDG.Selectors:Call("shopping.neighborhood", state, {})
+    local preferredMap = prefFaction
+        and HDG.Constants.NEIGHBORHOOD_MAP_BY_FACTION[prefFaction] or nil
     local res, n = {}, 0
     for _, entry in ipairs(list.items) do
-        if not entry.npcID then
-            local row = HDG.HousingCatalogObserver:GetRow(entry.itemID)
-            local v = row and row.vendors and row.vendors[1]
-            if v and v.npcID then res[entry.itemID] = v.npcID; n = n + 1 end
+        local row = HDG.HousingCatalogObserver:GetRow(entry.itemID)
+        local best = HDG.VendorRank.Pick(row, preferredMap)
+        local npc  = best and best.npcID
+        if npc and npc ~= entry.npcID
+           and (not entry.npcID or _isNeighborhoodMove(entry.npcID, npc)) then
+            res[entry.itemID] = npc; n = n + 1
         end
     end
     if n > 0 then
@@ -560,11 +602,17 @@ function ShoppingController:Wire(rootFrame)
     -- from any surface (decor browser, companion right-click, Find Decor) while
     -- this window is OPEN used to sit in the Wishlist bucket until a close/
     -- reopen re-ran the OnShow enrich -- resolve them the moment they land.
+    -- SHOPPING_SET_NEIGHBORHOOD re-resolves under the new preference, and
+    -- SHOPPING_LIST_ACTIVATE catches the lists that were not active when it
+    -- changed -- enrich only ever runs on the active list, so without this a
+    -- second list keeps the vendors it was resolved to under the old setting.
     -- Subscribe once (Wire may run per window rebuild).
     if not ShoppingController._enrichSubscribed then
         ShoppingController._enrichSubscribed = true
         HDG.Store:Subscribe(function(actionType)
-            if actionType == A.DECOR_CATALOG_READY or actionType == A.SHOPPING_ITEM_ADD then
+            if actionType == A.DECOR_CATALOG_READY or actionType == A.SHOPPING_ITEM_ADD
+               or actionType == A.SHOPPING_SET_NEIGHBORHOOD
+               or actionType == A.SHOPPING_LIST_ACTIVATE then
                 ShoppingController:_EnrichListVendors(HDG.Store:GetState().account.activeShoppingListId)
             end
         end)
@@ -575,6 +623,42 @@ function ShoppingController:Wire(rootFrame)
     -- owns the resulting Hide() via visibilityBinding.
     HDG.UI.OnClick(rootFrame, "shoppingHeaderPanel.close", function()
         HDG.Store:Dispatch({ type = A.SHOPPING_WIDGET_TOGGLE })
+    end)
+
+    -- Flip the neighborhood preference. Reads the RESOLVED side, not the stored
+    -- value: until the player picks one it is stored "" and shown as their own
+    -- faction, so flipping the STORED value would write back the side the knob
+    -- is already sitting on and the first click would appear to do nothing.
+    HDG.UI.OnClick(rootFrame, "shoppingPanel.neighborhoodToggle", function()
+        local state   = HDG.Store:GetState()  -- exception(false-positive): top-level controller wire, not a row factory
+        local current = HDG.Selectors:Call("shopping.neighborhood", state, {})
+        HDG.Store:Dispatch({ type = A.SHOPPING_SET_NEIGHBORHOOD,
+            payload = { value = (current == "alliance") and "horde" or "alliance" } })
+    end)
+
+    -- Rename the active list. Pre-filled with the current name and opened with
+    -- it selected, so the common case (a blueprint import landing as "Aneyiah"
+    -- when you wanted "Bedroom") is type-over-and-Enter. PromptInput trims and
+    -- drops an empty string, so a cleared box cancels rather than blanking the
+    -- name. Asked for by moondazze, who could not tell her imported lists apart.
+    HDG.UI.OnClick(rootFrame, "shoppingPanel.renameListBtn", function()
+        local state = HDG.Store:GetState()  -- exception(false-positive): top-level controller wire, not a row factory
+        local id    = state.account.activeShoppingListId
+        local list  = state.account.vendorShoppingLists[id]
+        if not list then
+            HDG.Log:Warn("shopping", "No active list to rename")
+            return
+        end
+        HDG.UI:PromptInput(HDG.Locale:Get("SHOP_RENAME_PROMPT"):format(list.name), {
+            initialText = list.name,
+            acceptText  = HDG.Locale:Get("SHOP_RENAME_LIST"),
+            hint        = HDG.Locale:Get("SHOP_RENAME_HINT"),
+            onAccept    = function(value)
+                HDG.Store:Dispatch({ type = A.SHOPPING_LIST_RENAME,
+                    payload = { id = id, name = value } })
+                HDG.Log:Success("shopping", "Renamed shopping list to '" .. value .. "'")
+            end,
+        })
     end)
 
     -- New list -- StaticPopup prompts for the name. EditBox text on Accept
@@ -599,7 +683,7 @@ function ShoppingController:Wire(rootFrame)
         HDG.UI.Confirm({
             id       = "HDGR_SHOPPING_DELETE_LIST",
             text     = "Delete shopping list \"%s\"? This cannot be undone.",
-            textArg1 = list.name or "?",
+            textArg1 = list.name,   -- every list factory stamps a name
             data     = id,
             accept   = "Delete",
             cancel   = "Cancel",
@@ -610,18 +694,29 @@ function ShoppingController:Wire(rootFrame)
         })
     end)
 
-    -- Clear -- empties the active list (no-op when no active list).
+    -- Clear -- empties the active list (no-op when no active list). Confirms,
+    -- like Delete beside it: the items are gone for good either way, and two
+    -- adjacent buttons where one asks and the other doesn't reads as a bug.
     HDG.UI.OnClick(rootFrame, "shoppingPanel.clearBtn", function()
-        local id = HDG.Store:GetState().account.activeShoppingListId  -- exception(false-positive): top-level controller read
-        if id == "" then
+        local state = HDG.Store:GetState()  -- exception(false-positive): top-level controller read
+        local id    = state.account.activeShoppingListId
+        local list  = state.account.vendorShoppingLists[id]
+        if not list then  -- exception(nullable): "" (no active list) or a stale id -- same shape as Delete above
             HDG.Log:Warn("shopping", "No active list to clear")
             return
         end
-        HDG.Store:Dispatch({
-            type    = A.SHOPPING_LIST_CLEAR,
-            payload = { id = id },
+        HDG.UI.Confirm({
+            id       = "HDGR_SHOPPING_CLEAR_LIST",
+            text     = "Clear every item from shopping list \"%s\"? This cannot be undone.",
+            textArg1 = list.name,
+            data     = id,
+            accept   = "Clear",
+            cancel   = "Cancel",
+            onAccept = function(_, listId)
+                HDG.Store:Dispatch({ type = A.SHOPPING_LIST_CLEAR, payload = { id = listId } })
+                HDG.Log:Info("shopping", "Cleared all items from active list")
+            end,
         })
-        HDG.Log:Info("shopping", "Cleared all items from active list")
     end)
 
     -- Export -- encode active list + show in CopyDialog for user to copy.

@@ -118,7 +118,7 @@ do
 		if not LibSharedMedia:IsValid(FONT, db.fontName) or not BigWigsAPI.IsValidMediaPath(LibSharedMedia:Fetch("font", db.fontName)) then
 			db.fontName = plugin.defaultDB.fontName
 		end
-		if not LibSharedMedia:IsValid(STATUSBAR, db.texture) then
+		if not LibSharedMedia:IsValid(STATUSBAR, db.texture) or not BigWigsAPI.IsValidMediaPath(LibSharedMedia:Fetch(STATUSBAR, db.texture)) then
 			db.texture = plugin.defaultDB.texture
 		end
 		if db.fontSize < 10 or db.fontSize > 200 then
@@ -609,7 +609,7 @@ do
 								if type(style.fontName) == "string" and LibSharedMedia:IsValid(FONT, style.fontName) and BigWigsAPI.IsValidMediaPath(LibSharedMedia:Fetch("font", style.fontName)) then
 									db.fontName = style.fontName
 								end
-								if type(style.texture) == "string" and LibSharedMedia:IsValid(STATUSBAR, style.texture) then
+								if type(style.texture) == "string" and LibSharedMedia:IsValid(STATUSBAR, style.texture) and BigWigsAPI.IsValidMediaPath(LibSharedMedia:Fetch(STATUSBAR, style.texture)) then
 									db.texture = style.texture
 								end
 
@@ -1882,9 +1882,12 @@ do
 end
 
 do
+	local isRetail = BigWigsLoader.isRetail
 	local function moveBar(bar)
 		plugin:EmphasizeBar(bar)
-		plugin:SendMessage("BigWigs_BarEmphasized", plugin, bar)
+		if isRetail then
+			plugin:SendMessage("BigWigs_BarEmphasized", plugin, bar)
+		end
 		rearrangeBars(normalAnchor)
 		rearrangeBars(emphasizeAnchor)
 	end
@@ -1902,6 +1905,10 @@ do
 
 	function plugin:BigWigs_StartBar(_, module, key, text, time, icon, isApprox, maxTime, eventId, spellIndicators)
 		if not text then text = "" end
+		if not eventId and self:IsSecret(text) then
+			BigWigs:Error("Cannot start a bar with secrets when no eventId is specified.")
+			return
+		end
 		self:StopSpecificBar(nil, module, text, eventId)
 		local bar = self:CreateBar(module, key, text, time, icon, isApprox, eventId, spellIndicators)
 		if db.iconTooltip and type(key) == "number" and key > 0 then
@@ -1927,11 +1934,13 @@ do
 		end
 		local anchor = bar:Get("bigwigs:anchor") == "expPosition" and emphasizeAnchor or normalAnchor
 		rearrangeBars(anchor)
-		self:SendMessage("BigWigs_BarCreated", self, bar, module, key, text, time, icon, isApprox)
-		-- Check if :EmphasizeBar(bar) was run and trigger the callback.
-		-- Bit of a roundabout method to approaching this so that we purposely keep callbacks firing last.
-		if bar:Get("bigwigs:emphasized") then
-			self:SendMessage("BigWigs_BarEmphasized", self, bar)
+		if isRetail then -- The following callbacks are now deprecated and will eventually be entirely removed
+			self:SendMessage("BigWigs_BarCreated", self, bar, module, key, text, time, icon, isApprox)
+			-- Check if :EmphasizeBar(bar) was run and trigger the callback.
+			-- Bit of a roundabout method to approaching this so that we purposely keep callbacks firing last.
+			if bar:Get("bigwigs:emphasized") then
+				self:SendMessage("BigWigs_BarEmphasized", self, bar)
+			end
 		end
 	end
 end

@@ -125,18 +125,14 @@ L.BUTTON_TRACKNEW =                      "Отслеживать новые об
 L.CURRENT_SETTING =                      "Текущая настройка:"
 L.MODE_APPEARANCES =                     "новые внешние виды"
 L.MODE_SOURCES =                         "новые внешние виды и источники"
-L.TRACK_NEW1 =                           "Это позволит проверить" -- Followed by a number
-L.TRACK_NEW2 =                           "видимые рецепты для" -- Preceded by a number, followed by L.MODE_APPEARANCES or L.MODE_SOURCES
-L.TRACK_NEW3 =                           "Ваша игра может зависнуть на несколько секунд."
-L.ADDED_RECIPES1 =                       "Добавлен" -- Followed by a number
-L.ADDED_RECIPES2 =                       "подходящие рецепты" -- Preceded by a number
+L.ADDED_RECIPES =                        "Проверено рецептов для %2$s: %1$d. Отслеживается рецептов: %3$d." -- %d becomes a number, %s becomes L.MODE_APPEARANCES or L.MODE_SOURCES
 
 -- Tooltip info
 L.MORE_NEEDED =                          "нужно больше" -- Preceded by a number
 L.MADE_WITH =                            "Сделано" -- Followed by a profession name such as "Blacksmithing" or "Leatherworking"
 L.RECIPE_LEARNED =                       "рецепт изучен"
 L.RECIPE_UNLEARNED =                     "рецепт не изучен"
--- L.CRAFTING_COST =                        "Crafting Cost"
+L.CRAFTING_COST =                        "Стоимость создания"
 
 -- Profession knowledge
 L.PERKS_UNLOCKED =                       "перки разблокированы"
@@ -241,16 +237,20 @@ L.SETTINGS_TOOLTIP_TITLE =               "Показывать информац�
 L.SETTINGS_TOOLTIP_DESC =                "Показывать, сколько реагентов у вас есть/нужно, на подсказке к предмету."
 L.SETTINGS_CRAFTTOOLTIP_TITLE =          "Показать информацию о изготовлении"
 L.SETTINGS_CRAFTTOOLTIP_DESC =           "Показывать, с помощью какой профессии сделана экипировка, и известен ли рецепт на вашем аккаунте."
--- L.SETTINGS_CRAFTCOSTTOOLTIP_TITLE =      "Show Crafting Cost"
--- L.SETTINGS_CRAFTCOSTTOOLTIP_DESC =       "Show how much an item costs to craft, if that information is available."
+L.SETTINGS_CRAFTCOSTTOOLTIP_TITLE =      "Показывать стоимость создания"
+L.SETTINGS_CRAFTCOSTTOOLTIP_DESC =       "Показывать, сколько стоит изготовление предмета, если эта информация доступна."
 L.SETTINGS_REAGENTQUALITY_TITLE =        "Минимальное качество реагента"
 L.SETTINGS_REAGENTQUALITY_DESC =         "Установите минимальное качество реагентов, при котором " .. app.NameShort .. " будет учитывать их в общем количестве предметов. Результаты симуляции по-прежнему будут иметь приоритет над этой настройкой."
 L.SETTINGS_INCLUDEHIGHER_TITLE =         "Включить более высокое качество"
 L.SETTINGS_INCLUDEHIGHER_DESC =          "Учитывать ли реагенты более высокого качества. (Например, включать имеющиеся реагенты 2-го уровня при подсчете реагентов 1-го уровня.)"
-L.SETTINGS_SPENDTOPERK_TITLE =           "Тратить до ближайшего таланта"
-L.SETTINGS_SPENDTOPERK_DESC =            "Shift+клик по узлу специализации профессии тратит очки до достижения следующего бонуса."
 L.SETTINGS_COLLECTMODE_TITLE =           "Режим сбора"
 L.SETTINGS_COLLECTMODE_DESC =            "Установите, какие предметы будут включены при использовании " .. app:Colour(L.BUTTON_TRACKNEW) .. " кнопки."
+
+L.PROFESSION_WINDOW =                    "Окно профессий"
+L.SETTINGS_FILTER_OPTREAGENTS =          "Фильтр необязательных реагентов"
+L.SETTINGS_FILTER_OPTREAGENTS_DESC =     "Если для необязательных реагентов включена опция %s, объединяемые предметы будут скрыты." -- %s becomes "Hide Unavailable"
+L.SETTINGS_SPENDTOPERK_TITLE =           "Тратить до ближайшего таланта"
+L.SETTINGS_SPENDTOPERK_DESC =            "Shift+клик по узлу специализации профессии тратит очки до достижения следующего бонуса."
 L.SETTINGS_ENHANCEDORDERS_TITLE =        "Улучшенные заказы"
 L.SETTINGS_ENHANCEDORDERS_DESC =         "Улучшите предварительный просмотр наград за заказы и комиссионных, а также добавьте значки для первых созданных, неизученных рецептов и отслеживаемых рецептов.\n\n" .. L.REQUIRES_RELOAD
 L.SETTINGS_QUICKORDER_TITLE =            "Продолжительность быстрого заказа"

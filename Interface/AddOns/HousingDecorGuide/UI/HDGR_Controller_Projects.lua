@@ -10,8 +10,12 @@ local PC = HDG.ProjectsController
 local A = HDG.Constants.ACTIONS
 
 -- ===== helpers =============================================================
+-- Projects-scoped shorthand over the shared setter -- 20 call sites earn the
+-- alias. It used to dispatch UI_SET_TRANSIENT itself, as did the Layouts
+-- controller, which is how two views of one tab start disagreeing about the
+-- payload shape.
 local function _dispatchTransient(key, value)
-    HDG.Store:Dispatch({ type = A.UI_SET_TRANSIENT, payload = { view = "projects", key = key, value = value } })
+    HDG.ControllerHelpers.Mechanics.SetUITransientView("projects", key, value)
 end
 -- Switch the rendered top-level view. Uses UI_SET_PERSISTENT (same as NavController.setView).
 -- UI_SET_VIEW writes session.ui.view which the window does NOT render.
@@ -38,21 +42,20 @@ local function _branchWhatIf(houseID, basedOn)
         name = "What-if " .. (n + 1), basedOn = basedOn, createdAt = HDG.ControllerHelpers.Mechanics.Now()} })  -- exception(boundary): time()
     HDG.Log:Success("projects_save", "What-if " .. (n + 1) .. " created (copy of current)")
 end
-local function _deleteWhatIf(houseID, versionID)
+local function _deleteWhatIf(houseID, versionID, name)
     if not (houseID and versionID) then return end
-    HDG.Store:Dispatch({ type = A.PROJECTS_DELETE_VERSION,
-        payload = { houseID = houseID, versionID = versionID, ts = HDG.ControllerHelpers.Mechanics.Now()} })  -- exception(boundary): time()
-    HDG.Log:Info("projects_action", "Design version deleted")
+    HDG.ControllerHelpers.Mechanics.ConfirmDeleteVersion(houseID, versionID, name,
+        function() HDG.Log:Info("projects_action", "Design version deleted") end)
 end
 -- Build + show the version menu: a radio per version (switch on pick), then New / Delete.
 local function _openVersionMenu(owner)
     local tabs = HDG.Selectors:Call("projects.versionTabs", HDG.Store:GetState(), {})  -- exception(false-positive): top-level controller helper, not a row factory
     if #tabs == 0 then return end   -- no house captured yet
     local houseID = tabs[1].houseID
-    local activeVid, activeIsCurrent
+    local activeVid, activeIsCurrent, activeName
     local items = { { isTitle = true, text = "House version" } }
     for _, v in ipairs(tabs) do
-        if v.isActive then activeVid, activeIsCurrent = v.versionID, v.isCurrent end
+        if v.isActive then activeVid, activeIsCurrent, activeName = v.versionID, v.isCurrent, v.name end
         local vid = v.versionID
         items[#items + 1] = { kind = "radio", text = v.name .. (v.isCurrent and "  (Live)" or ""),
             selected = v.isActive, value = vid,
@@ -63,7 +66,7 @@ local function _openVersionMenu(owner)
     items[#items + 1] = { isDivider = true }
     items[#items + 1] = { text = "New what-if (copy current)", callback = function() _branchWhatIf(houseID, activeVid) end }
     if not activeIsCurrent then
-        items[#items + 1] = { text = "Delete this what-if", callback = function() _deleteWhatIf(houseID, activeVid) end }
+        items[#items + 1] = { text = "Delete this what-if", callback = function() _deleteWhatIf(houseID, activeVid, activeName) end }
     end
     HDG.UI.ShowMenu(owner, items)
 end
@@ -217,6 +220,17 @@ function PC:ExpandStackUp(roomID)
 end
 
 -- Kick the multi-floor capture sweep; surface its failure reason.
+-- Plan <-> Section. Transient (per-view bucket), so it resets to plan on reload:
+-- the section view is for reading the house, the plan is for building it.
+local function _toggleCanvasMode()
+    local mode = HDG.Store:GetState().session.ui.projects.canvasMode  -- exception(false-positive): top-level controller read, not a row factory
+    HDG.Store:Dispatch({
+        type    = HDG.Constants.ACTIONS.UI_SET_TRANSIENT,
+        payload = { view = "projects", key = "canvasMode",
+                    value = (mode == "plan") and "section" or "plan" },
+    })
+end
+
 local function _captureHouse()
     -- Capture sweeps the house you're STANDING IN -- a mismatched focus would
     -- silently capture the wrong house (or nothing). Fail loud at the click.
@@ -339,17 +353,15 @@ local function _confirmRoomDelete(roomID, name, spots, layoutCount)
         accept   = "Delete", cancel = "Cancel",
         textArg1 = name or "Design", textArg2 = where, data = roomID,
         onAccept = function(_, data)
-            if data then
-                HDG.Store:Dispatch({ type = A.FURN_ROOM_DELETE, payload = { roomID = data } })
-                HDG.Log:Success("projects_action", "Room deleted -- its pieces are saved in your library")
-            end
+            HDG.Store:Dispatch({ type = A.FURN_ROOM_DELETE, payload = { roomID = data } })
+            HDG.Log:Success("projects_action", "Room deleted -- its pieces are saved in your library")
         end,
     })
 end
 
 local function _promptRenameRoom(roomID, currentName)
     _G.StaticPopup_Show("HDGR_PROJECTS_RENAME_ROOM", nil, nil,
-        { name = currentName, roomID = roomID })
+        { prefill = currentName, roomID = roomID })   -- prefill: RegisterInputDialog's OnShow seeds the box from it
 end
 
 local function _layoutLedgerRow(row)
@@ -1179,6 +1191,7 @@ function PC:Wire(rootFrame)
     })
     HDG.UI.OnClick(rootFrame, "projectsDetailPanel.equipSet",        function(self) _openEquipMenu(self) end)
     HDG.UI.OnClick(rootFrame, "projectsPickerPreviewPanel.equipSet", function(self) _openEquipMenu(self) end)
+    HDG.UI.OnClick(rootFrame, "projectsNavPanel.viewMode",           _toggleCanvasMode)
     HDG.UI.OnClick(rootFrame, "projectsNavPanel.captureAll",         _captureHouse)
     HDG.UI.OnClick(rootFrame, "projectsNavPanel.autoAssign",         _autoAssign)
     HDG.UI.OnClick(rootFrame, "projectsNavPanel.addFloor",           function() _setWhatIfFloors(1) end)

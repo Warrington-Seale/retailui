@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.10
+- Surge Icon will now scale with the window size changes in windowed
+
 ## 0.8.9
 - Version update
 

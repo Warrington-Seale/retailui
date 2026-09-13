@@ -55,7 +55,6 @@ local DB_AURA_SEPARATE_BUFFS
 local DB_SHOW_PURGE_IN_EXTRA_ICONS
 local DB_SHOW_ENRAGE_IN_EXTRA_ICONS
 local DB_SHOW_MAGIC_IN_EXTRA_ICONS
-local DB_DEBUFF_BANNED
 local DB_AURA_SHOW_IMPORTANT
 local DB_AURA_SHOW_RAID
 local DB_AURA_SHOW_BYPLAYER
@@ -65,7 +64,6 @@ local DB_AURA_SHOW_BUFFS_AS_BLIZZARD
 local DB_AURA_SHOW_BUFF_BYPLAYER
 local DB_AURA_SHOW_BYOTHERPLAYERS
 local DB_AURA_SHOW_BYOTHERNPCS
-local DB_BUFF_BANNED
 local DB_AURA_SHOW_DISPELLABLE
 local DB_AURA_SHOW_ONLY_SHORT_DISPELLABLE_ON_PLAYERS
 local DB_AURA_SHOW_ENRAGE
@@ -204,6 +202,13 @@ local MANUAL_TRACKING_DEBUFFS = {}
 local AUTO_TRACKING_EXTRA_BUFFS = {}
 local AUTO_TRACKING_EXTRA_DEBUFFS = {}
 
+--blacklists
+local DB_DEBUFF_BANNED
+local DB_BUFF_BANNED
+
+--cache
+local DB_AURA_NAME_CACHE
+
 --Cache for ghost auras
 --Updated on function: Plater.UpdateGhostAurasCache()
 local GHOSTAURAS = {}
@@ -216,7 +221,131 @@ platerInternal.ExtraAuras = {
 	unitFramesToGUID = {}
 }
 
-platerInternal.Auras = {}
+platerInternal.Auras = {
+	spellCaches = {
+		allIDsByName = {},
+	},
+	spellCachesLoaded = false,
+	spellCachesLoading = false,
+}
+Plater.SpellCaches = platerInternal.Auras.spellCaches
+
+local spellBlacklist = {} -- some spells just crash PTR clients... add them here
+
+-- Spell Caches
+local expandAuraCaches
+local lazyBuildSpellCache
+-- Spell Cache init
+lazyBuildSpellCache = function(start)
+	platerInternal.Auras.spellCachesLoading = true
+	platerInternal.Auras.spellCachesLoaded = false
+	local startPoint = start or 1
+	local endPoint = startPoint + 1500
+	local i = startPoint
+
+	local toLowerCase = string.lower
+	local GetSpellInfo = GetSpellInfo
+
+	local allSpellsSameName = platerInternal.Auras.spellCaches.allIDsByName
+
+	local curTime = debugprofilestop()
+	local endTime = curTime + 25
+
+	--while (i < endPoint) do
+	while (curTime < endTime) do
+		local spellName = (not spellBlacklist[i]) and GetSpellInfo(i)
+
+		if (spellName) then
+			spellName = toLowerCase(spellName)
+
+			local spellNameTable = allSpellsSameName[spellName]
+			if (not spellNameTable) then
+				spellNameTable = {}
+				allSpellsSameName[spellName] = spellNameTable
+			end
+			spellNameTable[#spellNameTable+1] = i
+		end
+
+		i = i + 1
+
+		curTime = debugprofilestop()
+	end
+	if i < 1500000 then
+		C_Timer.After(0, function() lazyBuildSpellCache(i) end)
+	else
+		--if DevTool then DevTool:AddData(platerInternal.Auras.spellCaches) end
+		platerInternal.Auras.spellCachesLoaded = true
+		platerInternal.Auras.spellCachesLoading = false
+		expandAuraCaches()
+	end
+end
+--lazyBuildSpellCache()
+
+function expandAuraCaches()
+	--if not IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS or not platerInternal.Auras.spellCachesLoaded then return end
+	if not IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS then return end
+	local toLowerCase = string.lower
+	local allIDsByName = platerInternal.Auras.spellCaches.allIDsByName
+	local missing = {}
+	local containersToExtend = DB_TRACK_METHOD == 0x1 and {DB_DEBUFF_BANNED, DB_BUFF_BANNED, SPECIAL_AURAS_AUTO_ADDED, SPECIAL_AURAS_USER_LIST, SPECIAL_AURAS_USER_LIST_MINE, AUTO_TRACKING_EXTRA_BUFFS, AUTO_TRACKING_EXTRA_DEBUFFS} or {SPECIAL_AURAS_AUTO_ADDED, SPECIAL_AURAS_USER_LIST, SPECIAL_AURAS_USER_LIST_MINE, MANUAL_TRACKING_BUFFS, MANUAL_TRACKING_DEBUFFS}
+	for _, container in pairs (containersToExtend) do
+		local containerCopy = DF.table.copy({}, container or {})
+		for id, val in pairs(containerCopy) do
+			local lowerID = toLowerCase(id)
+			local isNumber = tonumber(id) and true or false
+			local addIDs = Plater.SpellSameNameTable[lowerID] or DB_AURA_NAME_CACHE[lowerID] or allIDsByName[lowerID] -- just expand names and refresh automatically
+			if addIDs and not isNumber then
+				DB_AURA_NAME_CACHE[lowerID] = addIDs
+				for _, addID in pairs(addIDs) do
+					container[addID] = val
+				end
+			elseif not isNumber and not platerInternal.Auras.spellCachesLoaded then -- if that's a miss, even in the cache, then ignore it.
+				table.insert(missing, lowerID)
+			end
+		end
+	end
+
+	if next(missing) and not platerInternal.Auras.spellCachesLoading then
+		C_Timer.After(0, lazyBuildSpellCache)
+	elseif not platerInternal.Auras.spellCachesLoading then
+		C_Timer.After(0, function()
+			--clean spell cache
+			local copy = DF.table.copy({}, DB_AURA_NAME_CACHE)
+			local toCheck = {DB_DEBUFF_BANNED, DB_BUFF_BANNED, SPECIAL_AURAS_AUTO_ADDED, SPECIAL_AURAS_USER_LIST, SPECIAL_AURAS_USER_LIST_MINE, AUTO_TRACKING_EXTRA_BUFFS, AUTO_TRACKING_EXTRA_DEBUFFS, MANUAL_TRACKING_BUFFS, MANUAL_TRACKING_DEBUFFS}
+			local fullList = {}
+			for _, cache in pairs (toCheck) do
+				for id in pairs(cache) do
+					if not tonumber(id) then
+						fullList[toLowerCase(id)] = true
+					end
+				end
+			end
+			for name in pairs (copy) do
+				local contained = false
+				if fullList[name] then
+					contained = true
+				end
+				if not contained then
+					DB_AURA_NAME_CACHE[name] = nil
+				end
+			end
+		end)
+	end
+
+	-- update filters
+	Plater.Auras.SetContainerFiltersOutdated()
+	--if DevTool then DevTool:AddData(containersToExtend, "containers") end
+	for _, plateFrame in ipairs (Plater.GetAllShownPlates()) do
+		if plateFrame.unitFrame and plateFrame.unitFrame.PlaterOnScreen then
+			if not plateFrame.unitFrame.isPerformanceUnitAura then
+				Plater.AddToAuraUpdate(plateFrame.unitFrame.namePlateUnitToken, plateFrame.unitFrame) -- force aura update
+			end
+		end
+	end
+end
+-- End Spell Caches
+
+
 
 local extraAuraGUIDtoUnitFrameCache = platerInternal.ExtraAuras.unitFramesToGUID
 
@@ -655,6 +784,8 @@ end
 	New aura container code - MIDNIGHT 12.1!
 ]]--
 
+local AURA_CONTAINER_CACHE = {}
+
 local auraFramesSetup = {
 	{
 		frameName = "BuffFrame1",
@@ -674,8 +805,59 @@ local auraFramesSetup = {
 }
 
 -- TODO: filter by buffs/debuffs
-local function getCandidateFilters(frameName)
+local containerConfigCache = {
+	containerConfigIndex = 0,
+	candidateFilterIndex = 0,
+	candidateFilters = {},
+	auraFilterIndex = 1,
+	auraFilters = {
+		enemynpc = {},
+		friendlynpc = {},
+		enemyplayer = {},
+		friendlyplayer = {},
+	},
+	containerLayoutIndex = 0,
+	containerLayouts = {},
+	containerFullOptionIndex = 0,
+	containerFullOptions = {
+		enemynpc = {},
+		friendlynpc = {},
+		enemyplayer = {},
+		friendlyplayer = {},
+	},
+	auraFrameOptionIndex = 0,
+	auraFrameOptions = {},
+	auraFrameLayoutIndex = 0,
+	auraFrameLayouts = {},
+	auraBorderOptionIndex = 0,
+	auraBorderOptions = {},
+}
+function Plater.Auras.SetIconConfigOutdated()
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "SetIconConfigOutdated")
+	containerConfigCache.containerConfigIndex = containerConfigCache.containerConfigIndex + 1
+	containerConfigCache.containerLayoutIndex = containerConfigCache.containerLayoutIndex + 1
+	containerConfigCache.containerFullOptionIndex = containerConfigCache.containerFullOptionIndex + 1
+	containerConfigCache.auraBorderOptionIndex = containerConfigCache.auraBorderOptionIndex + 1
+	containerConfigCache.auraFrameLayoutIndex = containerConfigCache.auraFrameLayoutIndex + 1
+	containerConfigCache.auraFrameOptionIndex = containerConfigCache.auraFrameOptionIndex + 1
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "SetIconConfigOutdated")
+end
+function Plater.Auras.SetContainerFiltersOutdated()
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "SetContainerFiltersOutdated")
+	containerConfigCache.candidateFilterIndex = containerConfigCache.candidateFilterIndex + 1
+	containerConfigCache.auraFilterIndex = containerConfigCache.auraFilterIndex + 1
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "SetContainerFiltersOutdated")
+end
+local function getCandidateFilters(frameName, force)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "getCandidateFilters")
 	local profile = Plater.db.profile
+
+	local cachedFilter = containerConfigCache.candidateFilters[frameName]
+	if not force and cachedFilter and cachedFilter.filterIndex == containerConfigCache.candidateFilterIndex then
+		cachedFilter = DF.table.copy({}, cachedFilter)
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "getCandidateFilters")
+		return cachedFilter
+	end
 
 	local filters = {
 		mainFilter = {
@@ -683,7 +865,7 @@ local function getCandidateFilters(frameName)
 			excludeSpellIDs = {}, -- needs to exclude anything on the additionalInclude, due to second include group!
 			--includeDispelTypes -- AuraUtil.DispellableDebuffTypes
 			--excludeDispelTypes -- AuraUtil.DispellableDebuffTypes
-			maxDuration = profile.debuff_hide_permanent and math.huge or nil,
+			--maxDuration = nil --profile.debuff_hide_permanent and math.huge or nil,
 			--processedAuraType --AuraUtil.AuraUpdateChangedType
 			--isFromPlayerOrPlayerPet
 			--isRoleAura
@@ -697,43 +879,47 @@ local function getCandidateFilters(frameName)
 		},
 		additionalInclude = {
 			includeSpellIDs = {},
-		}
+		},
+		filterIndex = containerConfigCache.candidateFilterIndex
 	}
 
 	if frameName == "Main" then
 		if DB_AURA_SEPARATE_BUFFS then
-			--filters.mainFilter.processedAuraType = AuraUtil.AuraUpdateChangedType.Debuff
-			
 			if DB_TRACK_METHOD == 1 then 
 				DF.table.copy(filters.additionalInclude.includeSpellIDs, AUTO_TRACKING_EXTRA_DEBUFFS)
+
 				DF.table.copy(filters.mainFilter.excludeSpellIDs, AUTO_TRACKING_EXTRA_DEBUFFS)
 				DF.table.copy(filters.mainFilter.excludeSpellIDs, DB_DEBUFF_BANNED)
+				DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_AUTO_ADDED)
+				DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_USER_LIST)
+				DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_USER_LIST_MINE)
 			else
 				DF.table.copy(filters.additionalInclude.includeSpellIDs, MANUAL_TRACKING_DEBUFFS)
 				DF.table.copy(filters.mainFilter.excludeSpellIDs, MANUAL_TRACKING_DEBUFFS)
 			end
 		else
-			--filters.mainFilter.processedAuraType -> all -> no filter
+			if DB_TRACK_METHOD == 1 then
+				DF.table.copy(filters.additionalInclude.includeSpellIDs, AUTO_TRACKING_EXTRA_BUFFS)
+				DF.table.copy(filters.additionalInclude.includeSpellIDs, AUTO_TRACKING_EXTRA_DEBUFFS)
 
-			if DB_TRACK_METHOD == 1 then 
 				DF.table.copy(filters.mainFilter.excludeSpellIDs, DB_BUFF_BANNED)
 				DF.table.copy(filters.mainFilter.excludeSpellIDs, DB_DEBUFF_BANNED)
 
-				DF.table.copy(filters.additionalInclude.includeSpellIDs, AUTO_TRACKING_EXTRA_BUFFS)
 				DF.table.copy(filters.mainFilter.excludeSpellIDs, AUTO_TRACKING_EXTRA_BUFFS)
-				DF.table.copy(filters.additionalInclude.includeSpellIDs, AUTO_TRACKING_EXTRA_DEBUFFS)
 				DF.table.copy(filters.mainFilter.excludeSpellIDs, AUTO_TRACKING_EXTRA_DEBUFFS)
+				DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_AUTO_ADDED)
+				DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_USER_LIST)
+				DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_USER_LIST_MINE)
 			else
 				DF.table.copy(filters.additionalInclude.includeSpellIDs, MANUAL_TRACKING_BUFFS)
-				DF.table.copy(filters.mainFilter.excludeSpellIDs, MANUAL_TRACKING_BUFFS)
 				DF.table.copy(filters.additionalInclude.includeSpellIDs, MANUAL_TRACKING_DEBUFFS)
+
+				DF.table.copy(filters.mainFilter.excludeSpellIDs, MANUAL_TRACKING_BUFFS)
 				DF.table.copy(filters.mainFilter.excludeSpellIDs, MANUAL_TRACKING_DEBUFFS)
 			end
 		end
 	elseif frameName == "Secondary" then
-		--filters.mainFilter.processedAuraType = AuraUtil.AuraUpdateChangedType.Buff
-
-		if DB_TRACK_METHOD == 1 then 
+		if DB_TRACK_METHOD == 1 then
 			DF.table.copy(filters.mainFilter.excludeSpellIDs, DB_BUFF_BANNED)
 
 			DF.table.copy(filters.additionalInclude.includeSpellIDs, AUTO_TRACKING_EXTRA_BUFFS)
@@ -748,27 +934,61 @@ local function getCandidateFilters(frameName)
 
 		DF.table.copy(filters.additionalInclude.includeSpellIDs, SPECIAL_AURAS_AUTO_ADDED)
 		DF.table.copy(filters.additionalInclude.includeSpellIDs, SPECIAL_AURAS_USER_LIST)
+		DF.table.copy(filters.additionalInclude.excludeSpellIDs, SPECIAL_AURAS_USER_LIST_MINE) -- explicitly
 
-		DF.table.copy(filters.mainFilter.excludeSpellIDs, DB_BUFF_BANNED)
-		DF.table.copy(filters.mainFilter.excludeSpellIDs, DB_DEBUFF_BANNED)
+		DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_AUTO_ADDED)
+		DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_USER_LIST)
 		DF.table.copy(filters.mainFilter.excludeSpellIDs, SPECIAL_AURAS_USER_LIST_MINE)
 
-		DF.table.copy(filters.additionalInclude.excludeSpellIDs, DB_BUFF_BANNED)
-		DF.table.copy(filters.additionalInclude.excludeSpellIDs, DB_DEBUFF_BANNED)
-		DF.table.copy(filters.additionalInclude.excludeSpellIDs, SPECIAL_AURAS_USER_LIST_MINE)
+		if DB_TRACK_METHOD == 1 then
+			DF.table.copy(filters.mainFilter.excludeSpellIDs, DB_BUFF_BANNED)
+			DF.table.copy(filters.mainFilter.excludeSpellIDs, DB_DEBUFF_BANNED)
+			DF.table.copy(filters.additionalInclude.excludeSpellIDs, DB_BUFF_BANNED)
+			DF.table.copy(filters.additionalInclude.excludeSpellIDs, DB_DEBUFF_BANNED)
+
+			DF.table.copy(filters.mainFilter.excludeSpellIDs, AUTO_TRACKING_EXTRA_BUFFS)
+			DF.table.copy(filters.mainFilter.excludeSpellIDs, AUTO_TRACKING_EXTRA_DEBUFFS)
+			DF.table.copy(filters.additionalInclude.excludeSpellIDs, AUTO_TRACKING_EXTRA_BUFFS)
+			DF.table.copy(filters.additionalInclude.excludeSpellIDs, AUTO_TRACKING_EXTRA_DEBUFFS)
+		else
+			DF.table.copy(filters.mainFilter.excludeSpellIDs, MANUAL_TRACKING_BUFFS)
+			DF.table.copy(filters.mainFilter.excludeSpellIDs, MANUAL_TRACKING_DEBUFFS)
+			DF.table.copy(filters.additionalInclude.excludeSpellIDs, MANUAL_TRACKING_BUFFS)
+			DF.table.copy(filters.additionalInclude.excludeSpellIDs, MANUAL_TRACKING_DEBUFFS)
+		end
 	end
+
+	containerConfigCache.candidateFilters[frameName] = filters
+
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "getCandidateFilters")
 	return filters
 end
 
-local function getAuraFilters(frameName, unit)
+local function getAuraFilters(frameName, actorType, force)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "getAuraFilters")
+
+	if not actorType then return {} end
+
+	local isPlayer = actorType == "enemyplayer" or actorType == "friendlyplayer"
+	local canAssist = actorType == "friendlynpc" or actorType == "friendlyplayer"
+	--local unitReaction = unit and UnitReaction (unit, "player")
+	--local isFriend = unit and UnitIsFriend("player", unit)
+
+	local cachedFilterInfo = containerConfigCache.auraFilters[actorType]
+	if not cachedFilterInfo[frameName] then
+		cachedFilterInfo[frameName] = {}
+	end
+	cachedFilterInfo = cachedFilterInfo[frameName]
+	if not force and cachedFilterInfo.filters and cachedFilterInfo.filterIndex == containerConfigCache.auraFilterIndex then
+		cachedFilterInfo = DF.table.copy({}, cachedFilterInfo)
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "getAuraFilters")
+		return cachedFilterInfo.filters
+	end
+
 	local filters = {}
-	local allCandidates = getCandidateFilters(frameName)
-	local unitReaction = unit and UnitReaction (unit, "player")
-	local isPlayer = unit and UnitIsPlayer (unit)
-	local canAssist = unit and UnitCanAssist("player", unit)
-	local isFriend = unit and UnitIsFriend("player", unit)
-	
+
 	for _, type in pairs({"debuffs", "buffs"}) do
+		local allCandidates = getCandidateFilters(frameName, force) -- fetch a fresh copy
 
 		local pFilters = {}
 		local nFilters = {}
@@ -789,6 +1009,8 @@ local function getAuraFilters(frameName, unit)
 		elseif DB_TRACK_METHOD == 0x1 and frameName == "Main" and type == "debuffs" then
 			mainFilterString = "HARMFUL"
 
+			allCandidates.mainFilter.maxDuration = Plater.db.profile.aura_hide_permanent_debuffs and math.huge or nil
+
 			--additional filters
 			if canAssist == false then
 				table.insert(filters, {
@@ -808,24 +1030,28 @@ local function getAuraFilters(frameName, unit)
 				table.insert(pFilters, "RAID_IN_COMBAT")
 				--table.insert(pFilters, "RAID")
 			end
-			if DB_AURA_SHOW_DEBUFF_BYPLAYER then
-				table.insert(pFilters, "PLAYER")
-			end
+			
 			if Plater.db.profile.aura_show_crowdcontrol and not Plater.db.profile.debuff_show_cc then
 				table.insert(pFilters, "CROWD_CONTROL")
 			elseif Plater.db.profile.debuff_show_cc then
 				table.insert(nFilters, "!CROWD_CONTROL")
 			end
 
-			if DB_AURA_SHOW_AS_BLIZZARD then
+			if DB_AURA_SHOW_DEBUFF_BYPLAYER then
+				table.insert(filters, {
+					filterString = "HARMFUL|PLAYER" .. (canAssist and DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (DB_AURA_SHOW_RAID and "|!RAID_IN_COMBAT" or "") .. (Plater.db.profile.aura_show_crowdcontrol and "|!CROWD_CONTROL" or ""),
+					candidateFilters = allCandidates.mainFilter,
+				})
+			end
+			if DB_AURA_SHOW_AS_BLIZZARD and not DB_AURA_SHOW_DEBUFF_BYPLAYER then
 				local candidate = DF.table.copy({}, allCandidates.mainFilter)
 				candidate.nameplateShowPersonal = true
 				table.insert(filters, {
-					filterString = "HARMFUL|IMPORTANT|PLAYER|!CROWD_CONTROL",
+					filterString = "HARMFUL|IMPORTANT|PLAYER|!CROWD_CONTROL" .. (canAssist and DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or ""),
 					candidateFilters = candidate,
 				})
 				table.insert(filters, {
-					filterString = "HARMFUL|!IMPORTANT|PLAYER|!CROWD_CONTROL ",
+					filterString = "HARMFUL|!IMPORTANT|PLAYER|!CROWD_CONTROL" .. (canAssist and DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or ""),
 					candidateFilters = candidate,
 				})
 				pFilters = {}
@@ -834,12 +1060,48 @@ local function getAuraFilters(frameName, unit)
 		elseif DB_TRACK_METHOD == 0x1 and ((frameName == "Main" and not DB_AURA_SEPARATE_BUFFS) or (frameName == "Secondary" and DB_AURA_SEPARATE_BUFFS)) and type == "buffs" then
 			mainFilterString = "HELPFUL"
 
+			allCandidates.mainFilter.maxDuration = Plater.db.profile.aura_hide_permanent_buffs and math.huge or nil
+
 			--additional filters
 			if canAssist == true then
 				table.insert(filters, {
 					filterString = "HELPFUL",
 					candidateFilters = allCandidates.additionalInclude
 				})
+			end
+
+			if DB_AURA_SHOW_ENRAGE and not DB_SHOW_ENRAGE_IN_EXTRA_ICONS and not canAssist then
+				local candidate = DF.table.copy({}, allCandidates.mainFilter)
+				candidate.includeSpellIDs = nil
+				candidate.includeDispelTypes = candidate.includeDispelTypes or {}
+				allCandidates.mainFilter.excludeDispelTypes = allCandidates.mainFilter.excludeDispelTypes or {}
+				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
+				candidate.includeDispelTypes["Enrage"] = true
+				table.insert(filters, {
+					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					candidateFilters = candidate,
+				})
+
+				-- remaining exclude magic
+				allCandidates.mainFilter.excludeDispelTypes["Enrage"] = true
+				allCandidates.additionalInclude.excludeDispelTypes["Enrage"] = true
+			end
+
+			if DB_AURA_SHOW_MAGIC and not DB_SHOW_MAGIC_IN_EXTRA_ICONS and not canAssist then
+				local candidate = DF.table.copy({}, allCandidates.mainFilter)
+				candidate.includeSpellIDs = nil
+				candidate.includeDispelTypes = candidate.includeDispelTypes or {}
+				allCandidates.mainFilter.excludeDispelTypes = allCandidates.mainFilter.excludeDispelTypes or {}
+				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
+				candidate.includeDispelTypes["Magic"] = true
+				table.insert(filters, {
+					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					candidateFilters = candidate,
+				})
+
+				-- remaining exclude magic
+				allCandidates.mainFilter.excludeDispelTypes["Magic"] = true
+				allCandidates.additionalInclude.excludeDispelTypes["Magic"] = true
 			end
 
 			if Plater.db.profile.aura_show_defensive_cd and not Plater.db.profile.extra_icon_show_defensive  then
@@ -870,8 +1132,30 @@ local function getAuraFilters(frameName, unit)
 				local candidateFilter = DF.table.copy({}, allCandidates.mainFilter)
 				candidateFilter.includeSpellIDs = nil
 				table.insert(filters, {
-					filterString = "HELPFUL",
+					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
 					candidateFilters = candidateFilter
+				})
+				pFilters = {}
+			end
+
+			if DB_AURA_SHOW_BUFFS_AS_BLIZZARD and not DB_AURA_SHOW_BUFFENEMYNPC and not canAssist then
+				local candidate = DF.table.copy({}, allCandidates.mainFilter)
+				candidate.includeSpellIDs = nil
+				--candidate.nameplateShowPersonal = true
+				--candidate.nameplateShowAll = true
+				candidate.isStealable = true
+				table.insert(filters, {
+					filterString = "HELPFUL|INCLUDE_NAME_PLATE_ONLY" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					candidateFilters = candidate,
+					--candidateFilters = allCandidates.mainFilter,
+				})
+				candidate = DF.table.copy({}, allCandidates.mainFilter)
+				candidate.includeSpellIDs = nil
+				candidate.isStealable = false
+				table.insert(filters, {
+					filterString = "HELPFUL|IMPORTANT" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					candidateFilters = candidate,
+					--candidateFilters = allCandidates.mainFilter,
 				})
 				pFilters = {}
 			end
@@ -888,7 +1172,8 @@ local function getAuraFilters(frameName, unit)
 				table.insert(filters, {
 					filterString = "HARMFUL|PLAYER",
 					candidateFilters = {
-						includeSpellIDs = SPECIAL_AURAS_USER_LIST_MINE
+						includeSpellIDs = SPECIAL_AURAS_USER_LIST_MINE,
+						--excludeSpellIDs = SPECIAL_AURAS_USER_LIST,
 					}
 				})
 			end
@@ -907,11 +1192,46 @@ local function getAuraFilters(frameName, unit)
 				})
 				-- the "only mine"
 				table.insert(filters, {
-					filterString = "HELPFUL",
+					filterString = "HELPFUL|PLAYER",
 					candidateFilters = {
-						includeSpellIDs = SPECIAL_AURAS_USER_LIST_MINE
+						includeSpellIDs = SPECIAL_AURAS_USER_LIST_MINE,
+						--excludeSpellIDs = SPECIAL_AURAS_USER_LIST,
 					}
 				})
+			end
+
+			if DB_SHOW_ENRAGE_IN_EXTRA_ICONS and not canAssist then
+				local candidate = DF.table.copy({}, allCandidates.mainFilter)
+				candidate.includeSpellIDs = nil
+				candidate.includeDispelTypes = candidate.includeDispelTypes or {}
+				allCandidates.mainFilter.excludeDispelTypes = allCandidates.mainFilter.excludeDispelTypes or {}
+				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
+				candidate.includeDispelTypes["Enrage"] = true
+				table.insert(filters, {
+					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					candidateFilters = candidate,
+				})
+
+				-- remaining exclude magic
+				allCandidates.mainFilter.excludeDispelTypes["Enrage"] = true
+				allCandidates.additionalInclude.excludeDispelTypes["Enrage"] = true
+			end
+
+			if DB_SHOW_MAGIC_IN_EXTRA_ICONS and not canAssist then
+				local candidate = DF.table.copy({}, allCandidates.mainFilter)
+				candidate.includeSpellIDs = nil
+				candidate.includeDispelTypes = candidate.includeDispelTypes or {}
+				allCandidates.mainFilter.excludeDispelTypes = allCandidates.mainFilter.excludeDispelTypes or {}
+				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
+				candidate.includeDispelTypes["Magic"] = true
+				table.insert(filters, {
+					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					candidateFilters = candidate,
+				})
+
+				-- remaining exclude magic
+				allCandidates.mainFilter.excludeDispelTypes["Magic"] = true
+				allCandidates.additionalInclude.excludeDispelTypes["Magic"] = true
 			end
 
 			if Plater.db.profile.extra_icon_show_defensive then
@@ -941,42 +1261,62 @@ local function getAuraFilters(frameName, unit)
 				candidateFilters = allCandidates.mainFilter
 			})
 		end
-		--if DevTool then DevTool:AddData({pFilters = pFilters, nFilters = nFilters, mainFilterString = mainFilterString}, frameName .. " - filters") end
+		--if DevTool then DevTool:AddData({pFilters = pFilters, nFilters = nFilters, mainFilterString = mainFilterString, allCandidates = allCandidates}, frameName .. " - filters") end
 	end
 
-	if DevTool then DevTool:AddData(filters, frameName) end
+	--if DevTool then DevTool:AddData(filters, frameName) end
+
+	if actorType then
+		cachedFilterInfo.filters = filters
+		cachedFilterInfo.filterIndex = containerConfigCache.auraFilterIndex
+	end
+	
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "getAuraFilters")
 	return filters
 end
 
 --TODO: by container group as well. requires larger rework of the whole current setup. support separate sizes for "own" debuffs/buffs
 local function getAuraFrameLayout(frameName)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "getAuraFrameLayout")
 	if not Plater.MaxAurasPerRow then Plater.RefreshAuraCache() end -- security check
+
+	local cachedFrameLayout = containerConfigCache.auraFrameLayouts[frameName]
+	if cachedFrameLayout and cachedFrameLayout.optionIndex == containerConfigCache.auraFrameLayoutIndex then
+		cachedFrameLayout = DF.table.copy({}, cachedFrameLayout)
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "getAuraFrameLayout")
+		return cachedFrameLayout
+	end
 
 	local profile = Plater.db.profile
 	local layout = {
 		elementSpacing = profile.aura_padding,
 		lineSpacing = profile.aura_breakline_space,
-		groupSpacing = profile.aura_padding,
+		--groupSpacing = profile.aura_padding, -- element spacing is for groups as well
 		groupLineSpacing = profile.aura_breakline_space,
 		--forceNewLine = false,
 		elementWidth = 26,
 		elementHeight = 16,
 		--layoutIndex
 		maximumLineSize = math.huge,
+		optionIndex = containerConfigCache.auraFrameLayoutIndex,
 	}
 
 	if frameName == "Main" then
 		layout.elementWidth = profile.aura_width
 		layout.elementHeight = profile.aura_height
-		layout.maximumLineSize = (profile.auras_per_row_auto and Plater.MaxAurasPerRow or profile.auras_per_row_amount or 10) * (layout.elementWidth + layout.elementSpacing)
+		layout.maximumLineSize = (profile.auras_per_row_auto and Plater.MaxAurasPerRow or profile.auras_per_row_amount or 10) * (layout.elementWidth + layout.elementSpacing) + 1
 	elseif frameName == "Secondary" then
 		layout.elementWidth = profile.aura_width2
 		layout.elementHeight = profile.aura_height2
-		layout.maximumLineSize = (profile.auras_per_row_auto and Plater.MaxAurasPerRow or profile.auras_per_row_amount2 or 10) * (layout.elementWidth + layout.elementSpacing)
+		layout.maximumLineSize = (profile.auras_per_row_auto and Plater.MaxAurasPerRow or profile.auras_per_row_amount2 or 10) * (layout.elementWidth + layout.elementSpacing) + 1
 	elseif frameName == "ExtraIconFrame" then
 		layout.elementWidth = profile.extra_icon_width
 		layout.elementHeight = profile.extra_icon_height
 	end
+
+	containerConfigCache.auraFrameLayouts[frameName] = layout
+
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "getAuraFrameLayout")
 	return layout
 end
 
@@ -1022,7 +1362,34 @@ local function getAuraProcessingPolicy(frameName)
 	return policy, options
 end
 
-local function initAuraFrame(auraButton, name, key, auraContainer)
+-- allow for override in aura creation and update
+platerInternal.Auras.initAndUpdateAuraFrameOverrides = {}
+platerInternal.Auras.AuraFrameUpdateCallbackTypes = {
+	["Icon"] = true,
+	["Cooldown"] = true,
+	["Count"] = true,
+	["Timer"] = true,
+	["Border"] = true,
+}
+Plater.Auras.AuraFrameUpdateCallbackTypes = {
+	"Icon",
+	"Cooldown",
+	"Count",
+	"Timer",
+	"Border",
+}
+function Plater.Auras.SetAuraFrameUpdateCallback(callbackType, callbackFunc)
+	assert(callbackType and platerInternal.Auras.AuraFrameUpdateCallbackTypes[callbackType], "The aura frame update callback 'type' needs to be 'Icon', 'Cooldown', 'Count', 'Timer' or 'Border'.")
+	assert(type(callbackFunc) == "function", "The aura frame update callback function needs to be a function.")
+
+	platerInternal.Auras.initAndUpdateAuraFrameOverrides[callbackType] = callbackFunc
+end
+function Plater.Auras.ClearAuraFrameUpdateCallback(callbackType)
+	assert(callbackType and platerInternal.Auras.AuraFrameUpdateCallbackTypes[callbackType], "The aura frame update callback 'type' needs to be 'Icon', 'Cooldown', 'Count', 'Timer' or 'Border'.")
+	platerInternal.Auras.initAndUpdateAuraFrameOverrides[callbackType] = nil
+end
+
+local function initAuraFrame(auraButton, frameName, frameKey, auraContainer)
 	--DevTool:AddData(newIcon, "initAuraFrame")
 	local profile = Plater.db.profile
 
@@ -1067,7 +1434,7 @@ local function initAuraFrame(auraButton, name, key, auraContainer)
 
 	
 	auraButton.CountFrame = CreateFrame ("frame", "$parentCountFrame", auraButton)--, BackdropTemplateMixin and "BackdropTemplate")
-	auraButton.CountFrame:SetAllPoints()
+	auraButton.CountFrame:SetPoint("CENTER")
 	auraButton.CountFrame:EnableMouse (false)
 	if auraButton.CountFrame.EnableMouseMotion then
 		auraButton.CountFrame:EnableMouseMotion (false)
@@ -1099,12 +1466,21 @@ local function initAuraFrame(auraButton, name, key, auraContainer)
 		auraButton:ClearDurationText()
 	end
 
+	if auraButton.SetCasterName and frameName == "ExtraIconFrame" then
+		auraButton.Desc = auraButton:CreateFontString(nil, "overlay", "GameFontNormal")
+        auraButton.Desc:SetPoint("bottom", auraButton, "top", 0, 2)
+        auraButton.Desc:SetText("")
+		DF:SetFontSize(auraButton.Desc, Plater.db.profile.extra_icon_caster_size)
+		DF:SetFontFace(auraButton.Desc, Plater.db.profile.extra_icon_caster_font)
+		DF:SetFontOutline(auraButton.Desc, "SLUG")
+		auraButton.SetCasterName(auraButton.Desc, false, true)
+	end
+
 
 	--sizes and position:
 	local auraWidth
 	local auraHeight
 	local borderThickness
-	local frameName = name
 	if frameName == "Main" then
 		auraWidth = profile.aura_width
 		auraHeight = profile.aura_height
@@ -1177,18 +1553,41 @@ local function initAuraFrame(auraButton, name, key, auraContainer)
 	--auraButton.Border:SetPoint("TOPLEFT",     auraButton.Icon, "TOPLEFT",     -band * offset,  band * offset)
 	--auraButton.Border:SetPoint("BOTTOMRIGHT", auraButton.Icon, "BOTTOMRIGHT",  band * offset, -band * offset)
 	auraButton.Border:SetAllPoints()
-	auraButton.Border:SetScale(borderThickness / band)
-	local defaultColor = Plater.db.profile.aura_border_colors.default
+	if borderThickness > 0 then
+		auraButton.Border:SetScale(borderThickness / band)
+		auraButton.Border:Show()
+	else
+		auraButton.Border:Hide()
+	end
+	local defaultColor = frameName ~= "ExtraIconFrame" and Plater.db.profile.aura_border_colors.default or Plater.db.profile.extra_icon_dispel_type_colors.default
     auraButton.Border:SetVertexColor(defaultColor[1], defaultColor[2], defaultColor[3], defaultColor[4])
 
-	if Plater.db.profile.aura_border_colors_by_type then
+	if frameName ~= "ExtraIconFrame" and Plater.db.profile.aura_border_colors_by_type or frameName == "ExtraIconFrame" and Plater.db.profile.extra_icon_aura_border_colors_by_type then
 		local borderOptions = {
 			showIcon = false,
 			showWhenHarmful = true,
 			showWhenHelpful = true,
 			showWithoutDispelType = true,
 			style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+			customDispelColorMap = frameName ~= "ExtraIconFrame" and {
+				["None"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.none)),
+				["Magic"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.magic)),
+				["Curse"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.curse)),
+				["Disease"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.disease)),
+				["Poison"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.poison)),
+				["Bleed"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.bleed)),
+				["Enrage"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.enrage)),
+			} or {
+				["None"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.none)),
+				["Magic"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.magic)),
+				["Curse"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.curse)),
+				["Disease"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.disease)),
+				["Poison"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.poison)),
+				["Bleed"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.bleed)),
+				["Enrage"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.enrage)),
+			}
 		}
+		--C_AuraContainerUtil.ProcessCustomAuraButtonDispelTypeTextureOptions(borderOptions)
 		auraButton:SetAuraBorder(auraButton.Border, borderOptions)
 	end
 
@@ -1199,12 +1598,13 @@ local function initAuraFrame(auraButton, name, key, auraContainer)
 	auraButton.Border:SetSize(auraWidth, auraHeight)
 	auraButton.Icon:SetSize(auraWidth, auraHeight)
 	auraButton.Cooldown:SetSize(auraWidth, auraHeight)
+	auraButton.CountFrame:SetSize(auraWidth, auraHeight)
 	auraButton:SetScale(1)
 
 	Plater.UpdateIconAspecRatio (auraButton)
 
-	auraButton.frameName = name
-	auraButton.frameKey = key
+	auraButton.frameName = frameName
+	auraButton.frameKey = frameKey
 	auraButton.auraContainer = auraContainer
 
 	tinsert(auraContainer.auraButtons, auraButton)
@@ -1212,18 +1612,59 @@ local function initAuraFrame(auraButton, name, key, auraContainer)
 	return auraButton
 end
 
-platerInternal.Auras.reSkinAuraButtonsTimer = {}
-local function reSkinAuraButtons(auraButtons)
+platerInternal.Auras.reSkinAuraButtonsTimer = nil
+platerInternal.Auras.reSkinAuraButtonsObjects = {}
+local reSkinAuraButtons
+local function runScheduledUpdateAuraButtons()
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "runScheduledUpdateAuraButtons")
+	if C_Secrets.ShouldAurasBeSecret() or InCombatLockdown() then
+		if platerInternal.Auras.reSkinAuraButtonsTimer then
+			platerInternal.Auras.reSkinAuraButtonsTimer:Cancel()
+		end
+		platerInternal.Auras.reSkinAuraButtonsTimer = C_Timer.NewTimer(1, runScheduledUpdateAuraButtons)
+		return
+	end
+	local curTime = debugprofilestop()
+	local endTime = curTime + 100
+	local doneItems = {}
+	for auraButton, options in pairs(platerInternal.Auras.reSkinAuraButtonsObjects) do
+		reSkinAuraButtons(auraButton, options)
+		table.insert(doneItems, auraButton)
+		curTime = debugprofilestop()
+		if curTime > endTime then break end
+	end
+	for _, auraButtons in pairs (doneItems) do
+		platerInternal.Auras.reSkinAuraButtonsObjects[auraButtons] = nil
+	end
+	for _ in pairs(platerInternal.Auras.reSkinAuraButtonsObjects) do
+		-- has something..
+		if platerInternal.Auras.reSkinAuraButtonsTimer then
+			platerInternal.Auras.reSkinAuraButtonsTimer:Cancel()
+		end
+		platerInternal.Auras.reSkinAuraButtonsTimer = C_Timer.NewTimer(0, runScheduledUpdateAuraButtons)
+		break
+	end
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "runScheduledUpdateAuraButtons")
+end
+local function scheduleReSkinAurButtons(auraButtons, options)
+	if platerInternal.Auras.reSkinAuraButtonsTimer then
+		platerInternal.Auras.reSkinAuraButtonsTimer:Cancel()
+	end
+	platerInternal.Auras.reSkinAuraButtonsObjects[auraButtons] = options
+	platerInternal.Auras.reSkinAuraButtonsTimer = C_Timer.NewTimer(1, runScheduledUpdateAuraButtons)
+end
+function reSkinAuraButtons(auraButtons, options)
 
 	local profile = Plater.db.profile
 
 	if C_Secrets.ShouldAurasBeSecret() or InCombatLockdown() then
-		if platerInternal.Auras.reSkinAuraButtonsTimer[auraButtons] then
-			platerInternal.Auras.reSkinAuraButtonsTimer[auraButtons]:Cancel()
-		end
-		platerInternal.Auras.reSkinAuraButtonsTimer[auraButtons] = C_Timer.NewTimer(1, function() reSkinAuraButtons(auraButtons) end)
+		--if DevTool then DevTool:AddData(auraButtons, "schedule - " .. tostring(auraButtons)) end
+		scheduleReSkinAurButtons(auraButtons, options)
 		return
 	end
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "reSkinAuraButtons")
+	
+	--if DevTool then DevTool:AddData(auraButtons, "updating - " .. tostring(auraButtons)) end
 	for _, auraButton in pairs(auraButtons) do
 		
 		auraButton:SetMouseMotionEnabled(profile.aura_show_tooltip)
@@ -1300,23 +1741,22 @@ local function reSkinAuraButtons(auraButtons)
 		auraButton.Border:SetSize(auraWidth, auraHeight)
 		auraButton.Icon:SetSize(auraWidth, auraHeight)
 		auraButton.Cooldown:SetSize(auraWidth, auraHeight)
+		auraButton.CountFrame:SetSize(auraWidth, auraHeight)
 		auraButton:SetScale(1)
 
 		local band = 8
-		auraButton.Border:SetScale(borderThickness / band)
+		if borderThickness > 0 then
+			auraButton.Border:SetScale(borderThickness / band)
+			auraButton.Border:Show()
+		else
+			auraButton.Border:Hide()
+		end
 
-		local defaultColor = Plater.db.profile.aura_border_colors.default
+		local defaultColor = frameName ~= "ExtraIconFrame" and Plater.db.profile.aura_border_colors.default or Plater.db.profile.extra_icon_dispel_type_colors.default
     	auraButton.Border:SetVertexColor(defaultColor[1], defaultColor[2], defaultColor[3], defaultColor[4])
 
-		if Plater.db.profile.aura_border_colors_by_type then
-			local borderOptions = {
-				showIcon = false,
-				showWhenHarmful = true,
-				showWhenHelpful = true,
-				showWithoutDispelType = true,
-				style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
-			}
-			auraButton:SetAuraBorder(auraButton.Border, borderOptions)
+		if frameName ~= "ExtraIconFrame" and Plater.db.profile.aura_border_colors_by_type or frameName == "ExtraIconFrame" and Plater.db.profile.extra_icon_aura_border_colors_by_type then
+			auraButton:SetAuraBorder(auraButton.Border, options.borderOptions)
 		else
 			auraButton:ClearAuraBorder()
 		end
@@ -1341,9 +1781,19 @@ local function reSkinAuraButtons(auraButtons)
 		end
 
 	end
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "reSkinAuraButtons")
 end
 
-local function getAuraFrameOptions(frameName, name, key, auraContainer)
+local function getAuraFrameOptions(frameName, key, auraContainer)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "getAuraFrameOptions")
+	local cachedAuraOptions = containerConfigCache.auraFrameOptions[frameName]
+	if cachedAuraOptions and cachedAuraOptions.optionIndex == containerConfigCache.auraFrameOptionIndex then
+		cachedAuraOptions = DF.table.copy({}, cachedAuraOptions)
+		cachedAuraOptions.initializeFrame = function(auraButton) initAuraFrame(auraButton, frameName, key, auraContainer) end -- this needs to be up to date!
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "getAuraFrameOptions")
+		return cachedAuraOptions
+	end
+	
 	local auraFrameOptions = {
 		-- Maximum number of aura frames this filter group may display.
 		maxFrameCount = (Plater.db.profile.aura_max_shown_limit and (Plater.db.profile.aura_max_shown_limit <= 0))and math.huge or Plater.db.profile.aura_max_shown_limit or math.huge,
@@ -1356,24 +1806,77 @@ local function getAuraFrameOptions(frameName, name, key, auraContainer)
 		-- Optional candidate filters applied after the aura filter string.
 		candidateFilters = nil,
 		-- Optional callback invoked after each frame is created.
-		initializeFrame = function(auraButton) initAuraFrame(auraButton, name, key, auraContainer) end,
+		initializeFrame = function(auraButton) initAuraFrame(auraButton, frameName, key, auraContainer) end,
 		-- Optional flow layout settings for this filter group's visible frames.
 		layout = getAuraFrameLayout(frameName),
+		optionIndex = containerConfigCache.auraFrameOptionIndex,
 	}
 
 	if frameName == "ExtraIconFrame" then
 		auraFrameOptions.maxFrameCount = math.huge
 	end
 
+	containerConfigCache.auraFrameOptions[frameName] = auraFrameOptions
+
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "getAuraFrameOptions")
 	return auraFrameOptions
 end
 
-local function getFullAuraOptions(frameName, name, key, auraContainer, unit)
+local function getAuraBorderOptions(frameName)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "getAuraBorderOptions")
+	local cachedAuraBorderOptions = containerConfigCache.auraBorderOptions[frameName]
+	if cachedAuraBorderOptions and cachedAuraBorderOptions.optionIndex == containerConfigCache.containerFullOptionIndex then
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "getAuraBorderOptions")
+		return cachedAuraBorderOptions
+	end
+	local borderOptions = {
+		showIcon = false,
+		showWhenHarmful = true,
+		showWhenHelpful = true,
+		showWithoutDispelType = true,
+		style = Enum.CustomAuraButtonDispelTypeTextureStyle.PreserveAsset,
+		customDispelColorMap = frameName ~= "ExtraIconFrame" and {
+			["None"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.none)),
+			["Magic"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.magic)),
+			["Curse"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.curse)),
+			["Disease"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.disease)),
+			["Poison"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.poison)),
+			["Bleed"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.bleed)),
+			["Enrage"] = CreateColor(unpack(Plater.db.profile.aura_border_colors.enrage)),
+		} or {
+			["None"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.none)),
+			["Magic"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.magic)),
+			["Curse"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.curse)),
+			["Disease"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.disease)),
+			["Poison"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.poison)),
+			["Bleed"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.bleed)),
+			["Enrage"] = CreateColor(unpack(Plater.db.profile.extra_icon_dispel_type_colors.enrage)),
+		},
+		optionIndex = containerConfigCache.auraBorderOptionIndex,
+	}
+
+	containerConfigCache.auraBorderOptions[frameName] = borderOptions
+
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "getAuraBorderOptions")
+	return borderOptions
+end
+
+local function getFullAuraOptions(frameName, key, auraContainer, actorType, force)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "getFullAuraOptions")
+	local cachedAuraOptions = actorType and containerConfigCache.containerFullOptions[actorType][frameName]
+	if not force and cachedAuraOptions and cachedAuraOptions.optionIndex == containerConfigCache.containerFullOptionIndex then
+		cachedAuraOptions.initializeFrame = function(auraButton) initAuraFrame(auraButton, frameName, key, auraContainer) end -- this needs to be up to date!
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "getFullAuraOptions")
+		return cachedAuraOptions
+	end
 	local fullOptions = {
-		auraFrameOptions = getAuraFrameOptions(frameName, name, key, auraContainer),
-		processingPolicy = {},
+		auraFrameOptions = getAuraFrameOptions(frameName, key, auraContainer),
+		--processingPolicy = {},
 		layoutGrowth = {},
-		auraFilters = getAuraFilters(frameName, unit),
+		auraFilters = getAuraFilters(frameName, actorType, force),
+		borderOptions = getAuraBorderOptions(frameName),
+		optionsIndex = actorType and containerConfigCache.containerFullOptionIndex or -1,
+		actorType = actorType,
 	}
 
 	local horizontalDirection, verticalDirection, anchorPoint = getLayoutGrowthDirection(frameName)
@@ -1381,22 +1884,40 @@ local function getFullAuraOptions(frameName, name, key, auraContainer, unit)
 	fullOptions.layoutGrowth.verticalDirection = verticalDirection
 	fullOptions.layoutGrowth.anchorPoint = anchorPoint
 
-	local policy, policyOptions = getAuraProcessingPolicy(frameName)
-	fullOptions.processingPolicy.policy = policy
-	fullOptions.processingPolicy.policyOptions = policyOptions
+	--local policy, policyOptions = getAuraProcessingPolicy(frameName)
+	--fullOptions.processingPolicy.policy = policy
+	--fullOptions.processingPolicy.policyOptions = policyOptions
 
+	if actorType then
+		containerConfigCache.containerFullOptions[actorType][frameName] = fullOptions
+	end
+
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "getFullAuraOptions")
 	return fullOptions
 end
 
+local allocIndex = 1
 local function createAuraContainers(unitFrame)
 	if not IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS then return end
+	if not unitFrame and allocIndex > 121 then return end
 	for _, frameInfo in pairs (auraFramesSetup) do
-		local auraContainer = CreateFrame("AuraContainer", "$parent" .. frameInfo.frameName, unitFrame, "CustomAuraContainerTemplate")
-		unitFrame[frameInfo.key] = auraContainer
-		auraContainer.Name = frameInfo.name
-		--auraContainer.index = i
+		local auraContainer = CreateFrame("AuraContainer", "PlaterAuraContainer" .. allocIndex .. frameInfo.frameName, unitFrame or UIParent, "CustomAuraContainerTemplate")
+		auraContainer:SetSize(1, 1)
+		if unitFrame then
+			unitFrame[frameInfo.key] = auraContainer
+		end
+		-- skip ahead and store
+		while AURA_CONTAINER_CACHE[allocIndex] and AURA_CONTAINER_CACHE[allocIndex][frameInfo.key] do
+			allocIndex = allocIndex + 1
+		end
+		AURA_CONTAINER_CACHE[allocIndex] = AURA_CONTAINER_CACHE[allocIndex] or {}
+		AURA_CONTAINER_CACHE[allocIndex][frameInfo.key] = auraContainer
 
-		local options = getFullAuraOptions(frameInfo.name, frameInfo.name, frameInfo.key, auraContainer, nil)
+		auraContainer.frameInfo = frameInfo
+		auraContainer.Name = frameInfo.name
+		auraContainer.index = allocIndex
+
+		local options = getFullAuraOptions(frameInfo.name, frameInfo.key, auraContainer, nil)
 		auraContainer.activeOptions = options
 		auraContainer.groups = {}
 		auraContainer.auraButtons = {}
@@ -1415,13 +1936,49 @@ local function createAuraContainers(unitFrame)
 		auraContainer:SetFlowLayoutAnchorPoint(options.layoutGrowth.anchorPoint)
 		auraContainer:SetFlowLayoutGrowthDirection(options.layoutGrowth.horizontalDirection, options.layoutGrowth.verticalDirection)
 		auraContainer:SetFlowLayoutMaximumLineSize(options.auraFrameOptions.layout.maximumLineSize)
-		auraContainer:SetAuraProcessingPolicy(options.processingPolicy.policy, options.processingPolicy.policyOptions)
+		--auraContainer:SetAuraProcessingPolicy(options.processingPolicy.policy, options.processingPolicy.policyOptions)
 		--SetAuraLayoutPadding
 
 		auraContainer:SetEnabled(false)
 
-		--DevTool:AddData(auraContainer, "create")
+		--DevTool:AddData(auraContainer, "create - "..allocIndex)
 	end
+	allocIndex = allocIndex + 1
+end
+
+local nextAuraIndex = 1
+local function createOrAllocateAuraContainers(unitFrame)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "createOrAllocateAuraContainers")
+	if nextAuraIndex > allocIndex or not AURA_CONTAINER_CACHE[nextAuraIndex] then
+		--if DevTool then DevTool:AddData(unitFrame, "allocate direct create") end
+		createAuraContainers(unitFrame)
+	else
+		--if DevTool then DevTool:AddData(unitFrame, "allocate from cache") end
+		local auraContainers = AURA_CONTAINER_CACHE[nextAuraIndex]
+		for _, frameInfo in pairs (auraFramesSetup) do
+			local container = auraContainers[frameInfo.key]
+			unitFrame[frameInfo.key] = container
+			container:SetParent(unitFrame)
+		end
+	end
+	nextAuraIndex = nextAuraIndex + 1
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "createOrAllocateAuraContainers")
+end
+
+local function preCreateAuraContainers()
+	if not IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS then return end
+	if allocIndex > 121 then return end
+	local curTime = debugprofilestop()
+	local endTime = curTime + 100
+	while curTime < endTime and allocIndex <= 121 do
+		createAuraContainers()
+		curTime = debugprofilestop()
+	end
+	C_Timer.After(0, preCreateAuraContainers)
+end
+function Plater.StartPreCreateAuraContainers()
+	if not IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS then return end
+	C_Timer.After(0, preCreateAuraContainers)
 end
 
 function platerInternal.Auras.CreateOldAuraContainers(unitFrame)
@@ -1476,12 +2033,13 @@ function platerInternal.Auras.CreateOldAuraContainers(unitFrame)
 	unitFrame.BuffFrame.ExtraIconFrame = unitFrame.ExtraIconFrame
 end
 
-local nextAuraIndex = 1
-function Plater.CreateOrUpdateAuraContainers(unitFrame, unit)
+function Plater.CreateOrUpdateAuraContainers(unitFrame, unit, forceFull, forceFilters, forceLayout)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "CreateOrUpdateAuraContainers")
 	if IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS and unit ~= "player" then
 		
 		if not unitFrame.BuffFrame then
-			createAuraContainers(unitFrame)
+			Plater.StartLogPerformanceCore("Plater-Core", "Update", "CreateOrUpdateAuraContainers - createallocate")
+			createOrAllocateAuraContainers(unitFrame)
 
 			for _, frameInfo in pairs (auraFramesSetup) do
 				
@@ -1496,84 +2054,126 @@ function Plater.CreateOrUpdateAuraContainers(unitFrame, unit)
 				--DevTool:AddData(auraContainer, "create")
 			end
 
-			nextAuraIndex = nextAuraIndex + 1
-
 			--> unit aura cache dummy compat
+			unitFrame.BuffFrame.amountAurasShown = 0
+			unitFrame.BuffFrame2.amountAurasShown = 0
 			unitFrame.AuraCache = {}
 			unitFrame.GhostAuraCache = {}
 			unitFrame.ExtraAuraCache = {}
 			unitFrame.BuffFrame.BuffFrame2 = unitFrame.BuffFrame2
 			unitFrame.BuffFrame.ExtraIconFrame = unitFrame.ExtraIconFrame
+			Plater.EndLogPerformanceCore("Plater-Core", "Update", "CreateOrUpdateAuraContainers - createallocate")
 		end
 
 		-- update
 		for _, frameInfo in pairs (auraFramesSetup) do
 			local auraContainer = unitFrame[frameInfo.key]
 			if DB_AURA_ENABLED and unit then
-				local options = getFullAuraOptions(frameInfo.name, frameInfo.name, frameInfo.key, auraContainer, unitFrame.namePlateUnitToken)
-				auraContainer.activeOptions = options
-				auraContainer:SetAuraProcessingPolicy(options.processingPolicy.policy, options.processingPolicy.policyOptions)
-				auraContainer:SetFlowLayoutMaximumLineSize(options.auraFrameOptions.layout.maximumLineSize)
-				auraContainer:SetFlowLayoutAnchorPoint(options.layoutGrowth.anchorPoint)
-				auraContainer:SetFlowLayoutGrowthDirection(options.layoutGrowth.horizontalDirection, options.layoutGrowth.verticalDirection)
-
-				local index = 1
-				for _, filter in pairs(options.auraFilters) do
-					local groupName = "group"..index
-					if not auraContainer.groups[groupName] then
-						options.auraFrameOptions.candidateFilters = filter.candidateFilters
-						auraContainer:AddAuraGroup(groupName, filter.filterString, options.auraFrameOptions)
-						auraContainer.groups[groupName] = true
+				local options = getFullAuraOptions(frameInfo.name, frameInfo.key, auraContainer, unitFrame.ActorType, forceFull)
+				if forceFull then
+					forceLayout = true
+					forceFilters = true
+				end
+				--if force or auraContainer.activeUnit ~= unit or (auraContainer.activeOptionsType ~= unitFrame.ActorType) or (auraContainer.activeOptionsIndex ~= options.optionsIndex) then
+				local shouldUpdate = (auraContainer.activeOptionsType ~= unitFrame.ActorType) or (auraContainer.activeOptionsIndex ~= options.optionsIndex)
+				if forceFilters or shouldUpdate or forceLayout then
+					--if DevTool then DevTool:AddData({stack = debugstack(), force = force, shouldUpdate = shouldUpdate, forceLayout = forceLayout, forceFull = forceFull, active = auraContainer.activeOptionsType, current = unitFrame.ActorType, activeIndex = auraContainer.activeOptionsIndex, currentIndex = options.optionsIndex, options = options}, "Updating: " .. unit .. " - " .. frameInfo.key) end
+					if shouldUpdate or forceLayout then
+						Plater.StartLogPerformanceCore("Plater-Core", "Update", "CreateOrUpdateAuraContainers - updatelayout")
+						--auraContainer:SetAuraProcessingPolicy(options.processingPolicy.policy, options.processingPolicy.policyOptions) -- currently unused
+						auraContainer:SetFlowLayoutMaximumLineSize(options.auraFrameOptions.layout.maximumLineSize)
+						auraContainer:SetFlowLayoutAnchorPoint(options.layoutGrowth.anchorPoint)
+						auraContainer:SetFlowLayoutGrowthDirection(options.layoutGrowth.horizontalDirection, options.layoutGrowth.verticalDirection)
+						Plater.EndLogPerformanceCore("Plater-Core", "Update", "CreateOrUpdateAuraContainers - updatelayout")
 					end
 
-					local maxFrameCount = options.auraFrameOptions.maxFrameCount
-					if DB_AURA_SEPARATE_BUFFS and frameInfo.name == "Main" and groupName == "buffs" then
-						maxFrameCount = 0
+					if shouldUpdate or forceFilters then
+						Plater.StartLogPerformanceCore("Plater-Core", "Update", "CreateOrUpdateAuraContainers - updatefilters")
+						local index = 1
+						for _, filter in pairs(options.auraFilters) do
+							local groupName = "group"..index
+							--if DevTool then DevTool:AddData({hasGroup = auraContainer:HasAuraGroup(groupName), auraContainer = auraContainer, unitFrame = unitFrame}, "update-" .. frameInfo.key .. "-" .. (unit or "nil") .. "-" .. groupName) end
+							if not auraContainer.groups[groupName] then
+								options.auraFrameOptions.candidateFilters = filter.candidateFilters
+								auraContainer:AddAuraGroup(groupName, filter.filterString, options.auraFrameOptions)
+								auraContainer.groups[groupName] = true
+							end
+
+							if filter.filterString then
+								auraContainer:SetAuraGroupCandidateFilters(groupName, filter.candidateFilters)
+								auraContainer:SetAuraGroupFilterString(groupName, filter.filterString)
+
+								if shouldUpdate or forceLayout then
+									auraContainer:SetAuraGroupMaxFrameCount(groupName, options.auraFrameOptions.maxFrameCount)
+									auraContainer:SetAuraGroupSortMethod(groupName, options.auraFrameOptions.sortMethod, options.auraFrameOptions.sortDirection)
+									auraContainer:SetAuraGroupLayout(groupName, options.auraFrameOptions.layout)
+								end
+							else
+								auraContainer:SetAuraGroupFilterString(groupName, "")
+								auraContainer:SetAuraGroupMaxFrameCount(groupName, 0)
+							end
+
+							index = index + 1
+						end
+
+						while (auraContainer.groups["group"..index]) do
+							--disable surplus
+							--if DevTool then DevTool:AddData({hasGroup = auraContainer:HasAuraGroup(groupName), auraContainer = auraContainer, unitFrame = unitFrame}, "disable-" .. frameInfo.key .. "-" .. (unit or "nil") .. "-" .. "group"..index) end
+							auraContainer:SetAuraGroupMaxFrameCount("group"..index, 0)
+							auraContainer:SetAuraGroupFilterString("group"..index, "")
+							index = index + 1
+						end
+						Plater.EndLogPerformanceCore("Plater-Core", "Update", "CreateOrUpdateAuraContainers - updatefilters")
+					end
+					
+					if auraContainer.configIndex ~= containerConfigCache.containerConfigIndex then
+						reSkinAuraButtons(auraContainer.auraButtons, options)
+						auraContainer.configIndex = containerConfigCache.containerConfigIndex
 					end
 
-					if filter.filterString then
-						auraContainer:SetAuraGroupCandidateFilters(groupName, filter.candidateFilters)
-						auraContainer:SetAuraGroupFilterString(groupName, filter.filterString)
-
-						auraContainer:SetAuraGroupMaxFrameCount(groupName, maxFrameCount)
-						auraContainer:SetAuraGroupSortMethod(groupName, options.auraFrameOptions.sortMethod, options.auraFrameOptions.sortDirection)
-						auraContainer:SetAuraGroupLayout(groupName, options.auraFrameOptions.layout)
-					else
-						auraContainer:SetAuraGroupFilterString(groupName, "")
-						auraContainer:SetAuraGroupMaxFrameCount(groupName, 0)
+					if unitFrame.ActorType then
+						auraContainer.activeOptionsType = unitFrame.ActorType
+						auraContainer.activeOptions = options
+						auraContainer.activeOptionsIndex = options.optionsIndex
+						auraContainer.activeUnit = unit
 					end
-
-					index = index + 1
 				end
 
-				while (auraContainer.groups["group"..index]) do
-					--disable surplus
-					auraContainer:SetAuraGroupMaxFrameCount("group"..index, 0)
-					auraContainer:SetAuraGroupFilterString("group"..index, "")
-					index = index + 1
+				if auraContainer.enabled and auraContainer.unitToken and auraContainer.unitToken == unit then
+					Plater.StartLogPerformanceCore("Plater-Core", "Update", "createOrAllocateAuraContainers - rebuildupdate")
+					--auraContainer:RebuildAuraParseFilters()
+					auraContainer:UpdateAllAuras()
+					--C_Timer.After(0, auraContainer.UpdateAllAuras)
+					--auraContainer:Hide()
+					auraContainer:Show()
+					Plater.EndLogPerformanceCore("Plater-Core", "Update", "createOrAllocateAuraContainers - rebuildupdate")
+				else 
+					auraContainer:SetEnabled(true)
+					auraContainer:SetUnit(unit)
+					auraContainer:Show()
 				end
-				
-				reSkinAuraButtons(auraContainer.auraButtons)
-				auraContainer:SetEnabled(true)
-				auraContainer:SetUnit(unit)
 			else
 				--auraContainer:SetUnit("player") -- dummy
 				auraContainer:SetEnabled(false)
+				auraContainer:Hide()
 			end
 
 			--auraContainer:SetEnabled(DB_AURA_ENABLED and unit and true or false)
 
-			--if DevTool then DevTool:AddData(auraContainer, "update") end
+			--if DevTool then DevTool:AddData({auraContainer = auraContainer, unitFrame = unitFrame, debugstack = debugstack()}, "update - " .. (unit or "nil")) end
 		end
 
 	elseif not unitFrame.BuffFrame then -- old API
 		platerInternal.Auras.CreateOldAuraContainers(unitFrame)
 	end
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "CreateOrUpdateAuraContainers")
 end
 
 function Plater.RemoveFromAuraUpdate (unit, unitFrame)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "RemoveFromAuraUpdate")
 	if IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS then
 		Plater.CreateOrUpdateAuraContainers(unitFrame, nil)
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "RemoveFromAuraUpdate")
 		return
 	end
 	if not unit or not unitFrame then return end
@@ -1582,12 +2182,16 @@ function Plater.RemoveFromAuraUpdate (unit, unitFrame)
 	unitFrame.UnitAuraEventHandlerFrame:SetScript ("OnEvent", nil)
 	UnitAuraCacheData[unit] = nil
 	UnitAuraEventHandlerData[unit] = nil
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "RemoveFromAuraUpdate")
 end
 
 function Plater.AddToAuraUpdate (unit, unitFrame)
+	Plater.StartLogPerformanceCore("Plater-Core", "Update", "AddToAuraUpdate")
 	if not unit or not unitFrame then return end
 	if IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS then
 		Plater.CreateOrUpdateAuraContainers(unitFrame, unit)
+		--Plater.CreateOrUpdateAuraContainers(unitFrame, unit, false, true)
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "AddToAuraUpdate")
 		return
 	end
 	unitFrame.UnitAuraEventHandlerFrame = unitFrame.UnitAuraEventHandlerFrame or CreateFrame ("frame")
@@ -1596,6 +2200,7 @@ function Plater.AddToAuraUpdate (unit, unitFrame)
 	UnitAuraEventHandlerData[unit] = { hasBuff = true, hasDebuff = true } --update at least once
 	--UpdateUnitAuraCacheData(unit, {isFullUpdate = true})
 	UpdateUnitAuraCacheData(unit, nil)
+	Plater.EndLogPerformanceCore("Plater-Core", "Update", "AddToAuraUpdate")
 end
 
 
@@ -1912,10 +2517,12 @@ end
 	
 	--called from the options panel, request a refresh on all auras shown
 	function Plater.RefreshAuras() --private
-		for _, plateFrame in ipairs (Plater.GetAllShownPlates()) do
-			if plateFrame.unitFrame.PlaterOnScreen then -- only for visible
-				UnitAuraEventHandlerData[plateFrame.unitFrame.unit] = { hasBuff = true, hasDebuff = true } -- ensure aura update
-				Plater.NameplateTick (plateFrame.OnTickFrame, 1)
+		if not IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS then
+			for _, plateFrame in ipairs (Plater.GetAllShownPlates()) do
+				if plateFrame.unitFrame.PlaterOnScreen then -- only for visible
+					UnitAuraEventHandlerData[plateFrame.unitFrame.unit] = { hasBuff = true, hasDebuff = true } -- ensure aura update
+					Plater.NameplateTick (plateFrame.OnTickFrame, 1)
+				end
 			end
 		end
 		if Plater.Masque then
@@ -4418,6 +5025,7 @@ end
 					--> if the user remove the spell, that spell isn't removed from the 'only mine' list
 					--> so need to check if the spell on 'only mine' list is included in the special aura list
 					if (SPECIAL_AURAS_USER_LIST [spellId]) then
+						--SPECIAL_AURAS_USER_LIST [spellId] = nil --TODO is thi safe?
 						SPECIAL_AURAS_USER_LIST_MINE [spellId] = true
 					end
 				end
@@ -4426,6 +5034,8 @@ end
     end
 
 	function Plater.RefreshAuraCache()
+		Plater.StartLogPerformanceCore("Plater-Core", "Update", "RefreshAuraCache")
+
 		local profile = Plater.db.profile
 
 		DB_AURA_ENABLED = profile.aura_enabled
@@ -4458,7 +5068,13 @@ end
 		
 		DB_TRACK_METHOD = profile.aura_tracker.track_method
 
+		DB_AURA_NAME_CACHE = profile.aura_tracker.spell_name_cache
+
 		Plater.MaxAurasPerRow = floor(profile.plate_config.enemynpc.health_incombat[1] / (profile.aura_width + DB_AURA_PADDING))
+		Plater.Auras.SetContainerFiltersOutdated()
+		Plater.Auras.SetIconConfigOutdated()
+
+		Plater.EndLogPerformanceCore("Plater-Core", "Update", "RefreshAuraCache")
     end
 
 	local function re_UpdateGhostAurasCache()
@@ -4498,11 +5114,7 @@ end
 				local spellIDNum = tonumber(manualDebuffsToTrack [i])
 				local spellName = GetSpellInfo (spellIDNum or manualDebuffsToTrack [i])
 				if (spellName) then
-					if IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS and spellIDNum then
-						MANUAL_TRACKING_BUFFS [spellIDNum] = true
-					else
-						MANUAL_TRACKING_DEBUFFS [spellName] = true
-					end
+					MANUAL_TRACKING_DEBUFFS [spellName] = true
 				else
 					--add the entry in case there's a spell name instead of a spellId in the list (for back compatibility)
 					MANUAL_TRACKING_DEBUFFS [manualDebuffsToTrack [i]] = true
@@ -4513,11 +5125,7 @@ end
 				local spellIDNum = tonumber(manualBuffsToTrack [i])
 				local spellName = GetSpellInfo (spellIDNum or manualBuffsToTrack [i])
 				if (spellName) then
-					if IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS and spellIDNum then
-						MANUAL_TRACKING_BUFFS [spellIDNum] = true
-					else
-						MANUAL_TRACKING_BUFFS [spellName] = true
-					end
+					MANUAL_TRACKING_BUFFS [spellName] = true
 				else
 					--add the entry in case there's a spell name instead of a spellId in the list (for back compatibility)
 					MANUAL_TRACKING_BUFFS [manualBuffsToTrack [i]]= true
@@ -4629,4 +5237,7 @@ end
 
 		--> ghost aura cache
 		Plater.UpdateGhostAurasCache()
+		if IS_WOW_PROJECT_MIDNIGHT_API_WITH_AURA_CONTAINERS then
+			expandAuraCaches()
+		end
 	end

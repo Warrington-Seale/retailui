@@ -19,10 +19,6 @@ if L then
 	--L.wipe_trigger = "No! Not yet!"
 	--L.defender = "Defender" -- Ashtongue Defender
 	--L.sorcerer = "Sorcerer" -- Ashtongue Sorcerer
-	L.adds_right = "右側小怪"
-	L.adds_left = "左側小怪"
-
-	--L.engaged = "Shade of Akama Engaged"
 end
 
 L = BigWigs:NewBossLocale("Reliquary of Souls", "zhTW")
@@ -40,7 +36,6 @@ if L then
 	L.zerevor = "高等虛空術士札瑞佛：%s"
 
 	L.circle_heal_message = "治療成功！約20秒後再次使用。"
-	L.circle_fail_message = "%s打斷了！約12秒後再次使用。"
 
 	L.magical_immunity = "魔法免疫！"
 	L.physical_immunity = "物理免疫！"
@@ -94,7 +89,6 @@ if L then
 	L.three = "第 %d 波：%d %s、%d %s、%d %s！"
 	L.four = "第 %d 波：%d %s、%d %s、%d %s、%d %s！"
 	L.five = "第 %d 波：%d %s、%d %s、%d %s、%d %s、%d %s！"
-	L.barWave = "第 %d 波出現！"
 
 	L.waveInc = "第 %d 波即將來臨！"
 	L.message = "%s 約 %d 秒後來臨!"

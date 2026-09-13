@@ -14,7 +14,7 @@ VE = VE or {}
 VE.Health = {}
 local Health = VE.Health
 
-local SCHEMA_VERSION = 4
+local SCHEMA_VERSION = 6
 
 -- ---------------------------------------------------------------------------
 -- Helpers
@@ -157,6 +157,40 @@ local MIGRATIONS = {
         -- base" coupon model is no longer read.
         local msgs = {}
         msgs[#msgs + 1] = dropKey("taskActualCoupons", "removed legacy taskActualCoupons (DR curve replaces empirical model)")
+        return msgs
+    end,
+    [5] = function()
+        -- Community Coupons are uncapped in 12.1, so the per-character cap
+        -- snapshot describes a ceiling that no longer exists and is no longer read.
+        local msgs = {}
+        local chars = VE_DB.characterCoupons
+        if chars then
+            local cleared = 0
+            for _, entry in pairs(chars) do
+                if entry.cap ~= nil then
+                    entry.cap = nil
+                    cleared = cleared + 1
+                end
+            end
+            if cleared > 0 then
+                msgs[#msgs + 1] = ("removed characterCoupons.cap from %d character(s) (coupons are uncapped in 12.1)"):format(cleared)
+            end
+        end
+        return msgs
+    end,
+    [6] = function()
+        -- `quotesOnlyChat` was one boolean asked to carry two answers, so
+        -- "talking head AND chat" was unreachable. It splits into the two
+        -- outputs it was really about. Both of the old key's states map
+        -- exactly, so nobody's setting changes on login.
+        local msgs = {}
+        local cfg = VE_DB.config
+        if type(cfg) == "table" and cfg.quotesOnlyChat ~= nil then
+            cfg.quotesChat = cfg.quotesOnlyChat and true or false
+            cfg.quotesPopup = not cfg.quotesOnlyChat
+            cfg.quotesOnlyChat = nil
+            msgs[#msgs + 1] = "split config.quotesOnlyChat into quotesPopup + quotesChat"
+        end
         return msgs
     end,
 }

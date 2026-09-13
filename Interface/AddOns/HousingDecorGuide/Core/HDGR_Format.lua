@@ -21,7 +21,7 @@ F.BRAND_PREFIX = "|cff0070dd[HDG]|r"
 function F.FriendlyDate(d)
     if d == nil or d == "" then return nil end
     local n = tonumber(d)
-    if n and n > 1000000000 and _G.date then  -- exception(boundary): unix ts -> date(); date() absent in headless tests
+    if n and n > 1000000000 and _G.date then  -- exception(boundary): unix ts rendered through WoW's `date` global (os.date alias)
         return _G.date("%Y-%m-%d", n)
     end
     return tostring(d)
@@ -30,14 +30,38 @@ end
 -- Returns "" for zero/nil. FormatGoldZero is the zero-visible variant (column-aligned tables).
 --   FormatAmount(n)              -> "1,234"  (commas, suppress zero)
 --   FormatCurrency(amount, cid)  -> "1,234 <icon>"
+--   CurrencyName(cid)            -> "Ancient Mana" / "Gold" / nil
 --   FormatGold(copper)           -> FormatCurrency(gold, CURRENCY_GOLD)
+--   FormatCost(amount, e)        -> "1,234 <icon>" for a currency OR item-token cost entry
+--   CostName(e)                  -> "Mark of Honor" / "Ancient Mana" / "Gold" / nil
+--   CostKey(e)                   -> "item:137642" / "currency:3363" / "currency:-1"
 
 function F.FormatAmount(n)
     if not n or n <= 0 then return "" end
     return _G.BreakUpLargeNumbers and _G.BreakUpLargeNumbers(n) or tostring(n)
 end
 
-local _trackedCurrencyIcon
+-- One ladder for anything that describes a currency by ID: the curated housing
+-- table first (name + icon, no client call), then the live client for IDs the
+-- table does not track. Returns { name, icon } or nil for an ID neither source
+-- knows -- callers render the raw id at that seam so a missing entry is visible
+-- rather than blank.
+local _trackedCurrency
+local function _currencyInfo(currencyID)
+    if not _trackedCurrency then
+        _trackedCurrency = {}
+        for _, c in ipairs(HDG.Constants.HOUSING_DECOR_CURRENCY_DATA) do
+            _trackedCurrency[c.id] = { name = c.name, icon = c.icon }
+        end
+    end
+    local tracked = _trackedCurrency[currencyID]
+    if tracked then return tracked end
+    if not (_G.C_CurrencyInfo and _G.C_CurrencyInfo.GetCurrencyInfo) then return nil end  -- exception(boundary): C_CurrencyInfo absent in headless tests
+    local info = _G.C_CurrencyInfo.GetCurrencyInfo(currencyID)
+    if not info then return nil end  -- exception(boundary): GetCurrencyInfo nil for unknown currencyIDs
+    return { name = info.name, icon = info.iconFileID }
+end
+
 function F.FormatCurrency(amount, currencyID, iconOverride)
     local n = F.FormatAmount(amount)
     if n == "" then return "" end
@@ -47,22 +71,54 @@ function F.FormatCurrency(amount, currencyID, iconOverride)
     -- Catalog icon wins (always correct). Curated table + live API are fallbacks for ItemAugment costs.
     local icon = iconOverride
     if not icon then
-        if not _trackedCurrencyIcon then
-            _trackedCurrencyIcon = {}
-            for _, c in ipairs(HDG.Constants.HOUSING_DECOR_CURRENCY_DATA) do
-                _trackedCurrencyIcon[c.id] = c.icon
-            end
-        end
-        icon = _trackedCurrencyIcon[currencyID]
-        if not icon and _G.C_CurrencyInfo and _G.C_CurrencyInfo.GetCurrencyInfo then  -- exception(boundary): C_CurrencyInfo absent in headless tests
-            local info = _G.C_CurrencyInfo.GetCurrencyInfo(currencyID)
-            icon = info and info.iconFileID  -- exception(boundary): GetCurrencyInfo nil for unknown currencyIDs
-        end
+        local info = _currencyInfo(currencyID)
+        icon = info and info.icon  -- exception(nullable): untracked and unknown to the client
     end
     if icon then return n .. " |T" .. icon .. ":14:14|t" end
     -- Final fallback: bare number with the raw id so missing tracking is
     -- visible at the UI seam instead of silently rendering as "1234".
     return n .. " (#" .. tostring(currencyID) .. ")"
+end
+
+-- Display name for a cost line. Gold is the sentinel, not a client currency.
+-- nil when neither the curated table nor the client knows the ID; the caller
+-- prints "#<id>" there for the same reason FormatCurrency does.
+function F.CurrencyName(currencyID)
+    if currencyID == HDG.Constants.CURRENCY_GOLD then return HDG.Constants.GOLD_NAME end
+    local info = _currencyInfo(currencyID)
+    return info and info.name  -- exception(nullable): untracked and unknown to the client
+end
+
+-- A cost entry is EITHER a currency ({ currencyID, amount, icon }; gold is the -1
+-- sentinel) OR an item token ({ itemID, amount, icon }). The catalog prices some
+-- decor in items (1 Mark of Honor, 500 Dreamsurge Coalescence), and an item ID is
+-- not a currency ID, so the two never share a field. These three helpers are the
+-- only place that distinction is read; every consumer goes through them.
+
+-- Stable identity for grouping / dedup. Sorts gold < currencies < items, total.
+function F.CostKey(e)
+    if e.itemID then return "item:" .. e.itemID end
+    return "currency:" .. e.currencyID
+end
+
+-- "1,234 <icon>" for either identity. Amount is a parameter, not read off `e`, so
+-- a per-currency AGGREGATE ({ currencyID, total }) renders through the same path.
+function F.FormatCost(amount, e)
+    if not e.itemID then return F.FormatCurrency(amount, e.currencyID, e.icon) end
+    local n = F.FormatAmount(amount)
+    if n == "" then return "" end
+    -- The catalog link always carries the token's icon; a missing one is drift,
+    -- shown as the raw id so it is visible rather than blank.
+    if e.icon then return n .. " |T" .. e.icon .. ":14:14|t" end
+    return n .. " (item #" .. tostring(e.itemID) .. ")"
+end
+
+-- Display name for either identity. Items go through the resolver boundary
+-- (placeholder + async kick on a cold cache); a currency is nil when neither the
+-- curated table nor the client knows the ID.
+function F.CostName(e)
+    if e.itemID then return (HDG.ItemNameResolver:ResolveName(e.itemID)) end
+    return F.CurrencyName(e.currencyID)
 end
 
 function F.FormatGold(copper)
@@ -200,4 +256,13 @@ function F.LocalItemName(itemID, baked)
     if not itemID then return baked or "?" end
     local name, resolved = HDG.ItemNameResolver:ResolveName(itemID)
     return (resolved and name) or baked or name
+end
+
+-- Day month year ("09 Sep 2026") for list rows: the year matters once a
+-- library holds codes from more than one season. nil in, nil out: `date` with
+-- no timestamp renders TODAY, and an undated blueprint (pasted before the
+-- stamp existed) showing today's date is invented data, not a blank.
+function F.ShortDate(ts)
+    if ts == nil then return nil end
+    return _G.date("%d %b %Y", ts)  -- exception(boundary): WoW's `date` global
 end

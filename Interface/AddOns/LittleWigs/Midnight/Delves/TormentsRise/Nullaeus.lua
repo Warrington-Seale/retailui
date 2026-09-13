@@ -7,14 +7,6 @@ if not mod then return end
 mod:SetEncounterID({3372, 3430}) -- Tier 8, Tier 11
 mod:SetAllowWin(true)
 mod:SetRespawnTime(15)
-mod:SetPrivateAuraSounds({
-	{1256045, sound = "underyou"}, -- Null Zone
-	{1256167, sound = "underyou"}, -- Void Hole
-	{1256358, sound = "none"}, -- Devouring Essence
-	{1256366, sound = "none"}, -- Jagged Rip
-	{1256518, sound = "none"}, -- Poisonous Spit
-	{1256526, sound = "info"}, -- Curse of Hesitation
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -31,19 +23,39 @@ local backupBars = {}
 -- Localization
 --
 
-local L = mod:GetLocale()
-if L then
-	L.nullaeus = "Nullaeus"
-	L.adds_icon = "inv_babyvoidwalker_silver"
-end
+local L = mod:SetDefaultLocale({
+	nullaeus = "Nullaeus",
+	adds_icon = "inv_babyvoidwalker_silver",
+})
+mod.displayName = L.nullaeus
+
+--------------------------------------------------------------------------------
+-- Renames
+--
+
+mod:SetRenames({
+	[1280086] = {1280086}, -- Emptiness of the Void
+	[1280087] = {1280087}, -- Imploding Strike
+	[1280088] = {1280088}, -- Devouring Essence
+	["adds"] = {CL.adds_spawning}, -- Adds spawning
+})
+
+--------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{1256045, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Null Zone
+	{1256167, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Void Hole
+	{1256358, duration = 18, dispel = "magic"}, -- Devouring Essence
+	{1256366, duration = 18, dispel = "bleed", mechanic = "bleeding"}, -- Jagged Rip
+	{1256518, duration = 8, soundOnAppliedDose = "none"}, -- Poisonous Spit
+	{1256526, duration = 300, dispel = "curse", soundOnApplied = "info"}, -- Curse of Hesitation
+})
 
 --------------------------------------------------------------------------------
 -- Initialization
 --
-
-function mod:OnRegister()
-	self.displayName = L.nullaeus
-end
 
 function mod:GetOptions()
 	return {
@@ -51,12 +63,6 @@ function mod:GetOptions()
 		1280087, -- Imploding Strike
 		1280088, -- Devouring Essence
 		"adds",
-		{1256045, "PRIVATE"}, -- Null Zone
-		{1256167, "PRIVATE"}, -- Void Hole
-		--{1256358, "PRIVATE"}, -- Devouring Essence
-		{1256366, "PRIVATE"}, -- Jagged Rip
-		{1256518, "PRIVATE"}, -- Poisonous Spit
-		{1256526, "PRIVATE"}, -- Curse of Hesitation
 	}
 end
 
@@ -117,8 +123,8 @@ function mod:ENCOUNTER_TIMELINE_EVENT_STATE_CHANGED(_, eventID)
 		if state == 0 then -- Active
 			self:ResumeBar(barInfo.key, barInfo.msg)
 		elseif state == 1 then -- Paused
-			-- bars pausing means adds are spawning (and also just stop the bars)
-			self:StopBar(barInfo.msg)
+			self:PauseBar(barInfo.key, barInfo.msg)
+			-- bars pausing means adds are spawning
 			self:Adds()
 		elseif state == 2 then -- Finished
 			self:StopBar(barInfo.msg)
@@ -158,10 +164,10 @@ end
 --
 
 function mod:EmptinessOfTheVoidTimeline(eventInfo)
-	local barText = CL.count:format(self:SpellName(1280086), emptinessOfTheVoidCount)
+	local barText = CL.count:format(self:GetRename(1280086), emptinessOfTheVoidCount)
 	self:CDBar(1280086, eventInfo.duration, barText, nil, eventInfo.id)
 	if emptinessOfTheVoidCount > 1 then
-		self:Message(1280086, "red", CL.casting:format(CL.count:format(self:SpellName(1280086), emptinessOfTheVoidCount - 1)))
+		self:Message(1280086, "red", CL.casting:format(CL.count:format(self:GetRename(1280086), emptinessOfTheVoidCount - 1)))
 		self:PlaySound(1280086, "warning")
 	end
 	emptinessOfTheVoidCount = emptinessOfTheVoidCount + 1
@@ -172,10 +178,10 @@ function mod:EmptinessOfTheVoidTimeline(eventInfo)
 end
 
 function mod:ImplodingStrikeTimeline(eventInfo)
-	local barText = CL.count:format(self:SpellName(1280087), implodingStrikeCount)
+	local barText = CL.count:format(self:GetRename(1280087), implodingStrikeCount)
 	self:CDBar(1280087, eventInfo.duration, barText, nil, eventInfo.id)
 	if implodingStrikeCount > 1 then
-		self:Message(1280087, "orange", CL.count:format(self:SpellName(1280087), implodingStrikeCount - 1))
+		self:Message(1280087, "orange", CL.count:format(self:GetRename(1280087), implodingStrikeCount - 1))
 		self:PlaySound(1280087, "alarm")
 	end
 	implodingStrikeCount = implodingStrikeCount + 1
@@ -186,10 +192,10 @@ function mod:ImplodingStrikeTimeline(eventInfo)
 end
 
 function mod:DevouringEssenceTimeline(eventInfo)
-	local barText = CL.count:format(self:SpellName(1280088), devouringEssenceCount)
+	local barText = CL.count:format(self:GetRename(1280088), devouringEssenceCount)
 	self:CDBar(1280088, eventInfo.duration, barText, nil, eventInfo.id)
 	if devouringEssenceCount > 1 then
-		self:Message(1280088, "yellow", CL.count:format(self:SpellName(1280088), devouringEssenceCount - 1))
+		self:Message(1280088, "yellow", CL.count:format(self:GetRename(1280088), devouringEssenceCount - 1))
 		self:PlaySound(1280088, "info")
 	end
 	devouringEssenceCount = devouringEssenceCount + 1
@@ -204,7 +210,7 @@ do
 	function mod:Adds()
 		if GetTime() - prev > 2 then
 			prev = GetTime()
-			self:Message("adds", "cyan", CL.count_amount:format(CL.adds_spawning, addsCount, 3), L.adds_icon)
+			self:Message("adds", "cyan", CL.count_amount:format(self:GetRename("adds"), addsCount, 3), L.adds_icon)
 			addsCount = addsCount + 1
 			self:PlaySound("adds", "long")
 		end

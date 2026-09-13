@@ -17,16 +17,25 @@ end
 
 MDT.dungeonMaps[dungeonIndex] = {
   [0] = "",
-  [1] = { customTextures = 'Interface\\AddOns\\'..addonName..'\\Midnight\\Textures\\RubyLifePools' }
+  [1] = { customTextures = 'Interface\\AddOns\\'..addonName..'\\Midnight\\Textures\\RubyLifePools' },
 }
 
 MDT.dungeonSubLevels[dungeonIndex] = {
   [1] = L["RubyLifePools"],
 }
 
-MDT.mapPOIs[dungeonIndex] = {};
+MDT.mapPOIs[dungeonIndex] = {
+  [1] = {
+    [1] = {
+      ["type"] = "dungeonEntrance",
+      ["x"] = 119.9,
+      ["y"] = -514.5,
+      ["sizeMult"] = 1.5,
+    },
+  },
+};
 
-MDT.dungeonTotalCount[dungeonIndex] = { normal = 553 }
+MDT.dungeonTotalCount[dungeonIndex] = { normal = 551 }
 
 MDT.dungeonEnemies[dungeonIndex] = {
   [1] = {
@@ -73,7 +82,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Deepstone Earthshaper",
     ["id"] = 187969,
     ["count"] = 5,
-    ["health"] = 3891906,
+    ["health"] = 3567581,
     ["scale"] = 1,
     ["displayId"] = 102955,
     ["creatureType"] = "Humanoid",
@@ -105,11 +114,10 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
     ["clones"] = {
       [1] = {
-        ["x"] = 130.89323000235,
-        ["y"] = -374.35184176998,
+        ["x"] = 125.6,
+        ["y"] = -366,
         ["g"] = 1,
         ["sublevel"] = 1,
-        ["scale"] = 1.6,
       },
       [2] = {
         ["x"] = 104.38231928109,
@@ -147,8 +155,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["scale"] = 1.6,
       },
       [8] = {
-        ["x"] = 200.61475916268,
-        ["y"] = -132.62121883682,
+        ["x"] = 190.4,
+        ["y"] = -133.1,
         ["g"] = 33,
         ["sublevel"] = 1,
         ["scale"] = 1.6,
@@ -157,6 +165,13 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["x"] = 93.208822113861,
         ["y"] = -478.07466830498,
         ["g"] = 32,
+        ["sublevel"] = 1,
+        ["scale"] = 1.6,
+      },
+      [10] = {
+        ["x"] = 139.13324062897,
+        ["y"] = -208.28637479916,
+        ["g"] = 40,
         ["sublevel"] = 1,
         ["scale"] = 1.6,
       },
@@ -195,25 +210,10 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
     ["clones"] = {
       [1] = {
-        ["x"] = 139.44271912845,
-        ["y"] = -365.53792645157,
+        ["x"] = 132.4,
+        ["y"] = -360.7,
         ["g"] = 1,
         ["sublevel"] = 1,
-        ["scale"] = 1.6,
-      },
-      [2] = {
-        ["x"] = 80.39931527567,
-        ["y"] = -303.05422821141,
-        ["g"] = 3,
-        ["sublevel"] = 1,
-        ["scale"] = 1.6,
-      },
-      [3] = {
-        ["x"] = 71.515154500318,
-        ["y"] = -293.50582363109,
-        ["g"] = 3,
-        ["sublevel"] = 1,
-        ["scale"] = 1.6,
       },
       [4] = {
         ["x"] = 47.661843299819,
@@ -230,16 +230,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["scale"] = 1.6,
       },
       [6] = {
-        ["x"] = 114.49007344707,
-        ["y"] = -270.73144468269,
-        ["g"] = 7,
-        ["sublevel"] = 1,
-        ["scale"] = 1.6,
-      },
-      [7] = {
-        ["x"] = 117.3129381105,
-        ["y"] = -150.61896646271,
-        ["g"] = 12,
+        ["x"] = 128.81414002501,
+        ["y"] = -220.00031578777,
+        ["g"] = 40,
         ["sublevel"] = 1,
         ["scale"] = 1.6,
       },
@@ -251,8 +244,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["scale"] = 1.6,
       },
       [9] = {
-        ["x"] = 159.51479751329,
-        ["y"] = -122.10158070481,
+        ["x"] = 155.9,
+        ["y"] = -122.2,
         ["g"] = 34,
         ["sublevel"] = 1,
         ["scale"] = 1.6,
@@ -263,7 +256,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Flashfrost Chillweaver",
     ["id"] = 188067,
     ["count"] = 7,
-    ["health"] = 3243255,
+    ["health"] = 2918930,
     ["scale"] = 1,
     ["displayId"] = 107397,
     ["creatureType"] = "Humanoid",
@@ -323,23 +316,16 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
         ["scale"] = 1.6,
       },
-      [7] = {
-        ["x"] = 131.9661541637,
-        ["y"] = -209.428765984,
-        ["sublevel"] = 1,
-        ["scale"] = 1.6,
-      },
       [8] = {
-        ["x"] = 128.11860789449,
-        ["y"] = -155.35617714507,
+        ["x"] = 118.3,
+        ["y"] = -151.4,
         ["g"] = 12,
         ["sublevel"] = 1,
         ["scale"] = 1.6,
       },
       [9] = {
-        ["x"] = 186.76931599511,
-        ["y"] = -129.08830703889,
-        ["g"] = 33,
+        ["x"] = 167.79333656497,
+        ["y"] = -142.82824582743,
         ["sublevel"] = 1,
         ["scale"] = 1.6,
         ["patrol"] = {
@@ -351,7 +337,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Infused Whelp",
     ["id"] = 187894,
     ["count"] = 0,
-    ["health"] = 3243255,
+    ["health"] = 1297302,
     ["scale"] = 1,
     ["displayId"] = 110633,
     ["creatureType"] = "Dragonkin",
@@ -756,6 +742,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["displayId"] = 107106,
     ["creatureType"] = "Dragonkin",
     ["level"] = 91,
+    ["isBoss"] = true,
+    ["instanceID"] = 1202,
     ["characteristics"] = {
       ["Taunt"] = true,
       ["Mind Soothe"] = true,
@@ -783,7 +771,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Melidrussa Chillworn",
     ["id"] = 188252,
     ["count"] = 0,
-    ["health"] = 20270342,
+    ["health"] = 20270343,
     ["scale"] = 1,
     ["displayId"] = 106891,
     ["creatureType"] = "Humanoid",
@@ -875,6 +863,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["displayId"] = 106435,
     ["creatureType"] = "Dragonkin",
     ["level"] = 91,
+    ["isBoss"] = true,
+    ["instanceID"] = 1202,
     ["characteristics"] = {
       ["Taunt"] = true,
       ["Mind Soothe"] = true,
@@ -1234,6 +1224,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["displayId"] = 106023,
     ["creatureType"] = "Dragonkin",
     ["level"] = 91,
+    ["isBoss"] = true,
+    ["instanceID"] = 1202,
     ["characteristics"] = {
       ["Taunt"] = true,
       ["Mind Soothe"] = true,
@@ -1263,7 +1255,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Kokia Blazehoof",
     ["id"] = 189232,
     ["count"] = 0,
-    ["health"] = 21621698,
+    ["health"] = 21621700,
     ["scale"] = 1,
     ["displayId"] = 106851,
     ["creatureType"] = "Humanoid",
@@ -1644,6 +1636,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["displayId"] = 110966,
     ["creatureType"] = "Humanoid",
     ["level"] = 91,
+    ["isBoss"] = true,
+    ["instanceID"] = 1202,
     ["characteristics"] = {
       ["Taunt"] = true,
       ["Mind Soothe"] = true,
@@ -1676,7 +1670,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Erkhart Stormvein",
     ["id"] = 190485,
     ["count"] = 0,
-    ["health"] = 15202757,
+    ["health"] = 15202758,
     ["scale"] = 1,
     ["displayId"] = 108318,
     ["creatureType"] = "Humanoid",
@@ -1825,7 +1819,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Scorchling",
     ["id"] = 194622,
     ["count"] = 0,
-    ["health"] = 648651,
+    ["health"] = 613089,
     ["scale"] = 1,
     ["displayId"] = 102535,
     ["creatureType"] = "Elemental",

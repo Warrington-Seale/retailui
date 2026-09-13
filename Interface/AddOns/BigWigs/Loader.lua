@@ -12,12 +12,12 @@ local strfind = string.find
 -- Generate our version variables
 --
 
-local BIGWIGS_VERSION = 419
+local BIGWIGS_VERSION = 424
 local CONTENT_PACK_VERSIONS = {
-	["LittleWigs"] = {12, 0, 63},
-	["BigWigs_Classic"] = {12, 0, 21},
-	["BigWigs_BurningCrusade"] = {12, 0, 16},
-	["BigWigs_WrathOfTheLichKing"] = {12, 0, 10},
+	["LittleWigs"] = {12, 1, 12},
+	["BigWigs_Classic"] = {12, 1, 1},
+	["BigWigs_BurningCrusade"] = {12, 1, 9},
+	["BigWigs_WrathOfTheLichKing"] = {12, 0, 11},
 	["BigWigs_Cataclysm"] = {12, 0, 5},
 	["BigWigs_MistsOfPandaria"] = {12, 0, 9},
 	["BigWigs_WarlordsOfDraenor"] = {12, 0, 3},
@@ -50,14 +50,13 @@ do
 	public.isCata = tbl.isCata
 	public.isMists = tbl.isMists
 	public.dbmPrefix = "D5"
-	public.littlewigsVersionString = L.missingAddOnPopup:format("LittleWigs")
 
 	-- START: MAGIC PACKAGER VOODOO VERSION STUFF
 	local REPO = "REPO"
 	local ALPHA = "ALPHA"
 
 	local releaseType
-	local myGitHash = "e3e0d1e" -- The ZIP packager will replace this with the Git hash.
+	local myGitHash = "8177bf9" -- The ZIP packager will replace this with the Git hash.
 	local releaseString
 	--[=[@alpha@
 	-- The following code will only be present in alpha ZIPs.
@@ -142,7 +141,9 @@ public.CTimerAfter = CTimerAfter
 public.CTimerNewTicker = C_Timer.NewTicker
 public.CTimerNewTimer = CTimerNewTimer
 public.DoCountdown = C_PartyInfo.DoCountdown
+public.GetAreaInfo = C_Map.GetAreaInfo
 public.GetBestMapForUnit = GetBestMapForUnit
+public.GetCreatureID = C_CreatureInfo.GetCreatureID
 public.GetInstanceInfo = GetInstanceInfoModified
 public.GetMapInfo = GetMapInfo
 public.GetPlayerAuraBySpellID = C_UnitAuras.GetPlayerAuraBySpellID
@@ -174,13 +175,14 @@ public.UnitIsPlayer = UnitIsPlayer
 public.UnitLevel = UnitLevel
 public.UnitName = UnitNameUnmodified
 public.UnitSex = UnitSex
+public.UnitClassification = UnitClassification
 public.UnitTokenFromGUID = UnitTokenFromGUID
 public.Print = sysprint
 public.isTestBuild = IsPublicTestClient() -- PTR/beta
 do
 	local _, _, _, build = GetBuildInfo()
 	public.isBeta = public.isTestBuild and build >= 130000
-	public.isNext = build >= 120100
+	public.isNext = build >= 120105
 end
 
 -- Version
@@ -323,6 +325,7 @@ do
 				[2912] = "BigWigs_TheVoidspire",
 				[2913] = "BigWigs_MarchOnQuelDanas",
 				[1592] = "BigWigs_Sporefall",
+				[2987] = "BigWigs_MidnightLairs",
 				[3004] = "BigWigs_TheVenomousAbyss",
 			}
 		}
@@ -344,29 +347,22 @@ do
 				lw_cs,
 			},
 			currentSeason = {
-				[2805] = not public.isNext and lw_cs or nil, -- Windrunner Spire
-				[2811] = not public.isNext and lw_cs or nil, -- Magisters' Terrace
-				[2874] = not public.isNext and lw_cs or nil, -- Maisara Caverns
-				[2915] = not public.isNext and lw_cs or nil, -- Nexus-Point Xenas
-				[2526] = not public.isNext and lw_cs or nil, -- Algeth'ar Academy
-				[1753] = not public.isNext and lw_cs or nil, -- Seat of the Triumvirate
-				[1209] = not public.isNext and lw_cs or nil, -- Skyreach
-				[658] = not public.isNext and lw_cs or nil, -- Pit of Saron
-				[2813] = public.isNext and lw_cs or nil, -- Murder Row
-				[2825] = public.isNext and lw_cs or nil, -- Den of Nalorakk
-				[2859] = public.isNext and lw_cs or nil, -- The Blinding Vale
-				[2923] = public.isNext and lw_cs or nil, -- Voidscar Arena
-				[2993] = public.isNext and lw_cs or nil, -- Altar of Fangs
-				[2521] = public.isNext and lw_cs or nil, -- Ruby Life Pools
-				[1877] = public.isNext and lw_cs or nil, -- Temple of Sethraliss
-				[1762] = public.isNext and lw_cs or nil, -- Kings' Rest
+				[2813] = lw_cs, -- Murder Row
+				[2825] = lw_cs, -- Den of Nalorakk
+				[2859] = lw_cs, -- The Blinding Vale
+				[2923] = lw_cs, -- Voidscar Arena
+				[2993] = lw_cs, -- Altar of Fangs
+				[2521] = lw_cs, -- Ruby Life Pools
+				[1877] = lw_cs, -- Temple of Sethraliss
+				[1762] = lw_cs, -- Kings' Rest
 			},
 			zones = {
 				[2939] = "BigWigs_TheDreamrift",
 				[2912] = "BigWigs_TheVoidspire",
 				[2913] = "BigWigs_MarchOnQuelDanas",
 				[1592] = "BigWigs_Sporefall",
-				[3004] = public.isNext and "BigWigs_TheVenomousAbyss" or nil,
+				[2987] = "BigWigs_MidnightLairs",
+				[3004] = "BigWigs_TheVenomousAbyss",
 			}
 		}
 	end
@@ -464,7 +460,8 @@ do
 		[2913] = mn, -- March on Quel'Danas
 		[2939] = mn, -- The Dreamrift
 		[1592] = mn, -- Sporefall
-		[3004] = public.isNext and mn or nil, -- The Venomous Abyss
+		[2987] = mn, -- The Tidebound Grotto
+		[3004] = mn, -- The Venomous Abyss
 
 
 		--[[ LittleWigs: Classic ]]--
@@ -649,7 +646,7 @@ do
 		[2874] = lw_mn, -- Maisara Caverns
 		[2915] = lw_mn, -- Nexus-Point Xenas
 		[2923] = lw_mn, -- Voidscar Arena
-		[2993] = public.isNext and lw_mn or nil, -- Altar of Fangs
+		[2993] = lw_mn, -- Altar of Fangs
 		--[[ LittleWigs: Midnight Delves ]]--
 		[2933] = lw_delves, -- Collegiate Calamity
 		[2952] = lw_delves, -- The Shadow Enclave
@@ -662,9 +659,9 @@ do
 		[2966] = lw_delves, -- Torment's Rise
 		[2979] = lw_delves, -- Shadowguard Point
 		[3003] = lw_delves, -- The Darkway
-		[3038] = public.isNext and lw_delves or nil, -- Gnarldor Isle
-		[3077] = public.isNext and lw_delves or nil, -- The Ring of Glory
-		[3079] = public.isNext and lw_delves or nil, -- Venomfall Deeps
+		[3038] = lw_delves, -- Gnarldor Isle
+		[3077] = lw_delves, -- The Ring of Glory
+		[3079] = lw_delves, -- Venomfall Deeps
 	}
 	public.remappedZones = {
 		[2827] = 2213, -- Horrific Vision of Stormwind (Revisited) -> Horrific Vision of Stormwind
@@ -952,7 +949,8 @@ do
 			EnableAddOn(i) -- Make sure it wasn't left disabled for whatever reason
 		end
 
-		if GetAddOnEnableState(name, myGUID) == 2 then -- if addonState ~= "DISABLED" then (only works when disabled on ALL characters)
+		local addonEnabled = GetAddOnEnableState(name, myGUID) == 2 -- addonState ~= "DISABLED" only works when disabled on ALL characters
+		if addonEnabled then
 			local meta = GetAddOnMetadata(i, "X-BigWigs-LoadOn-CoreEnabled")
 			if meta then
 				if name == "BigWigs_Plugins" then -- Always first
@@ -992,13 +990,26 @@ do
 				local slashCommandsTable = {strsplit(",", meta)}
 				for slashNumInTable = 1, #slashCommandsTable do
 					local slash = slashCommandsTable[slashNumInTable]:trim()
-					RegisterSlashCommand(slash, function()
-						if strfind(name, "BigWigs", nil, true) then
-							-- Attempting to be smart. Only load core & config if it's a BW plugin.
+					if strfind(name, "BigWigs", nil, true) then -- Attempting to be smart. Only load core & config if it's a BW plugin.
+						RegisterSlashCommand(slash, function()
+							for tableEntry = 1, #loadOnCoreEnabled do
+								-- This addon may be registered to load with LoadOn-Slash AND with LoadOn-CoreEnabled.
+								-- Removing it from the core list means it will correctly load AFTER loadCoreAndOptions() runs.
+								-- i.e. we are trying to prevent this: Load Core > Load Addon > Load Options
+								-- we want to ensure this: Load Core > Load Options > Load Addon
+								if i == loadOnCoreEnabled[tableEntry] then
+									table.remove(loadOnCoreEnabled, tableEntry)
+									break
+								end
+							end
 							loadCoreAndOptions()
-						end
-						load(i) -- Load the addon/plugin
-					end)
+							load(i) -- Load the addon/plugin
+						end)
+					else
+						RegisterSlashCommand(slash, function()
+							load(i) -- Load the addon/plugin
+						end)
+					end
 				end
 			end
 		else
@@ -1019,15 +1030,16 @@ do
 		if name == "LittleWigs" then
 			if GetAddOnMetadata(i, "X-LittleWigs-Repo") then
 				public.usingLittleWigsRepo = true
-				public.littlewigsVersionString = L.littlewigsSourceCheckout
-			else
-				local version = GetAddOnMetadata(i, "Version")
-				if version then
-					local alpha = strfind(version, "-", nil, true)
-					if alpha then
-						public.littlewigsVersionString = L.littlewigsAlphaRelease:format(version)
-					else
-						public.littlewigsVersionString = L.littlewigsOfficialRelease:format(version)
+				public.littlewigsVersion = "repo"
+			else -- Packaged installs of LittleWigs
+				public.littlewigsVersion = GetAddOnMetadata(i, "Version") -- e.g. "v12.1.0" or "v12.1.0-1"
+				if addonEnabled then
+					-- Packaged releases always load the main LittleWigs addon in current season zones.
+					-- This ensures shared modules (e.g. "Common Trash") are also loaded in seasonal dungeons.
+					for zone in next, public.currentExpansion.currentSeason do
+						enableZones[zone] = true
+						if not loadOnZone[zone] then loadOnZone[zone] = {} end
+						loadOnZone[zone][#loadOnZone[zone] + 1] = i
 					end
 				end
 			end
@@ -1521,19 +1533,19 @@ do
 		--zhTW = "Traditional Chinese (zhTW)",
 		itIT = "Italian (itIT)",
 		--koKR = "Korean (koKR)",
-		esES = "Spanish (esES)",
-		--esMX = "Spanish (esMX)",
+		--esES = "Spanish (esES)",
+		esMX = "Spanish (esMX)",
 		--deDE = "German (deDE)",
-		--ptBR = "Portuguese (ptBR)",
+		ptBR = "Portuguese (ptBR)",
 		--frFR = "French (frFR)",
 	}
 	local realms = {
 		--[542] = locales.frFR, -- frFR
-		--[3207] = locales.ptBR, [3208] = locales.ptBR, [3209] = locales.ptBR, [3210] = locales.ptBR, [3234] = locales.ptBR, -- ptBR
-		--[1425] = locales.esMX, [1427] = locales.esMX, [1428] = locales.esMX, -- esMX
+		[3207] = locales.ptBR, [3208] = locales.ptBR, [3209] = locales.ptBR, [3210] = locales.ptBR, [3234] = locales.ptBR, -- ptBR
+		[1425] = locales.esMX, [1427] = locales.esMX, [1428] = locales.esMX, -- esMX
 		[1309] = locales.itIT, [1316] = locales.itIT, -- itIT
-		[1378] = locales.esES, [1379] = locales.esES, [1380] = locales.esES, [1381] = locales.esES, [1382] = locales.esES, [1383] = locales.esES, -- esES
-		[1384] = locales.esES, [1385] = locales.esES, [1386] = locales.esES, [1387] = locales.esES, [1395] = locales.esES, -- esES
+		--[1378] = locales.esES, [1379] = locales.esES, [1380] = locales.esES, [1381] = locales.esES, [1382] = locales.esES, [1383] = locales.esES, -- esES
+		--[1384] = locales.esES, [1385] = locales.esES, [1386] = locales.esES, [1387] = locales.esES, [1395] = locales.esES, -- esES
 	}
 	local criticalList = {
 		[locales.itIT] = true,
@@ -1652,12 +1664,12 @@ end
 --
 
 do
-	local DBMdotRevision = "20260714231042" -- The changing version of the local client, changes with every new zip using the project-date-integer packager replacement.
-	local DBMdotDisplayVersion = "12.0.55" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration.
-	local DBMdotReleaseRevision = "20260714000000" -- Hardcoded time, manually changed every release, they use it to track the highest release version, a new DBM release is the only time it will change.
+	local DBMdotRevision = "20260901210504" -- The changing version of the local client, changes with every new zip using the project-date-integer packager replacement.
+	local DBMdotDisplayVersion = "12.1.8" -- "N.N.N" for a release and "N.N.N alpha" for the alpha duration.
+	local DBMdotReleaseRevision = "20260901000000" -- Hardcoded time, manually changed every release, they use it to track the highest release version, a new DBM release is the only time it will change.
 	local protocol = 3
 	local versionPrefix = "V"
-	local PForceDisable = 26
+	local PForceDisable = 27
 
 	local timer = nil
 	local function sendDBMMsg()
@@ -1881,21 +1893,20 @@ do
 			CreateFrame("Frame"), CreateFrame("Frame"), CreateFrame("Frame"), CreateFrame("Frame"), CreateFrame("Frame"), CreateFrame("Frame"),
 			CreateFrame("Frame"), CreateFrame("Frame"), CreateFrame("Frame"), CreateFrame("Frame"), CreateFrame("Frame"), CreateFrame("Frame"),
 		}
-		local UnitIsPlayer = UnitIsPlayer
+		local GetCreatureID = C_CreatureInfo.GetCreatureID
 		local function UNIT_TARGET(_, _, unit)
 			local unitTarget = unit.."target"
-			local guid = UnitGUID(unitTarget)
-			if guid and not UnitIsPlayer(unitTarget) then
-				local _, _, _, _, _, mobIdString = strsplit("-", guid)
-				local mobId = tonumber(mobIdString)
-				if mobId then
-					local zoneId = worldBosses[mobId]
+			local GUID = UnitGUID(unitTarget)
+			if GUID then
+				local creatureID = GetCreatureID(GUID)
+				if creatureID then
+					local zoneId = worldBosses[creatureID]
 					if zoneId and loadAndEnableCore() then
 						loadZone(zoneId)
 						BigWigs:Enable()
 					end
 
-					public:SendMessage("BigWigs_UNIT_TARGET", mobId, unitTarget, guid)
+					public:SendMessage("BigWigs_UNIT_TARGET", creatureID, unitTarget, GUID)
 				end
 			end
 		end
@@ -2073,7 +2084,7 @@ do
 	mod:GROUP_FORMED() -- If you're already in a group, the event only fires when logging on, not when reloading UI, so we force a check
 end
 
-function mod:BigWigs_BossModuleRegistered(_, _, module)
+function mod:BigWigs_BossModuleRegistered(_, module)
 	if module:IsWorldModule() then
 		local id = -(module.mapId)
 		enableZones[id] = "world"
@@ -2105,7 +2116,7 @@ public.RegisterMessage(mod, "BigWigs_BossModuleRegistered")
 function mod:BigWigs_CoreEnabled()
 	local _, _, _, _, _, _, _, instanceID = GetInstanceInfoModified()
 	local zoneAddon = public.zoneTbl[instanceID]
-	if zoneAddon and zoneAddon:find("LittleWigs", nil, true) then
+	if public:IsLittleWigsZone(instanceID) then
 		dataBroker.icon = "Interface\\AddOns\\BigWigs\\Media\\Icons\\minimap_party.tga"
 	elseif zoneAddon and zoneAddon:find("BigWigs", nil, true) and zoneAddon ~= public.currentExpansion.name then
 		dataBroker.icon = "Interface\\AddOns\\BigWigs\\Media\\Icons\\minimap_legacy.tga"
@@ -2149,6 +2160,11 @@ end
 function public:IsAddOnEnabled(name)
 	local addonState = GetAddOnEnableState(name, myGUID)
 	return addonState == 2
+end
+
+function public:IsLittleWigsZone(zoneID)
+	local zoneAddon = public.zoneTbl[zoneID]
+	return zoneAddon ~= nil and zoneAddon:find("LittleWigs", nil, true) ~= nil
 end
 
 -----------------------------------------------------------------------

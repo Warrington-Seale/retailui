@@ -13,7 +13,7 @@
 --       },
 --   }
 -- Sparse: items with no augmentable field have NO entry.
--- Generated 2026-06-06 20:14:55 by housingdecorguide-tools/itemaugment/rebuild_item_augment.lua
+-- Generated 2026-09-09 19:23:51 by housingdecorguide-tools/itemaugment/rebuild_item_augment.lua
 -- ============================================================================
 
 HDGR_ItemAugment = {
@@ -181,6 +181,7 @@ HDGR_ItemAugment = {
     [245533] = { sources = { { type = 2, questID = 93082, name = "Decor Treasure Hunt", detail = "Razorwind Shores" } } },
     [245534] = { sources = { { type = 11, name = "Draenor Inscription (80)" } } },
     [245535] = { sources = { { type = 2, questID = 86973, name = "Halting Harm in Har'mara" } } },
+    [245539] = { sources = { { type = 2, name = "A Curated Gift", detail = "The Last Architect, weekly; random from the Arcanostorage Sphere" } } },
     [245545] = { sources = { { type = 2, questID = 93083, name = "Decor Treasure Hunt", detail = "Razorwind Shores" } } },
     [245546] = { sources = { { type = 2, questID = 93084, name = "Decor Treasure Hunt", detail = "Razorwind Shores" } } },
     [245547] = { sources = { { type = 2, questID = 92981, name = "Decor Treasure Hunt", detail = "Founder's Point" } } },
@@ -306,6 +307,7 @@ HDGR_ItemAugment = {
     [246880] = { sources = { { type = 2, questID = 93104, name = "Decor Treasure Hunt", detail = "Razorwind Shores" } } },
     [246882] = { sources = { { type = 2, questID = 93133, name = "Decor Treasure Hunt", detail = "Razorwind Shores" } } },
     [246883] = { sources = { { type = 2, questID = 93105, name = "Decor Treasure Hunt", detail = "Razorwind Shores" } } },
+    [246958] = { sources = { { type = 2, name = "A Curated Gift", detail = "The Last Architect, weekly; random from the Arcanostorage Sphere" } } },
     [247220] = { sources = { { type = 11, name = "Pandaria Cooking (60)" } } },
     [247221] = { sources = { { type = 2, questID = 93106, name = "Decor Treasure Hunt", detail = "Razorwind Shores" } } },
     [247222] = { sources = { { type = 11, name = "Dragon Isles Cooking (80)" } } },
@@ -415,6 +417,7 @@ HDGR_ItemAugment = {
     [248942] = { sources = { { type = 1, achievementID = 60986, name = "Raise an Army for the Temple of Five Dawns" } } },
     [248958] = { sources = { { type = 1, achievementID = 42275, name = "The Grandmaster's Campaign" } } },
     [248960] = { sources = { { type = 1, achievementID = 42281, name = "The Netherlord's Campaign" } } },
+    [248962] = { sources = { { type = 1, achievementID = 63432, name = "Mysterious Mix Master" } } },
     [248965] = { sources = { { type = 11, name = "Midnight Jewelcrafting (50)", detail = "Recipe drops from Eversong Treasures (Saltheril's Soiree event)" } } },
     [249143] = { sources = { { type = 11, name = "Cataclysm Jewelcrafting (60)" } } },
     [249457] = { sources = { { type = 1, achievementID = 42288, name = "Hidden Potential of the Slayer" } } },
@@ -425,6 +428,7 @@ HDGR_ItemAugment = {
     [249518] = { sources = { { type = 1, achievementID = 60982, name = "Raise an Army for the Fel Hammer" } } },
     [249549] = { sources = { { type = 2, questID = 72515, name = "Augmenting a Dragon", detail = "The Forbidden Reach" } } },
     [249690] = { sources = { { type = 1, achievementID = 60963, name = "Legendary Research of the Illidari" } } },
+    [249923] = { sources = { { type = 2, name = "A Curated Gift", detail = "The Last Architect, weekly; random from the Arcanostorage Sphere" } } },
     [250111] = { sources = { { type = 1, achievementID = 60964, name = "Legendary Research of the Dreamgrove" } } },
     [250112] = { sources = { { type = 1, achievementID = 60981, name = "Raise an Army for Acherus" } } },
     [250115] = { sources = { { type = 1, achievementID = 42270, name = "The Deathlord's Campaign" } } },
@@ -550,12 +554,14 @@ HDGR_ItemAugment = {
     [253250] = { sources = { { type = 11, name = "Classic Enchanting (240)" } } },
     [253252] = { sources = { { type = 11, name = "Khaz Algar Engineering (80)" } } },
     [253253] = { sources = { { type = 11, name = "Khaz Algar Jewelcrafting (80)" } } },
+    [253397] = { sources = { { type = 2, name = "A Curated Gift", detail = "The Last Architect, weekly; random from the Arcanostorage Sphere" } } },
     [253441] = { sources = { { type = 2, questID = 93005, name = "Decor Treasure Hunt", detail = "Founder's Point" } } },
     [253443] = { sources = { { type = 2, questID = 88999, name = "Sky's Hope" } } },
     [253451] = { sources = { { type = 4, name = "Ziekket", detail = "The Blinding Vale" } } },
     [253457] = { sources = { { type = 11, name = "Midnight Leatherworking (80)", detail = "Trainer - Jan'zel / Zavahi / Talmar / Sathein, Silvermoon City / Zul'Aman" } } },
     [253467] = { sources = { { type = 2, questID = 86867, name = "Into the Lightbloom" } } },
     [253479] = { sources = { { type = 2, questID = 93006, name = "Decor Treasure Hunt", detail = "Founder's Point" } } },
+    [253481] = { sources = { { type = 2, name = "A Curated Gift", detail = "The Last Architect, weekly; random from the Arcanostorage Sphere" } } },
     [253485] = { sources = { { type = 2, questID = 90493, name = "The Heart of Tranquillien" } } },
     [253490] = { sources = { { type = 2, questID = 93002, name = "Decor Treasure Hunt", detail = "Founder's Point" } } },
     [253493] = { sources = { { type = 2, questID = 93147, name = "Decor Treasure Hunt", detail = "Razorwind Shores" } } },
@@ -570,6 +576,7 @@ HDGR_ItemAugment = {
     [253598] = { sources = { { type = 2, questID = 92321, name = "A Frostbitten Tally" } } },
     [254319] = { sources = { { type = 2, questID = 86866, name = "Can We Heal This?" } } },
     [254417] = { sources = { { type = 12, name = "In-Game Shop" } } },
+    [254561] = { sources = { { type = 2, name = "A Curated Gift", detail = "The Last Architect, weekly; random from the Arcanostorage Sphere" } } },
     [254773] = { sources = { { type = 1, achievementID = 62288, name = "Eversong Woods: The Highest Peaks" } } },
     [254878] = { sources = { { type = 2, questID = 86891, name = "A Last Resort" } } },
     [255648] = { sources = { { type = 2, questID = 86693, name = "De Legend of de Hash'ey" } } },
@@ -859,6 +866,7 @@ HDGR_ItemAugment = {
     [263302] = { sources = { { type = 10, name = "Promotion" } } },
     [263303] = { sources = { { type = 10, name = "Promotion" } } },
     [263315] = { sources = { { type = 2, questID = 88994, name = "The Cauldron of Echoes" } } },
+    [263873] = { sources = { { type = 1, achievementID = 63358, name = "Coiled to Strike" } } },
     [263997] = { sources = { { type = 1, achievementID = 42788, name = "Alchemizing at Midnight" } } },
     [263998] = { sources = { { type = 1, achievementID = 42792, name = "Blacksmithing at Midnight" } } },
     [263999] = { sources = { { type = 1, achievementID = 42795, name = "Cooking at Midnight" } } },
@@ -898,7 +906,7 @@ HDGR_ItemAugment = {
     [264338] = { sources = { { type = 4, name = "Lothraxion", detail = "Nexus-Point Xenas" } } },
     [264340] = { sources = { { type = 2, questID = 86540 } } },
     [264342] = { sources = { { type = 4, name = "Midnight Delves", detail = "Shadow Enclave" } } },
-    [264343] = { sources = { { type = 4, name = "Victorious Stormarion Pinnacle Cache", detail = "Weekly cache, Midnight Season 1" } } },
+    [264343] = { sources = { { type = 4, name = "Victorious Stormarion Cache / Pinnacle Cache", detail = "Weekly cache, Midnight" } } },
     [264349] = { sources = { { type = 2, questID = 30612, name = "The Leader Hozen", detail = "Kun-Lai Summit" } } },
     [264362] = { sources = { { type = 2, questID = 30000, name = "The Jade Serpent", detail = "The Jade Forest" } } },
     [264384] = { sources = { { type = 10, name = "Shop" } } },
@@ -1012,10 +1020,16 @@ HDGR_ItemAugment = {
     [268049] = { sources = { { type = 4, name = "Crown of the Cosmos", detail = "The Voidspire" } } },
     [268550] = { sources = { { type = 12, name = "Blizzard Shop" } } },
     [269269] = { sources = { { type = 4, name = "Alleria Windrunner", detail = "The Voidspire" } } },
-    [269316] = { sources = { { type = 1, achievementID = 61083, name = "Highly Decorated" } } },  -- Bartender Bob's Rack: achievement unlock (extra copies from Morta Gage -- see CatalogOverrides)
+    [269316] = { sources = { { type = 1, achievementID = 61083, name = "Highly Decorated" } } },
+    [271971] = { sources = { { type = 1, achievementID = 61442, name = "Lorewalking: The Loa" } } },
     [273135] = { factionID = 2792, minRep = 3, factionName = "Ritual Sites" },
     [273142] = { factionID = 2792, minRep = 3, factionName = "Ritual Sites" },
     [273147] = { factionID = 2792, minRep = 3, factionName = "Ritual Sites" },
     [273157] = { factionID = 2792, minRep = 3, factionName = "Ritual Sites" },
     [273159] = { factionID = 2792, minRep = 3, factionName = "Ritual Sites" },
+    [276083] = { sources = { { type = 1, achievementID = 63325, name = "Omnium Folio Studies" } } },
+    [278369] = { sources = { { type = 1, achievementID = 63451, name = "Scales for Days" } } },
+    [278372] = { sources = { { type = 1, achievementID = 63452, name = "Fangs for the Memories" } } },
+    [278376] = { sources = { { type = 1, achievementID = 63454, name = "Nine, Ten, Never Sleep Again" } } },
+    [278380] = { sources = { { type = 1, achievementID = 63453, name = "One, Two, Ral'kala's Coming for You" } } },
 }

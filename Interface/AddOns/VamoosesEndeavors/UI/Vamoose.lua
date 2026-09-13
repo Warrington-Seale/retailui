@@ -137,23 +137,20 @@ local function QuotesEnabled()
     return state.config.quotesEnabled ~= false
 end
 
--- Check if chat-only mode
-local function ChatOnlyMode()
-    local state = VE.Store and VE.Store:GetState()
-    if not state then return false end
-    return state.config.quotesOnlyChat == true
-end
-
--- Display a quote (talking head or chat)
+-- Display a quote. The two outputs are INDEPENDENT, so both can run for one
+-- quote: the talking head carries the performance, the chat line survives it
+-- for anyone who could not read the head before it faded.
 local function DisplayQuote(quote)
     if not quote then return end
+    local config = VE.Store:GetState().config
 
-    if ChatOnlyMode() then
+    if config.quotesChat then
         -- Brown color for squirrel in chat
         local displayID = VE.MascotDisplayID or 64016
         local name = (displayID == 64016) and "Nestor" or "Robo-Nestor"
         print("|cFFA0522D[" .. name .. "]|r " .. quote)
-    else
+    end
+    if config.quotesPopup then
         PlayTalkingHead(quote)
     end
 end

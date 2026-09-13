@@ -239,16 +239,23 @@ L.otherDifficultiesNote = "Ce texte sera utilisé pour toutes les autres difficu
 L.debuffFailureNote = "Cet affaiblissement vous sera appliqué si vous échouez"
 L.debuffFailureMoveFromExplosionNote = "Cet affaiblissement vous sera appliqué si vous ne vous écartez pas de l'explosion"
 L.debuffFailureInterruptNote = "Cet affaiblissement s'appliquera à vous si vous échouez à interrompre l'incantation de |cFFFFFFFF%s|r" -- This debuff will apply to you if you fail to interrupt the cast of SPELL_NAME
+L.debuffFailureMoveFromCastNote = "Cet affaiblissement s'appliquera à vous si vous échouez à bouger hors de l'incantation |cFFFFFFFF%s|r" -- This debuff will apply to you if you fail to move out of the SPELL_NAME cast
+L.debuffFailureGroupSoakNote = "Cet affaiblissement s'appliquera à vous si votre groupe échoue à absorber |cFFFFFFFF%s|r" -- This debuff will apply to you if your group fails to soak SPELL_NAME
+L.debuffFailureSafeZoneNote = "Cet affaiblissement s'appliquera à vous si vous ne vous tenez pas dans la zone sûre"
+L.debuffHitByOtherPlayerNote = "Cet affaiblissement s'appliquera à vous si vous touchez un autre joueur avec |cFFFFFFFF%s|r" -- This debuff will apply to you if you are hit by another player's SPELL_NAME
+L.debuffTargetedNote = "Cet affaiblissement s'appliquera à vous si vous êtes ciblé par |cFFFFFFFF%s|r" -- This debuff will apply to you if you are being targeted for SPELL_NAME
 L.preDebuffNote = "Ceci est le pré-affaiblissement, avant que le principal ne s'applique à vous"
 L.mainDebuffNote = "Ceci est l'affaiblissement principal qui s'applique à vous"
 L.postDebuffNote = "Cet affaiblissement vous sera appliqué après que |cFFFFFFFF%s|r expire" -- This debuff will apply to you after OTHER_DEBUFF expires
 L.debuffUnderYouNote = "Cet affaiblissement vous sera appliqué si vous vous tenez à un mauvais endroit" -- Usually when a player is standing in a pool of something bad, a debuff will apply to them
-L.debuffDotAfterCastNote = "Cet affaiblissement est un DoT qui prend effet après que le boss incante |cFFFFFFFF%s|r" -- This debuff is a damage over time effect after the boss finishes casting SPELL_NAME
-L.debuffPossibleAfterCastNote = "Cet affaiblissement pourrait s'appliquer à vous après que le boss incante |cFFFFFFFF%s|r" -- This debuff might apply to you after the boss finishes casting SPELL_NAME
-L.debuffTankAfterCastNote = "Cet affaiblissement va s'appliquer sur le tank après que le boss incante |cFFFFFFFF%s|r" -- This debuff will apply to the tank after the boss finishes casting SPELL_NAME
+L.debuffDotAfterCastNote = "Cet affaiblissement est le dégâts sur la durée de l'incantation |cFFFFFFFF%s|r" -- This debuff is a damage over time effect after the SPELL_NAME cast
+L.debuffPossibleAfterCastNote = "Cet affaiblissement peut s'appliquer à vous après l'incantation de |cFFFFFFFF%s|r" -- This debuff might apply to you after the SPELL_NAME cast
+L.debuffTankAfterCastNote = "Cet affaiblissement s'appliquera au tank après l'incantation de |cFFFFFFFF%s|r" -- This debuff will apply to the tank after the SPELL_NAME cast
+L.debuffGroupAfterCastNote = "cet affaiblissement s'appliquera à tout le groupe après l'incantation de |cFFFFFFFF%s|r" -- This debuff will apply to the entire group after the SPELL_NAME cast
 L.debuffWalkIntoObjectNote = "Cet affaiblissement vous sera appliqué si vous marchez dans le sort |cFFFFFFFF%s|r" -- This debuff will apply to you if you purposely walk into the OBJECT_NAME (e.g. trap, mine, bomb)
 L.debuffHitByCastNote = "cet affaiblissement s'appliquera à vous si vous êtes ciblé par l'incantation de |cFFFFFFFF%s|r" -- This debuff will apply to you if you are hit by the the SPELL_NAME cast
 L.debuffAddsCast = "Cet affaiblissement vous sera appliqué par |cFFFFFFFF%s|r" -- This debuff is applied to you by NPC_NAME
+L.debuffPickupNote = "Cet affaiblissement s'appliquera à vous si vous ramassez |cFFFFFFFF%s|r" -- This debuff will apply to you if you pick up the OBJECT_NAME
 
 -- Common ability name replacements
 L.laser = "Laser" -- Used for abilities that act like a laser. Usually from the boss to a player, or, from the boss to a specific area
@@ -335,6 +342,7 @@ L.tentacle = "Tentacule" -- Used for bosses that summon tentacles
 L.tentacles = "Tentacules" -- Plural of L.tentacle
 L.vines = "Lianes" -- Short for any ability with the name "Vines" in it e.g. "Festering Vines" (1222088) or "Choking Vines" (238593)
 L.waves = "Vagues" -- Multiple waves of a bad ability coming from a boss, like waves in the ocean
+L.winds = "Vents" -- Short for any ability with the name "Winds" in it e.g. "Winds of Change" (381517)
 L.whelp = "Dragonnet" -- Short for Whelpling, a baby dragonkin (Dragon Whelp)
 L.whelps = "Dragonnets" -- Plural of L.whelp
 
@@ -355,8 +363,8 @@ L.fire_debuffs = "Affaiblissements de feu"
 L.curse = "Malédiction" -- Any curse-type dispellable debuff, or debuffs called "Curse of XYZ", etc.
 L.curses = "Malédictions" -- Plural of L.curse
 L.disease = "Maladie" -- Any disease-type dispellable debuff, or debuffs called "Disease of XYZ", etc.
-L.dispel = "Dispel" -- General term for any debuff that is dispellable
-L.dispels = "Dispells" -- Plural of L.dispel
+L.dispel = "Dissipation" -- General term for any debuff that is dispellable
+L.dispels = "Dissipations" -- Plural of L.dispel
 L.dispel_boss = "Purge Boss" -- When the boss gains a buff (magic or enrage) that you need to dispel
 L.poison = "Poison" -- Any poison-type dispellable debuff, or debuffs called "Poison of XYZ", etc.
 L.bleed = "Saignement" -- Any bleed-type debuff
@@ -380,3 +388,7 @@ L.tank_hit = "Coup sur Tank" -- An attack that will only target the tank, usuall
 L.tank_knockback = "Repoussement du Tank" -- Similar to L.knockback but only applies to tanks"
 L.tank_soak = "Tank Soak" -- Similar to L.soak but only applies to tanks
 L.tank_grip = "Poigne du Tank" -- When a boss grapples the tank towards them. We use "Grip" because of the Death Knight ability "Death Grip" (49576) but you can use "Grapple" if it makes more sense
+
+-- Aura Sections
+L.important = "Important" -- High priority debuffs
+L.achievement = "Haut fait : \"%s\"" -- Debuff related to an achievement

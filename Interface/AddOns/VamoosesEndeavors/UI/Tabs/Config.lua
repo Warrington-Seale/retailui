@@ -180,7 +180,10 @@ function VE.UI.Tabs:CreateConfig(parent)
     container.checkboxRows = {}
 
     -- Helper to create a checkbox row
-    local function CreateCheckbox(labelText, configKey, description)
+    --- `parentKey` names a config key this row depends on. When that setting is
+    --- off the row is disabled and dimmed: a child that still looks clickable
+    --- while it does nothing is worse than one that says so.
+    local function CreateCheckbox(labelText, configKey, description, parentKey)
         local C = GetColors()
         local row = CreateFrame("Frame", nil, settingsPanel)
         row:SetHeight(24)
@@ -234,26 +237,35 @@ function VE.UI.Tabs:CreateConfig(parent)
                 end
             end
 
-            -- Special handling for dashboard button
-            if configKey == "showDashboardButton" then
-                if VE.UpdateDashboardButtonVisibility then
-                    VE:UpdateDashboardButtonVisibility()
-                end
+            -- Repaint anything that hangs off this setting, so the dimming
+            -- follows the toggle instead of waiting for the next theme change.
+            for _, child in ipairs(container.checkboxRows) do
+                if child.parentKey == configKey then child:UpdateColors() end
             end
         end)
 
         row.checkbox = checkbox
+        row.parentKey = parentKey
 
-        -- Add update function for theme changes
+        -- Repaint for the current theme AND the current parent setting. ONE
+        -- function because they write the same colours: a theme change that
+        -- ignored the parent would paint a disabled child as if it were live.
         function row:UpdateColors()
             local colors = GetColors()
-            self.label:SetTextColor(colors.text.r, colors.text.g, colors.text.b)
+            local enabled = true
+            if self.parentKey then
+                enabled = VE.Store:GetState().config[self.parentKey] and true or false
+            end
+            self.checkbox:SetEnabled(enabled)
+            local tint = enabled and colors.text or colors.text_dim
+            self.label:SetTextColor(tint.r, tint.g, tint.b)
             VE.Theme.ApplyFont(self.label, colors)
             if self.desc then
-                self.desc:SetTextColor(colors.text.r, colors.text.g, colors.text.b)
+                self.desc:SetTextColor(tint.r, tint.g, tint.b)
                 VE.Theme.ApplyFont(self.desc, colors)
             end
         end
+        row:UpdateColors()
 
         table.insert(container.checkboxRows, row)
         return row
@@ -263,7 +275,6 @@ function VE.UI.Tabs:CreateConfig(parent)
     CreateCheckbox("Show Minimap Button", "showMinimapButton", "Toggle the minimap button visibility")
 
     -- Dashboard Button checkbox
-    CreateCheckbox("Show Dashboard Button", "showDashboardButton", "Toggle the VE button in Housing Dashboard")
 
     -- Auto-Activate checkbox
     CreateCheckbox("Auto-Activate on Selection", "autoActivateOnSelect",
@@ -296,8 +307,12 @@ function VE.UI.Tabs:CreateConfig(parent)
     -- Quotes enabled checkbox
     CreateCheckbox("Enable Squirrel Quotes", "quotesEnabled", "Show squirrel mascot and talking head quotes on task events")
 
-    -- Chat-only mode checkbox
-    CreateCheckbox("Chat Only Mode", "quotesOnlyChat", "Display quotes in chat instead of talking head")
+    -- The two outputs, independent -- tick both to get the talking head AND a
+    -- chat line you can still read after it fades.
+    CreateCheckbox("Show Talking Head", "quotesPopup", "Nestor pops up and says the quote",
+        "quotesEnabled")
+    CreateCheckbox("Show In Chat", "quotesChat", "Print the quote in your chat frame",
+        "quotesEnabled")
 
     -- ========================================================================
     -- ALT SHARING SECTION

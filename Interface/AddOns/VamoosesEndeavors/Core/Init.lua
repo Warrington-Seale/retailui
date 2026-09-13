@@ -85,92 +85,26 @@ VE.frame:SetScript("OnEvent", function(self, event, arg1)
     if event == "ADDON_LOADED" then
         if arg1 == "VamoosesEndeavors" then
             VE:OnInitialize()
-        elseif arg1 == "Blizzard_HousingDashboard" then
-            VE:HookHousingDashboard()
-            self:UnregisterEvent("ADDON_LOADED")
         end
     elseif event == "PLAYER_LOGIN" then
         VE:OnEnable()
-        -- Check if Housing Dashboard is already loaded
-        if C_AddOns.IsAddOnLoaded("Blizzard_HousingDashboard") then
-            VE:HookHousingDashboard()
-            VE.frame:UnregisterEvent("ADDON_LOADED")
-        end
         self:UnregisterEvent("PLAYER_LOGIN")
     elseif event == "PLAYER_LOGOUT" then
         VE.Store:Flush()
     end
 end)
 
--- Hook into Blizzard Housing Dashboard to add VE button
-function VE:HookHousingDashboard()
-    if self.dashboardHooked then return end
-
-    -- Find the Housing Dashboard frame (HousingDashboardFrame.HouseInfoContent.ContentFrame.InitiativesFrame)
-    local dashboard = HousingDashboardFrame
-    if not dashboard or not dashboard.HouseInfoContent then return end
-
-    local houseInfo = dashboard.HouseInfoContent
-    if not houseInfo.ContentFrame then return end
-
-    local contentFrame = houseInfo.ContentFrame
-    if not contentFrame.InitiativesFrame then return end
-
-    local initiativesFrame = contentFrame.InitiativesFrame
-
-    -- Create VE toggle button with wood sign background
-    local btn = CreateFrame("Button", "VE_DashboardButton", initiativesFrame)
-    btn:SetSize(70, 32)
-    btn:SetFrameStrata("HIGH")
-    -- Position to the right of Activity title
-    local activityFrame = initiativesFrame.InitiativeSetFrame and initiativesFrame.InitiativeSetFrame.InitiativeActivity
-    if activityFrame then
-        btn:SetPoint("TOPRIGHT", activityFrame, "TOPRIGHT", -20, 0)
-    else
-        btn:SetPoint("TOPRIGHT", initiativesFrame, "TOPRIGHT", -10, -10)
-    end
-
-    -- Wood sign background
-    local bg = btn:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    bg:SetAtlas("housing-woodsign")
-    btn.bg = bg
-
-    -- Button text
-    local text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    text:SetPoint("CENTER", 0, 0)
-    text:SetText("Endeavor\nTracker")
-    text:SetJustifyH("CENTER")
-    btn.text = text
-    btn:SetScript("OnClick", function()
-        VE:ToggleWindow()
-    end)
-    btn:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOP")
-        GameTooltip:AddLine("Vamoose's Endeavors", 1, 1, 1)
-        GameTooltip:AddLine("Click to toggle the VE tracker window", 0.7, 0.7, 0.7)
-        GameTooltip:Show()
-    end)
-    btn:SetScript("OnLeave", function()
-        GameTooltip:Hide()
-    end)
-
-    self.dashboardButton = btn
-    self.dashboardHooked = true
-
-    -- Apply initial visibility based on config
-    self:UpdateDashboardButtonVisibility()
-end
-
--- Update dashboard button visibility based on config
-function VE:UpdateDashboardButtonVisibility()
-    if not self.dashboardButton then return end
-    local showButton = true
-    if VE.Store and VE.Store.state and VE.Store.state.config then
-        showButton = VE.Store.state.config.showDashboardButton ~= false
-    end
-    self.dashboardButton:SetShown(showButton)
-end
+-- The Housing Dashboard button was REMOVED 2026-08-20. It parented a NAMED
+-- global frame (VE_DashboardButton) into Blizzard's InitiativesFrame at
+-- ADDON_LOADED -- before Blizzard_HousingDashboard runs its own deferred
+-- OneTimeInit, since that addon is LoadOnDemand. Two taint vectors (named global
+-- + an addon frame in a Blizzard child list during init), and players were
+-- reporting a BLANK housing dashboard, which is what a silent taint bail looks
+-- like. VE is reachable from the minimap button and /ve; the shortcut was not
+-- worth being a suspect we could not rule out.
+--
+-- If it is ever wanted back: create it unnamed, and on first dashboard OPEN
+-- rather than ADDON_LOADED, so VE is never in the frame during Blizzard's init.
 
 -- Toggle main window (alias for minimap/compartment)
 function VE:Toggle()
@@ -187,6 +121,14 @@ function VE:ToggleWindow()
         if self._healthTimer then self._healthTimer:Cancel(); self._healthTimer = nil end
     else
         self.MainFrame:Show()
+        -- Ask for the house list HERE, not at login. See the note in
+        -- EndeavorTracker's PLAYER_ENTERING_WORLD handler: requesting it at login
+        -- primed Blizzard's dashboard dropdown cache before its content pane had
+        -- registered, and left that pane permanently blank. Opening this window is
+        -- a deliberate user action, so the request belongs here.
+        if VE.EndeavorTracker and VE.EndeavorTracker.RequestHouseInfo then
+            VE.EndeavorTracker:RequestHouseInfo()
+        end
         self:RefreshUI()
         -- Tier 1 health check: 5s after panel open. Cancelled on close.
         if self._healthTimer then self._healthTimer:Cancel() end
@@ -219,6 +161,30 @@ function VE:RefreshUI()
 end
 
 -- Rebuild UI after theme change
+
+-- Endeavor countdown span, largest whole unit only ("3 Days", "1 Day",
+-- "18 Hours", "42 Minutes"). Returns nil when nothing is left to count.
+--
+-- Whole days alone were not enough: the header floored the remaining seconds to
+-- days, so the last stretch of an endeavor read "1 Days Remaining" for a full
+-- day and then blanked entirely once under 24 hours -- exactly when the
+-- countdown matters most. Callers append their own suffix.
+function VE:FormatDuration(seconds)
+    if not seconds or seconds <= 0 then return nil end
+    if seconds >= 86400 then
+        local days = math.floor(seconds / 86400)
+        return days .. (days == 1 and " Day" or " Days")
+    end
+    if seconds >= 3600 then
+        local hours = math.floor(seconds / 3600)
+        return hours .. (hours == 1 and " Hour" or " Hours")
+    end
+    if seconds >= 60 then
+        local minutes = math.floor(seconds / 60)
+        return minutes .. (minutes == 1 and " Minute" or " Minutes")
+    end
+    return "Under a Minute"
+end
 
 -- Get current character key
 function VE:GetCharacterKey()
@@ -290,21 +256,25 @@ SlashCmdList["VE"] = function(msg)
     elseif command == "status" or command == "chest" or command == "progress" then
         local activeInfo, activeGUID = VE.EndeavorTracker:GetActiveInfo()
         local viewedState = VE.Store:GetState().endeavor or {}
-        local source, e
+        -- Both shapes carry an absolute end stamp, under different names: the
+        -- per-house snapshot calls it endTime, the store branch seasonEndTime.
+        local source, e, endTime
         if activeInfo then
-            source = "active house"; e = activeInfo
+            source = "active house"; e = activeInfo; endTime = activeInfo.endTime or 0
         else
             source = activeGUID and "viewed house (active not yet processed)" or "viewed house (no active set)"
             e = viewedState
+            endTime = viewedState.seasonEndTime or 0
         end
         local cur, max = e.currentProgress or 0, e.maxProgress or 0
         local pct = max > 0 and (cur / max * 100) or 0
         local chest = VE.EndeavorTracker:GetActiveChest() or {}
         local projected, fromTasks, chestBonus = VE.EndeavorTracker:GetProjectedHouseXP()
-        print(("|cFF2aa198[VE]|r %s -- %.1f / %d  (%.1f%%)  -- %d day%s left  |cFF93a1a1(%s)|r"):format(
+        local span = endTime > 0 and VE:FormatDuration(endTime - time()) or nil
+        print(("|cFF2aa198[VE]|r %s -- %.1f / %d  (%.1f%%)  -- %s left  |cFF93a1a1(%s)|r"):format(
             (e.seasonName and e.seasonName ~= "") and e.seasonName or "Endeavor",
             cur, max, pct,
-            e.daysRemaining or 0, (e.daysRemaining == 1) and "" or "s",
+            span or "unknown time",
             source))
         print(("|cFF2aa198[VE]|r Your contribution: |cFFffd700%.1f|r"):format(VE.EndeavorTracker:GetPlayerContribution()))
         -- chest XP is ADDITIVE: lands directly on house favor on claim, not via

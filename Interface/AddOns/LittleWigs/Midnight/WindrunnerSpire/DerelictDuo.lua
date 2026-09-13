@@ -6,15 +6,6 @@ local mod, CL = BigWigs:NewBoss("Derelict Duo", 2805, 2656)
 if not mod then return end
 mod:SetEncounterID(3057)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{472777, sound = "underyou", note = CL.debuffUnderYouNote}, -- Gunk Splatter
-	{472793, sound = "warning"}, -- Heaving Yank
-	{472888, sound = "none", note = CL.tank_hit}, -- Bone Hack
-	{474129, sound = "alarm", note = CL.spread}, -- Splattering Spew
-	{1253834, sound = "info", note = CL.preDebuffNote}, -- Curse of Darkness
-	{1215803, sound = "alarm", note = CL.mainDebuffNote}, -- Curse of Darkness
-	{1282272, sound = "none", note = CL.postDebuffNote:format(CL.extra:format(mod:SpellName(474129), CL.spread))}, -- Splattered
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -36,6 +27,20 @@ mod:SetRenames({
 	[474105] = {CL.curse, CL.you:format(CL.curse), notes = {CL.generalNote, CL.messageOnYouNote}, original = {474105, CL.you:format(mod:SpellName(474105))}}, -- Curse of Darkness (Curse)
 	[472736] = {CL.group_damage}, -- Debilitating Shriek (Group Damage)
 	[472793] = {CL.you:format(mod:SpellName(472793)), notes = {CL.messageOnYouNote}, original = CL.you:format(mod:SpellName(472793))}, -- Heaving Yank
+})
+
+--------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{472777, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Gunk Splatter
+	{472793, duration = 10, soundOnApplied = "warning"}, -- Heaving Yank
+	{472888, duration = 3, note = CL.tank_hit}, -- Bone Hack
+	{474129, duration = 30, soundOnApplied = "alarm", note = CL.spread}, -- Splattering Spew
+	{1253834, duration = 10, dispel = "curse", soundOnApplied = "info", tip = CL.preDebuffNote}, -- Curse of Darkness
+	{1215803, duration = 12, dispel = "curse", soundOnApplied = "alarm", tip = CL.mainDebuffNote}, -- Curse of Darkness
+	{1282272, duration = 10, tip = CL.postDebuffNote:format(CL.extra:format(mod:SpellName(474129), CL.spread))}, -- Splattered
 })
 
 --------------------------------------------------------------------------------
@@ -85,6 +90,7 @@ function mod:ENCOUNTER_TIMELINE_EVENT_ADDED(_, eventInfo)
 	elseif duration == 22.67 then -- Curse of Darkness
 		barInfo = self:CurseofDarknessTimeline(eventInfo)
 	elseif duration == 48 then -- Debilitating Shriek
+		-- TODO suppress at end of fight
 		barInfo = self:DebilitatingShriekTimeline(eventInfo)
 	elseif not self:IsWiping() then
 		self:ErrorForTimelineEvent(eventInfo)

@@ -27,7 +27,7 @@ BuffReminders: enabled
 BugSack: enabled
 Cell: enabled
 CityGuide: enabled
-Clique: enabled
+Clique: disabled
 CooldownManagerCentered: enabled
 CooldownManagerSlashCommand: enabled
 CraftSim: enabled
@@ -143,3 +143,5 @@ PatchWerk: disabled
 kExtraBossFrames: disabled
 OPie_Classic: disabled
 Blizzard_CombatText: enabled
+CliqueBar: disabled
+FollowTheArrow: disabled

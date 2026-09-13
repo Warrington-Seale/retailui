@@ -125,11 +125,7 @@ L.BUTTON_TRACKNEW =                      "追踪新外观"
 L.CURRENT_SETTING =                      "当前设置："
 L.MODE_APPEARANCES =                     "新外观"
 L.MODE_SOURCES =                         "新外观及来源"
-L.TRACK_NEW1 =                           "即将扫描" -- Followed by a number
-L.TRACK_NEW2 =                           "个可见配方中的" -- Preceded by a number, followed by L.MODE_APPEARANCES or L.MODE_SOURCES
-L.TRACK_NEW3 =                           "游戏可能会卡顿数秒。"
-L.ADDED_RECIPES1 =                       "已添加" -- Followed by a number
-L.ADDED_RECIPES2 =                       "个符合条件的配方" -- Preceded by a number
+-- L.ADDED_RECIPES =                        "Checked %d visible recipes for %s. Tracked %d recipes." -- %d becomes a number, %s becomes L.MODE_APPEARANCES or L.MODE_SOURCES
 
 -- Tooltip info
 L.MORE_NEEDED =                          "个仍需" -- Preceded by a number
@@ -249,6 +245,10 @@ L.SETTINGS_INCLUDEHIGHER_TITLE =         "包含更高品质"
 L.SETTINGS_INCLUDEHIGHER_DESC =          "是否统计高品质材料。（例如：在统计1级材料时包含拥有的2级材料。）"
 L.SETTINGS_COLLECTMODE_TITLE =           "收集模式"
 L.SETTINGS_COLLECTMODE_DESC =            "设置使用" .. app:Colour(L.BUTTON_TRACKNEW) .. "按钮时包含的物品类型。"
+
+-- L.PROFESSION_WINDOW =                    "Profession Window"
+-- L.SETTINGS_FILTER_OPTREAGENTS =          "Filter Optional Reagents"
+-- L.SETTINGS_FILTER_OPTREAGENTS_DESC =     "When %s is checked for optional reagents, hide combinable items." -- %s becomes "Hide Unavailable"
 L.SETTINGS_SPENDTOPERK_TITLE =           "花费至下一专精"
 L.SETTINGS_SPENDTOPERK_DESC =            "Shift+点击专业技能知识节点时，自动花费技能点直至获得下一个专精效果。"
 L.SETTINGS_ENHANCEDORDERS_TITLE =        "增强订单"

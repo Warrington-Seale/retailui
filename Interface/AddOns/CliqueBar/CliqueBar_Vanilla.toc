@@ -1,0 +1,32 @@
+## Interface: 11509
+## Title: CliqueBar
+## Notes: Shows your Clique click-cast bindings as an icon bar with keys and cooldowns.
+## IconTexture: Interface\AddOns\CliqueBar\Media\Icon.tga
+## Author: Sogu
+## Version: v0.2.0
+## SavedVariables: CliqueBarDB
+## OptionalDeps: Clique, Masque
+## Category: Unit Frames
+## X-License: GPL-3.0-or-later
+## X-Website: https://github.com/jfstn/cliquebar-addon
+## X-Curse-Project-ID: 1642027
+## X-Wago-ID: 4N2kX06L
+# X-WoWI-ID: set after creating the WoWInterface project (optional)
+
+Libs\Libs.xml
+Locales\enUS.lua
+Locales\deDE.lua
+Locales\esES.lua
+Locales\esMX.lua
+Locales\frFR.lua
+Locales\itIT.lua
+Locales\koKR.lua
+Locales\ptBR.lua
+Locales\ruRU.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
+Core.lua
+Bar.lua
+Options.lua
+Broker.lua
+About.lua

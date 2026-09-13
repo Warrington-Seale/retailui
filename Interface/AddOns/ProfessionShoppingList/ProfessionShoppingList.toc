@@ -3,7 +3,7 @@
 ## Author: Slackluster
 ## Notes: Track recipes, reagents, cooldowns, patron orders, and more
 ## IconTexture: Interface\AddOns\ProfessionShoppingList\assets\icon.png
-## Version: v12.1.0-03
+## Version: v12.1.0-05
 ## X-Curse-Project-ID: 498475
 ## X-Wago-ID: Xb6X71Np
 
@@ -40,8 +40,8 @@ modules-old\ProfessionKnowledge.lua
 modules-old\ProfessionWindow.lua
 modules-old\Tooltip.lua
 modules-old\TrackingWindow.lua
-modules-old\TrackNewMogs.lua
 modules\OrdersQueue.lua
+modules\TrackNewMogs.lua
 locales\enUS.lua
 locales\deDE.lua
 locales\esES.lua

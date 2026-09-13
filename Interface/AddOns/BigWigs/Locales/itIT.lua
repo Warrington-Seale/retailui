@@ -6,13 +6,13 @@ if not L then return end
 
 -- API.lua
 L.showAddonBar = "L'addon '|cFF436EEE%s|r' ha creato la barra '%s'."
---L.requestAddonProfile = "The addon '|cFF436EEE%s|r' just made a copy of your profile export string for the profile called |cFF33FF99'%s'|r."
+L.requestAddonProfile = "L' addon '|cFF436EEE%s|r' ha realizzato una copia della stringa da esportare per il tuo profilo chiamata |cFF33FF99'%s'|r."
 L.shortMinutesAndSeconds = "%d Min %d Sec" -- 1 Minute 2 Seconds
 L.shortSecondsOnly = "%d Sec" -- 28 Seconds
 L.shortSubTenSeconds = "%.1f Sec" -- 3.2 Seconds
 L.accept = "Accetta"
 L.cancel = "Annulla"
---L.confirm_profile_swap = "The addon |cFF436EEE\"%s\"|r wants to automatically swap your BigWigs profile to a different profile called:\n\n|cFF33FF99\"%s\"|r\n\nAre you sure you want to do this?"
+L.confirm_profile_swap = "L' addon |cFF436EEE\"%s\"|r vuole cambiare automaticamente il tuo profilo di BigWigs in un altro profilo chiamato:\n\n|cFF33FF99\"%s\"|r\n\nSei sicuro di volerlo fare?"
 
 -- Core.lua
 L.berserk = "Infuriato"
@@ -74,7 +74,7 @@ L.newFeatures = "Nuove funzioni di BigWigs:"
 L.parentheses = "%s (%s)"
 
 L.expansionNames = {
-	"Classiche", -- Classic
+	"Classic", -- Classic
 	"The Burning Crusade", -- The Burning Crusade
 	"Wrath of the Lich King", -- Wrath of the Lich King
 	"Cataclysm", -- Cataclysm
@@ -148,9 +148,54 @@ L.compartmentMenu_desc = "Disattivando quest'opzione farà in modo che BigWigs f
 L.configure = "Configura"
 L.resetPositions = "Ripristina le Posizioni"
 L.selectEncounter = "Seleziona il Combattimento"
+--L.primary_aura_spellId = "Primary spell ID: %d"
+--L.secondary_aura_spellIds = "Secondary spell ID(s): %s"
+--L.auraDispelType = "Dispel type: %s"
+L.auraDispel_magic = "Magia"
+L.auraDispel_curse = "Maledizione"
+L.auraDispel_disease = "Malattia"
+L.auraDispel_poison = "Veleno"
+L.auraDispel_bleed = "Sanguinamento"
+--L.auraMechanic = "Mechanic: %s"
+L.auraMechanic_charmed = "Ammaliato"
+L.auraMechanic_disoriented = "Disorientato"
+L.auraMechanic_disarmed = "Disarmato"
+L.auraMechanic_distracted = "Distratto"
+L.auraMechanic_fleeing = "In fuga"
+L.auraMechanic_knockbacked = "Respinto"
+L.auraMechanic_rooted = "Immobilizzato"
+L.auraMechanic_slowed = "Rallentato"
+L.auraMechanic_silenced = "Silenziato"
+L.auraMechanic_asleep = "Addormentato"
+L.auraMechanic_snared = "Rallentato"
+L.auraMechanic_stunned = "Stordito"
+L.auraMechanic_frozen = "Congelato"
+L.auraMechanic_incapacitated = "Inabilitato"
+L.auraMechanic_bleeding = "Sanguinante"
+L.auraMechanic_healing = "In guarigione"
+L.auraMechanic_polymorphed = "Metamorfato"
+L.auraMechanic_banished = "Esiliato"
+L.auraMechanic_shielded = "Protetto"
+L.auraMechanic_shackled = "Incatenato"
+L.auraMechanic_mounted = "In sella"
+L.auraMechanic_infected = "Infetto"
+L.auraMechanic_turned = "Intimorito"
+L.auraMechanic_horrified = "Terrorizzato"
+L.auraMechanic_invulnerable = "Invulnerabile"
+L.auraMechanic_interrupted = "Interrotto"
+L.auraMechanic_dazed = "Frastornato"
+L.auraMechanic_discovery = "Scoperto"
+L.auraMechanic_sapped = "Tramortito"
+L.auraMechanic_enraged = "Infuriato"
+L.auraMechanic_wounded = "Ferito"
+L.auraMechanic_taunted = "Provocato"
+--L.onApplied = "On Applied"
+--L.onDose = "On Dose"
+--L.onRemoved = "On Removed"
 L.privateAuraSounds = "Suoni per le Aura Private"
 --L.privateAuraSounds_desc = "Private auras can't be tracked normally, but you can set a sound to be played when the ability debuff is applied to you."
 L.listAbilities = "Elenca le Abilità nella Chat"
+L.parenthesesID = "%s |cffA5A5A5(ID: %s)|r"
 
 L.dbmFaker = "Fingi di usare DBM"
 L.dbmFakerDesc = "Se un'utente DBM effettua un controllo di versione per vedere chi usa DBM, ti vedranno nella lista. Utile per quelle gilde che obbligano ad usare DBM."
@@ -227,7 +272,7 @@ L.healer = "|cFFFF0000Messaggio solo per Guaritori.|r "
 L.tankhealer = "|cFFFF0000Messaggio per Difensori e Guaritori.|r "
 L.dispeller = "|cFFFF0000Messaggio solo per Dissolutori Magici.|r "
 
---L.renames = "Renames"
+L.renames = "Rinomina"
 --L.noteLabel = "%s (|cFFFFFF99%s|r)"
 --L.renameLabel = "%s (|cFF3366FF%s|r)"
 --L.renameHeader = "Set a custom name for the ability. This text will be used instead of the spell name in all messages and bars.\n\n"
@@ -237,14 +282,14 @@ L.dispeller = "|cFFFF0000Messaggio solo per Dissolutori Magici.|r "
 -- Sharing.lua
 L.import = "Importa"
 L.import_info = "Dopo che immetti una stringa puoi selezione quali impostazioni vuoi importate. \n Se impostazioni non sono disponibili nella stringa di importazione non saranno selezionabili."
-L.import_info_active = "Choose what parts you would like to import and then click the import button."
+L.import_info_active = "Scegli cosa vuoi importare e poi clicca sul pulsante importa."
 L.import_info_none = "|cFFFF0000 La stringa di importo non è compatibile o non è aggiornata.|r"
 L.export = "Esporta"
 --L.export_core = "Export Core"
 L.export_info = "Seleziona quali impostazioni vorresti esportare e condividere con gli altri.\n\n|cffff4411 Puoi solo condividere impostazioni generali e quelle non hanno nessun effetto sulle impostazioni specifiche ai boss.|r"
 L.export_string = "Esporta Stringa"
 L.export_string_desc = "Copia questa stringa BigWigs se vuoi condividere le tue impostazioni."
-L.import_string = "Improta Stringa"
+L.import_string = "Importa Stringa"
 L.import_string_desc = "Incolla la stringa BigWigs che vuoi importare qua."
 L.position = "Posizione"
 L.settings = "Impostazioni"
@@ -314,8 +359,7 @@ L.battleres_settings_export_desc = "esportare tutte le impostazzioni Battle Res.
 --L.sharing_export_renames_desc = "Export the custom renames that are configured."
 --L.sharing_sounds_desc = "Import which sounds to play for abilities."
 --L.sharing_export_sounds_desc = "Export which sounds to play for abilities."
---L.sharing_private_auras = "Private Auras"
---L.sharing_private_auras_desc = "Import the configured Private Auras sounds."
+--L.sharing_auras_desc = "Import the configured aura sounds."
 --L.sharing_export_private_auras_desc = "Export the configured Private Auras sounds."
 --L.sharing_colors_desc = "Import the color settings for bars and messages."
 --L.sharing_export_colors_desc = "Export the color settings for bars and messages."
@@ -362,6 +406,7 @@ L.H10 = "Eroico 10"
 L.H25 = "Eroico 25"
 --L.titan = "Titan" -- Chinese-only "Titan Reforged" servers
 --L.mythic_flex = "Mythic (Flex)" -- Mythic (Flexible 15-25 player raids)
+--L.world = "World" -- World (The first difficulty for Lairs in Retail WoW, essentially the same as LFR since its World -> Normal -> Heroic -> Mythic)
 
 -----------------------------------------------------------------------
 -- TOOLS
@@ -702,6 +747,8 @@ L.TOPLEFT = "In alto a sinistra"
 L.BOTTOMRIGHT = "In basso a destra"
 L.BOTTOMLEFT = "In basso a sinistra"
 L.CENTER = "Centro"
+--L.CENTER_HORIZONTAL = "Center-Horizontal"
+--L.CENTER_VERTICAL = "Center-Vertical"
 L.customAnchorPoint = "Avanzato: Punto di ancoraggio personalizzato"
 L.sourcePoint = "Punto di origine"
 L.destinationPoint = "Punto di Destinazione"
@@ -730,6 +777,65 @@ L.yourPowerTest = "Tuo Potere: %d" -- Tuo Potere: 42
 L.yourAltPower = "Tuo %s: %d" -- esempio: Tua Corruzione: 42
 L.player = "Giocatore %d" -- Giocatore 7
 L.disableAltPowerDesc = "Disabilita totalmente il display del Potere Alternativo, non verrà mai mostrato in nessuno scontro contro i boss."
+
+-----------------------------------------------------------------------
+-- Auras.lua
+--
+
+--L.auras = "Auras" -- Buffs/Debuffs
+--L.privateAuras = "Private Auras"
+--L.privateAurasDesc1 = "'Private Auras' are a special type of debuff that addons cannot detect or perform any automation on. These debuffs are used by all modern boss encounters now.\n\n"
+--L.privateAurasDesc2 = "BigWigs can help you keep track of when they are applied to you by displaying them as icons. |cFF33FF99This can help you by displaying critical debuffs separately from your normal debuffs.|r\n\n"
+--L.aurasDesc = "BigWigs can help you keep track of when boss debuffs are applied to you by displaying them as icons.\n|cFF33FF99This can help you by displaying critical debuffs separately from your normal debuffs.|r\n\n"
+--L.disabledDuringTrash = "Disabled During Trash"
+
+--L.createTestAura = "Create Test Aura"
+--L.showDispelType = "Show Dispel Type Indicator"
+--L.showDispelTypeDesc = "Show an icon on the aura if it has a dispel type."
+--L.dispelType = "Dispel Type Indicator"
+--L.iconSize = "Icon Size"
+--L.iconSpacing = "Icon Spacing"
+--L.showCooldown = "Show Cooldown Spiral"
+--L.showCooldownText = "Show Cooldown Text"
+--L.cooldownDecimalsThreshold = "Decimals Threshold"
+--L.cooldownDecimalsThresholdDesc = "At which threshold in seconds should decimal points be shown."
+--L.cooldownTextScale = "Cooldown Text Scale"
+--L.growthDirection = "Icon Growth Direction"
+--L.aurasOnYou = "Auras On You"
+--L.aurasOnYouDesc = "Customize the icons for auras that apply to you.\n\n"
+--L.aurasOnAnother = "Auras On Another"
+--L.aurasOnAnotherDesc = "Choose a specific player and then customize the icons for auras that apply to them.\n\n"
+--L.chooseAPlayer = "Choose a player"
+--L.theOtherTank = "Automatically find a tank"
+--L.theOtherTankDesc = "Show boss debuffs on the first tank in your group that isn't you. (Current: %s)"
+--L.onlyWhenYouAreTank = "Only show when you are also a tank"
+--L.playerInYourGroup = "A player in your group"
+--L.tankIndicator = "Tank Indicator"
+--L.maxIcons = "Max Icons"
+--L.maxIconsDesc = "The maximum amount of icons to be displayed."
+--L.privateAurasHelpTip = "|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid:0:0|tBigWigs: You can now see your private aura debuffs as icons, or even the private auras of another player (e.g. a tank)."
+--L.aurasHelpTip = "|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid:0:0|tBigWigs: You can now see your boss debuffs as icons, or even the boss debuffs of another player (e.g. a tank)."
+
+--L.aurasTestAnchorText = "Player\nAuras"
+--L.aurasTestTankAnchorText = "Tank\nAuras"
+
+--L.auraSounds = "Aura Sounds"
+--L.addAuraSpell = "Add Spell"
+--L.addAuraSpellDesc = "You can add spells you currently know by name, but it is always best to use the spell ID from logs."
+--L.invalidSpell = "Invalid spell"
+--L.bossDebuffsOnYou = "Boss Debuffs On You"
+--L.bossDebuffsOnTank = "Boss Debuffs On Tank"
+--L.showCountText = "Show Stacks"
+--L.cooldownText = "Cooldown Duration"
+--L.countText = "Applications"
+--L.selectPlayer = "Select Player"
+--L.myself = "Myself"
+--L.trigger = "Trigger"
+L.remove = "Rimuovi"
+--L.auraCountdownDesc = "If enabled, a vocal countdown will be added to the last 3 seconds of the aura."
+--L.auraDuration = "Aura Duration"
+--L.auraDurationDesc = "The duration in seconds that the aura will last."
+L.currentUnit = "(Attuale: %s)"
 
 -----------------------------------------------------------------------
 -- AutoReply.lua
@@ -979,6 +1085,8 @@ L.classColors = "Colore delle Classi"
 L.classColorsDesc = "I messaggi possono contenere i nomi dei giocatori. Attivando questa opzione verranno colorati con il colore della classe."
 L.chatFrameMessages = "Messaggi Riquadro Chat"
 L.chatFrameMessagesDesc = "Invia tutti i messaggi di BigWigs alla chat oltre che nei settaggi di visualizzazione."
+--L.chatFrameChoice = "Choose Chat Frame"
+--L.chatFrame = "Chat Frame %d: %s" -- "Chat Frame 1: General" or "Chat Frame 2: Combat Log" etc.
 
 L.fontSize = "Dimensione Carattere"
 L.none = "Nessuno"
@@ -1030,10 +1138,12 @@ L.zoom = "Zoom"
 L.zoomDesc = "Zoom della grafica dell' icona."
 L.showBorder = "Mostra Contorno"
 L.showBorderDesc = "Mostra un contorno intorno all'icona."
+--L.border = "Border"
 L.borderColor = "Colore del contorno"
 L.borderSize = "Dimensione del contorno"
 --L.borderOffset = "Border Offset"
 --L.borderName = "Border Name"
+--L.borderDispelColor = "Color border by dispel type"
 L.showNumbers = "Mostra numeri"
 L.showNumbersDesc = "Mostra numeri sull'icona."
 L.cooldown = "Recupero"
@@ -1087,39 +1197,6 @@ L.startAnimation_glow_desc = "Questo Splendore ha un animazione iniziale, questo
 --L.nameplateOptInHeaderOn = "\n\n\n\nBoss mod nameplates 'opt-in' mode is |cFF33FF99ACTIVE|r. To see boss mod nameplates, go into the settings of a specific boss ability and turn on the '|cFF33FF99Nameplates|r' option.\n\n"
 --L.nameplateOptInTitle = "Boss mod nameplates 'opt-in' mode"
 --L.nameplateOptInWarning = "|cffff4411WARNING!|r\n\nEnabling 'opt-in' mode will turn off nameplates across ALL of your boss modules. You will need to go through each one and manually turn on the nameplates you want.\n\nYour UI will now reload, are you sure?"
-
------------------------------------------------------------------------
--- PrivateAuras.lua
---
-
---L.privateAuras = "Private Auras"
---L.privateAurasDesc1 = "'Private Auras' are a special type of debuff that addons cannot detect or perform any automation on. These debuffs are used by all modern boss encounters now.\n\n"
---L.privateAurasDesc2 = "BigWigs can help you keep track of when they are applied to you by displaying them as icons. |cFF33FF99This can help you by displaying critical debuffs separately from your normal debuffs.|r\n\n"
-
---L.createTestAura = "Create Test Aura"
---L.showDispelType = "Show Dispel Type Indicator"
---L.showDispelTypeDesc = "Show an icon on the private aura frame if it has a dispel type.\n\n|cffffd200Note: This is a global option for all private aura frames.|r"
---L.iconSize = "Icon Size"
---L.iconSpacing = "Icon Spacing"
---L.showCooldown = "Show Cooldown Spiral"
---L.showCooldownText = "Show Cooldown Text"
---L.cooldownTextScale = "Cooldown Text Scale"
---L.growthDirection = "Icon Growth Direction"
---L.aurasOnYou = "Auras On You"
---L.aurasOnYouDesc = "Customize the icons for auras that apply to you.\n\n"
---L.aurasOnAnother = "Auras On Another"
---L.aurasOnAnotherDesc = "Choose a specific player and then customize the icons for auras that apply to them.\n\n"
---L.chooseAPlayer = "Choose a player"
---L.theOtherTank = "Automatically find a tank"
---L.theOtherTankDesc = "Show private auras on the first tank in your group that isn't you. (Current: %s)"
---L.onlyWhenYouAreTank = "Only show when you are also a tank"
---L.playerInYourGroup = "A player in your group"
---L.maxIcons = "Max Icons"
---L.maxIconsDesc = "The maximum amount of icons to be displayed."
---L.privateAurasHelpTip = "|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid:0:0|tBigWigs: You can now see your private aura debuffs as icons, or even the private auras of another player (e.g. a tank)."
-
---L.privateAurasTestAnchorText = "Private\nAura\n(%d)"
---L.privateAurasTestTankAnchorText = "Tank\nAura\n(%d)"
 
 -----------------------------------------------------------------------
 -- Proximity.lua

@@ -29,6 +29,11 @@ function D:Help()
     _cmd("/hdgr trace [tag/off]",  "list active traces / toggle a log-tag trace / disable all")
     _cmd("/hdgr log [tag/clear]",  "last 10 log entries (opt. filtered by tag) / clear the log")
     _cmd("/hdgr house",            "dump the HouseTab dashboard runtime state (widget/data chain)")
+    _cmd("/hdgr petscene",         "dump the ACTIVE pet stage's runtime state (camera/actors/keys)")
+    _cmd("/hdgr petseat <z>",      "eyeball a scene decor's seat height, to bake into SCENE_SEAT_Z")
+    _cmd("/hdgr dashtaint",        "audit WHO tainted the Blizzard dashboard's teleport chain")
+    _cmd("/hdgr dashdump",         "visibility + data state of the stranded dashboard, layer by layer")
+    _cmd("/hdgr dashsync",         "test whether a warm house-list request replies synchronously")
     _cmd("/hdgr costdump <id>",    "dump a catalog row's parsed cost + sourceTags for an itemID")
     _cmd("/hdgr dumpdecor <ids>",  "emit AllDecorDB-ready Lua rows for decorIDs (copy-paste)")
     _cmd("/hdgr tipdump [ids]",    "dump C_TooltipInfo line types for itemIDs (finds gates the catalog omits)")
@@ -125,6 +130,201 @@ function D:Log(rest)
 end
 
 -- Dump dashboard runtime state (selector empty? widget not built? data not pushed?).
+-- Eyeball a decor's seat height live. A bounding box cannot say where a bed's
+-- cushion is, so the two scene decors get their seat measured by eye, ONCE, and
+-- written into Constants.MENAGERIE.SCENE_SEAT_Z. This is that measuring stick:
+-- nudge until the pet sits right, then read the number back and bake it.
+--
+-- The override is widget-local and dies with a /reload -- it calibrates, it does
+-- not persist. Baking the value is a deliberate second step.
+function D:PetSeat(rest)
+    local w = HDG.UI:PetStage()
+    if not w then _print("no stage widget built -- open the pet card first") return end
+    local spec = w._sceneSpec
+    if not (spec and spec.decor) then
+        _print("no decor on the stage -- click a scene chip (bed / plinth) first")
+        return
+    end
+    local arg = rest and rest:match("^%s*(%S+)")
+    if not arg then
+        _print(("seat for decor %d (%s):"):format(spec.decor.decorID, spec.decor.name))
+        _G.print(("  bbox top:   %.4f   (the fallback -- right only if flat-topped)"):format(w._decorTopZ))
+        _G.print(("  baked:      %s"):format(tostring(spec.decor.seatZ)))
+        _G.print(("  override:   %s"):format(tostring(w._seatOverride)))
+        _G.print("  usage: /hdg petseat <z>   |   /hdg petseat clear")
+        return
+    end
+    if arg == "clear" then
+        w._seatOverride = nil
+        _print("seat override cleared")
+    else
+        local z = tonumber(arg)
+        if not z then _print("seat must be a number, or 'clear'") return end
+        w._seatOverride = z
+        _print(("seat override %.4f on decor %d (%s) -- bake it into SCENE_SEAT_Z when it looks right")
+            :format(z, spec.decor.decorID, spec.decor.name))
+    end
+    w:Reframe()
+end
+
+function D:PetScene()
+    -- The ACTIVE host's stage. Hardcoding the Menagerie's made this dump answer
+    -- "no stage widget built" from the Decor tab -- the one host a scene bug had
+    -- actually been reported in.
+    local w = HDG.UI:PetStage()
+    if not w then _print("no stage widget built") return end
+    _print("petscene diagnostic dump:")
+    local cx, cy, cz = w._scene:GetCameraPosition()
+    _G.print(("  camera:      %.2f, %.2f, %.2f  (build default = 6, 0, 1.2)"):format(cx, cy, cz))
+    _G.print(("  decorTopZ:   %s"):format(tostring(w._decorTopZ)))
+    local k = w._sceneKeys or {}
+    _G.print(("  keys:        decor=%s pet=%s you=%s"):format(tostring(k.decor), tostring(k.pet), tostring(k.you)))
+    local spec = w._sceneSpec
+    if spec then
+        _G.print(("  spec:        sid=%s display=%s h=%s scale=%s lift=%s you=%s"):format(
+            tostring(spec.speciesID), tostring(spec.petDisplayID), tostring(spec.petHeight),
+            tostring(spec.petScale), tostring(spec.petLift), tostring(spec.withYou)))
+    else
+        _G.print("  spec:        nil")
+    end
+    local pet = w._petActor
+    if pet then
+        local px, py, pz = pet:GetPosition()
+        _G.print(("  pet actor:   loaded=%s scale=%.4f requested=%s pos=%.2f,%.2f,%.2f"):format(
+            tostring(pet:IsLoaded()), pet:GetScale(), tostring(pet:GetRequestedScale()), px, py, pz))
+        -- WHERE ARE ITS FEET. SetPosition places the model ORIGIN at pos x scale
+        -- (the position is in the actor's scaled frame), and a mesh authored
+        -- above or below its own origin lands off the seat by minZ x scale on
+        -- top of that -- which is what seatLift is generated to cancel. Printing the box is
+        -- the only way to see whether the generated number matches this model:
+        -- one pet standing correctly and another floating at the SAME seat means
+        -- the two disagree about where their origin is.
+        --
+        -- Caveat, and it is a big one: for a creature this box is a union over
+        -- the whole animation set, so a travelling idle inflates it (the recorded
+        -- Gill'dan case, 8x). Read minZ as "the lowest this model ever goes",
+        -- not "where it stands".
+        local minX, minY, minZ, maxX, maxY, maxZ = pet:GetActiveBoundingBox()
+        if minZ then
+            local sc = pet:GetScale()
+            _G.print(("   pet box:    z %.4f..%.4f  x %.4f..%.4f  y %.4f..%.4f"):format(
+                minZ, maxZ, minX, maxX, minY, maxY))
+            _G.print(("   feet at:    %.4f   ((pos %.4f + minZ %.4f) x scale %.4f)"):format(
+                (pz + minZ) * sc, pz, minZ, sc))
+        else
+            _G.print("   pet box:    nil -- model not streamed")
+        end
+    else
+        _G.print("  pet actor:   nil")
+    end
+    -- The decor actor, which the dump used to omit entirely -- and the composed
+    -- seat is computed from ITS bounding box, so a wrong-looking composition
+    -- cannot be diagnosed without it.
+    local dec = w._decorActor
+    if dec then
+        local dx, dy, dz = dec:GetPosition()
+        local ok, _, _, _, _, _, maxZ = pcall(dec.GetActiveBoundingBox, dec)  -- exception(boundary): nil until streamed
+        _G.print(("  decor actor: loaded=%s pos=%.2f,%.2f,%.2f boxMaxZ=%s"):format(
+            tostring(dec:IsLoaded()), dx, dy, dz, tostring(ok and maxZ)))
+    else
+        _G.print("  decor actor: nil")
+    end
+    _G.print(("  you actor:   %s"):format(
+        w._youActor and tostring(w._youActor:IsLoaded()) or "nil"))
+    _G.print(("  portrait:    %s  (no decor AND no You = portrait framing)"):format(
+        tostring(w._sceneSpec ~= nil and not w._sceneSpec.decor and not w._sceneSpec.withYou)))
+    _G.print(("  scene shown: %s  widget %dx%d"):format(
+        tostring(w._scene:IsVisible()), w:GetWidth(), w:GetHeight()))  -- exception(boundary): debug print, WoW API
+end
+
+function D:DashTaint()
+    -- issecurevariable(tbl, key) -> secure, taintingAddon: names WHO tainted each
+    -- link of the dashboard's house-list -> teleport chain. Ground truth for the
+    -- ADDON_ACTION_FORBIDDEN TeleportHome blame.
+    local dash = _G.HousingDashboardFrame
+    if not dash then _print("dashboard not loaded") return end
+    local function probe(label, tbl, key)
+        if not tbl then _G.print(("  %s: FRAME MISSING"):format(label)) return end
+        local secure, tainter = _G.issecurevariable(tbl, key)
+        _G.print(("  %s.%s: %s%s  (value: %s)"):format(label, key,
+            secure and "SECURE" or "TAINTED",
+            tainter and (" by " .. tostring(tainter)) or "",
+            tostring(tbl[key])))
+    end
+    _print("dashboard taint audit:")
+    -- Bracket-indexed: HouseDropdown is a 12.1 parentKey; wowlua-ls stubs are 12.0.7.
+    local dd = dash["HouseDropdown"]
+    probe("HouseDropdown", dd, "playerHouseList")
+    probe("HouseDropdown", dd, "selectedHouseInfo")
+    local info = dash.HouseInfoFrame or dash.HouseInfoContent  -- exception(boundary): parentKey name per Blizzard XML
+    local content = info and info.ContentFrame
+    local upg = content and content.HouseUpgradeFrame
+    probe("HouseUpgradeFrame", upg, "houseList")
+    probe("HouseUpgradeFrame", upg, "houseInfo")
+    local tp = upg and upg.TeleportToHouseButton
+    probe("TeleportToHouseButton", tp, "houseInfo")
+    probe("TeleportToHouseButton", tp, "teleportToPlot")
+end
+
+function D:DashDump()
+    -- Visibility + data-chain state of every layer of the stranded dashboard.
+    local dash = _G.HousingDashboardFrame
+    if not dash then _print("dashboard not loaded") return end
+    local function line(label, v) _G.print(("  %s: %s"):format(label, tostring(v))) end
+    local function shown(label, f) line(label, f and (f:IsShown() and "SHOWN" or "hidden") or "MISSING") end
+    _print("dashboard state dump:")
+    local info = dash["HouseInfoContent"]
+    shown("HouseInfoContent", info)
+    if not info then return end
+    shown("LoadingSpinner", info["LoadingSpinner"])
+    shown("DashboardNoHousesFrame", info["DashboardNoHousesFrame"])
+    shown("HouseFinderButton", info["HouseFinderButton"])
+    local content = info["ContentFrame"]
+    shown("ContentFrame", content)
+    if content then
+        line("tabsInitialized", content["tabsInitialized"])
+        shown("HouseUpgradeFrame", content["HouseUpgradeFrame"])
+        shown("InitiativesFrame", content["InitiativesFrame"])
+        local init = content["InitiativesFrame"]
+        line("InitiativesFrame.playerHouseList", init and init.playerHouseList and ("table n=" .. #init.playerHouseList))
+        local upg = content["HouseUpgradeFrame"]
+        line("HouseUpgradeFrame.houseList", upg and upg.houseList and ("table n=" .. #upg.houseList))
+        line("HouseUpgradeFrame.houseInfo", upg and tostring(upg["houseInfo"]))
+    end
+    local dd = dash["HouseDropdown"]
+    line("HouseDropdown.playerHouseList", dd and dd.playerHouseList and ("table n=" .. #dd.playerHouseList))
+    -- Who is actually registered on the EventRegistry for the dropdown's
+    -- broadcasts? Read-only walk of callbackTables[type][event][owner].
+    for _, ev in ipairs({ "HouseDropdown.HouseListUpdated", "HouseDropdown.HouseListLoading",
+                          "HouseDropdown.HouseSelected" }) do
+        local n, paneIn = 0, false
+        for _, byEvent in pairs(_G.EventRegistry:GetCallbackTables()) do
+            local owners = byEvent[ev]
+            if owners then
+                for owner in pairs(owners) do
+                    n = n + 1
+                    if owner == info then paneIn = true end
+                end
+            end
+        end
+        line(ev, ("%d registered%s"):format(n, paneIn and " (PANE REGISTERED)" or "  -- PANE MISSING"))
+    end
+end
+
+function D:DashSync()
+    -- Does C_Housing.GetPlayerOwnedHouses reply SYNCHRONOUSLY when the client
+    -- cache is warm? If yes, the dashboard's dropdown broadcasts its house list
+    -- DURING its own OnLoad -- before the House Info pane exists -- and the pane
+    -- strands deaf for the session (the /reload blank-dashboard bug).
+    local f = _G.CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_HOUSE_LIST_UPDATED")
+    local fired = false
+    f:SetScript("OnEvent", function() fired = true end)
+    _G.C_Housing.GetPlayerOwnedHouses()
+    f:UnregisterAllEvents()
+    _print(("PLAYER_HOUSE_LIST_UPDATED fired synchronously inside the call: %s"):format(tostring(fired)))
+end
+
 function D:House()
     local root = HDG.mainFrame
     _print("house diagnostic dump:")
@@ -184,13 +384,20 @@ function D:CostDump(rest)
     local function ceStr(list)
         if not list or #list == 0 then return "EMPTY" end
         local s = ""
-        for _, e in ipairs(list) do s = s .. ("[id=%s x%s]"):format(tostring(e.currencyID), tostring(e.amount)) end
+        for _, e in ipairs(list) do s = s .. ("[%s x%s]"):format(HDG.Format.CostKey(e), tostring(e.amount)) end
         return s
     end
     _print(("costdump %d: %s"):format(id, row.name or "?"))
     _G.print(("  vendors: %d"):format(row.vendors and #row.vendors or 0))  -- exception(nullable): vendors list optional
     for i, v in ipairs(row.vendors or {}) do
-        _G.print(("    [%d] %s | cost=%q | costEntries=%s"):format(i, tostring(v.name), tostring(v.cost), ceStr(v.costEntries)))
+        -- ZONE + npcID per entry. Two records that resolved to the SAME zone are
+        -- the signature of a vendor missing one of its per-zone augment rows:
+        -- the second zone falls back to the first's npcID and gets its zone
+        -- stamped over the catalog's (see the multi-zone vendor note in
+        -- _flushVendor). Without these two fields the duplicate is invisible.
+        _G.print(("    [%d] %s | zone=%s | npcID=%s | cost=%q | costEntries=%s"):format(
+            i, tostring(v.name), tostring(v.zone), tostring(v.npcID),
+            tostring(v.cost), ceStr(v.costEntries)))
     end
     _G.print("  row.costEntries: " .. ceStr(row.costEntries))
     _G.print("  row.costLine: " .. tostring(row.costLine))
@@ -198,6 +405,15 @@ function D:CostDump(rest)
     local tags = ""
     for _, t in ipairs(row.sourceTags or {}) do tags = tags .. "[" .. tostring(t.kind) .. "]" end
     _G.print("  sourceTags: " .. (tags ~= "" and tags or "none"))
+    -- THE RAW STRING, last and unabridged. Everything above is HDG's own parse,
+    -- which reports our bugs back as if they were Blizzard's data -- so a
+    -- vendor-attribution question can only be settled against this line.
+    -- |n is the WoW escape, not a newline; rendered as " // " to keep it on one
+    -- chat line.
+    local e = _G.C_HousingCatalog and row.decorID
+        and _G.C_HousingCatalog.GetCatalogEntryInfoByRecordID(1, row.decorID)  -- exception(boundary): live catalog getter; nil pre-sweep
+    local raw = e and e.sourceText
+    _G.print("  RAW sourceText: " .. (raw and raw ~= "" and raw:gsub("|n", " // ") or "(empty)"))
     local info = row.decorID and _G.C_HousingCatalog
              and _G.C_HousingCatalog.GetCatalogEntryInfoByRecordID(1, row.decorID)
     if info and info.sourceText and info.sourceText ~= "" then
@@ -576,6 +792,10 @@ end
 local function _petScaleStep(f, i, acc, done)
     if i > #PETSCALE_PROBE then return done(acc) end
     local e = PETSCALE_PROBE[i]
+    -- exception(false-positive): dev surface. PetObserver declares sole ownership of
+    -- C_PetJournal for the PRODUCTION path; /hdg petscale is a probe that wants raw
+    -- species data the observer deliberately does not expose, and adding an observer
+    -- method for one debug command would be the worse trade.
     local info = _G.C_PetJournal.GetPetInfoTableBySpeciesID(e.sid)
     if not (info and info.displayID) then
         acc[i] = { name = ("sid %d (not owned)"):format(e.sid) }
@@ -628,6 +848,10 @@ function D:PetScale()
         local dialog = HDG.UI and HDG.UI.CopyDialog and HDG.UI:CopyDialog()
         if dialog and dialog.Open then dialog:Open("petscale", table.concat(out, "\n"))
         else for _, l in ipairs(out) do _print(l) end end
+        -- Hide the probe model. It is a 200x200 PlayerModel anchored to the centre of
+        -- UIParent, so leaving it shown parked the last probed pet over the world for
+        -- the rest of the session with /reload the only cure.
+        f:Hide()
         _petScaleBusy = false
     end)
 end

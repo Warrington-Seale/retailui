@@ -238,16 +238,23 @@ L.otherDifficultiesNote = "Текст будет использован на в�
 L.debuffFailureNote = "Дебафф наложится на тебя, если не успеешь отреагировать"
 L.debuffFailureMoveFromExplosionNote = "Дебафф наложится на тебя, если не успеешь выйти из взрыва"
 L.debuffFailureInterruptNote = "Дебафф наложится на тебя если ты не успеешь кикнуть: |cFFFFFFFF%s|r" -- This debuff will apply to you if you fail to interrupt the cast of SPELL_NAME
+L.debuffFailureMoveFromCastNote = "Дебафф наложится на тебя если ты не выбежишь с каста: |cFFFFFFFF%s|r" -- This debuff will apply to you if you fail to move out of the SPELL_NAME cast
+L.debuffFailureGroupSoakNote = "Дебафф наложится на тебя если группа не соакнет: |cFFFFFFFF%s|r" -- This debuff will apply to you if your group fails to soak SPELL_NAME
+L.debuffFailureSafeZoneNote = "Этот дебафф наложится на тебя если ты не встанешь в безопасную зону"
+L.debuffHitByOtherPlayerNote = "Этот дебафф наложится на тебя если другой игрок попадет в тебя: |cFFFFFFFF%s|r" -- This debuff will apply to you if you are hit by another player's SPELL_NAME
+L.debuffTargetedNote = "Этот дебафф наложится на тебя если ты станешь целью для: |cFFFFFFFF%s|r" -- This debuff will apply to you if you are being targeted for SPELL_NAME
 L.preDebuffNote = "Дебафф предшествующий основному"
 L.mainDebuffNote = "Основной дебафф применяемый к тебе"
 L.postDebuffNote = "Дебафф наложится на тебя, когда |cFFFFFFFF%s|r истечет" -- This debuff will apply to you after OTHER_DEBUFF expires
 L.debuffUnderYouNote = "Дебафф наложится на тебя если будешь стоять в луже" -- Usually when a player is standing in a pool of something bad, a debuff will apply to them
-L.debuffDotAfterCastNote = "ДОТа наложится на тебя, после того как босс докастует: |cFFFFFFFF%s|r" -- This debuff is a damage over time effect after the boss finishes casting SPELL_NAME
-L.debuffPossibleAfterCastNote = "Дебафф может наложиться на тебя, когда босс докастует: |cFFFFFFFF%s|r" -- This debuff might apply to you after the boss finishes casting SPELL_NAME
-L.debuffTankAfterCastNote = "Дебафф наложится на танка, когда босс докастует: |cFFFFFFFF%s|r" -- This debuff will apply to the tank after the boss finishes casting SPELL_NAME
+L.debuffDotAfterCastNote = "Этот дебафф является ДоТом после каста: |cFFFFFFFF%s|r" -- This debuff is a damage over time effect after the SPELL_NAME cast
+L.debuffPossibleAfterCastNote = "Этот дебафф может быть применен к тебе после каста: |cFFFFFFFF%s|r" -- This debuff might apply to you after the SPELL_NAME cast
+L.debuffTankAfterCastNote = "Этот дебафф будет применен к танку после каста: |cFFFFFFFF%s|r" -- This debuff will apply to the tank after the SPELL_NAME cast
+L.debuffGroupAfterCastNote = "Этот дебафф будет применен ко всей группе после каста: |cFFFFFFFF%s|r" -- This debuff will apply to the entire group after the SPELL_NAME cast
 L.debuffWalkIntoObjectNote = "Дебафф наложится на тебя, если ты специально зайдешь в: |cFFFFFFFF%s|r" -- This debuff will apply to you if you purposely walk into the OBJECT_NAME (e.g. trap, mine, bomb)
 L.debuffHitByCastNote = "Дебафф наложится на тебя, если ты поймаешь каст: |cFFFFFFFF%s|r" -- This debuff will apply to you if you are hit by the the SPELL_NAME cast
 L.debuffAddsCast = "Дебафф на тебе от: |cFFFFFFFF%s|r" -- This debuff is applied to you by NPC_NAME
+L.debuffPickupNote = "Этот дебафф будет наложен на тебя если ты подобрал |cFFFFFFFF%s|r" -- This debuff will apply to you if you pick up the OBJECT_NAME
 
 -- Common ability name replacements
 L.laser = "Лазер" -- Used for abilities that act like a laser. Usually from the boss to a player, or, from the boss to a specific area
@@ -334,6 +341,7 @@ L.tentacle = "Щупальце" -- Used for bosses that summon tentacles
 L.tentacles = "Щупальца" -- Plural of L.tentacle
 L.vines = "Лозы" -- Short for any ability with the name "Vines" in it e.g. "Festering Vines" (1222088) or "Choking Vines" (238593)
 L.waves = "Волны" -- Multiple waves of a bad ability coming from a boss, like waves in the ocean -- technically speaking "waves" is "Волны" but current tl is a very common name
+L.winds = "Ветра" -- Short for any ability with the name "Winds" in it e.g. "Winds of Change" (381517)
 L.whelp = "Дракончик" -- Short for Whelpling, a baby dragonkin (Dragon Whelp)
 L.whelps = "Дракончики" -- Plural of L.whelp
 
@@ -379,3 +387,7 @@ L.tank_hit = "Танк Удар" -- An attack that will only target the tank, us
 L.tank_knockback = "Танк Отталкивание" -- Similar to L.knockback but only applies to tanks"
 L.tank_soak = "Танк Соак" -- Similar to L.soak but only applies to tanks
 L.tank_grip = "Танк Притяжка" -- When a boss grapples the tank towards them. We use "Grip" because of the Death Knight ability "Death Grip" (49576) but you can use "Grapple" if it makes more sense
+
+-- Aura Sections
+L.important = "Важное" -- High priority debuffs
+L.achievement = "Достижение: \"%s\"" -- Debuff related to an achievement

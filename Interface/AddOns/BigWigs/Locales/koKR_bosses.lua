@@ -79,3 +79,49 @@ BigWigsAPI.SetBossModuleLocale("Crown of the Cosmos", {
 	aspect_of_the_end = "사슬",
 	devouring_cosmos = "단상 이동",
 })
+
+-- The Venomous Abyss
+
+BigWigsAPI.SetBossModuleLocale("Nek'zali the Soulcoiler", {
+	possession_barrage = "브레스",
+})
+
+BigWigsAPI.SetBossModuleLocale("The Lost Explorers", {
+	trader_gebbo = "게보",
+	first_mate_nama = "나마",
+	scrollsage_iku = "이쿠",
+})
+
+BigWigsAPI.SetBossModuleLocale("Vashnik the Malignant", {
+	malignant_catalyst = "광역기", -- Short for Malignant Catalyst
+})
+
+BigWigsAPI.SetBossModuleLocale("The Twin Fangs", {
+	coiling_toxin = "바닥", -- Short for Coiling Toxin
+	corrosive_spit = "브레스", -- Short for Corrosive Spit
+})
+
+BigWigsAPI.SetBossModuleLocale("Ula'tek", {
+	mephitic_thrash = "휩쓸기",
+	call_of_the_serpent = "알",
+	gore_rattle = "쫄",
+	grasping_fangs = "밧줄",
+	circling_prey = "단상 파괴",
+	p3_knock_up = "띄우기",
+
+	toxic_womb = "쫄 추가",
+	fester_burst = "보호막",
+	toxic_incubation = "파도",
+
+	count_amount_side = "%s (%d/%d) %s",
+	count_side = "%s (%d) %s",
+	fester_burst_count = "%s (%d-%d)",
+
+	custom_select_limit_warnings = "유령의 똬리 그룹",
+	custom_select_limit_warnings_desc = "바닥 그룹(왼쪽 또는 오른쪽)에 해당하는 막대만 표시합니다. 1단계에서는 오른쪽이 먼저, 사잇단계에서는 왼쪽이 먼저입니다.",
+	custom_select_limit_warnings_value1 = "양쪽 모두에 대한 경고를 표시합니다.",
+	custom_select_limit_warnings_value2 = "왼쪽에 대한 경고만 표시합니다.",
+	custom_select_limit_warnings_value3 = "오른쪽에 대한 경고만 표시합니다.",
+	custom_select_limit_warnings_value4 = "홀수 그룹은 왼쪽, 짝수 그룹은 오른쪽.",
+	custom_select_limit_warnings_value5 = "신화 난이도: 1, 2파티는 왼쪽, 3, 4파티는 오른쪽. 그 외: 1/2/3파티는 왼쪽, 4/5/6파티는 오른쪽.",
+})

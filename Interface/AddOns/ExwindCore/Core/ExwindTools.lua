@@ -2,6 +2,25 @@ local addonName, addonTable = ...
 local ExwindTools = addonTable
 _G.ExwindTools = ExwindTools
 
+-- 12S2 hard cut: the three addons now own three new SavedVariables names.
+-- No migration is allowed.  Clear the legacy globals in memory as a second
+-- guarantee; because their TOC declarations are also removed, the next saved
+-- variables flush removes the old payload from disk.
+_G.ExwindToolsDB = nil -- EXWIND_LEGACY_DB_PURGE
+_G.ExBossDB = nil      -- EXWIND_LEGACY_DB_PURGE
+local legacyDBPurge = CreateFrame("Frame")
+legacyDBPurge:RegisterEvent("ADDON_LOADED")
+legacyDBPurge:SetScript("OnEvent", function(_, _, loadedAddon)
+    local name = tostring(loadedAddon or ""):lower()
+    if name == "exwindtools" then
+        _G.ExwindToolsDB = nil -- EXWIND_LEGACY_DB_PURGE
+    elseif name == "exboss" then
+        -- ExBoss' old SavedVariables file is loaded only immediately before
+        -- ExBoss code, which is later than Core. Purge it at that exact event.
+        _G.ExBossDB = nil -- EXWIND_LEGACY_DB_PURGE
+    end
+end)
+
 -- 把 Locale 代理接入 addonTable（ExwindLocale 由 Locale/Init.lua 提前初始化）
 ExwindTools.L = _G.ExwindLocale and _G.ExwindLocale.GetProxy() or
     setmetatable({}, { __index = function(_, k) return k end })
@@ -79,20 +98,24 @@ end
 --========================== 模块清单 ===================================
 --=======================================================================
 -- ⚠️ 警告：此 ModuleList 被多个插件共享
---  严禁删除任何模块条目！只能追加新模块
+--  它是 Tools 左侧路由、模块管理与模块元数据的唯一真源。
+--  内置模块在此显式登记；外置插件只能通过下方 RegisterExternalModule
+--  入口注册一次，不能直接写入或覆盖此表。
 ExwindTools.ModuleList = {
     ----------------------------------------------------------------------------------------------------------
     ---------------------------------------------工具类 (1)---------------------------------------------------
     ----------------------------------------------------------------------------------------------------------
     { Key = "ExTools.MiniTools", Name = L["常用功能设置"], Desc = L["常用功能合集 (自动卖垃圾/日志/删除确认等)。"], Category = 1 },
-    { Key = "ExTools.StreamerTools", Name = L["大秘境小工具"], Desc = L["大秘境常用的小工具整里"], Category = 1 },
+    { Key = "ExTools.CombatAlert", Name = L["进出战斗提示"], Desc = L["进入或离开战斗时显示提示文字。"], Category = 1 },
     { Key = "ExTools.PlayerPosition", Name = L["玩家角色定位"], Desc = L["在屏幕中心显示标记，支持超出距离变色"], Category = 1 },
+
     { Key = "ExTools.ChatChannelBar", Name = L["聊天频道切换"], Desc = L["快速切换聊天频道的工具栏"], Category = 1 },
     { Key = "ExTools.AutoBuy", Name = L["自动购买"], Desc = L["自动购买指定物品。"], Category = 1 },
     { Key = "ExTools.GossipID", Name = L["自动对话"], Desc = L["显示对话 ID，并支持加入自动对话列表。"], Category = 1, },
-    { Key = "ExTools.InstanceNote", Name = L["副本笔记"], Desc = L["按副本 / 首领显示自定义备注。"], Category = 1, DefaultEnabled = false },
-    --{ Key = "ExTools.MicroMenu", Name = "微型选单", Desc = "顶端微型选单：中间显示时间，左右各有可配置的面板快捷图标。", Category = 1 },
+    { Key = "ExTools.CombatMobDebuffGrid", Name = L["周围怪物DEBUFF监控"], Desc = L["以格子显示周围进入战斗的敌对怪物；玩家或宠物施放的指定 Debuff 存在时显示红色。"], Category = 1 },
+    -- { Key = "ExTools.MicroMenu", Name = L["微型选单"], Desc = L["顶端微型选单：中间显示时间，左右各有可配置的面板快捷图标。"], Category = 1 },
     { Key = "ExTools.RaidMarkerPanel", Name = L["团队标记面板"], Desc = L["目标标记 + 地面光柱的快捷操作面板。"], Category = 1 },
+
     ----------------------------------------------------------------------------------------------------------
     ---------------------------------------------大秘境资讯 (2)------------------------------------------------
     ----------------------------------------------------------------------------------------------------------
@@ -105,17 +128,18 @@ ExwindTools.ModuleList = {
     { Key = "ExM+InfoMythicFrame", Name = L["大秘境统计面板"], Desc = L["大秘境统计面板与展示。"], Category = 2, HideCfg = true },
     { Key = "ExM+InfoSpellData", Name = L["法术数据 (内部)"], Desc = L["内部数据/法术资料库。"], Category = 2, HideCfg = true },
     { Key = "ExM+.MythicDamage", Name = L["大秘境伤害计算"], Desc = L["独立UI，根据层数计算法术实际伤害。"], Category = 2 },
-    { Key = "ExTools.PveInfoPanel", Name = L["PVE 扩展面板"], Desc = L["在副本查找器 (PVEFrame) 侧边显示额外信息挂架。"], Category = 2, HideCfg = true },
+    { Key = "ExTools.PveInfoPanel", Name = L["PVE 扩展面板"], Desc = L["在副本查找器侧边显示额外信息挂架。"], Category = 2, },
     { Key = "ExTools.PveKeystoneInfo", Name = L["大米队友钥石"], Desc = L["在 PVEFrame 上显示玩家与队友钥石信息。"], Category = 2, },
 
     ----------------------------------------------------------------------------------------------------------
     ---------------------------------------------大秘境辅助 (3)------------------------------------------------
     ----------------------------------------------------------------------------------------------------------
-    -- { Key = "ExM+.InterruptTracker", Name = L["队友打断监控"], Desc = L["推断并监控队友打断技能 (支持12.0)。"], Category = 3 },
-    { Key = "ExTools.PlayerHealAbsorb", Name = L["玩家治疗吸收盾"], Desc = L["在屏幕上显示玩家当前总治疗吸收量。"], Category = 3 },
-    { Key = "ExTools.PlayerShield", Name = L["玩家护盾量"], Desc = L["在屏幕上显示玩家当前总护盾量，支持显示数值或占总血量百分比。"], Category = 3 },
-    { Key = "ExM+.MythicCast", Name = L["周围怪物施法监控"], Desc = L["显示周围的怪物施法条 支持可断/钢条分别染色"], Category = 3 },
     { Key = "ExClass.FocusCast", Name = L["焦点施法提示"], Desc = L["仅监控焦点施法，支持施法条与音效独立提示。"], Category = 3 },
+    { Key = "ExTools.BattleResurrection", Name = L["战斗复活"], Desc = L["显示战斗复活的可用次数与恢复计时。"], Category = 3 },
+    { Key = "ExTools.PlayerShield", Name = L["玩家护盾量"], Desc = L["在屏幕上显示玩家当前总护盾量"], Category = 3 },
+    { Key = "ExTools.PlayerHealAbsorb", Name = L["玩家治疗吸收盾"], Desc = L["在屏幕上显示玩家当前总治疗吸收量。"], Category = 3 },
+    { Key = "ExTools.CombatTimer", Name = L["战斗时间计时器"], Desc = L["显示本次战斗已持续的时间。"], Category = 3 },
+
     ----------------------------------------------------------------------------------------------------------
     ---------------------------------------------职业 (通用) (4)----------------------------------------------
     ----------------------------------------------------------------------------------------------------------
@@ -123,21 +147,24 @@ ExwindTools.ModuleList = {
     { Key = "ExClass.SpellEffectAlpha", Name = L["法术触发透明度"], Desc = L["根据当前专精自动调整法术触发透明度。"], Category = 4 },
     { Key = "ExTools.PlayerStats", Name = L["玩家属性监控"], Desc = L["采集并显示玩家各项战斗属性数据。"], Category = 4 },
     { Key = "ExTools.YYSound", Name = L["嗜血音效"], Desc = L["队友开启嗜血时播放音效 功能测试中"], Category = 4 },
-    { Key = "ExTools.CastSequence", Name = L["施法序列"], Desc = L["实时显示你的施法序列，支持读条/引导/瞬发/打断等状态可视化。"], Category = 4 },
+    { Key = "ExTools.CastSequence", Name = L["施法序列"], Desc = L["实时显示你的施法序列，"], Category = 4 },
     { Key = "ExClass.RangeCheck", Name = L["距离监视"], Desc = L["实时显示目标距离范围。"], Category = 4 },
-
-
 
     ----------------------------------------------------------------------------------------------------------
     ---------------------------------------------职业  (6)----------------------------------------------
     ----------------------------------------------------------------------------------------------------------
     { Key = "ExClass.NoMoveSkillAlert", Name = L["位移技能CD提示"], Desc = L["当位移技能冷却中时提示。"], Category = 6 },
+    { Key = "ExClass.DKBloodBoil", Name = L["DK血沸普通版"], Desc = L["血沸冷却更新时显示 3 秒倒数图标。"], Category = 6 },
+    { Key = "ExClass.DKBloodBoilSmart", Name = L["DK血沸智能版"], Desc = L["仅在需要手动施放高亮血沸时显示图标。"], Category = 6, DefaultEnabled = false },
+
     { Key = "ExClass.BrewmasterStagger", Name = L["酒仙酒池监控"], Desc = L["显示酒仙武僧的酒池百分比，并支持独立满条上限与阈值变色。"], Category = 6 },
     { Key = "ExTools.TransformTimer", Name = L["噬灭变身计时"], Desc = L["玩家施放指定变身法术后，在屏幕显示持续秒数。"], Category = 6 },
+
+
     ----------------------------------------------------------------------------------------------------------
     ---------------------------------------------PTR/BETA (5)-------------------------------------------------
     ----------------------------------------------------------------------------------------------------------
-    { Key = "ExPTR.MiniTools", Name = L["PTR工具箱"], Desc = L["汇集测试服专用的便捷功能（屏蔽反馈、一键加点等）。"], Category = 5, BlockBeta = true },
+    { Key = "ExPTR.MiniTools", Name = L["PTR工具箱"], Desc = L["汇集测试服专用的便捷功能"], Category = 5, BlockBeta = true },
     { Key = "ExPTR.SetKey", Name = L["快速设置钥石 (PTR)"], Desc = L["PTR 用：快速制作/设置钥石。"], Category = 5, BlockBeta = true, },
 }
 
@@ -160,19 +187,32 @@ for i, meta in ipairs(ExwindTools.ModuleList) do
     ExwindTools.ModuleIndexByKey[meta.Key] = i
 end
 
+function ExwindTools:GetModuleMeta(moduleKey)
+    if type(moduleKey) ~= "string" or moduleKey == "" then return nil end
+    local index = self.ModuleIndexByKey[moduleKey]
+    return index and self.ModuleList[index] or nil
+end
+
 --=======================================================================
 --========================== 数据库初始化 ===============================
 --=======================================================================
-_G.ExwindToolsDB = _G.ExwindToolsDB or {}
-local db = _G.ExwindToolsDB
+_G.EXCORE12S2 = _G.EXCORE12S2 or {}
+local db = _G.EXCORE12S2
 
 db.DBVersion = db.DBVersion or 1
 db.ModuleDB = db.ModuleDB or {}
-db.LoadByKey = db.LoadByKey or {}
-db.Load = {}
-db.LoadKeys = {}
 db.Minimap = db.Minimap or { hide = false }
 db.Locale = db.Locale or { mode = "AUTO" }
+
+-- ExwindTools' SavedVariables are not loaded yet while its required Core is
+-- executing. Keep the catalog in a transient table until ExwindTools registers
+-- EXTOOLS12S2 from its first file; never persist Tools module data in Core.
+local moduleCatalogDB = { DBVersion = 1, ModuleDB = {}, LoadByKey = {}, Load = {}, LoadKeys = {} }
+local moduleDBStorages = { CORE = db }
+local moduleDBOwnerByKey = {}
+local moduleDBOwnerPrefixes = {}
+local activeModuleDBOwner = "CORE"
+local toolsCatalogOwner = nil
 
 local function NormalizeLocaleMode(mode)
     local value = tostring(mode or ""):gsub("%s+", "")
@@ -189,15 +229,15 @@ local validKeys = {}
 for i, meta in ipairs(ExwindTools.ModuleList) do
     local key = meta.Key
     validKeys[key] = true
-    db.LoadKeys[i] = key
-    if db.LoadByKey[key] == nil then db.LoadByKey[key] = (meta.DefaultEnabled ~= false) end
-    db.Load[i] = db.LoadByKey[key]
+    moduleCatalogDB.LoadKeys[i] = key
+    if moduleCatalogDB.LoadByKey[key] == nil then moduleCatalogDB.LoadByKey[key] = (meta.DefaultEnabled ~= false) end
+    moduleCatalogDB.Load[i] = moduleCatalogDB.LoadByKey[key]
 end
-for k in pairs(db.LoadByKey) do
-    if not validKeys[k] then db.LoadByKey[k] = nil end
+for k in pairs(moduleCatalogDB.LoadByKey) do
+    if not validKeys[k] then moduleCatalogDB.LoadByKey[k] = nil end
 end
 
-ExwindTools.DB = db
+ExwindTools.DB = moduleCatalogDB
 
 function ExwindTools:GetLocaleMode()
     db.Locale = db.Locale or { mode = "AUTO" }
@@ -246,59 +286,129 @@ ApplyCoreCVars()
 
 local function SyncModuleRegistry()
     wipe(ExwindTools.ModuleIndexByKey)
-    wipe(db.Load)
-    wipe(db.LoadKeys)
+    wipe(ExwindTools.DB.Load)
+    wipe(ExwindTools.DB.LoadKeys)
 
     local validKeys = {}
     for i, meta in ipairs(ExwindTools.ModuleList) do
         local key = meta.Key
         validKeys[key] = true
         ExwindTools.ModuleIndexByKey[key] = i
-        db.LoadKeys[i] = key
-        if db.LoadByKey[key] == nil then
-            db.LoadByKey[key] = (meta.DefaultEnabled ~= false)
+        ExwindTools.DB.LoadKeys[i] = key
+        if ExwindTools.DB.LoadByKey[key] == nil then
+            ExwindTools.DB.LoadByKey[key] = (meta.DefaultEnabled ~= false)
         end
-        db.Load[i] = db.LoadByKey[key]
+        ExwindTools.DB.Load[i] = ExwindTools.DB.LoadByKey[key]
     end
 
-    for k in pairs(db.LoadByKey) do
+    for k in pairs(ExwindTools.DB.LoadByKey) do
         if not validKeys[k] then
-            db.LoadByKey[k] = nil
+            ExwindTools.DB.LoadByKey[k] = nil
         end
     end
 end
 
+-- 外置插件的源码仍归各自 AddOn 所有；这里仅把已经加载的模块资料接入
+-- Tools 的既有导航、模块开关和设置页路由。禁止外置代码直接改 ModuleList。
 function ExwindTools:RegisterExternalModule(meta)
-    if type(meta) ~= "table" or type(meta.Key) ~= "string" or meta.Key == "" then
-        return false
+    if type(meta) ~= "table" then
+        error("RegisterExternalModule: meta must be table", 2)
     end
 
-    if meta.BlockBeta and not self.IsBeta then
-        return false
+    local key = meta.Key
+    if type(key) ~= "string" or key == "" then
+        error("RegisterExternalModule: Key must be non-empty string", 2)
+    end
+    if type(meta.Name) ~= "string" or meta.Name == "" then
+        error("RegisterExternalModule: Name must be non-empty string", 2)
+    end
+    if self.ModuleIndexByKey[key] then
+        error("RegisterExternalModule: duplicate module key " .. key, 2)
+    end
+    if not toolsCatalogOwner then
+        error("RegisterExternalModule: ExwindTools storage is not registered", 2)
     end
 
-    local idx = self.ModuleIndexByKey[meta.Key]
-    if idx then
-        local cur = self.ModuleList[idx]
-        for k, v in pairs(meta) do
-            cur[k] = v
-        end
-    else
-        self.ModuleList[#self.ModuleList + 1] = meta
-    end
+    local entry = {
+        Key = key,
+        Name = meta.Name,
+        Desc = type(meta.Desc) == "string" and meta.Desc or "",
+        Category = type(meta.Category) == "number" and meta.Category or 1,
+        DefaultEnabled = meta.DefaultEnabled,
+        HideCfg = meta.HideCfg == true,
+    }
 
+    self.ModuleList[#self.ModuleList + 1] = entry
     SyncModuleRegistry()
+    return entry
+end
 
-    if self.UI and self.UI.MainFrame and self.UI.MainFrame:IsShown() then
-        if self.UI.SidebarFrame and self.UI.BuildNavigationTree then
-            self.UI:BuildNavigationTree(self.UI.SidebarFrame)
-        end
-        if self.UI.RefreshContent then
-            self.UI:RefreshContent()
+-- Addons register their own already-loaded SavedVariables table from their
+-- first Lua file. Declarations/GetModuleDB bind each moduleKey to that owner,
+-- so later runtime calls never depend on whichever addon happened to load last.
+function ExwindTools:RegisterAddonModuleStorage(owner, storage, ownsToolsCatalog, prefixes)
+    if type(owner) ~= "string" or owner == "" or type(storage) ~= "table" then
+        error("RegisterAddonModuleStorage requires owner and storage table", 2)
+    end
+    storage.ModuleDB = type(storage.ModuleDB) == "table" and storage.ModuleDB or {}
+    moduleDBStorages[owner] = storage
+    activeModuleDBOwner = owner
+    for _, prefix in ipairs(type(prefixes) == "table" and prefixes or {}) do
+        if type(prefix) == "string" and prefix ~= "" then
+            moduleDBOwnerPrefixes[#moduleDBOwnerPrefixes + 1] = { prefix = prefix, owner = owner }
         end
     end
+    if ownsToolsCatalog == true then
+        toolsCatalogOwner = owner
+        storage.DBVersion = storage.DBVersion or 1
+        storage.LoadByKey = type(storage.LoadByKey) == "table" and storage.LoadByKey or {}
+        storage.Load = {}
+        storage.LoadKeys = {}
+        self.DB = storage
+        SyncModuleRegistry()
+    end
+    return storage
+end
 
+function ExwindTools:ResetAddonModuleStorage(owner)
+    local storage = moduleDBStorages[owner]
+    if type(storage) ~= "table" then return false end
+    wipe(storage)
+    storage.ModuleDB = {}
+    if owner == toolsCatalogOwner then
+        storage.DBVersion = 1
+        storage.LoadByKey, storage.Load, storage.LoadKeys = {}, {}, {}
+        self.DB = storage
+        SyncModuleRegistry()
+    end
     return true
+end
+
+local function ResolveModuleDBOwner(moduleKey)
+    local owner = moduleDBOwnerByKey[moduleKey]
+    if owner then return owner end
+    local bestLength = -1
+    for _, rule in ipairs(moduleDBOwnerPrefixes) do
+        if moduleKey:sub(1, #rule.prefix) == rule.prefix and #rule.prefix > bestLength then
+            owner, bestLength = rule.owner, #rule.prefix
+        end
+    end
+    return owner or activeModuleDBOwner
+end
+
+local function BindModuleDBOwner(moduleKey)
+    local owner = ResolveModuleDBOwner(moduleKey)
+    if not moduleDBStorages[owner] then
+        error("module DB owner is not registered: " .. tostring(owner), 3)
+    end
+    moduleDBOwnerByKey[moduleKey] = owner
+    return owner
+end
+
+function ExwindTools:GetModuleDBStorage(moduleKey)
+    if type(moduleKey) ~= "string" or moduleKey == "" then return nil end
+    local owner = moduleDBOwnerByKey[moduleKey] or BindModuleDBOwner(moduleKey)
+    return moduleDBStorages[owner], owner
 end
 
 --=======================================================================
@@ -319,6 +429,9 @@ _G.EXDebug = EXDebug
 --=======================================================================
 ExwindTools.ModuleStatus = {}
 ExwindTools.RegisteredLayouts = {}
+-- 模块默认值声明是源码唯一真源：模块作者可直接粘贴 Grid 导出的 EX_DEFAULTS。
+-- 它只在首次取得 ModuleDB 时编译为运行时扁平结构；运行时不存在第二份映射或转发。
+ExwindTools.ModuleDefaultDeclarations = {}
 
 function ExwindTools:ReportReady(moduleKey)
     self.ModuleStatus[moduleKey] = "ready"
@@ -400,11 +513,11 @@ C_Timer.After(3, CheckLibs)
 --=======================================================================
 function ExwindTools:GetEnvironmentInfo()
     local version, build, buildDate = GetBuildInfo()
-    local isPTR = (IsPublicTestClient and IsPublicTestClient()) and "是" or "否"
-    local isBeta = (IsBetaBuild and IsBetaBuild()) and "是" or "否"
+    local isPTR = (IsPublicTestClient and IsPublicTestClient()) and L["是"] or L["否"]
+    local isBeta = (IsBetaBuild and IsBetaBuild()) and L["是"] or L["否"]
     local realmID = GetRealmID and GetRealmID() or 0
-    local isBetaRealm = (realmID == 4608) and "是" or "否"
-    local isBetaEnv = self.IsBeta and "是" or "否"
+    local isBetaRealm = (realmID == 4608) and L["是"] or L["否"]
+    local isBetaEnv = self.IsBeta and L["是"] or L["否"]
     local platform = IsWindowsClient() and "Windows" or (IsMacClient() and "Mac" or "Unknown")
     local arch = Is64BitClient() and "64-bit" or "32-bit"
     local gameLocale = GetLocale()
@@ -422,7 +535,7 @@ function ExwindTools:GetEnvironmentInfo()
         realmID = realmID,
         isBetaRealm = isBetaRealm,
         isBetaEnv = isBetaEnv,
-        isElvUI = C_AddOns.IsAddOnLoaded("ElvUI") and "是" or "否",
+        isElvUI = C_AddOns.IsAddOnLoaded("ElvUI") and L["是"] or L["否"],
         platform = platform,
         arch = arch,
         locale = gameLocale,
@@ -442,21 +555,21 @@ end
 function ExwindTools:GenerateDiagnosticText()
     local env = self:GetEnvironmentInfo()
     local lines = {
-        "=== ExwindTools 诊断信息 ===",
-        string.format("插件版本: %s | WTF版本: %d", env.addonVersion, env.dbVersion),
-        string.format("游戏版本: %s (Build: %s)", env.gameVersion, env.gameBuild),
-        string.format("系统: %s (%s) | 区域: %s | 语言: %s | ElvUI: %s", env.platform, env.arch, env.region, env.locale,
+        L["=== ExwindTools 诊断信息 ==="],
+        string.format(L["插件版本: %s | WTF版本: %d"], env.addonVersion, env.dbVersion),
+        string.format(L["游戏版本: %s (Build: %s)"], env.gameVersion, env.gameBuild),
+        string.format(L["系统: %s (%s) | 区域: %s | 语言: %s | ElvUI: %s"], env.platform, env.arch, env.region, env.locale,
             env.isElvUI),
-        string.format("环境: PTR=%s | BetaBuild=%s | RealmID=%s | BetaRealm=%s | 最终IsBeta=%s", env.isPTR, env.isBeta,
+        string.format(L["环境: PTR=%s | BetaBuild=%s | RealmID=%s | BetaRealm=%s | 最终IsBeta=%s"], env.isPTR, env.isBeta,
             tostring(env.realmID), env.isBetaRealm, env.isBetaEnv),
         "",
-        "=== 当前状态 ===",
-        string.format("职业: %s | 专精: %s", self.State and self.State.ClassName or "N/A",
+        L["=== 当前状态 ==="],
+        string.format(L["职业: %s | 专精: %s"], self.State and self.State.ClassName or "N/A",
             self.State and self.State.SpecName or "N/A"),
-        string.format("副本: %s | 战斗: %s", self.State and self.State.InInstance and "是" or "否",
-            self.State and self.State.InCombat and "是" or "否"),
+        string.format(L["副本: %s | 战斗: %s"], self.State and self.State.InInstance and L["是"] or L["否"],
+            self.State and self.State.InCombat and L["是"] or L["否"]),
         "",
-        "=== 依赖库 ===",
+        L["=== 依赖库 ==="],
     }
     for name, loaded in pairs(self.LibStatus) do
         table.insert(lines, string.format("%s: %s", name, loaded and "OK" or "MISSING"))
@@ -479,9 +592,238 @@ local function MergeDefaults(dst, src)
     end
 end
 
+local function CopyDefaultValue(value)
+    if type(value) ~= "table" then
+        return value
+    end
+    local copied = {}
+    for key, child in pairs(value) do
+        copied[CopyDefaultValue(key)] = CopyDefaultValue(child)
+    end
+    return copied
+end
+
+local function BuildAllowedFieldSet(fields, moduleKey, groupName)
+    local allowed = {}
+    if type(fields) ~= "table" then
+        error("DeclareModuleDefaults[" .. moduleKey .. "]: root group '" .. groupName .. "' requires fields", 3)
+    end
+    for _, field in ipairs(fields) do
+        if type(field) ~= "string" or field == "" then
+            error("DeclareModuleDefaults[" .. moduleKey .. "]: invalid field in group '" .. groupName .. "'", 3)
+        end
+        if allowed[field] then
+            error("DeclareModuleDefaults[" .. moduleKey .. "]: duplicate field '" .. field .. "'", 3)
+        end
+        allowed[field] = true
+    end
+    return allowed
+end
+
+-- 默认值 schema 是递归白名单，不是“顶层组名存在即可整表复制”。这样 Grid
+-- 导出只投影被声明的字段，运行时残留或误写的嵌套字段不能回流成 EX_DEFAULTS。
+local function ProjectDeclaredTable(source, fields, moduleKey, path, strict)
+    if type(source) ~= "table" or type(fields) ~= "table" then
+        error("DeclareModuleDefaults[" .. moduleKey .. "]: " .. path .. " requires table fields", 3)
+    end
+    local allowed, projected = {}, {}
+    for key, childFields in pairs(fields) do
+        if type(key) == "number" then
+            if type(childFields) ~= "string" or childFields == "" then
+                error("DeclareModuleDefaults[" .. moduleKey .. "]: invalid field in " .. path, 3)
+            end
+            allowed[childFields] = true
+        elseif type(key) == "string" then
+            if type(childFields) ~= "table" then
+                error(
+                    "DeclareModuleDefaults[" ..
+                    moduleKey .. "]: nested field " .. path .. "." .. key .. " requires schema",
+                    3)
+            end
+            allowed[key] = childFields
+        else
+            error("DeclareModuleDefaults[" .. moduleKey .. "]: invalid schema key in " .. path, 3)
+        end
+    end
+    for key, value in pairs(source) do
+        local rule = allowed[key]
+        if rule == nil then
+            if strict then
+                error(
+                    "DeclareModuleDefaults[" .. moduleKey .. "]: unknown field '" .. path .. "." .. tostring(key) .. "'",
+                    3)
+            end
+        else
+            -- 叶子值可以合法地是 false；不能用 a and b or c 选择分支，
+            -- 否则 CopyDefaultValue(false) 会错误落进嵌套表投影。
+            if rule == true then
+                projected[key] = CopyDefaultValue(value)
+            else
+                projected[key] = ProjectDeclaredTable(value, rule, moduleKey, path .. "." .. key, strict)
+            end
+        end
+    end
+    return projected
+end
+
+local function CompileModuleDefaultDeclaration(moduleKey, declaration, schema)
+    if type(declaration) ~= "table" then
+        error("DeclareModuleDefaults[" .. moduleKey .. "]: declaration must be a table", 3)
+    end
+    if type(schema) ~= "table" or #schema == 0 then
+        error("DeclareModuleDefaults[" .. moduleKey .. "]: schema must be a non-empty array", 3)
+    end
+
+    local compiled, handledGroups, writtenTargets = {}, {}, {}
+    for _, rule in ipairs(schema) do
+        local groupName = rule and rule.group
+        if type(groupName) ~= "string" or groupName == "" then
+            error("DeclareModuleDefaults[" .. moduleKey .. "]: each schema rule requires group", 3)
+        end
+        if handledGroups[groupName] then
+            error("DeclareModuleDefaults[" .. moduleKey .. "]: duplicate schema group '" .. groupName .. "'", 3)
+        end
+        handledGroups[groupName] = true
+
+        local source = declaration[groupName]
+        if type(source) ~= "table" then
+            error("DeclareModuleDefaults[" .. moduleKey .. "]: declaration group '" .. groupName .. "' must be a table",
+                3)
+        end
+
+        if rule.root == true then
+            local allowed = BuildAllowedFieldSet(rule.fields, moduleKey, groupName)
+            for field, value in pairs(source) do
+                if not allowed[field] then
+                    error(
+                        "DeclareModuleDefaults[" ..
+                        moduleKey .. "]: unknown field '" .. groupName .. "." .. tostring(field) .. "'", 3)
+                end
+                if writtenTargets[field] then
+                    error("DeclareModuleDefaults[" .. moduleKey .. "]: duplicate runtime field '" .. field .. "'", 3)
+                end
+                writtenTargets[field] = true
+                compiled[field] = CopyDefaultValue(value)
+            end
+        else
+            local target = rule.target or groupName
+            if type(target) ~= "string" or target == "" then
+                error("DeclareModuleDefaults[" .. moduleKey .. "]: invalid target for group '" .. groupName .. "'", 3)
+            end
+            if writtenTargets[target] then
+                error("DeclareModuleDefaults[" .. moduleKey .. "]: duplicate runtime table '" .. target .. "'", 3)
+            end
+            writtenTargets[target] = true
+            compiled[target] = ProjectDeclaredTable(source, rule.fields, moduleKey, groupName, true)
+        end
+    end
+
+    for groupName in pairs(declaration) do
+        if not handledGroups[groupName] then
+            error("DeclareModuleDefaults[" .. moduleKey .. "]: undeclared source group '" .. tostring(groupName) .. "'",
+                3)
+        end
+    end
+
+    return compiled
+end
+
+function ExwindTools:DeclareModuleDefaults(moduleKey, declaration, schema)
+    if type(moduleKey) ~= "string" or moduleKey == "" then
+        error("DeclareModuleDefaults: moduleKey must be non-empty string", 2)
+    end
+    if self.ModuleDefaultDeclarations[moduleKey] then
+        error("DeclareModuleDefaults[" .. moduleKey .. "]: declaration already registered", 2)
+    end
+    BindModuleDBOwner(moduleKey)
+
+    local compiled = CompileModuleDefaultDeclaration(moduleKey, declaration, schema)
+    self.ModuleDefaultDeclarations[moduleKey] = {
+        declaration = CopyDefaultValue(declaration),
+        schema = schema,
+        compiled = compiled,
+    }
+    return CopyDefaultValue(compiled)
+end
+
+-- 模块自己的 MODULE_SPEC.defaults 就是唯一 DB 声明来源。此处只提供无模块知识的
+-- 编译器：root 内字段写入 ModuleDB 根，其余组保持为同名嵌套表。
+local function InferModuleSpecFields(value, moduleKey, path)
+    if type(value) ~= "table" then
+        error("DeclareModuleSpecDefaults[" .. moduleKey .. "]: " .. path .. " must be a table", 3)
+    end
+    local fields = {}
+    for key, child in pairs(value) do
+        if type(key) ~= "string" or key == "" then
+            error("DeclareModuleSpecDefaults[" .. moduleKey .. "]: invalid key in " .. path, 3)
+        end
+        if type(child) == "table" then
+            fields[key] = InferModuleSpecFields(child, moduleKey, path .. "." .. key)
+        else
+            fields[#fields + 1] = key
+        end
+    end
+    return fields
+end
+
+function ExwindTools:DeclareModuleSpecDefaults(moduleKey, declaration)
+    if type(declaration) ~= "table" or type(declaration.root) ~= "table" then
+        error("DeclareModuleSpecDefaults[" .. tostring(moduleKey) .. "]: declaration.root must be a table", 2)
+    end
+    local schema = { { group = "root", root = true, fields = {} } }
+    for key in pairs(declaration.root) do
+        if type(key) ~= "string" or key == "" then
+            error("DeclareModuleSpecDefaults[" .. moduleKey .. "]: invalid root key", 2)
+        end
+        schema[1].fields[#schema[1].fields + 1] = key
+    end
+    local groups = {}
+    for groupName in pairs(declaration) do
+        if groupName ~= "root" then groups[#groups + 1] = groupName end
+    end
+    table.sort(groups)
+    for _, groupName in ipairs(groups) do
+        schema[#schema + 1] = {
+            group = groupName,
+            fields = InferModuleSpecFields(declaration[groupName], moduleKey, groupName),
+        }
+    end
+    return self:DeclareModuleDefaults(moduleKey, declaration, schema)
+end
+
+function ExwindTools:ExportModuleDefaults(moduleKey)
+    local registered = self.ModuleDefaultDeclarations[moduleKey]
+    if not registered then
+        error("ExportModuleDefaults[" .. tostring(moduleKey) .. "]: module has not declared standard defaults", 2)
+    end
+
+    local db = self:GetModuleDB(moduleKey)
+    local declaration = {}
+    for _, rule in ipairs(registered.schema) do
+        local group = {}
+        if rule.root == true then
+            for _, field in ipairs(rule.fields) do
+                if db[field] ~= nil then
+                    group[field] = CopyDefaultValue(db[field])
+                end
+            end
+        else
+            local target = rule.target or rule.group
+            if type(db[target]) ~= "table" then
+                error("ExportModuleDefaults[" .. moduleKey .. "]: runtime table '" .. target .. "' is missing", 2)
+            end
+            group = ProjectDeclaredTable(db[target], rule.fields, moduleKey, rule.group, false)
+        end
+        declaration[rule.group] = group
+    end
+    return declaration
+end
+
 function ExwindTools:IsModuleEnabled(moduleKey)
-    -- 1. 检查配置是否启用
-    if db.LoadByKey[moduleKey] ~= true then
+    -- 1. 检查配置是否启用。和 SetModuleEnabled/模块管理卡片保持同一口径：
+    -- nil 视为默认启用（与 DefaultEnabled ~= false 的初始化语义一致），
+    -- 只有显式写入 false 才是禁用；不能用 ~= true 把 nil 当成禁用。
+    if self.DB.LoadByKey[moduleKey] == false then
         return false
     end
 
@@ -501,52 +843,24 @@ function ExwindTools:GetModuleDB(moduleKey, defaults)
     if type(moduleKey) ~= "string" or moduleKey == "" then
         error("GetModuleDB: moduleKey must be non-empty string", 2)
     end
-    db.ModuleDB[moduleKey] = db.ModuleDB[moduleKey] or {}
-    if type(defaults) == "table" then
-        MergeDefaults(db.ModuleDB[moduleKey], defaults)
+    local declared = self.ModuleDefaultDeclarations[moduleKey]
+    if declared and defaults ~= nil then
+        error("GetModuleDB[" .. moduleKey .. "]: declared module must not pass a second defaults table", 2)
     end
-    return db.ModuleDB[moduleKey]
+    local storage = self:GetModuleDBStorage(moduleKey)
+    storage.ModuleDB[moduleKey] = storage.ModuleDB[moduleKey] or {}
+    if declared then
+        MergeDefaults(storage.ModuleDB[moduleKey], declared.compiled)
+    elseif type(defaults) == "table" then
+        MergeDefaults(storage.ModuleDB[moduleKey], defaults)
+    end
+    return storage.ModuleDB[moduleKey]
 end
-
-function ExwindTools:RegisterModuleOptions() end -- 兼容层
 
 function ExwindTools:RegisterModuleLayout(moduleKey, layoutData)
     if type(moduleKey) == "string" and type(layoutData) == "table" then
         self.RegisteredLayouts[moduleKey] = layoutData
     end
-end
-
--- =========================================================
--- ========================== HUD 框架注册与编辑模式 ============================
--- =========================================================
-ExwindTools.HUDs = {}
-
---- 注册一个模块的 HUD 框架
---- 注册后将获得：右键跳转设置、统一控制等能力
---- @param moduleKey string 模块 Key
---- @param frame table 对应的 Frame 对象
-function ExwindTools:RegisterHUD(moduleKey, frame)
-    if not frame then return end
-
-    -- 1. 基础配置确保点击
-    frame:EnableMouse(true)
-
-    -- 2. 注入右键跳转逻辑 (使用 Hook 避免覆盖模块原有脚本)
-    frame:HookScript("OnMouseDown", function(_, button)
-        if button == "RightButton" and self.GlobalEditMode then
-            self:OpenConfig(moduleKey)
-        end
-    end)
-
-    -- 3. 记录到注册表
-    table.insert(self.HUDs, { key = moduleKey, frame = frame })
-
-    -- 4. 自动关联全局编辑模式变化
-    self:RegisterEditModeCallback(moduleKey .. "_HUD_" .. (frame:GetName() or tostring(frame)), function(enabled)
-        if enabled then
-            frame:EnableMouse(true)
-        end
-    end)
 end
 
 local function OwnerBelongsToModule(owner, moduleKey)
@@ -614,30 +928,6 @@ function ExwindTools:DisableModuleRuntime(moduleKey)
         end
     end
 
-    local editCallbacksToRemove = {}
-    for owner in pairs(self.EditModeCallbacks or {}) do
-        if OwnerBelongsToModule(owner, moduleKey) then
-            editCallbacksToRemove[#editCallbacksToRemove + 1] = owner
-        end
-    end
-    for _, owner in ipairs(editCallbacksToRemove) do
-        self:UnregisterEditModeCallback(owner)
-    end
-
-    for i = #self.HUDs, 1, -1 do
-        local entry = self.HUDs[i]
-        if entry and entry.key == moduleKey then
-            local frame = entry.frame
-            if frame then
-                pcall(frame.StopMovingOrSizing, frame)
-                pcall(frame.SetScript, frame, "OnUpdate", nil)
-                pcall(frame.EnableMouse, frame, false)
-                pcall(frame.Hide, frame)
-            end
-            table.remove(self.HUDs, i)
-        end
-    end
-
     self.ModuleStatus[moduleKey] = "disabled"
     return true
 end
@@ -653,7 +943,14 @@ function ExwindTools:SetModuleEnabled(moduleKey, enabled)
         return false
     end
 
-    local currentEnabled = self.DB.LoadByKey[moduleKey] == true
+    -- 必须和调用方（模块管理卡片）的判定口径一致：nil 视为"已启用"，只有
+    -- 显式 false 才是禁用。之前这里用 == true（nil 判为禁用）而卡片用
+    -- ~= false（nil 判为启用），两者相反：当某个模块字段仍是 nil 时，UI
+    -- 显示"已启用/可禁用"，点击后算出 enabled=false 传进来，这里却认为
+    -- "当前已经是禁用"（currentEnabled=false）而直接短路 return，真实值
+    -- 永远停留在 nil，导致该模块的启用/禁用按钮永久失效，只有"全部启用"
+    -- 无条件写入 true 才能把 nil 打破。
+    local currentEnabled = self.DB.LoadByKey[moduleKey] ~= false
     if currentEnabled == enabled then
         return false
     end
@@ -686,12 +983,12 @@ local function ShowMissingExwindToolsWarning()
     local message
 
     if not exists then
-        message = "你并未安装 ExwindTools，无法打开 ExwindTools 设置面板。"
+        message = L["你并未安装 ExwindTools，无法打开 ExwindTools 设置面板。"]
     elseif not loaded then
         if loadable == false and reason and reason ~= "" then
-            message = string.format("ExwindTools 当前未载入，无法打开设置面板。\n原因：%s", tostring(reason))
+            message = string.format(L["ExwindTools 当前未载入，无法打开设置面板。\n原因：%s"], tostring(reason))
         else
-            message = "ExwindTools 当前未载入，无法打开 ExwindTools 设置面板。"
+            message = L["ExwindTools 当前未载入，无法打开 ExwindTools 设置面板。"]
         end
     else
         return false
@@ -700,7 +997,7 @@ local function ShowMissingExwindToolsWarning()
     if not StaticPopupDialogs["EXWINDTOOLS_MISSING_WARNING"] then
         StaticPopupDialogs["EXWINDTOOLS_MISSING_WARNING"] = {
             text = "%s",
-            button1 = "确定",
+            button1 = L["确定"],
             timeout = 0,
             whileDead = true,
             hideOnEscape = true,
@@ -712,61 +1009,21 @@ local function ShowMissingExwindToolsWarning()
     ExwindTools:Print(message)
     return true
 end
---===============================EXBOSS 编辑模式右键跳转================================
 function ExwindTools:OpenConfig(moduleKey)
-    if type(moduleKey) == "string" and string.sub(moduleKey, 1, 7) == "ExBoss." then
-        local panel = _G.ExBoss and _G.ExBoss.UI and _G.ExBoss.UI.Panel
-        if panel and panel.Show and panel.SetTab then
-            if self.UI.MainFrame and self.UI.MainFrame:IsShown() then
-                self.UI.MainFrame:Hide()
-            end
-
-            local targetTab = "boss"
-            local targetPanelKey = nil
-
-            if moduleKey == "ExBoss.TimerBar" then
-                targetPanelKey = "timerbar"
-            elseif moduleKey == "ExBoss.BunBar" then
-                targetPanelKey = "bunbar"
-            elseif moduleKey == "ExBoss.Countdown" then
-                targetPanelKey = "countdown"
-            elseif moduleKey == "ExBoss.FlashText" then
-                targetPanelKey = "flashtext"
-            elseif moduleKey == "ExBoss.FlashTextMedium" then
-                targetPanelKey = "flashtextmedium"
-            elseif moduleKey == "ExBoss.RingProgress" then
-                targetPanelKey = "ringprogress"
-            elseif moduleKey == "ExBoss.IconAlert" then
-                targetPanelKey = "iconalert"
-            elseif moduleKey == "ExBoss.CastProgressBar" then
-                targetPanelKey = "castprogressbar"
-            elseif moduleKey == "ExBoss.ExtraShieldBar" then
-                targetPanelKey = "extrashieldbar"
-            elseif moduleKey == "ExBoss.PrivateAuraMonitor" then
-                targetPanelKey = "privateauramonitor"
-            elseif moduleKey == "ExBoss.TargetAlert" then
-                targetPanelKey = "targetalert"
-            elseif moduleKey == "ExBoss.Tools.MythicCast" then
-                targetPanelKey = "mythiccast"
-            elseif moduleKey == "ExBoss.Tools.StateIcons" then
-                targetPanelKey = "stateicons"
-            elseif moduleKey == "ExBoss.Boss.MaisaraTrash248690Absorb" then
-                targetPanelKey = "dungeonextra"
-            elseif moduleKey == "ExBoss.PrivateAuraOptions" or moduleKey == "ExBoss.BossSpellOptions" then
-                targetTab = "boss"
-            end
-
-            panel:SetTab(targetPanelKey or targetTab)
-            panel:Show()
-            return
-        end
-    end
-
     if ShowMissingExwindToolsWarning() then
         return
     end
 
     if not self.UI or not self.UI.Toggle then return end
+
+    -- Unified Shell 已注册 Tools Provider 时，所有 Tools 入口都走同一外壳。
+    -- 这里传 route 而不是操作旧 MainFrame，确保模块页仍由 Tools 自己的
+    -- CurrentPage / CurrentModule / RefreshContent 处理。
+    local unified = self.UnifiedPanel
+    if unified and unified.Providers and unified.Providers.tools then
+        unified:Show("tools", moduleKey and { moduleKey = moduleKey } or nil)
+        return
+    end
 
     if moduleKey then
         self.UI.CurrentPage = "ModuleSettings"
@@ -779,71 +1036,6 @@ function ExwindTools:OpenConfig(moduleKey)
         self.UI:RefreshContent()
         -- [v4.7] 确保窗口在最前
         self.UI.MainFrame:Raise()
-    end
-end
-
---=======================================================================
---========================== 全局编辑模式系统 ============================
---=======================================================================
--- [v3.1 新增] 全局编辑模式切换功能
--- 允许通过 /EX EDMODE 统一切换所有支持模块的拖动状态
-ExwindTools.GlobalEditMode = false
-ExwindTools.EditModeCallbacks = {}
-
---- 注册编辑模式回调
---- @param moduleKey string 模块键名
---- @param callback function 回调函数,接收一个参数: enabled (boolean)
-function ExwindTools:RegisterEditModeCallback(moduleKey, callback)
-    if type(callback) ~= "function" then
-        error("RegisterEditModeCallback: callback must be function", 2)
-    end
-    self.EditModeCallbacks[moduleKey] = callback
-end
-
---- 注销编辑模式回调
-function ExwindTools:UnregisterEditModeCallback(moduleKey)
-    self.EditModeCallbacks[moduleKey] = nil
-end
-
---- 切换全局编辑模式
-function ExwindTools:ToggleGlobalEditMode(forceState)
-    if forceState ~= nil then
-        self.GlobalEditMode = forceState
-    else
-        self.GlobalEditMode = not self.GlobalEditMode
-    end
-
-    local status = self.GlobalEditMode and "|cff00ff00[启用]|r" or "|cffff0000[禁用]|r"
-    self:Print("全局编辑模式: " .. status)
-
-    -- 1. 触发所有注册的回调
-    for moduleKey, callback in pairs(self.EditModeCallbacks) do
-        pcall(callback, self.GlobalEditMode)
-    end
-
-    -- 2. 同步 UI 按钮文字
-    if self.UI and self.UI.EditModeToggleButton then
-        self.UI.EditModeToggleButton:SetText(self.GlobalEditMode and "关闭编辑模式" or "启用编辑模式")
-    end
-
-    -- 3. [v4.7] 弹窗逻辑
-    if self.GlobalEditMode then
-        if not StaticPopupDialogs["EXWIND_EDIT_MODE_EXIT"] then
-            StaticPopupDialogs["EXWIND_EDIT_MODE_EXIT"] = {
-                text = "是否退出编辑模式？",
-                button1 = "确定",
-                OnAccept = function()
-                    ExwindTools:ToggleGlobalEditMode(false) -- 点击确定退出模式
-                end,
-                timeout = 0,
-                whileDead = true,
-                hideOnEscape = false, -- 强制点击确定
-                preferredIndex = 3,
-            }
-        end
-        StaticPopup_Show("EXWIND_EDIT_MODE_EXIT")
-    else
-        StaticPopup_Hide("EXWIND_EDIT_MODE_EXIT")
     end
 end
 
@@ -865,7 +1057,9 @@ ExwindTools:RegisterChatCommand("ex", function(input)
     local arg = (input or ""):trim():lower()
 
     if arg == "" then
-        if ExwindTools.UI and ExwindTools.UI.Toggle then
+        if ExwindTools.PanelRouter and ExwindTools.PanelRouter.Toggle then
+            ExwindTools.PanelRouter:Toggle("tools")
+        elseif ExwindTools.UI and ExwindTools.UI.Toggle then
             ExwindTools.UI:Toggle()
         else
             ExwindTools:OpenConfig()
@@ -875,20 +1069,48 @@ ExwindTools:RegisterChatCommand("ex", function(input)
 
     if arg == "dev" or arg == "edit" then
         ExwindTools.State.DevMode = not ExwindTools.State.DevMode
-        print("|cffA330C9[ExwindTools]|r 开发者模式: " ..
-            (ExwindTools.State.DevMode and "|cff00ff00[启用]|r" or "|cffff0000[禁用]|r"))
+        print(L["|cffA330C9[ExwindTools]|r 开发者模式: "] ..
+            (ExwindTools.State.DevMode and L["|cff00ff00[启用]|r"] or L["|cffff0000[禁用]|r"]))
         if ExwindTools.UI and ExwindTools.UI.RefreshContent then ExwindTools.UI:RefreshContent() end
         return
     end
 
     if arg == "debug" then
         ExwindTools.DebugMode = not ExwindTools.DebugMode
-        print("|cffA330C9[ExwindTools]|r DEBUG: " .. (ExwindTools.DebugMode and "|cff00ff00[启用]|r" or "|cffff0000[禁用]|r"))
+        print("|cffA330C9[ExwindTools]|r DEBUG: " ..
+            (ExwindTools.DebugMode and L["|cff00ff00[启用]|r"] or L["|cffff0000[禁用]|r"]))
         return
     end
 
     if arg == "edmode" then
-        ExwindTools:ToggleGlobalEditMode()
+        ExwindTools.UI:ToggleEditMode()
+        return
+    end
+
+    if arg == "diag" then
+        local root = _G.ExwindPlayerStatsAnchor
+        if not root then
+            print("|cffff9900[EX-DIAG]|r 找不到 ExwindPlayerStatsAnchor，模块可能未加载/未启用")
+            return
+        end
+        local function Scan(frame, depth)
+            local mouseEnabled = frame.IsMouseEnabled and frame:IsMouseEnabled()
+            local name = frame.GetName and frame:GetName() or tostring(frame)
+            local strata = frame.GetFrameStrata and frame:GetFrameStrata() or "?"
+            local level = frame.GetFrameLevel and frame:GetFrameLevel() or "?"
+            local shown = frame.IsShown and frame:IsShown()
+            print(string.format("|cff88ff00[EX-DIAG]|r %s%s mouse=%s shown=%s strata=%s level=%s",
+                string.rep("  ", depth), tostring(name), tostring(mouseEnabled), tostring(shown), tostring(strata),
+                tostring(level)))
+            local n = frame.GetNumChildren and frame:GetNumChildren() or 0
+            for i = 1, n do
+                local child = select(i, frame:GetChildren())
+                if child then Scan(child, depth + 1) end
+            end
+        end
+        print("|cff88ff00[EX-DIAG]|r ===== 开始扫描 ExwindPlayerStatsAnchor 及所有子 Frame =====")
+        Scan(root, 0)
+        print("|cff88ff00[EX-DIAG]|r ===== 扫描结束，mouse=true 的那一行就是挡鼠标的 Frame =====")
         return
     end
 
@@ -909,7 +1131,7 @@ ExwindTools:RegisterChatCommand("exwind", function(input)
 end)
 
 ExwindTools:RegisterChatCommand("extre", function()
-    _G.ExwindToolsDB = nil
+    ExwindTools:ResetAddonModuleStorage("TOOLS")
     C_UI.Reload()
 end)
 
@@ -919,9 +1141,9 @@ ExwindTools:RegisterChatCommand("rl", function()
 end)
 
 ExwindTools:RegisterChatCommand("exstate", function()
-    print("|cffA330C9[ExwindTools] 当前 States:|r")
+    print(L["|cffA330C9[ExwindTools] 当前 States:|r"])
     if not ExwindTools.State then
-        print("  State 未初始化"); return
+        print(L["  State 未初始化"]); return
     end
 
     local keys = {}
@@ -956,47 +1178,37 @@ function ExwindTools:SetMinimapButtonHidden(hidden)
     end
 end
 
-function ExwindTools:IsStandaloneExwindToolsLoaded()
-    if C_AddOns and C_AddOns.IsAddOnLoaded then
-        return C_AddOns.IsAddOnLoaded("ExwindTools")
-    end
-
-    return false
-end
-
+-- 统一小地图入口：不再区分 EXBoss / ExwindTools，只要 ExwindCore 加载就创建，
+-- 点击后打开三合一统一面板本身（保留上次打开的 Provider），不再绑定某一个插件。
 local function SyncMinimapButton()
     local LDB = LibStub("LibDataBroker-1.1", true)
     local LDBIcon = LibStub("LibDBIcon-1.0", true)
     if not LDB or not LDBIcon then return end
 
-    if not ExwindTools:IsStandaloneExwindToolsLoaded() then
-        if LDBIcon:IsRegistered("ExwindTools") then
-            LDBIcon:Hide("ExwindTools")
-        end
-        return
-    end
-
     local EX_LDB = LDB:NewDataObject("ExwindTools", {
         type = "launcher",
-        text = "ExwindTools",
+        text = "EXWIND",
         icon = [[Interface\AddOns\ExwindCore\Textures\LOGO\EXUI.jpg]],
         OnClick = function(self, button)
             if button == "LeftButton" then
-                ExwindTools:OpenConfig()
+                if ExwindTools.UnifiedPanel and ExwindTools.UnifiedPanel.Toggle then
+                    ExwindTools.UnifiedPanel:Toggle()
+                else
+                    ExwindTools:OpenConfig()
+                end
             elseif button == "RightButton" then
-                -- [v3.1 新增] 右键切换全局编辑模式
-                ExwindTools:ToggleGlobalEditMode()
+                ExwindTools.UI:ToggleEditMode()
             end
         end,
         OnTooltipShow = function(tt)
-            tt:AddLine("|cffA330C9ExwindTools|r " .. ExwindTools.VERSION)
+            tt:AddLine("|cffA330C9Exwind|r " .. ExwindTools.VERSION)
             tt:AddLine(" ")
-            tt:AddLine(string.format("|cff00ff00%s|r %s", L["左键:"], L["打开 ExwindTools 面板"]))
+            tt:AddLine(string.format("|cff00ff00%s|r %s", L["左键:"], L["打开 Exwind 面板"]))
             tt:AddLine(string.format("|cff00ff00%s|r %s", L["右键:"], L["切换编辑模式"]))
         end,
     })
 
-    -- 使用 ExwindToolsDB 存储位置信息
+    -- 使用 EXCORE12S2 存储位置信息
     db.Minimap = db.Minimap or { hide = false }
     if not LDBIcon:IsRegistered("ExwindTools") then
         LDBIcon:Register("ExwindTools", EX_LDB, db.Minimap)
@@ -1004,14 +1216,6 @@ local function SyncMinimapButton()
     LDBIcon:Refresh("ExwindTools", db.Minimap)
 end
 
-local minimapInitFrame = CreateFrame("Frame")
-minimapInitFrame:RegisterEvent("ADDON_LOADED")
-minimapInitFrame:RegisterEvent("PLAYER_LOGIN")
-minimapInitFrame:SetScript("OnEvent", function(_, event, addonName)
-    if event == "ADDON_LOADED" and addonName ~= "ExwindTools" then
-        return
-    end
-    SyncMinimapButton()
-end)
+C_Timer.After(0.5, SyncMinimapButton)
 
-EXDebug("ExwindTools 核心加载完成")
+EXDebug(L["ExwindTools 核心加载完成"])

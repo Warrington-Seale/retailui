@@ -17,14 +17,14 @@ end
 
 MDT.dungeonMaps[dungeonIndex] = {
   [0] = "",
-  [1] = { customTextures = 'Interface\\AddOns\\'..addonName..'\\Midnight\\Textures\\MurderRow' }
+  [1] = { customTextures = 'Interface\\AddOns\\'..addonName..'\\Midnight\\Textures\\MurderRow' },
 }
 
 MDT.dungeonSubLevels[dungeonIndex] = {
   [1] = L["MurderRow"],
 }
 
-MDT.dungeonTotalCount[dungeonIndex] = { normal = 690 }
+MDT.dungeonTotalCount[dungeonIndex] = { normal = 655 }
 
 MDT.mapPOIs[dungeonIndex] = {
   [1] = {
@@ -137,10 +137,6 @@ MDT.mapPOIs[dungeonIndex] = {
   },
 };
 
-
-
-
-
 MDT.dungeonEnemies[dungeonIndex] = {
   [1] = {
     ["name"] = "Felwyrm",
@@ -228,20 +224,20 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [12] = {
-        ["x"] = 518.19458993163,
-        ["y"] = -388.18094394718,
+        ["x"] = 526,
+        ["y"] = -388.5,
         ["g"] = 15,
         ["sublevel"] = 1,
       },
       [13] = {
-        ["x"] = 524.5551318271,
-        ["y"] = -376.84863327213,
+        ["x"] = 525.9,
+        ["y"] = -381.9,
         ["g"] = 15,
         ["sublevel"] = 1,
       },
       [14] = {
-        ["x"] = 523.92126287083,
-        ["y"] = -401.44021749904,
+        ["x"] = 525.8,
+        ["y"] = -394.9,
         ["g"] = 15,
         ["sublevel"] = 1,
       },
@@ -337,26 +333,26 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [9] = {
-        ["x"] = 565.58074801005,
-        ["y"] = -379.64479653449,
+        ["x"] = 556.8,
+        ["y"] = -383.4,
         ["g"] = 11,
         ["sublevel"] = 1,
       },
       [10] = {
-        ["x"] = 565.01671539842,
-        ["y"] = -392.57249798225,
+        ["x"] = 556.8,
+        ["y"] = -392.9,
         ["g"] = 11,
         ["sublevel"] = 1,
       },
       [11] = {
-        ["x"] = 538.91883527347,
-        ["y"] = -413.42065826918,
+        ["x"] = 545,
+        ["y"] = -400,
         ["g"] = 11,
         ["sublevel"] = 1,
       },
       [12] = {
-        ["x"] = 536.99294872372,
-        ["y"] = -365.29383959101,
+        ["x"] = 545,
+        ["y"] = -373.3,
         ["g"] = 11,
         ["sublevel"] = 1,
       },
@@ -549,7 +545,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["health"] = 4540557,
     ["scale"] = 2,
     ["displayId"] = 139996,
-    ["creatureType"] = "Humanoid",
+    ["creatureType"] = "Beast",
     ["level"] = 91,
     ["spells"] = {
       [1217633] = {
@@ -723,7 +719,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Unleashed Imp",
     ["id"] = 234849,
     ["count"] = 2,
-    ["health"] = 601841,
+    ["health"] = 486488,
     ["scale"] = 0.7,
     ["displayId"] = 65901,
     ["creatureType"] = "Demon",
@@ -1184,14 +1180,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [15] = {
-        ["x"] = 268.96515552732,
-        ["y"] = -502.23261705343,
+        ["x"] = 257.6,
+        ["y"] = -488.5,
         ["g"] = 39,
         ["sublevel"] = 1,
       },
       [16] = {
-        ["x"] = 244.22562040772,
-        ["y"] = -512.77180629948,
+        ["x"] = 238.2,
+        ["y"] = -494.9,
         ["g"] = 39,
         ["sublevel"] = 1,
       },
@@ -1201,7 +1197,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Fel Invoker",
     ["id"] = 235268,
     ["count"] = 7,
-    ["health"] = 3405418,
+    ["health"] = 5513534,
     ["scale"] = 1.2,
     ["displayId"] = 124770,
     ["creatureType"] = "Humanoid",
@@ -1323,15 +1319,15 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [3] = {
-        ["x"] = 228.99314772293,
-        ["y"] = -375.0241760227,
-        ["g"] = 32,
+        ["x"] = 231.3,
+        ["y"] = -357.8,
+        ["g"] = 58,
         ["sublevel"] = 1,
       },
       [4] = {
-        ["x"] = 237.20000225738,
-        ["y"] = -383.54038147684,
-        ["g"] = 32,
+        ["x"] = 238,
+        ["y"] = -357.2,
+        ["g"] = 58,
         ["sublevel"] = 1,
       },
       [5] = {
@@ -1374,18 +1370,6 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["x"] = 184.6490134212,
         ["y"] = -334.06910589821,
         ["g"] = 29,
-        ["sublevel"] = 1,
-      },
-      [12] = {
-        ["x"] = 233.47396680073,
-        ["y"] = -485.30812611969,
-        ["g"] = 38,
-        ["sublevel"] = 1,
-      },
-      [13] = {
-        ["x"] = 259.85567537116,
-        ["y"] = -479.88883311715,
-        ["g"] = 38,
         ["sublevel"] = 1,
       },
     },
@@ -1433,12 +1417,6 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["x"] = 127.90279192401,
         ["y"] = -362.68402401321,
         ["g"] = 30,
-        ["sublevel"] = 1,
-      },
-      [4] = {
-        ["x"] = 246.84353719061,
-        ["y"] = -483.11527773742,
-        ["g"] = 38,
         ["sublevel"] = 1,
       },
       [5] = {
@@ -1561,6 +1539,30 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 37,
         ["sublevel"] = 1,
       },
+      [18] = {
+        ["x"] = 163.8,
+        ["y"] = -348.3,
+        ["g"] = 57,
+        ["sublevel"] = 1,
+      },
+      [19] = {
+        ["x"] = 171.6,
+        ["y"] = -348.2,
+        ["g"] = 57,
+        ["sublevel"] = 1,
+      },
+      [20] = {
+        ["x"] = 162.9,
+        ["y"] = -356,
+        ["g"] = 57,
+        ["sublevel"] = 1,
+      },
+      [21] = {
+        ["x"] = 170.5,
+        ["y"] = -356.1,
+        ["g"] = 57,
+        ["sublevel"] = 1,
+      },
     },
   },
   [17] = {
@@ -1653,8 +1655,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
     ["clones"] = {
       [1] = {
-        ["x"] = 256.57195821161,
-        ["y"] = -508.10278252497,
+        ["x"] = 247.8,
+        ["y"] = -492.1,
         ["g"] = 39,
         ["sublevel"] = 1,
       },
@@ -1738,7 +1740,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Xathuux the Annihilator",
     ["id"] = 234647,
     ["count"] = 0,
-    ["health"] = 23648733,
+    ["health"] = 23648734,
     ["scale"] = 1.5,
     ["displayId"] = 140268,
     ["creatureType"] = "Demon",
@@ -1781,7 +1783,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Kystia Manaheart",
     ["id"] = 234648,
     ["count"] = 0,
-    ["health"] = 20270342,
+    ["health"] = 20270343,
     ["scale"] = 1.5,
     ["displayId"] = 124578,
     ["creatureType"] = "Humanoid",
@@ -1822,7 +1824,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Zaen Bladesorrow",
     ["id"] = 234649,
     ["count"] = 0,
-    ["health"] = 23648733,
+    ["health"] = 23648734,
     ["scale"] = 2,
     ["displayId"] = 124592,
     ["creatureType"] = "Humanoid",
@@ -1881,7 +1883,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Nibbles",
     ["id"] = 234660,
     ["count"] = 0,
-    ["health"] = 20270342,
+    ["health"] = 20270343,
     ["scale"] = 1.5,
     ["displayId"] = 126199,
     ["creatureType"] = "Beast",
@@ -1919,7 +1921,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Lithiel Cinderfury",
     ["id"] = 234763,
     ["count"] = 0,
-    ["health"] = 17567630,
+    ["health"] = 17567631,
     ["scale"] = 2,
     ["displayId"] = 124577,
     ["creatureType"] = "Humanoid",
@@ -1996,7 +1998,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Forbidden Freight",
     ["id"] = 234852,
     ["count"] = 0,
-    ["health"] = 514394,
+    ["health"] = 459705,
     ["scale"] = 1.5,
     ["displayId"] = 137176,
     ["creatureType"] = "Not specified",
@@ -2187,7 +2189,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Wild Imp",
     ["id"] = 237626,
     ["count"] = 0,
-    ["health"] = 399253,
+    ["health"] = 459705,
     ["scale"] = 1,
     ["displayId"] = 77406,
     ["creatureType"] = "Demon",
@@ -2214,7 +2216,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Infernal",
     ["id"] = 238414,
     ["count"] = 0,
-    ["health"] = 202703424,
+    ["health"] = 202703433,
     ["scale"] = 1,
     ["displayId"] = 103096,
     ["creatureType"] = "Demon",
@@ -2299,13 +2301,27 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
     ["clones"] = {
       [1] = {
-        ["x"] = 523.96927039384,
-        ["y"] = -384.48071421391,
+        ["x"] = 519.8,
+        ["y"] = -398.5,
+        ["g"] = 15,
         ["sublevel"] = 1,
       },
       [2] = {
-        ["x"] = 523.90805656742,
-        ["y"] = -393.30397055195,
+        ["x"] = 519.8,
+        ["y"] = -377.5,
+        ["g"] = 15,
+        ["sublevel"] = 1,
+      },
+      [3] = {
+        ["x"] = 519.8,
+        ["y"] = -384.5,
+        ["g"] = 15,
+        ["sublevel"] = 1,
+      },
+      [4] = {
+        ["x"] = 519.7,
+        ["y"] = -391.6,
+        ["g"] = 15,
         ["sublevel"] = 1,
       },
     },

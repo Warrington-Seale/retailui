@@ -142,18 +142,17 @@ end
 local enablemobs = {}
 
 local function UpdateMouseoverUnit()
-	local guid = UnitGUID("mouseover")
-	if issecretvalue and issecretvalue(guid) then return end -- XXX 12.0 compat
-	if not guid or UnitIsCorpse("mouseover") or UnitIsDead("mouseover") then return end
-	local _, _, _, _, _, mobIdString = strsplit("-", guid)
-	local mobId = tonumber(mobIdString)
-	if mobId then
-		local moduleNameOrTable = enablemobs[mobId]
+	local GUID = UnitGUID("mouseover")
+	if issecretvalue and issecretvalue(GUID) then return end -- XXX 12.0 compat
+	if not GUID or UnitIsCorpse("mouseover") or UnitIsDead("mouseover") then return end
+	local creatureID = loader.GetCreatureID(GUID)
+	if creatureID then
+		local moduleNameOrTable = enablemobs[creatureID]
 		if type(moduleNameOrTable) == "table" then
 			for i = 1, #moduleNameOrTable do
 				local moduleName = moduleNameOrTable[i]
 				local module = bosses[moduleName]
-				if module and not module:IsEnabled() and (not module.VerifyEnable or module:VerifyEnable("mouseover", mobId, GetBestMapForUnit("player"))) then
+				if module and not module:IsEnabled() and (not module.VerifyEnable or module:VerifyEnable("mouseover", creatureID, GetBestMapForUnit("player"))) then
 					module:Enable()
 					if not module:IsWorldModule() then
 						module:Sync("Enable", module.moduleName, true)
@@ -162,7 +161,7 @@ local function UpdateMouseoverUnit()
 			end
 		elseif moduleNameOrTable then
 			local module = bosses[moduleNameOrTable]
-			if module and not module:IsEnabled() and (not module.VerifyEnable or module:VerifyEnable("mouseover", mobId, GetBestMapForUnit("player"))) then
+			if module and not module:IsEnabled() and (not module.VerifyEnable or module:VerifyEnable("mouseover", creatureID, GetBestMapForUnit("player"))) then
 				module:Enable()
 				if not module:IsWorldModule() then
 					module:Sync("Enable", module.moduleName, true)
@@ -289,43 +288,30 @@ do
 			plugins[i]:Disable()
 		end
 	end
-	local DisableCore
-	do
-		local RemovePrivateAuraAppliedSound = C_UnitAuras.RemovePrivateAuraAppliedSound
-		function DisableCore(skipDelveEvent)
-			if coreEnabled then
-				coreEnabled = false
+	local function DisableCore(skipDelveEvent)
+		if coreEnabled then
+			coreEnabled = false
 
-				loader.UnregisterMessage(mod, "BigWigs_BossComm")
-				loader.UnregisterMessage(mod, "BigWigs_UNIT_TARGET")
-				core.UnregisterEvent(mod, "ENCOUNTER_START")
-				core.UnregisterEvent(mod, "RAID_BOSS_WHISPER")
-				core.UnregisterEvent(mod, "UPDATE_MOUSEOVER_UNIT")
-				core.UnregisterEvent(mod, "PLAYER_LEAVING_WORLD")
-				core.UnregisterEvent(mod, "ZONE_CHANGED_NEW_AREA")
-				if loader.isRetail then
-					for _, module in next, bosses do
-						-- Unregister private aura sounds
-						if module.privateAuraSounds then
-							for i = 1, #module.privateAuraSounds do
-								RemovePrivateAuraAppliedSound(module.privateAuraSounds[i])
-							end
-							module.privateAuraSounds = nil
-						end
-					end
-					if not skipDelveEvent then
-						core.UnregisterEvent(mod, "PLAYER_MAP_CHANGED")
-					end
+			loader.UnregisterMessage(mod, "BigWigs_BossComm")
+			loader.UnregisterMessage(mod, "BigWigs_UNIT_TARGET")
+			core.UnregisterEvent(mod, "ENCOUNTER_START")
+			core.UnregisterEvent(mod, "RAID_BOSS_WHISPER")
+			core.UnregisterEvent(mod, "UPDATE_MOUSEOVER_UNIT")
+			core.UnregisterEvent(mod, "PLAYER_LEAVING_WORLD")
+			core.UnregisterEvent(mod, "ZONE_CHANGED_NEW_AREA")
+			if loader.isRetail then
+				if not skipDelveEvent then
+					core.UnregisterEvent(mod, "PLAYER_MAP_CHANGED")
 				end
-				core.UnregisterEvent(mod, "PLAYER_LOGIN")
-
-				core:SendMessage("BigWigs_StopConfigureMode")
-				if BigWigsOptions then
-					BigWigsOptions:Close()
-				end
-				DisableModules()
-				core:SendMessage("BigWigs_CoreDisabled")
 			end
+			core.UnregisterEvent(mod, "PLAYER_LOGIN")
+
+			core:SendMessage("BigWigs_StopConfigureMode")
+			if BigWigsOptions then
+				BigWigsOptions:Close()
+			end
+			DisableModules()
+			core:SendMessage("BigWigs_CoreDisabled")
 		end
 	end
 	local function zoneChanged()
@@ -381,10 +367,6 @@ do
 			if loader.isRetail then
 				for _, module in next, bosses do
 					if module:IsZoneID(instanceID) then
-						-- Register private aura sounds
-						if module:HasPrivateAuraSounds() then
-							module:RegisterPrivateAuraSounds()
-						end
 						-- Enable trash modules for the current zone
 						if module:IsTrashModule() then
 							module:Enable()
@@ -402,15 +384,19 @@ function core:IsEnabled()
 	return coreEnabled
 end
 
-function core:Print(msg)
-	print("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid:0:0|t|cFF33FF99BigWigs|r: |cffffff00"..msg.."|r")
+function core:Print(msg, isLittleWigs)
+	if isLittleWigs then
+		print("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_party:0:0|t|cFF33FF99LittleWigs|r: |cffffff00"..msg.."|r")
+	else
+		print("|TInterface\\AddOns\\BigWigs\\Media\\Icons\\minimap_raid:0:0|t|cFF33FF99BigWigs|r: |cffffff00"..msg.."|r")
+	end
 end
 
-function core:Error(msg, noPrint)
+function core:Error(msg, noPrint, isLittleWigs)
 	if not noPrint then
-		core:Print(msg)
+		core:Print(msg, isLittleWigs)
 	end
-	geterrorhandler()("BigWigs: ".. msg)
+	geterrorhandler()((isLittleWigs and "LittleWigs: " or "BigWigs: ").. msg)
 end
 
 -------------------------------------------------------------------------------
@@ -650,14 +636,10 @@ do
 				-- Set up aura data storage DB
 				local auras = {}
 				if module:HasAuraData() then
-					local auraList = module:GetAuraList()
-					for i = 1, #auraList do
-						local spellID = auraList[i]
-						auras[spellID] = {
-							soundOnApplied = module:GetAuraAppliedSoundDefault(spellID),
-							soundOnAppliedDose = module:GetAuraAppliedDoseSoundDefault(spellID),
-							soundOnRemoved = module:GetAuraRemovedSoundDefault(spellID),
-						}
+					local count = module:GetAuraCount()
+					for i = 1, count do
+						local spellID = module:GetAuraPrimarySpellIDByIndex(i)
+						auras[spellID] = {}
 					end
 				end
 
@@ -705,24 +687,22 @@ do
 				end
 				-- Option validation for auras
 				for auraSpellID, auraTable in next, module.db.profile.auras do
-					if not module:IsAuraDataAvailable(auraSpellID) then
+					if not module:IsAuraDataAvailable(auraSpellID) or module:GetAuraPrimarySpellIDBySpellID(auraSpellID) ~= auraSpellID then
 						module.db.profile.auras[auraSpellID] = nil
 					elseif type(auraTable) ~= "table" then
-						module.db.profile.auras[auraSpellID] = {
-							soundOnApplied = module:GetAuraAppliedSoundDefault(auraSpellID),
-							soundOnAppliedDose = module:GetAuraAppliedDoseSoundDefault(auraSpellID),
-							soundOnRemoved = module:GetAuraRemovedSoundDefault(auraSpellID),
-						}
+						module.db.profile.auras[auraSpellID] = {}
 					else
 						for auraDataTableName, auraDataTableValue in next, auraTable do
-							if auraDataTableName ~= "soundOnApplied" and auraDataTableName ~= "soundOnAppliedDose" and auraDataTableName ~= "soundOnRemoved" then
+							if auraDataTableName ~= "soundOnApplied" and auraDataTableName ~= "soundOnAppliedDose" and auraDataTableName ~= "soundOnRemoved" and auraDataTableName ~= "countdown" then
 								module.db.profile.auras[auraSpellID][auraDataTableName] = nil
 							elseif auraDataTableName == "soundOnApplied" and type(auraDataTableValue) ~= "string" then
-								module.db.profile.auras[auraSpellID].soundOnApplied = module:GetAuraAppliedSoundDefault(auraSpellID)
+								module.db.profile.auras[auraSpellID].soundOnApplied = nil
 							elseif auraDataTableName == "soundOnAppliedDose" and type(auraDataTableValue) ~= "string" then
-								module.db.profile.auras[auraSpellID].soundOnAppliedDose = module:GetAuraAppliedDoseSoundDefault(auraSpellID)
+								module.db.profile.auras[auraSpellID].soundOnAppliedDose = nil
 							elseif auraDataTableName == "soundOnRemoved" and type(auraDataTableValue) ~= "string" then
-								module.db.profile.auras[auraSpellID].soundOnRemoved = module:GetAuraRemovedSoundDefault(auraSpellID)
+								module.db.profile.auras[auraSpellID].soundOnRemoved = nil
+							elseif auraDataTableName == "countdown" and type(auraDataTableValue) ~= "string" then
+								module.db.profile.auras[auraSpellID].countdown = nil
 							end
 						end
 					end
@@ -741,6 +721,7 @@ do
 			else
 				bossesPendingInit[moduleName] = nil
 				module.SetupOptions = moduleOptions
+				module:SetupOptions()
 
 				-- Call the module's OnRegister (which is our OnInitialize replacement)
 				if type(module.OnRegister) == "function" then
@@ -748,17 +729,13 @@ do
 					module.OnRegister = nil
 				end
 
-				core:SendMessage("BigWigs_BossModuleRegistered", module.moduleName, module)
+				local _, _, _, _, _, _, _, currentInstanceID = GetInstanceInfo()
+				core:SendMessage("BigWigs_BossModuleRegistered", module, currentInstanceID)
 
 				-- For repo users, a boss module can register prior to the core enabling, and trying to register sounds before the core/plugins is enabled would error
 				-- Since we need to run this same code on core enabled, we don't need to run it here unless the code is already enabled
 				if coreEnabled and module:Retail() then
-					local _, _, _, _, _, _, _, instanceID = GetInstanceInfo()
-					if module:IsZoneID(instanceID) then
-						-- Register private aura sounds
-						if module:HasPrivateAuraSounds() then
-							module:RegisterPrivateAuraSounds()
-						end
+					if module:IsZoneID(currentInstanceID) then
 						-- Automatically enable trash modules if we're in the relevant zone at module registration
 						if module:IsTrashModule() then
 							module:Enable()

@@ -39,7 +39,7 @@ function NSI:MakeEncounterAlert(data, timers)
         a[k] = v
     end
 
-    a.phase = data.phaseTimers and (data.phases or self:GetSortedPhaseKeys(data.phaseTimers)) or (data.phases or data.phase)
+    a.phase = data.phaseTimers and (data.phases or self:GetSortedPhaseKeys(data.phaseTimers)) or (data.phases or data.phase) or 1
     a.phases = nil
     local primaryPhase = self:GetPrimaryPhase(a.phase)
     local group = data.group
@@ -228,7 +228,6 @@ function NSI:InsertEncounterAlert(encId, diffID, alertDef, ReloeReminder)
         diffTable[self:UniqueAlertID(diffTable, ReloeReminder, alertDef.internalID)] = alertDef
         return
     elseif existing then
-        existing.name = alertDef.name
         existing.timers = alertDef.timers
         existing.phaseTimers = alertDef.phaseTimers
         existing.id = alertDef.id
@@ -239,6 +238,7 @@ function NSI:InsertEncounterAlert(encId, diffID, alertDef, ReloeReminder)
         existing.isSpecialDisplay = alertDef.isSpecialDisplay
         existing.DefaultEnabled = alertDef.DefaultEnabled
         existing.BlockCopy = alertDef.BlockCopy
+        existing.NoEdit = alertDef.NoEdit
         if applyDefaultEnabled and not existing.UserModifiedEnabled then
             existing.enabled = alertDef.DefaultEnabled ~= false
         end

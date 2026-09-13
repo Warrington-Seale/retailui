@@ -7,15 +7,6 @@ if not mod then return end
 mod:RegisterEnableMob(36476, 36477)
 mod:SetEncounterID(mod:Classic() and 835 or 2001)
 mod:SetRespawnTime(30)
-if mod:Retail() then -- Midnight+
-	mod:SetPrivateAuraSounds({
-		{1264186, sound = "alert", note = CL.debuffAddsCast:format(CL.extra:format(mod:SpellName(1264259), CL.adds))}, -- Shadowbind
-		{1264246, sound = "none", note = CL.debuffDotAfterCastNote:format(mod:SpellName(1264027))}, -- Shade Shift
-		{1264299, sound = "underyou", note = CL.debuffUnderYouNote}, -- Blight
-		{1280616, sound = "warning", note = CL.other:format(CL.fixate, CL.preDebuffNote)}, -- Lumbering Fixation
-		{1264453, sound = "none", note = CL.other:format(CL.fixate, CL.mainDebuffNote)}, -- Lumbering Fixation
-	})
-end
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -72,6 +63,20 @@ if mod:Retail() then -- Midnight+
 		[1264027] = {CL.adds, CL.spawning:format(mod:SpellName(1264259)), notes = {CL.timerNote, CL.messageNote}, original = {1264027, CL.casting:format(mod:SpellName(1264027))}}, -- Shade Shift (Adds)
 		[1264363] = {CL.fixates}, -- Get 'Em, Ick! (Fixates)
 		[1264453] = {CL.you:format(CL.fixate), notes = {CL.messageOnYouNote}, original = {CL.you:format(mod:SpellName(1264453))}}, -- Lumbering Fixation (Fixate)
+	})
+end
+
+--------------------------------------------------------------------------------
+-- Midnight Auras
+--
+
+if mod:Retail() then -- Midnight+
+	mod:SetAuraData({
+		{1264186, dispel = "curse", mechanic = "snared", soundOnApplied = "alert", tip = CL.debuffAddsCast:format(CL.extra:format(mod:SpellName(1264259), CL.adds))}, -- Shadowbind
+		{1264246, duration = 12, tip = CL.debuffDotAfterCastNote:format(mod:SpellName(1264027))}, -- Shade Shift
+		{1264299, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Blight
+		{1280616, duration = 15, soundOnApplied = "warning", note = CL.fixate, tip = CL.preDebuffNote}, -- Lumbering Fixation
+		{1264453, duration = 5, note = CL.fixate, tip = CL.mainDebuffNote}, -- Lumbering Fixation
 	})
 end
 

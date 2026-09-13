@@ -18,18 +18,17 @@ local lastKill = nil
 -- Localization
 --
 
-local L = mod:GetLocale()
-if L then
-	L.engage_trigger = "Now keep an eye out" -- Now keep an eye out! I'll have this licked in two shakes of a--
-	L.defeat_trigger = "The old magic fingers" --  Ha! The old magic fingers finally won through! Now let's get down to--
-	L.fail_trigger = "Not yet... not ye--"
+local L = mod:SetDefaultLocale({
+	engage_trigger = "Now keep an eye out", -- Now keep an eye out! I'll have this licked in two shakes of a--
+	defeat_trigger = "The old magic fingers", -- Ha! The old magic fingers finally won through! Now let's get down to--
+	fail_trigger = "Not yet... not ye--",
 
-	L.timers = "Timers"
-	L.timers_desc = "Timers for various events that take place."
-	L.timers_icon = "INV_Misc_PocketWatch_01"
+	timers = "Timers",
+	timers_desc = "Timers for various events that take place.",
+	timers_icon = "INV_Misc_PocketWatch_01",
 
-	L.victory = "Victory"
-end
+	victory = "Victory",
+})
 
 --------------------------------------------------------------------------------
 -- Initialization
@@ -68,7 +67,7 @@ function mod:VerifyEnable()
 	-- GetSubZoneText() approach was considered but the subzone he's initially in covers a huge chunk of the dungeon
 	-- (including the exact place where you need to talk to him to open the door to the last boss) and only checking
 	-- against the subzone the encounter is taking action in poses a risk of the module not being loaded.
-	return not lastKill or (GetTime() - lastKill > (BigWigsLoader.UnitLevel("player") > 80 and 150 or 300))
+	return not lastKill or (GetTime() - lastKill > (self:UnitLevel("player") > 80 and 150 or 300))
 end
 
 --------------------------------------------------------------------------------

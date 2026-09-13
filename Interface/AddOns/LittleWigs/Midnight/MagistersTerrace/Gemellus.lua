@@ -6,13 +6,6 @@ local mod, CL = BigWigs:NewBoss("Gemellus", 2811, 2660)
 if not mod then return end
 mod:SetEncounterID(3073)
 mod:SetRespawnTime(30)
-mod:SetPrivateAuraSounds({
-	{1224401, sound = "underyou", note = CL.debuffUnderYouNote}, -- Cosmic Radiation
-	{1284958, sound = "alert", note = CL.debuffPossibleAfterCastNote:format(CL.extra:format(mod:SpellName(1284954), CL.pools))}, -- Cosmic Sting
-	{1224104, sound = "underyou", note = CL.debuffUnderYouNote}, -- Void Secretions
-	{1224299, sound = "warning", note = CL.grip}, -- Astral Grasp
-	{1253709, sound = "warning", note = CL.break_shield}, -- Neural Link
-})
 
 --------------------------------------------------------------------------------
 -- Locals
@@ -34,6 +27,18 @@ mod:SetRenames({
 	[1284954] = {CL.pools}, -- Cosmic Sting (Pools)
 	[1253709] = {CL.break_shields, CL.you:format(CL.break_shield), notes = {CL.generalNote, CL.messageOnYouNote}, original = {1253709, CL.you:format(mod:SpellName(1253709))}}, -- Neural Link (Break Shields)
 	[1224299] = {CL.grips, CL.you:format(CL.grip), notes = {CL.generalNote, CL.messageOnYouNote}, original = {1224299, CL.you:format(mod:SpellName(1224299))}}, -- Astral Grasp (Grips)
+})
+
+--------------------------------------------------------------------------------
+-- Auras
+--
+
+mod:SetAuraData({
+	{1224401, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Cosmic Radiation
+	{1284958, duration = 6, soundOnApplied = "alert", soundOnAppliedDose = "none", tip = CL.debuffPossibleAfterCastNote:format(CL.extra:format(mod:SpellName(1284954), CL.pools))}, -- Cosmic Sting
+	{1224104, soundOnApplied = "underyou", tip = CL.debuffUnderYouNote}, -- Void Secretions
+	{1224299, duration = 8, soundOnApplied = "warning", note = CL.grip}, -- Astral Grasp
+	{1253709, duration = 12, soundOnApplied = "warning", note = CL.break_shield}, -- Neural Link
 })
 
 --------------------------------------------------------------------------------
@@ -141,6 +146,7 @@ function mod:TriplicateTimeline(eventInfo) -- Triplicate / Split / Adds
 		key = 1223847,
 		callback = function()
 			self:StopBlizzMessages(1)
+			-- TODO there's more Triplicates later with no timer, do we have another trigger for that?
 			self:Message(1223847, "cyan", barText)
 			self:PlaySound(1223847, "info")
 		end

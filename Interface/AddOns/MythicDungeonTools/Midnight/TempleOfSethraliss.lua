@@ -16,17 +16,27 @@ for _, zone in ipairs(zones) do
   MDT.zoneIdToDungeonIdx[zone] = dungeonIndex
 end
 
-MDT.dungeonTotalCount[dungeonIndex] = { normal = 649 }
+MDT.dungeonTotalCount[dungeonIndex] = { normal = 687 }
 
 MDT.dungeonMaps[dungeonIndex] = {
   [0] = "",
   [1] = { customTextures = 'Interface\\AddOns\\'..addonName..'\\Midnight\\Textures\\TempleOfSethraliss' },
 }
+
 MDT.dungeonSubLevels[dungeonIndex] = {
   [1] = L["Temple of Sethraliss"],
 }
 
-MDT.mapPOIs[dungeonIndex] = {};
+MDT.mapPOIs[dungeonIndex] = {
+  [1] = {
+    [1] = {
+      ["type"] = "dungeonEntrance",
+      ["x"] = 705.5,
+      ["y"] = -542.3,
+      ["sizeMult"] = 1.5,
+    },
+  },
+};
 
 MDT.dungeonEnemies[dungeonIndex] = {
   [1] = {
@@ -160,14 +170,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [13] = {
-        ["x"] = 701.33218784475,
-        ["y"] = -397.32216193294,
-        ["g"] = 9,
-        ["sublevel"] = 1,
-      },
-      [14] = {
-        ["x"] = 711.96334837735,
-        ["y"] = -396.85889822295,
+        ["x"] = 706.57442049733,
+        ["y"] = -398.50587971347,
         ["g"] = 9,
         ["sublevel"] = 1,
       },
@@ -616,6 +620,12 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["g"] = 24,
         ["sublevel"] = 1,
       },
+      [8] = {
+        ["x"] = 490.90952474603,
+        ["y"] = -262.77001632072,
+        ["g"] = 23,
+        ["sublevel"] = 1,
+      },
     },
   },
   [9] = {
@@ -703,6 +713,10 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["interruptible"] = true,
         ["curse"] = true,
       },
+      [1314082] = {
+        ["interruptible"] = true,
+        ["curse"] = true,
+      },
     },
     ["clones"] = {
       [1] = {
@@ -714,12 +728,6 @@ MDT.dungeonEnemies[dungeonIndex] = {
       [6] = {
         ["x"] = 481.30754117774,
         ["y"] = -263.04912492556,
-        ["g"] = 23,
-        ["sublevel"] = 1,
-      },
-      [7] = {
-        ["x"] = 490.90952474603,
-        ["y"] = -262.77001632072,
         ["g"] = 23,
         ["sublevel"] = 1,
       },
@@ -860,6 +868,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["y"] = -156.80776860394,
         ["g"] = 30,
         ["sublevel"] = 1,
+        ["count"] = 30,
       },
       [4] = {
         ["x"] = 541.58231125855,
@@ -922,12 +931,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["y"] = -152.52930738642,
         ["g"] = 30,
         ["sublevel"] = 1,
+        ["count"] = 12,
       },
       [6] = {
         ["x"] = 513.3225295204,
         ["y"] = -164.70438321247,
         ["g"] = 30,
         ["sublevel"] = 1,
+        ["count"] = 12,
       },
     },
   },
@@ -1028,7 +1039,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Avatar of Sethraliss",
     ["id"] = 133392,
     ["count"] = 0,
-    ["health"] = 21621700,
+    ["health"] = 23783870,
     ["scale"] = 2,
     ["displayId"] = 83203,
     ["creatureType"] = "Undead",
@@ -1092,7 +1103,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Toxic Viper",
     ["id"] = 134389,
     ["count"] = 0,
-    ["health"] = 1405411,
+    ["health"] = 324056,
     ["scale"] = 1.2,
     ["displayId"] = 78250,
     ["creatureType"] = "Beast",
@@ -1124,7 +1135,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 0,
     ["health"] = 2972984,
     ["scale"] = 1.7,
-    ["displayId"] = 78247,
+    ["displayId"] = 147087,
     ["creatureType"] = "Beast",
     ["level"] = 91,
     ["spells"] = {
@@ -1146,7 +1157,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Merektha",
     ["id"] = 134487,
     ["count"] = 0,
-    ["health"] = 307716,
+    ["health"] = 369424,
     ["scale"] = 1,
     ["displayId"] = 78247,
     ["creatureType"] = "Beast",
@@ -1198,7 +1209,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Lightning Spire",
     ["id"] = 135445,
     ["count"] = 0,
-    ["health"] = 21621699,
+    ["health"] = 235746,
     ["scale"] = 1,
     ["displayId"] = 46710,
     ["creatureType"] = "Elemental",
@@ -1216,7 +1227,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Sandswept Marksman",
     ["id"] = 139097,
     ["count"] = 0,
-    ["health"] = 439629,
+    ["health"] = 214315,
     ["scale"] = 1,
     ["displayId"] = 83780,
     ["creatureType"] = "Humanoid",
@@ -1292,7 +1303,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Eye of Sethraliss",
     ["id"] = 240681,
     ["count"] = 0,
-    ["health"] = 287585,
+    ["health"] = 324056,
     ["scale"] = 1,
     ["displayId"] = 169,
     ["creatureType"] = "Not specified",
@@ -1320,7 +1331,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Adderis",
     ["id"] = 262530,
     ["count"] = 0,
-    ["health"] = 10135172,
+    ["health"] = 10135171,
     ["scale"] = 1.5,
     ["displayId"] = 83550,
     ["creatureType"] = "Humanoid",
@@ -1330,6 +1341,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["instanceID"] = 1030,
     ["spells"] = {
       [263425] = {
+      },
+      [1288087] = {
       },
       [1288092] = {
       },
@@ -1345,6 +1358,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
       },
       [1310311] = {
       },
+      [1314051] = {
+      },
     },
     ["clones"] = {
       [1] = {
@@ -1359,7 +1374,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Aspix",
     ["id"] = 262822,
     ["count"] = 0,
-    ["health"] = 10135172,
+    ["health"] = 10135171,
     ["scale"] = 1.5,
     ["displayId"] = 83552,
     ["creatureType"] = "Humanoid",
@@ -1397,7 +1412,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     },
   },
   [32] = {
-    ["name"] = "Egg Marker",
+    ["name"] = "Egg",
     ["id"] = 263181,
     ["count"] = 0,
     ["health"] = 10000,
@@ -1424,9 +1439,9 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Galvazzt",
     ["id"] = 263658,
     ["count"] = 0,
-    ["health"] = 21621699,
+    ["health"] = 21621698,
     ["scale"] = 2,
-    ["displayId"] = 81654,
+    ["displayId"] = 147355,
     ["creatureType"] = "Elemental",
     ["level"] = 92,
     ["isBoss"] = true,
@@ -1489,7 +1504,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 5,
     ["health"] = 1135139,
     ["scale"] = 1.2,
-    ["displayId"] = 80960,
+    ["displayId"] = 147718,
     ["creatureType"] = "Humanoid",
     ["level"] = 90,
     ["spells"] = {
@@ -1559,7 +1574,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["name"] = "Lifeforce",
     ["id"] = 268364,
     ["count"] = 0,
-    ["health"] = 330722,
+    ["health"] = 224234,
     ["scale"] = 1,
     ["displayId"] = 169,
     ["creatureType"] = "Not specified",
@@ -1648,7 +1663,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 0,
     ["health"] = 486488,
     ["scale"] = 1,
-    ["displayId"] = 80960,
+    ["displayId"] = 147085,
     ["creatureType"] = "Humanoid",
     ["level"] = 90,
     ["spells"] = {
@@ -1712,7 +1727,7 @@ MDT.dungeonEnemies[dungeonIndex] = {
     ["count"] = 0,
     ["health"] = 648651,
     ["scale"] = 1,
-    ["displayId"] = 88179,
+    ["displayId"] = 147077,
     ["creatureType"] = "Humanoid",
     ["level"] = 90,
     ["clones"] = {

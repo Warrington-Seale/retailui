@@ -1,19 +1,25 @@
 local _, NSI = ... -- Internal namespace
 
+function NSI:CreateInterruptAssignmentDisplay(parent, name)
+    local display = CreateFrame("Frame", name, parent)
+    display.Box = display:CreateTexture(nil, "ARTWORK")
+    display.Box:SetColorTexture(0, 0, 0, 1)
+    display.Box:SetAllPoints()
+    display.Background = display.Box
+    display.Border = display:CreateTexture(nil, "BACKGROUND")
+    display.Border:SetColorTexture(0, 0, 0, 1)
+    display.Border:SetPoint("TOPLEFT", display, "TOPLEFT", -1, 1)
+    display.Border:SetPoint("BOTTOMRIGHT", display, "BOTTOMRIGHT", 1, -1)
+    display.Number = display:CreateFontString(nil, "OVERLAY")
+    display.Number:SetTextColor(1, 0, 0, 1)
+    display.Name = display:CreateFontString(nil, "OVERLAY")
+    display.Name:SetTextColor(1, 1, 1, 1)
+    return display
+end
+
 function NSI:CreateInterruptDisplay()
     if not self.InterruptDisplay then
-        self.InterruptDisplay = CreateFrame("Frame", "NSIInterruptDisplay", NSI.NSRTFrame)
-        self.InterruptDisplay.Box = self.InterruptDisplay:CreateTexture(nil, "ARTWORK")
-        self.InterruptDisplay.Box:SetColorTexture(0, 0, 0, 1)
-        self.InterruptDisplay.Box:SetAllPoints()
-        self.InterruptDisplay.Border = self.InterruptDisplay:CreateTexture(nil, "BACKGROUND")
-        self.InterruptDisplay.Border:SetColorTexture(0, 0, 0, 1)
-        self.InterruptDisplay.Border:SetPoint("TOPLEFT", self.InterruptDisplay, "TOPLEFT", -1, 1)
-        self.InterruptDisplay.Border:SetPoint("BOTTOMRIGHT", self.InterruptDisplay, "BOTTOMRIGHT", 1, -1)
-        self.InterruptDisplay.Number = self.InterruptDisplay:CreateFontString(nil, "OVERLAY")
-        self.InterruptDisplay.Number:SetTextColor(1, 0, 0, 1)
-        self.InterruptDisplay.Name = self.InterruptDisplay:CreateFontString(nil, "OVERLAY")
-        self.InterruptDisplay.Name:SetTextColor(1, 1, 1, 1)
+        self.InterruptDisplay = self:CreateInterruptAssignmentDisplay(NSI.NSRTFrame, "NSIInterruptDisplay")
     end
     self.InterruptDisplay:ClearAllPoints()
     self.InterruptDisplay:SetSize(NSRT.InterruptSettings.Width, NSRT.InterruptSettings.Height)
@@ -26,31 +32,52 @@ function NSI:CreateInterruptDisplay()
     self.InterruptDisplay.Name:SetFont(self.LSM:Fetch("font", NSRT.InterruptSettings.NameFont), NSRT.InterruptSettings.NameFontSize, NSRT.InterruptSettings.NameFontFlags)
 end
 
+function NSI:DisplayInterruptAssignment(castCount, name, boxColor, textColor)
+    self:CreateInterruptDisplay()
+    self.InterruptDisplay.Background:SetColorTexture(unpack(boxColor))
+    self.InterruptDisplay.Number:SetTextColor(unpack(textColor))
+    self.InterruptDisplay.Number:SetText(castCount or "")
+    self.InterruptDisplay.Name:SetText(name or "")
+    self.InterruptDisplay:Show()
+end
+
+function NSI:PreviewInterruptDisplay(castCount, name, boxColor, textColor)
+    if self.InterruptDisplay and self.InterruptDisplay:IsShown() then
+        self:MakeDraggable(self.InterruptDisplay, NSRT.InterruptSettings, false)
+        self:HideInterrupt()
+        return false
+    end
+
+    self:DisplayInterruptAssignment(castCount or 3, name or NSAPI:Shorten("player", 12, false, "GlobalNickNames", false, false), boxColor or NSRT.InterruptSettings.InterruptNowColor, textColor or NSRT.InterruptSettings.InterruptNowTextColor)
+    self:MakeDraggable(self.InterruptDisplay, NSRT.InterruptSettings, true)
+    return true
+end
+
+function NSI:GetInterruptNameplateScale(plate)
+    return plate and plate:GetEffectiveScale() / UIParent:GetEffectiveScale() or 1
+end
+
 function NSI:DisplayInterrupt(isCastStart)
     local s = NSRT.InterruptSettings
     local myKick = self.Interrupts.myKick
     local castCount = self.Interrupts.castCount
     local unit = self.Interrupts.myTable[castCount]
     local name = unit and UnitExists(unit) and NSAPI:Shorten(unit, 12, false, "GlobalNickNames", false, false) or ""
-    self:CreateInterruptDisplay()
-    self.InterruptDisplay.Number:SetText(castCount or "")
-    self.InterruptDisplay.Name:SetText(name)
+    local boxColor = s.InterruptDefaultColor
+    local textColor = s.InterruptDefaultTextColor
     if castCount == myKick then
         if isCastStart then -- player interrupts now
-            self.InterruptDisplay.Box:SetColorTexture(unpack(s.InterruptNowColor))
-            self.InterruptDisplay.Number:SetTextColor(unpack(s.InterruptNowTextColor))
+            boxColor = s.InterruptNowColor
+            textColor = s.InterruptNowTextColor
         else -- player interrupts next
-            self.InterruptDisplay.Box:SetColorTexture(unpack(s.InterruptNextColor))
-            self.InterruptDisplay.Number:SetTextColor(unpack(s.InterruptNextTextColor))
+            boxColor = s.InterruptNextColor
+            textColor = s.InterruptNextTextColor
         end
     elseif (castCount+1 == myKick) or (myKick == 1 and castCount == self.Interrupts.max) then
-        self.InterruptDisplay.Box:SetColorTexture(unpack(s.InterruptNextColor))
-        self.InterruptDisplay.Number:SetTextColor(unpack(s.InterruptNextTextColor))
-    else
-        self.InterruptDisplay.Box:SetColorTexture(unpack(s.InterruptDefaultColor))
-        self.InterruptDisplay.Number:SetTextColor(unpack(s.InterruptDefaultTextColor))
+        boxColor = s.InterruptNextColor
+        textColor = s.InterruptNextTextColor
     end
-    self.InterruptDisplay:Show()
+    self:DisplayInterruptAssignment(castCount, name, boxColor, textColor)
 end
 
 function NSI:PlayInterruptSound()
@@ -148,8 +175,8 @@ function NSI:ReadInterruptNote(StartNumber)
     str = str:gsub("||r", "")
     str = str:gsub("||c%x%x%x%x%x%x%x%x", "")
     str = strtrim(str)
-    for line in string.gmatch(str,'[^\r\n]+') do
-        line = strtrim(line)
+    for rawLine in string.gmatch(str,'[^\r\n]+') do
+        local line = strtrim(rawLine)
         if strlower(line) == "intend" then
             assign = false
             self.Interrupts.myTrackedID = self.Interrupts.myID
@@ -161,8 +188,8 @@ function NSI:ReadInterruptNote(StartNumber)
             local num = 0
             count = count+1
             self.Interrupts.assignTable[count] = self.Interrupts.assignTable[count] or {}
-            for name in line:gmatch("%S+") do
-                name = NSAPI:GetChar(name, true, "GlobalNickNames")
+            for rawName in line:gmatch("%S+") do
+                local name = NSAPI:GetChar(rawName, true, "GlobalNickNames")
                 if UnitInRaid(name) then
                     num = num+1
                     table.insert(self.Interrupts.assignTable[count], name)
