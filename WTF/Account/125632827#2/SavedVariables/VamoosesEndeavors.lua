@@ -8,7 +8,7 @@ VE_DB = {
 ["couponsIcon"] = 134495,
 ["level"] = 0,
 ["xp"] = 0,
-["savedAt"] = 1789341548,
+["savedAt"] = 1789499656,
 },
 ["Divthediv-BurningLegion"] = {
 ["xp"] = 0,
@@ -19,6 +19,15 @@ VE_DB = {
 ["coupons"] = 0,
 ["savedAt"] = 1788950886,
 },
+["Zerofoxgiven-BurningLegion"] = {
+["xpForNextLevel"] = 0,
+["maxLevel"] = 9,
+["coupons"] = 0,
+["couponsIcon"] = 134495,
+["level"] = 0,
+["xp"] = 0,
+["savedAt"] = 1789421892,
+},
 },
 ["characters"] = {
 ["Warrington-BurningLegion"] = {
@@ -26,7 +35,7 @@ VE_DB = {
 ["tasks"] = {
 },
 ["class"] = "DRUID",
-["lastUpdated"] = 1789235059,
+["lastUpdated"] = 1789499562,
 ["realm"] = "BurningLegion",
 },
 ["Divthediv-BurningLegion"] = {
@@ -42,10 +51,7 @@ VE_DB = {
 ["battleTagLookup"] = {
 ["Warrington"] = "egj8mjaa",
 ["Divthediv"] = "egj8mjaa",
-},
-["myCharacters"] = {
-["Warrington"] = true,
-["Divthediv"] = true,
+["Zerofoxgiven"] = "egj8mjaa",
 },
 ["config"] = {
 ["debug"] = false,
@@ -63,16 +69,27 @@ VE_DB = {
 ["theme"] = "housingtheme",
 ["fontFamily"] = "ARIALN",
 },
-["battleTagMains"] = {
-["egj8mjaa"] = {
-"Warrington",
+["altSharing"] = {
+["enabled"] = false,
+["lastBroadcast"] = 0,
+["groupingMode"] = "individual",
+["receivedMappings"] = {
 },
+},
+["knownInitiatives"] = {
+},
+["ui"] = {
+},
+["minimap"] = {
+["minimapPos"] = 200,
+["lock"] = false,
+["hide"] = false,
 },
 ["characterCoupons"] = {
 ["Warrington-BurningLegion"] = {
 ["name"] = "Warrington",
 ["faction"] = "Horde",
-["lastSeen"] = 1789341517,
+["lastSeen"] = 1789498284,
 ["class"] = "DRUID",
 ["coupons"] = 0,
 ["realm"] = "BurningLegion",
@@ -85,21 +102,23 @@ VE_DB = {
 ["coupons"] = 0,
 ["realm"] = "BurningLegion",
 },
+["Zerofoxgiven-BurningLegion"] = {
+["name"] = "Zerofoxgiven",
+["faction"] = "Horde",
+["lastSeen"] = 1789421854,
+["class"] = "WARRIOR",
+["coupons"] = 0,
+["realm"] = "BurningLegion",
 },
-["minimap"] = {
-["minimapPos"] = 200,
-["hide"] = false,
-["lock"] = false,
 },
-["ui"] = {
+["battleTagMains"] = {
+["egj8mjaa"] = {
+"Warrington",
 },
-["knownInitiatives"] = {
 },
-["altSharing"] = {
-["enabled"] = false,
-["lastBroadcast"] = 0,
-["groupingMode"] = "individual",
-["receivedMappings"] = {
-},
+["myCharacters"] = {
+["Warrington"] = true,
+["Divthediv"] = true,
+["Zerofoxgiven"] = true,
 },
 }

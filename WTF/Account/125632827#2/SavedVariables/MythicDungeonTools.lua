@@ -1,9 +1,33 @@
 
 MythicDungeonToolsDB = {
 ["global"] = {
-["announceDungeonReset"] = false,
+["maximized"] = false,
 ["enemyForcesTooltip"] = 1,
-["muteXalatathVoiceLines"] = false,
+["presets"] = {
+[160] = {
+{
+["difficulty"] = 10,
+["value"] = {
+["currentPull"] = 1,
+["currentSublevel"] = 1,
+["currentDungeonIdx"] = 160,
+["selection"] = {
+1,
+},
+["pulls"] = {
+{
+["color"] = "ff3eff",
+},
+},
+},
+},
+},
+},
+["devMode"] = false,
+["scale"] = 1.4,
+["latestDungeonSeen"] = 160,
+["announceDungeonReset"] = false,
+["version"] = 6216,
 ["focusMarker"] = {
 ["announceReadyCheck"] = false,
 ["suppressNotifications"] = false,
@@ -13,15 +37,80 @@ MythicDungeonToolsDB = {
 ["assignments"] = {
 },
 },
+["colorPaletteInfo"] = {
+["customPaletteValues"] = {
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+{
+1,
+1,
+1,
+},
+},
+},
+["muteXalatathVoiceLines"] = false,
 ["combatLogging"] = {
 ["enabled"] = false,
 ["content"] = {
 ["normal"] = false,
-["lfr"] = false,
-["heroic"] = false,
 ["mythic_dungeon"] = false,
-["mythic_plus"] = false,
 ["mythic"] = false,
+["lfr"] = false,
+["mythic_plus"] = false,
+["heroic"] = false,
 },
 },
 ["minimap"] = {
@@ -29,5 +118,8 @@ MythicDungeonToolsDB = {
 ["compartmentHide"] = false,
 ["hide"] = false,
 },
+},
+["profileKeys"] = {
+["Warrington - Burning Legion"] = "Warrington - Burning Legion",
 },
 }

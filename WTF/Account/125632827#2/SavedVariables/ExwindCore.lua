@@ -15,39 +15,42 @@ EXCORE12S2 = {
 ["routes"] = {
 ["tools"] = {
 ["page"] = "ModuleSettings",
-["moduleKey"] = "ExTools.CombatTimer",
+["moduleKey"] = "ExTools.PlayerShield",
 },
 },
-["x"] = 623.0003051757812,
+["x"] = 1065.000366210938,
 ["point"] = "TOPLEFT",
 ["relativePoint"] = "BOTTOMLEFT",
-["y"] = 1305.000244140625,
+["y"] = 1385.00048828125,
 ["lastProvider"] = "tools",
 },
 ["ModuleDB"] = {
 ["ExwindState"] = {
 ["encounter"] = {
 ["id"] = 0,
-["ts"] = 1789341488,
+["ts"] = 1789498221,
 ["inProgress"] = false,
-["instanceID"] = 2952,
+["instanceID"] = 3004,
 },
 ["versaCalibration"] = {
-["zeroValue"] = 114146.2956189982,
-["specID"] = 104,
-["lastDescriptionValue"] = 139491,
+["specID"] = 105,
+["zeroValue"] = 114146.5638867767,
+["lastDescriptionValue"] = 129197,
 ["spellID"] = 1271074,
 },
 },
 },
 ["Changelog"] = {
 ["LastSeenVersion"] = "v26.9.13.0946",
-["LastSeenAt"] = "2026-09-14 00:57:19",
-["LastPopupVersion"] = "v26.9.10.1512",
-["LastPopupAt"] = "2026-09-12 15:22:21",
+["LastSeenAt"] = "2026-09-15 20:32:33",
+["LastPopupAt"] = "2026-09-15 20:17:00",
+["LastPopupVersion"] = "v26.9.13.0946",
 },
 ["Locale"] = {
 ["mode"] = "enUS",
+},
+["Minimap"] = {
+["hide"] = false,
 },
 ["PanelStylePresets"] = {
 ["icon"] = {
@@ -55,8 +58,5 @@ EXCORE12S2 = {
 ["timerbar"] = {
 },
 ["version"] = 1,
-},
-["Minimap"] = {
-["hide"] = false,
 },
 }

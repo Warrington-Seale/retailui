@@ -3,7 +3,7 @@
 ## Author: Slackluster
 ## Notes: Track recipes, reagents, cooldowns, patron orders, and more
 ## IconTexture: Interface\AddOns\ProfessionShoppingList\assets\icon.png
-## Version: v12.1.0-05
+## Version: v12.1.0-06
 ## X-Curse-Project-ID: 498475
 ## X-Wago-ID: Xb6X71Np
 

@@ -4,13 +4,14 @@ OPie_SavedData = {
 },
 ["_OPieVersion"] = "8.8.1 (4.144)",
 ["_StoreVersion"] = 122,
-["_GameLocale"] = "enUS",
+["_GameVersion"] = "12.1.0",
 ["_StoreVersion2"] = 122,
 ["ProfileStorage"] = {
 ["default"] = {
 ["Bindings"] = {
-["Druidmisc"] = "SHIFT-T",
 ["druidforms"] = "T",
+["Druidmisc"] = "SHIFT-T",
+["WorldMarkers"] = "ALT-SHIFT-R",
 },
 },
 },
@@ -33,9 +34,9 @@ OPie_SavedData = {
 ["sliceToken"] = "ABueYYMO=Z1",
 ["id"] = 783,
 },
-["limit"] = "DRUID",
-["save"] = true,
 ["name"] = "druidforms",
+["save"] = true,
+["limit"] = "DRUID",
 },
 ["Druidmisc"] = {
 {
@@ -58,14 +59,14 @@ OPie_SavedData = {
 ["sliceToken"] = "ABueYYMO=Z2",
 ["id"] = 193753,
 },
-["name"] = "Druidmisc",
-["save"] = true,
 ["limit"] = "DRUID",
+["save"] = true,
+["name"] = "Druidmisc",
 },
 ["OPieFlagStore"] = {
 ["StoreVersion"] = 3,
 },
 },
 },
-["_GameVersion"] = "12.1.0",
+["_GameLocale"] = "enUS",
 }

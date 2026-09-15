@@ -1,4 +1,4 @@
-## Interface: 120005, 50504, 20506, 11508
+## Interface: 120100, 50504, 20506, 11509
 ## Title: |cff00ff00TradeSkillMaster_AppHelper|r
 ## IconTexture: Interface\Addons\TradeSkillMaster\Media\Logo
 ## Category-enUS: Auctions
@@ -14,7 +14,7 @@
 ## Category-zhTW: 拍賣
 ## Notes: Acts as a connection between the TSM addon and app.
 ## Author: TSM Team
-## Version: v4.14.10
+## Version: v4.14.13
 ## SavedVariables: TradeSkillMaster_AppHelperDB
 ## Dependency: TradeSkillMaster
 

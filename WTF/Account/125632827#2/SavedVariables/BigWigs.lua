@@ -1,143 +1,16 @@
 
 BigWigs3DB = {
 ["profileKeys"] = {
-["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
+["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
+["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
 },
 ["namespaces"] = {
-["BigWigs_Plugins_BossBlock"] = {
-["global"] = {
-["tableNeedsCopied"] = false,
-["watchedMovies"] = {
-[1050] = true,
-[-2516] = true,
-[-575] = true,
-[1049] = true,
-},
-},
-},
-["BigWigs_Plugins_AltPower"] = {
+["BigWigs_Bosses_Azta'rec"] = {
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
-["fontSize"] = 14,
-["fontName"] = "Merfin Font 1",
-["position"] = {
-"BOTTOMRIGHT",
-"BOTTOMRIGHT",
--315,
-327,
-},
-},
-["MerfinUI (1440) v7.8"] = {
-["fontSize"] = 14,
-["fontName"] = "Merfin Font 1",
-["position"] = {
-"BOTTOMRIGHT",
-"BOTTOMRIGHT",
--315,
-327,
-},
-},
-},
-},
-["BigWigs_Plugins_Nameplates"] = {
-["profiles"] = {
-["MerfinUI (1386) v7.8"] = {
-["iconFontSize"] = 8,
-["iconExpireGlowType"] = "proc",
-["iconZoom"] = 0.3,
-["iconHeight"] = 20,
-["iconFontName"] = "Merfin Font 1",
-["iconOffsetX"] = -3,
-["iconWidth"] = 20,
-},
-["MerfinUI (1440) v7.8"] = {
-["iconFontSize"] = 8,
-["iconExpireGlowType"] = "proc",
-["iconZoom"] = 0.3,
-["iconHeight"] = 20,
-["iconFontName"] = "Merfin Font 1",
-["iconWidth"] = 20,
-["iconOffsetX"] = -3,
-},
-},
-},
-["BigWigs_Plugins_Auras"] = {
-["global"] = {
-["showHelpTip"] = false,
-},
-},
-["BigWigs_Plugins_Proximity"] = {
-["profiles"] = {
-["MerfinUI (1386) v7.8"] = {
-["posx"] = 716,
-["fontSize"] = 16,
-["lock"] = false,
-["height"] = 101,
-["posy"] = 443,
-["fontName"] = "Merfin Font 1",
-["width"] = 120,
-},
-["MerfinUI (1440) v7.8"] = {
-["posx"] = 716,
-["fontSize"] = 16,
-["lock"] = false,
-["height"] = 101,
-["posy"] = 443,
-["fontName"] = "Merfin Font 1",
-["width"] = 120,
-},
-},
-},
-["BigWigs_Plugins_Pull"] = {
-["profiles"] = {
-["MerfinUI (1440) v7.8"] = {
-["voice"] = "English: Amy",
-},
-},
-},
-["BigWigs_Plugins_Messages"] = {
-["profiles"] = {
-["MerfinUI (1386) v7.8"] = {
-["outline"] = "OUTLINE",
-["fontSize"] = 15,
-["emphFontName"] = "Merfin Font 1",
-["emphFontSize"] = 37,
-["emphPosition"] = {
-"TOP",
-"TOP",
-nil,
--208,
-},
-["fontName"] = "Merfin Font 1",
-["growUpwards"] = true,
-["emphOutline"] = "OUTLINE",
-["normalPosition"] = {
-"TOP",
-nil,
-nil,
--190,
-},
-},
-["MerfinUI (1440) v7.8"] = {
-["outline"] = "OUTLINE",
-["fontSize"] = 15,
-["emphFontName"] = "Merfin Font 1",
-["fontName"] = "Merfin Font 1",
-["growUpwards"] = true,
-["emphOutline"] = "OUTLINE",
-["emphFontSize"] = 37,
-["emphPosition"] = {
-"TOP",
-"TOP",
-nil,
--208,
-},
-["normalPosition"] = {
-"TOP",
-nil,
-nil,
--190,
+["toggles"] = {
+[1294963] = 4178679,
 },
 },
 },
@@ -171,6 +44,30 @@ nil,
 },
 ["voice"] = "English: Amy",
 ["fontName"] = "Merfin Font 1",
+},
+},
+},
+["BigWigs_Plugins_AltPower"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["fontSize"] = 14,
+["fontName"] = "Merfin Font 1",
+["position"] = {
+"BOTTOMRIGHT",
+"BOTTOMRIGHT",
+-315,
+327,
+},
+},
+["MerfinUI (1440) v7.8"] = {
+["fontSize"] = 14,
+["fontName"] = "Merfin Font 1",
+["position"] = {
+"BOTTOMRIGHT",
+"BOTTOMRIGHT",
+-315,
+327,
+},
 },
 },
 },
@@ -264,6 +161,40 @@ nil,
 },
 },
 },
+["BigWigs_Plugins_Nameplates"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["iconFontSize"] = 8,
+["iconExpireGlowType"] = "proc",
+["iconZoom"] = 0.3,
+["iconHeight"] = 20,
+["iconFontName"] = "Merfin Font 1",
+["iconWidth"] = 20,
+["iconOffsetX"] = -3,
+},
+["MerfinUI (1440) v7.8"] = {
+["iconFontSize"] = 8,
+["iconExpireGlowType"] = "proc",
+["iconZoom"] = 0.3,
+["iconHeight"] = 20,
+["iconFontName"] = "Merfin Font 1",
+["iconOffsetX"] = -3,
+["iconWidth"] = 20,
+},
+},
+},
+["BigWigs_Plugins_BossBlock"] = {
+["global"] = {
+["tableNeedsCopied"] = false,
+["watchedMovies"] = {
+[-575] = true,
+[1049] = true,
+[1050] = true,
+[1065] = true,
+[-2516] = true,
+},
+},
+},
 ["BigWigs_Plugins_Bars"] = {
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
@@ -271,13 +202,7 @@ nil,
 ["expWidth"] = 229,
 ["fill"] = true,
 ["growup"] = true,
-["expPosition"] = {
-"BOTTOMLEFT",
-"TOPLEFT",
-29,
-75,
-"ElvUF_Target",
-},
+["fontName"] = "Merfin Font 1",
 ["visibleBarLimitEmph"] = 4,
 ["fontSize"] = 13,
 ["visibleBarLimit"] = 5,
@@ -285,7 +210,13 @@ nil,
 ["emphasizeGrowup"] = true,
 ["emphasizeTime"] = 10,
 ["barStyle"] = "ElvUI",
-["fontName"] = "Merfin Font 1",
+["expPosition"] = {
+"BOTTOMLEFT",
+"TOPLEFT",
+29,
+75,
+"ElvUF_Target",
+},
 ["fontSizeEmph"] = 14,
 ["normalWidth"] = 200,
 ["emphasizeRestart"] = false,
@@ -320,10 +251,10 @@ nil,
 "ElvUF_Target",
 },
 ["visibleBarLimitEmph"] = 4,
-["emphasizeTime"] = 10,
-["normalHeight"] = 23,
-["normalWidth"] = 200,
 ["texture"] = "Merfin Main Texture",
+["normalWidth"] = 200,
+["normalHeight"] = 23,
+["emphasizeTime"] = 10,
 ["normalPosition"] = {
 "BOTTOMLEFT",
 "TOPLEFT",
@@ -334,14 +265,94 @@ nil,
 },
 },
 },
+["BigWigs_Plugins_Auras"] = {
+["global"] = {
+["showHelpTip"] = false,
+},
+},
+["BigWigs_Plugins_Proximity"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["posx"] = 716,
+["fontSize"] = 16,
+["lock"] = false,
+["height"] = 101,
+["posy"] = 443,
+["fontName"] = "Merfin Font 1",
+["width"] = 120,
+},
+["MerfinUI (1440) v7.8"] = {
+["posx"] = 716,
+["fontSize"] = 16,
+["lock"] = false,
+["height"] = 101,
+["posy"] = 443,
+["fontName"] = "Merfin Font 1",
+["width"] = 120,
+},
+},
+},
+["BigWigs_Plugins_Pull"] = {
+["profiles"] = {
+["MerfinUI (1440) v7.8"] = {
+["voice"] = "English: Amy",
+},
+},
+},
+["BigWigs_Plugins_Messages"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["outline"] = "OUTLINE",
+["fontSize"] = 15,
+["emphFontName"] = "Merfin Font 1",
+["emphFontSize"] = 37,
+["emphPosition"] = {
+"TOP",
+"TOP",
+nil,
+-208,
+},
+["fontName"] = "Merfin Font 1",
+["growUpwards"] = true,
+["emphOutline"] = "OUTLINE",
+["normalPosition"] = {
+"TOP",
+nil,
+nil,
+-190,
+},
+},
+["MerfinUI (1440) v7.8"] = {
+["outline"] = "OUTLINE",
+["fontSize"] = 15,
+["emphFontName"] = "Merfin Font 1",
+["fontName"] = "Merfin Font 1",
+["growUpwards"] = true,
+["emphOutline"] = "OUTLINE",
+["emphFontSize"] = 37,
+["emphPosition"] = {
+"TOP",
+"TOP",
+nil,
+-208,
+},
+["normalPosition"] = {
+"TOP",
+nil,
+nil,
+-190,
+},
+},
+},
+},
 },
 ["myKeystones"] = {
 ["Player-3713-09224DF3"] = {
 ["playerRating"] = 0,
-["specId"] = 104,
-["keyMap"] = 0,
+["specId"] = 105,
+["keyMap"] = 249,
 ["name"] = "Warrington",
-["keyLevel"] = 0,
+["keyLevel"] = 2,
 ["realm"] = "Burning Legion",
 },
 },
@@ -358,45 +369,63 @@ nil,
 BigWigsIconDB = {
 }
 BigWigsStatsDB = {
+[2987] = {
+[2849] = {
+["world"] = {
+["kills"] = 1,
+["fkDate"] = "2026/09/15",
+["bestDate"] = "2026/09/15",
+["best"] = 200.451,
+["fkDuration"] = 200.451,
+},
+},
+},
+[3079] = {
+[-3508] = {
+["solotier11"] = {
+["wipes"] = 19,
+},
+},
+},
 [2912] = {
 [2734] = {
 ["LFR"] = {
 ["kills"] = 1,
-["fkDuration"] = 198.7699999999968,
-["best"] = 198.7699999999968,
-["bestDate"] = "2026/09/11",
 ["fkDate"] = "2026/09/11",
+["bestDate"] = "2026/09/11",
+["best"] = 198.7699999999968,
+["fkDuration"] = 198.7699999999968,
 },
 },
 [2733] = {
 ["LFR"] = {
 ["kills"] = 1,
-["fkDuration"] = 157.0080000000016,
-["wipes"] = 1,
+["fkDate"] = "2026/09/11",
+["bestDate"] = "2026/09/11",
 ["fkWipes"] = 1,
 ["best"] = 157.0080000000016,
-["bestDate"] = "2026/09/11",
-["fkDate"] = "2026/09/11",
+["wipes"] = 1,
+["fkDuration"] = 157.0080000000016,
 },
 },
 [2738] = {
 ["story"] = {
 ["kills"] = 1,
-["fkDuration"] = 269.503999999999,
-["wipes"] = 1,
+["fkDate"] = "2026/09/12",
+["bestDate"] = "2026/09/12",
 ["fkWipes"] = 1,
 ["best"] = 269.503999999999,
-["bestDate"] = "2026/09/12",
-["fkDate"] = "2026/09/12",
+["wipes"] = 1,
+["fkDuration"] = 269.503999999999,
 },
 },
 [2736] = {
 ["LFR"] = {
 ["kills"] = 1,
-["fkDuration"] = 221.1980000000003,
-["best"] = 221.1980000000003,
-["bestDate"] = "2026/09/11",
 ["fkDate"] = "2026/09/11",
+["bestDate"] = "2026/09/11",
+["best"] = 221.1980000000003,
+["fkDuration"] = 221.1980000000003,
 },
 },
 },
@@ -404,10 +433,68 @@ BigWigsStatsDB = {
 [2740] = {
 ["story"] = {
 ["kills"] = 1,
-["fkDate"] = "2026/09/12",
-["bestDate"] = "2026/09/12",
-["best"] = 312.4689999999991,
 ["fkDuration"] = 312.4689999999991,
+["best"] = 312.4689999999991,
+["bestDate"] = "2026/09/12",
+["fkDate"] = "2026/09/12",
+},
+},
+},
+[3004] = {
+[2883] = {
+["LFR"] = {
+["kills"] = 1,
+["bestDate"] = "2026/09/15",
+["fkDate"] = "2026/09/15",
+["best"] = 285.6139999999978,
+["fkDuration"] = 285.6139999999978,
+},
+},
+[2871] = {
+["LFR"] = {
+["kills"] = 1,
+["fkDuration"] = 360.2620000000006,
+["best"] = 360.2620000000006,
+["bestDate"] = "2026/09/15",
+["fkDate"] = "2026/09/15",
+},
+},
+[2887] = {
+["LFR"] = {
+["kills"] = 1,
+["bestDate"] = "2026/09/15",
+["fkDate"] = "2026/09/15",
+["best"] = 360.8080000000009,
+["fkDuration"] = 360.8080000000009,
+},
+},
+[2894] = {
+["LFR"] = {
+["kills"] = 1,
+["fkDuration"] = 224.8330000000005,
+["best"] = 224.8330000000005,
+["bestDate"] = "2026/09/15",
+["fkDate"] = "2026/09/15",
+},
+},
+[2895] = {
+["LFR"] = {
+["kills"] = 1,
+["bestDate"] = "2026/09/15",
+["best"] = 399.25,
+["fkWipes"] = 1,
+["fkDate"] = "2026/09/15",
+["wipes"] = 1,
+["fkDuration"] = 399.25,
+},
+},
+[2888] = {
+["LFR"] = {
+["kills"] = 1,
+["bestDate"] = "2026/09/15",
+["fkDate"] = "2026/09/15",
+["best"] = 271.8889999999992,
+["fkDuration"] = 271.8889999999992,
 },
 },
 },

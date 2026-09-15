@@ -33,9 +33,9 @@ _detalhes_database = {
 ["show_options"] = false,
 ["ignored_cooldowns"] = {
 },
-["framme_locked"] = false,
 ["cooldowns"] = {
 },
+["height"] = 18,
 ["own_frame"] = {
 ["defensive-raid"] = false,
 ["ofensive"] = false,
@@ -43,7 +43,7 @@ _detalhes_database = {
 ["utility"] = false,
 ["defensive-personal"] = false,
 },
-["height"] = 18,
+["framme_locked"] = false,
 ["show_conditions"] = {
 ["only_inside_instance"] = true,
 ["only_in_group"] = true,
@@ -61,7 +61,7 @@ _detalhes_database = {
 ["utility"] = false,
 },
 },
-["combat_counter"] = 100,
+["combat_counter"] = 162,
 ["player_stats"] = {
 },
 ["force_font_outline"] = "",
@@ -69,235 +69,134 @@ _detalhes_database = {
 },
 ["arena_data_compressed"] = {
 },
-["last_day"] = "14",
-["coach"] = {
-["enabled"] = false,
-["welcome_panel_pos"] = {
+["nick_tag_cache"] = {
+["last_version"] = 16,
+["Tatasuspenda"] = {
+"Tatasuspenda",
+"",
+{
+0,
+1,
+0,
+1,
 },
-["last_coach_name"] = false,
+"",
+{
+0,
+1,
+0,
+1,
+},
+{
+1,
+1,
+1,
+},
+6,
+},
+["Rogiba"] = {
+"Rogiba",
+"",
+{
+0,
+1,
+0,
+1,
+},
+"",
+{
+0,
+1,
+0,
+1,
+},
+{
+1,
+1,
+1,
+},
+5,
+},
+["Åethrill"] = {
+"Åethrill",
+"",
+{
+0,
+1,
+0,
+1,
+},
+"",
+{
+0,
+1,
+0,
+1,
+},
+{
+1,
+1,
+1,
+},
+6,
+},
+["nextreset"] = 1790243576,
+},
+["character_data"] = {
+["logons"] = 55,
 },
 ["arena_data_index_selected"] = 1,
-["auto_combatlog"] = false,
+["damage_meter_session_info"] = {
+},
 ["on_death_menu"] = false,
-["damage_meter_sessions"] = {
-[11] = {
-["playerCasts"] = {
-},
-["endUnixTime"] = 1789340747,
-["sessionId"] = 11,
-["added"] = false,
-["playerAuras"] = {
-},
-["startUnixTime"] = 1789340679,
-["endDate"] = "01:05:47",
-["endTime"] = 13141.943,
-["startDate"] = "01:04:39",
-["startTime"] = 13074.38,
-["alreadyAdded"] = false,
-["detailsId"] = "Bladesworn Cultist11",
-},
-[13] = {
-["playerCasts"] = {
-},
-["endUnixTime"] = 1789340920,
-["sessionId"] = 13,
-["added"] = false,
-["playerAuras"] = {
-},
-["startUnixTime"] = 1789340850,
-["endDate"] = "01:08:40",
-["endTime"] = 13315.044,
-["startDate"] = "01:07:30",
-["startTime"] = 13244.622,
-["alreadyAdded"] = false,
-["detailsId"] = "Shadowstone Elemental13",
-},
-[15] = {
-["playerCasts"] = {
-},
-["endUnixTime"] = 1789341238,
-["sessionId"] = 15,
-["added"] = false,
-["playerAuras"] = {
-},
-["startUnixTime"] = 1789341094,
-["endDate"] = "01:13:58",
-["endTime"] = 13633.368,
-["startDate"] = "01:11:34",
-["startTime"] = 13488.661,
-["alreadyAdded"] = false,
-["detailsId"] = "Shadowspawn15",
-},
-[10] = {
-["playerCasts"] = {
-},
-["endUnixTime"] = 1789340679,
-["sessionId"] = 10,
-["added"] = false,
-["playerAuras"] = {
-},
-["startUnixTime"] = 1789340597,
-["endDate"] = "01:04:39",
-["endTime"] = 13074.38,
-["startDate"] = "01:03:17",
-["startTime"] = 12991.681,
-["alreadyAdded"] = false,
-["detailsId"] = "Umbral Skullcrusher10",
-},
-[12] = {
-["playerCasts"] = {
-},
-["endUnixTime"] = 1789340850,
-["sessionId"] = 12,
-["added"] = false,
-["playerAuras"] = {
-},
-["startUnixTime"] = 1789340747,
-["endDate"] = "01:07:30",
-["endTime"] = 13244.622,
-["startDate"] = "01:05:47",
-["startTime"] = 13141.943,
-["alreadyAdded"] = false,
-["detailsId"] = "Twilight Bladesworn12",
-},
-[14] = {
-["playerCasts"] = {
-},
-["endUnixTime"] = 1789341094,
-["sessionId"] = 14,
-["added"] = false,
-["playerAuras"] = {
-},
-["startUnixTime"] = 1789340920,
-["endDate"] = "01:11:34",
-["endTime"] = 13488.661,
-["startDate"] = "01:08:40",
-["startTime"] = 13315.044,
-["alreadyAdded"] = false,
-["detailsId"] = "Ogre Browbeater14",
-},
-[16] = {
-["playerCasts"] = {
-},
-["endUnixTime"] = 1789341249,
-["sessionId"] = 16,
-["added"] = false,
-["playerAuras"] = {
-},
-["startUnixTime"] = 1789341238,
-["endDate"] = "01:14:09",
-["endTime"] = 13643.648,
-["startDate"] = "01:13:58",
-["startTime"] = 13633.368,
-["alreadyAdded"] = false,
-["detailsId"] = "Antenorian's Devoted16",
-},
-[17] = {
-["playerCasts"] = {
-},
-["sessionId"] = 17,
-["added"] = false,
-["playerAuras"] = {
-},
-["encounterName"] = "Antenorian",
-["startUnixTime"] = 1789341249,
-["encounterId"] = 3368,
-["encounterData"] = {
-["zoneType"] = "scenario",
-["unixtimeStart"] = 1789341249,
-["instanceType"] = "scenario",
-["zoneName"] = "The Shadow Enclave",
-["difficultyId"] = 208,
-["kill"] = true,
-["encounterName"] = "Antenorian",
-["encounterId"] = 3368,
-["endStatus"] = 1,
-["endTime"] = 13883.749,
-["sessionId"] = 17,
-["startTime"] = 13643.611,
-["difficultyName"] = "Delves",
-["zoneMapId"] = 2952,
-},
-["startDate"] = "01:14:09",
-["startTime"] = 13643.648,
-["alreadyAdded"] = false,
-["detailsId"] = "(!) Antenorian17",
-},
-},
-["local_instances_config"] = {
-{
-["modo"] = 2,
-["sub_attribute"] = 1,
-["horizontalSnap"] = false,
-["verticalSnap"] = false,
-["isLocked"] = true,
-["is_open"] = true,
-["sub_atributo_last"] = {
-1,
-1,
-1,
-1,
-1,
-},
-["snap"] = {
-},
-["segment"] = 0,
-["mode"] = 2,
-["attribute"] = 1,
-["pos"] = {
-["normal"] = {
-["y"] = -327.2887268066406,
-["x"] = 1162.775634765625,
-["w"] = 222.4291839599609,
-["h"] = 221.4216156005859,
-},
-["solo"] = {
-["y"] = 2,
-["x"] = 1,
-["w"] = 300,
-["h"] = 200,
-},
-},
-},
-{
-["modo"] = 2,
-["sub_attribute"] = 1,
-["horizontalSnap"] = false,
-["verticalSnap"] = false,
-["isLocked"] = true,
-["is_open"] = true,
-["sub_atributo_last"] = {
-1,
-1,
-1,
-1,
-1,
-},
-["snap"] = {
-},
-["segment"] = 0,
-["mode"] = 2,
-["attribute"] = 2,
-["pos"] = {
-["normal"] = {
-["y"] = -327.3668823242188,
-["x"] = 935.771484375,
-["w"] = 222.4291839599609,
-["h"] = 220.4212341308594,
-},
-["solo"] = {
-["y"] = 2,
-["x"] = 1,
-["w"] = 300,
-["h"] = 200,
-},
-},
-},
-},
+["last_version"] = "12.1.0 15275",
+["auto_combatlog"] = false,
 ["cached_talents"] = {
-["Player-3713-09224DF3"] = "CgGADBD3hSPCL9Y9gz68WcKvMAAAAAAAAAAAAgZmxsMzMjZWMLGMWGY2MjRT0MzsYmZmxYGDAAAAAwwyMgltZGMmlBwUAAAgNMzDMgFzgBjNLbAmZAMA",
+["Player-3391-0D1455B3"] = "CIEAzbn3egSOtoSwvPw1U1vTLsZeAzyYGzYmZWWGjZZWmlZMAADAAAAAAaamhZMzwY2aDADMgZw2AAAzMtNzsMDQgNLLYAAzwYAAWmBMzMgxC",
+["Player-1403-0AD2C1CB"] = "CoQAMrNP5kak+EBqLfUa3dMm+yMzMzoZzM2mZGzyAAAAAAAAGzYYBGYb0GNsYwYZMzMzMDAMjZGzMzAMMjZAAAmZmZmZmBbzMAD",
+["Player-1403-0A60DAAC"] = "CsPAkXBWxkyfx9CbGaHonEAhLNAzMMjZYY2mZmZmZbmZ0MjxYYmxgZmZmZmZmZAAAAAAAAAYMbDMgFwywEyYBzMmZGYAYYmBgBD",
+["Player-3674-090ADBD2"] = "CgQALMl7AwW51MWzGneuHE3tPCAAAgBAAAAzMzsstMmZmZMzMjhhFYDmxiGbDIzAbMzMY2mZmRz2yMzmZMbsMjZGDmlBAADgZGMzAADG",
+["Player-633-0AEC3AAF"] = "CcEASWsDSHNyPDXnbxuIhH3ZdjZmZmFzYmZGAAAghphxYmZzMzMzYmxMDAAAAgxyMDMhxy2AbgBMDTIzgNwMDDDmlZ2GgZGAMDDA",
+["Player-1597-03CF9647"] = "C4PAD57yiELKEty14ekTDtZEqYbZWGDjZMTjlZG2yMMbAAAAAAAAgZMjZW2mxMzYG8Ammxgx2yMzMzMzMzswMbDmBAAMmZGjZGMjNGGgNmZbGD",
+["Player-3674-092F3082"] = "CIQAR03Gt7xPmcDNOjs2Zlb3yOMjZGAAAAAAAAAAAghZxMGLzMmZWmZYmx2MGzMzYDZGLmpBYGgZ2MjmNDAZMWAwMAjZmZMbjZ2WGgZwA",
+["Player-1084-0A5F7BE2"] = "CkQAMrNP5kak+EBqLfUa3dMm+yMzMzoZhhZmZmlBAAYmZZ2mZmlxAAjllBGwEMDbBG2GAAAmBAAwMDzMjBzwMzMzMGMzMzAAmBG",
+["Player-1403-0AE4D1E4"] = "C4QAQnG51S19isUJoJoTeJ/IKDAAAAAAAghx2MwmFzYmllZshZmhZW2WmZswMaGzAGMYMLzMzMMbDGsYCAAAAgAsYZmlZbmBEAMgBYGwYYsIjZA",
+["Player-1379-00E71CE2"] = "CcEASWsDSHNyPDXnbxuIhH3ZdjZmZmFzYmZGAAAghphxYmZzMzMzYmxMDAAAAgxyMDMhxy2AbgBMDTIzgNwMDDDmlZ2GgZGAMDDA",
+["Player-3656-0B610CF4"] = "C4DAche08tHz49KSVf7iKFnyuNGGLzMzsgZGamZGAAAGAwMz0sssMDAEbAAsBzMDbWmxMLzYMzMzMswMzMzMAADAAwAMzAMAYYmZA",
+["Player-1305-0D4E6118"] = "CoPAkXBWxkyfx9CbGaHonEAhLxMzyMzwMmZmhZZmZmmZZGjxMGAAAAwMMzMzMjZGDAYmZmZGAAADMwMW0YZDktBsBYGDAAwMDYMA",
+["Player-1379-0934EF7D"] = "CQQA5HmDzx68KWyrW/8Y781L7Dgx2MMzMmZmtZmZmZMmF4BmZbaZw2MAAAAAAbbzMzwMzMziZmZbAAAAYmBAjZxwQGYWYhWYjBYmBDMA",
+["Player-1305-0D3BBE13"] = "CoQAMrNP5kak+EBqLfUa3dMm+amhZGNbmx2MzYWGAAAAAAAwYGDLwAbj2ohFjZGLz2MzMmBAmZMmZmZAmZGmZDAAMmZmxwwyMGwA",
+["Player-1403-064ED391"] = "C0PAD57yiELKEty14ekTDtZEqAMmxwCsAzwQDbAAYGPwMzsMzwMzMjZGMzYmhZGzYGmZGzYGM0MAAAAAAAAYmZmBYmNCDzCYbAYA",
+["Player-3674-0A7CAD27"] = "CcEASWsDSHNyPDXnbxuIhH3ZdjZmZmFzYmZGAAAghphxYmZzMzMzwMmZAAAAAMWmZgJMW2GYBMgZYCZGsBmZsNMYWmZbAmZAwMMA",
+["Player-2073-095FBF70"] = "CgGADBD3hSPCL9Y9gz68WcKvMAAAAAAAAAAAAgZmZmFzMjZWmZxwMLLDMbGGNRmZWGzMzsMm5BMAAAAAAjtZGYZbmBjZZAMFAAAYzYmBYxADMLW2AMzAA",
+["Player-1402-0AE3DD08"] = "C4DAche08tHz49KSVf7iKFnyuNzwYZmZmFMzQzMGAAAGAwMz0sssMDAEbAAsBzMDbWmxMLzYMzMzMswMzMzMAADAAwAMzAMAYYmZA",
+["Player-1084-0ADA908E"] = "CgGADBD3hSPCL9Y9gz68WcKvMAAAAAAAAAAAAgZmxsYmZMziZxMmZZZgZzMGNRzMzyMzMzsMmBAAAAAgZsZALbzMYMLDgpAAAAbYmHAYxMYALWAYmBwA",
+["Player-1085-021C93EF"] = "CEQAR03Gt7xPmcDNOjs2Zlb3yCDAAAAAAYBmZWGzMmZMMDzsMzYGAAAAzYWmBzMzwMMDgZqBwMbYIMmlBYMwiZmZBQzYMGDzMAzMzAD",
+["Player-1596-0F7B321C"] = "CIQAR03Gt7xPmcDNOjs2Zlb3yOjZWGAAAAAAAAAAAAYsNzMsMmZmZxMzMzYbGMzDMjNEjFzkZmBzMDAEgZb22CmNGAMGGzMjZ2mZGMzgB+AA",
+["Player-1379-0B4CBC76"] = "C4QAQnG51S19isUJoJoTeJ/IKDAAAAAAAghx2MwmFzYmllZshZmhZW2WmZswMaGzAGMYMLzMzMMbDGsYCAAAAgAsYZmlZbmBEAMgBYGwYYsIjZA",
+["Player-1084-05D0F0F8"] = "CkQAMrNP5kak+EBqLfUa3dMm+aMmZGNbmx2MzY2GAAwMzsMbmZ2GDAMLLLjhxwMNMzwWmNG2GAAAmBAAMzMzYGmZbMmxYmZmxwMzMAADYA",
+["Player-3702-0A5DD5A0"] = "CMQA5HmDzx68KWyrW/8Y781L7bmlZmFDGAAAAAYWGsNDAAAAAottxMzMzMGLzMzsNzyMz8AmxMjxwMjxAsNzyYhxMmlGz2ywkthhNDmZwMzMMA",
+["Player-1084-0B601C44"] = "CgQALMl7AwW51MWzGneuHE3tPCAAAgBAAAAzMzsstMzMzMjZGjZgFYDmxiGbDIzAbMzMY2mZMa2WmZ2MjZhFjZGDLzyAAAAzMDmZAgBzA",
+["Player-1305-05272EFB"] = "C4DAche08tHz49KSVf7iKFnyuZGGLzMzswMDamZGAAAGAwMz0sssMDAEbAAAmZG2sMjZWmxYmZmZYhZMzMDAwAAAMAzMgZAwwMzA",
+["Player-1305-0D60F4A1"] = "CYQALMl7AwW51MWzGneuHE3tPCAAAAzMbLzMmZmZZbZMMjBAAAAsYmNYADY2YCZWAgZZmZGjtFTYmZZsMzMzYYZWmxiZGmZZAADAMzYYYA",
+["Player-3674-0BBEA2E8"] = "CgQALMl7AwW51MWzGneuHE3tPCAAAgBAAAAzMzsssNzMzMjZGjZMWMzCMgJYWYCMWwMDmtZGjmtlZmNzYWYxYmxwysMAAAwMzAgZGYwM",
+["Player-3657-0AB0914E"] = "CUQA5HmDzx68KWyrW/8Y781L7Dgx2MAAAAAwsMGLTMbbjxMDDzMzMzw8AbzYGbbzMzMzMDYMz2AAAAYGMmFzyMmtZYsww2MLTL0ysgZYmZmBzYA",
+["Player-1092-08E27309"] = "CYGADBD3hSPCL9Y9gz68WcKvMAAAAAAAAAAAAAAAAAWomZrZMzMDwsMmZmBDGzyMLzsYMjNWmZZMmZmNMMAjltZGMmlRgJAAAALMzMzgNjhhBAwMDMA",
+["Player-1305-03B42DED"] = "CsQAMrNP5kak+EBqLfUa3dMm+yMzMzoZjhZmZmlZzMzMLGjFzAAgZmxMzsAGzYYhMw2wGNWYAAgxAjNAMzAYmxYAAAYmZmBAwYYA",
+["Player-1305-0D153826"] = "CwPAkXBWxkyfx9CbGaHonEAhLBYmhZMGDz2MzMTziZGzMjZAAAAAAAAMzYYAwyMmZ2MzYmZMwAzYTjlFAbTshBMDAjZmxMYmBDjB",
+["Player-1305-0D46DC5B"] = "CwPAkXBWxkyfx9CbGaHonEAhLBYmhZmZmZY2mZmZa2MzYMDAAAAAAAAMzYGDAWmxMzmZGjZAbmNDDZgZjhGLYADAGzMjZAmZmxYA",
+["Player-1403-054D3D23"] = "CEQAR03Gt7xPmcDNOjs2Zlb3yCDAAAAAAYBmZWGzMmZMMDzsMzYGAAAAzYWmBzMzwMMDgZqBwMbYIMmlBYMwiZmZBQzYMGDzMAzMzAD",
+["Player-1084-0A046168"] = "C4PAD57yiELKEty14ekTDtZEqwCMwMGNWGQmBbAAAAAAAAgZMzMDzYmZMDGTzYwsstNzMzMzMzMYmlhZGAAwYMDAmx2GmBYhZ2mxA",
+["Player-1316-04EC052A"] = "CAEAche08tHz49KSVf7iKFnyuNmNsMzMzitZmJmZmZMzMjFzMzYGzABAAmZmZbZmpNAAAAAAYDgttxMzMY2mHwYmxCAAAzsBMDMgZwAA",
+["Player-1305-0A8CF87C"] = "C4PAD57yiELKEty14ekTDtZEqwCMwMGNWGQmBbAAAAAAAAgZMzMDzYmZMDGTzYwsttNzMzMzMzMwsMMDAAgZmhBwM2YMDwGzsNjB",
+["Player-3713-09224DF3"] = "CkGADBD3hSPCL9Y9gz68WcKvMYMmZZmZMzMmthZwsZsNmBAAAAAAAAAAbDa2YMNzY4BMLzMzMDDzAAAAAAAAAAIAAgZbmlmtZ2sxYmZwMwoZAAmZAYA",
+["Player-3702-0A7A4B12"] = "CgQALMl7AwW51MWzGneuHE3tPCAAAgBAAAAzMzsssNjZGjZGzMDjFYDmxmGbDIzAbmhZw2YMTz2yMzmZMLsYegZGzwsMAAAwMzgZGAYwM",
+["Player-1096-06E5590B"] = "CgEASWsDSHNyPDXnbxuIhH3ZdDAAAAAAgGDzYmZ2MzMz4BmZMzMzYmZmlZmxMzMbGzMAAQMzy2YjFLLmphZGmMLMzYDYmBDAYmBzMMGjZMYA",
+["Player-1084-0A610452"] = "CcQALMl7AwW51MWzGneuHE3tPOzMzgZmZmZmhZmZAAAAAAAAA2AsZGDLkFYGGawCAzyMmZGLLzAzMbsMzMzwwYGAgZYMzYmJwMDGMGA",
+["Player-1305-0AD6615F"] = "CEQAR03Gt7xPmcDNOjs2Zlb3yyYAAAAAAAgZmlxYMzMDzMzYZGmBAAAwwsMDzMzMYGzAYmaAgZWMTmFDAMGsZmZWA0MMjxwMz2yAMDMA",
+["Player-1305-0D7B6C29"] = "CoQAMrNP5kak+EBqLfUa3dMm+yMMzoZzMz2MzMzyAAAAAAAAGzYYBGYb0CNsYMzYZ2mZmxMAwMjZmxMDwYGzYDAAMmZmxwwyMGwA",
 },
-["last_instance_id"] = 2913,
+["last_instance_id"] = 3004,
 ["data_harvest_for_charsts"] = {
 ["players"] = {
 {
@@ -322,36 +221,9 @@ _detalhes_database = {
 ["custom"] = "",
 ["next"] = "",
 },
-["announce_prepots"] = {
-["enabled"] = false,
-["channel"] = "SELF",
-["reverse"] = false,
-},
+["last_instance_time"] = 1789497775,
 ["active_profile"] = "MerfinUI (1440) v7.8",
 ["last_encounter"] = "Midnight Falls",
-["benchmark_db"] = {
-["frame"] = {
-},
-},
-["ignore_nicktag"] = false,
-["apocalypes_info"] = {
-},
-["damage_meter_session_info"] = {
-},
-["combat_log"] = {
-["inverse_deathlog_overalldata"] = false,
-["track_hunter_frenzy"] = false,
-["merge_gemstones_1007"] = false,
-["merge_critical_heals"] = false,
-["inverse_deathlog_raid"] = false,
-["calc_evoker_damage"] = true,
-["evoker_show_realtimedps"] = false,
-["inverse_deathlog_mplus"] = false,
-},
-["data_harvested_for_charts"] = {
-},
-["mythic_plus_log"] = {
-},
 ["mythic_dungeon_currentsaved"] = {
 ["dungeon_name"] = "",
 ["started"] = false,
@@ -363,39 +235,32 @@ _detalhes_database = {
 ["dungeon_zone_id"] = 0,
 ["previous_boss_killed_at"] = 0,
 },
-["last_instance_time"] = 1789229111,
-["announce_firsthit"] = {
-["enabled"] = true,
-["channel"] = "SELF",
+["ignore_nicktag"] = false,
+["apocalypes_info"] = {
 },
-["announce_damagerecord"] = {
-["enabled"] = true,
-["channel"] = "SELF",
+["cached_roles"] = {
 },
-["apocalypse_hashes"] = {
-["Nagrand Arena132355136041136096236179"] = {
-["sessionId"] = 1,
-["zoneName"] = "Nagrand Arena",
-["elapsedTime"] = 91.06999999999971,
+["combat_log"] = {
+["inverse_deathlog_overalldata"] = false,
+["track_hunter_frenzy"] = false,
+["merge_gemstones_1007"] = false,
+["merge_critical_heals"] = false,
+["inverse_deathlog_raid"] = false,
+["calc_evoker_damage"] = true,
+["evoker_show_realtimedps"] = false,
+["inverse_deathlog_mplus"] = false,
 },
+["last_realversion"] = 172,
+["mythic_plus_log"] = {
 },
-["last_version"] = "12.1.0 15275",
-["SoloTablesSaved"] = {
-["Mode"] = 1,
-},
-["combat_id"] = 0,
-["savedStyles"] = {
-},
-["nick_tag_cache"] = {
-["nextreset"] = 1790243576,
-["last_version"] = 16,
+["data_harvested_for_charts"] = {
 },
 ["plugin_database"] = {
 ["DETAILS_PLUGIN_TINY_THREAT"] = {
 ["enabled"] = true,
 ["only_my_group"] = false,
 ["animate"] = false,
-["updatespeed"] = 1,
+["disable_gouge"] = false,
 ["hide_pull_bar"] = false,
 ["useclasscolors"] = true,
 ["playercolor"] = {
@@ -404,15 +269,15 @@ _detalhes_database = {
 0,
 0.699999988079071,
 },
-["usefocus"] = false,
-["disable_gouge"] = false,
+["playSound"] = false,
+["updatespeed"] = 1,
 ["author"] = "Terciob",
 ["showamount"] = false,
 ["useplayercolor"] = false,
 ["absolute_mode"] = false,
 ["show_party_pets"] = false,
 ["playSoundFile"] = "Details Threat Warning Volume 3",
-["playSound"] = false,
+["usefocus"] = false,
 },
 ["DETAILS_PLUGIN_COMPARETWO_WINDOW"] = {
 ["enabled"] = true,
@@ -479,7 +344,10 @@ _detalhes_database = {
 0.5,
 },
 ["scale"] = 1,
-["arrow_anchor_y"] = 0,
+["main_frame_size"] = {
+299.9999694824219,
+500.0000915527344,
+},
 ["minimap"] = {
 ["minimapPos"] = 160,
 ["radius"] = 160,
@@ -500,7 +368,7 @@ _detalhes_database = {
 ["square_amount"] = 5,
 ["enabled"] = false,
 ["arrow_size"] = 10,
-["y"] = 1.52587890625e-05,
+["use_spark"] = true,
 ["row_spacement"] = 21,
 ["main_frame_color"] = {
 0,
@@ -508,14 +376,13 @@ _detalhes_database = {
 0,
 0.2,
 },
-["row_color"] = {
-0.1,
-0.1,
-0.1,
-0.4,
-},
+["author"] = "Terciob",
 ["arrow_texture"] = "Interface\\CHATFRAME\\ChatFrameExpandArrow",
-["use_spark"] = true,
+["font_size"] = 10,
+["y"] = 1.52587890625e-05,
+["x"] = 0,
+["font_face"] = "Friz Quadrata TT",
+["square_size"] = 32,
 ["per_second"] = {
 ["enabled"] = false,
 ["point"] = "CENTER",
@@ -527,17 +394,195 @@ _detalhes_database = {
 ["update_speed"] = 0.05,
 ["attribute_type"] = 1,
 },
-["x"] = 0,
-["font_face"] = "Friz Quadrata TT",
-["square_size"] = 32,
-["font_size"] = 10,
-["author"] = "Terciob",
+["row_color"] = {
+0.1,
+0.1,
+0.1,
+0.4,
+},
 ["main_frame_locked"] = false,
-["main_frame_size"] = {
-299.9999694824219,
-500.0000915527344,
+["arrow_anchor_y"] = 0,
 },
 },
+["damage_meter_sessions"] = {
+{
+["playerCasts"] = {
+},
+["endUnixTime"] = 1789497868,
+["sessionId"] = 1,
+["added"] = false,
+["playerAuras"] = {
+},
+["sessionName"] = "Writhing Behemoth",
+["startUnixTime"] = 1789497778,
+["endDate"] = "20:44:28",
+["endTime"] = 16837.482,
+["startDate"] = "20:42:58",
+["startTime"] = 16747.498,
+["alreadyAdded"] = false,
+["detailsId"] = "Writhing Behemoth1",
+},
+{
+["playerCasts"] = {
+},
+["endUnixTime"] = 1789497896,
+["sessionId"] = 2,
+["added"] = false,
+["playerAuras"] = {
+},
+["sessionName"] = "Venomfang Acolyte",
+["startUnixTime"] = 1789497868,
+["endDate"] = "20:44:56",
+["endTime"] = 16865.338,
+["startDate"] = "20:44:28",
+["startTime"] = 16837.482,
+["alreadyAdded"] = false,
+["detailsId"] = "Venomfang Acolyte2",
+},
+{
+["playerCasts"] = {
+},
+["endUnixTime"] = 1789497935,
+["sessionId"] = 3,
+["added"] = false,
+["playerAuras"] = {
+},
+["sessionName"] = "Venomfang Acolyte",
+["startUnixTime"] = 1789497896,
+["endDate"] = "20:45:35",
+["endTime"] = 16904.576,
+["startDate"] = "20:44:56",
+["startTime"] = 16865.338,
+["alreadyAdded"] = false,
+["detailsId"] = "Venomfang Acolyte3",
+},
+{
+["endDate"] = "20:51:20",
+["playerCasts"] = {
+},
+["endTime"] = 17249.054,
+["endUnixTime"] = 1789498280,
+["sessionId"] = 4,
+["sessionName"] = "(!) The Coiled Altar",
+["added"] = false,
+["playerAuras"] = {
+},
+["encounterName"] = "The Coiled Altar",
+["startUnixTime"] = 1789497935,
+["encounterId"] = 3429,
+["encounterData"] = {
+["zoneType"] = "raid",
+["unixtimeStart"] = 1789497935,
+["instanceType"] = "raid",
+["zoneName"] = "The Venomous Abyss",
+["difficultyId"] = 17,
+["kill"] = true,
+["encounterName"] = "The Coiled Altar",
+["encounterId"] = 3429,
+["endStatus"] = 1,
+["endTime"] = 17190.154,
+["sessionId"] = 4,
+["startTime"] = 16904.54,
+["difficultyName"] = "Looking For Raid",
+["zoneMapId"] = 3004,
+},
+["startDate"] = "20:45:35",
+["startTime"] = 16904.576,
+["alreadyAdded"] = false,
+["detailsId"] = "(!) The Coiled Altar4",
+},
+},
+["benchmark_db"] = {
+["frame"] = {
+},
+},
+["apocalypse_hashes"] = {
+["Nagrand Arena132355136041136096236179"] = {
+["sessionId"] = 1,
+["zoneName"] = "Nagrand Arena",
+["elapsedTime"] = 91.06999999999971,
+},
+},
+["last_day"] = "15",
+["SoloTablesSaved"] = {
+["Mode"] = 1,
+},
+["combat_id"] = 0,
+["savedStyles"] = {
+},
+["local_instances_config"] = {
+{
+["modo"] = 2,
+["sub_attribute"] = 1,
+["horizontalSnap"] = false,
+["verticalSnap"] = false,
+["isLocked"] = true,
+["is_open"] = true,
+["sub_atributo_last"] = {
+1,
+1,
+1,
+1,
+1,
+},
+["snap"] = {
+},
+["segment"] = 0,
+["mode"] = 2,
+["attribute"] = 1,
+["pos"] = {
+["normal"] = {
+["y"] = -327.2887268066406,
+["x"] = 1162.775634765625,
+["w"] = 222.4291839599609,
+["h"] = 221.4216156005859,
+},
+["solo"] = {
+["y"] = 2,
+["x"] = 1,
+["w"] = 300,
+["h"] = 200,
+},
+},
+},
+{
+["modo"] = 2,
+["sub_attribute"] = 1,
+["horizontalSnap"] = false,
+["verticalSnap"] = false,
+["isLocked"] = true,
+["is_open"] = true,
+["sub_atributo_last"] = {
+1,
+1,
+1,
+5,
+1,
+},
+["snap"] = {
+},
+["segment"] = 0,
+["mode"] = 2,
+["attribute"] = 2,
+["pos"] = {
+["normal"] = {
+["y"] = -327.3668823242188,
+["x"] = 935.771484375,
+["w"] = 222.4291839599609,
+["h"] = 220.4212341308594,
+},
+["solo"] = {
+["y"] = 2,
+["x"] = 1,
+["w"] = 300,
+["h"] = 200,
+},
+},
+},
+},
+["announce_firsthit"] = {
+["enabled"] = true,
+["channel"] = "SELF",
 },
 ["announce_deaths"] = {
 ["enabled"] = false,
@@ -573,7 +618,7 @@ _detalhes_database = {
 },
 ["raid_roster"] = {
 },
-["tempo_start"] = 12630.691,
+["tempo_start"] = 1789497773,
 ["last_events_tables"] = {
 },
 ["alternate_power"] = {
@@ -641,9 +686,9 @@ _detalhes_database = {
 ["data_inicio"] = 0,
 ["amountCasts"] = {
 },
-["mapId"] = 2962,
-["instance_type"] = "scenario",
-["zoneName"] = "Atal'Aman",
+["mapId"] = 3004,
+["instance_type"] = "raid",
+["zoneName"] = "The Venomous Abyss",
 ["boss_hp"] = 1,
 ["is_challenge"] = false,
 ["frags"] = {
@@ -669,14 +714,23 @@ _detalhes_database = {
 },
 ["start_time"] = 0,
 ["TimeData"] = {
+["Raid Damage Done"] = {
 },
-["combat_counter"] = 99,
 },
-["last_realversion"] = 172,
+["combat_counter"] = 161,
+},
+["announce_prepots"] = {
+["enabled"] = false,
+["channel"] = "SELF",
+["reverse"] = false,
+},
 ["arena_data_headers"] = {
 },
-["character_data"] = {
-["logons"] = 41,
+["coach"] = {
+["enabled"] = false,
+["welcome_panel_pos"] = {
+},
+["last_coach_name"] = false,
 },
 ["announce_cooldowns"] = {
 ["enabled"] = false,
@@ -689,9 +743,11 @@ _detalhes_database = {
 ["last_difficulty"] = 15,
 ["last_raid"] = "",
 },
-["cached_roles"] = {
+["announce_damagerecord"] = {
+["enabled"] = true,
+["channel"] = "SELF",
 },
 ["cached_specs"] = {
-["Player-3713-09224DF3"] = 104,
+["Player-3713-09224DF3"] = 105,
 },
 }

@@ -1,18 +1,11 @@
 
 NarciBarberShopDB = {
-["Hotkeys"] = {
-["RotateRight"] = "D",
-["RotateLeft"] = "A",
-["ZoomOut"] = "S",
-["ZoomIn"] = "W",
-},
-["SharedSavedLooks"] = {
-},
 ["PlayerData"] = {
 ["09224DF3"] = {
-["classID"] = 11,
+["realmName"] = "Burning Legion",
 ["playerName"] = "Warrington",
 ["realmID"] = "3713",
+["classID"] = 11,
 ["SavedLooks"] = {
 ["chrModel202"] = {
 },
@@ -24,16 +17,23 @@ NarciBarberShopDB = {
 ["female"] = {
 },
 },
-["chrModel129"] = {
+["chrModel126"] = {
 },
 ["chrModel125"] = {
 },
 ["chrModel124"] = {
 },
-["chrModel126"] = {
+["chrModel129"] = {
 },
 },
-["realmName"] = "Burning Legion",
 },
+},
+["Hotkeys"] = {
+["ZoomIn"] = "W",
+["RotateLeft"] = "A",
+["ZoomOut"] = "S",
+["RotateRight"] = "D",
+},
+["SharedSavedLooks"] = {
 },
 }

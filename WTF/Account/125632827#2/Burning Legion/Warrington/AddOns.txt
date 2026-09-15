@@ -145,3 +145,4 @@ OPie_Classic: disabled
 Blizzard_CombatText: enabled
 CliqueBar: disabled
 FollowTheArrow: disabled
+AztarecHelper: enabled

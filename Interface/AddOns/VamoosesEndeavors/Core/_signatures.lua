@@ -108,6 +108,12 @@ VE.Theme.ApplyTextShadow(fontString, scheme)         -- Apply/remove text shadow
 --                TaskRow, Dropdown, ScrollFrame, Checkbox, TitleBar, TabButton, HeaderText
 
 -- ============================================================================
+-- Minimap.lua - Minimap button, addon compartment, LDB data source
+-- ============================================================================
+
+VE.Minimap:RefreshBrokerText()                       -- LDB text + value = "<selected house> - <progress>%" (pct capped at 100); house name only when maxProgress is 0; "--" until the house list loads (VE window / Housing Dashboard open). Minimap + compartment tooltips show the same house/progress, read at hover time
+
+-- ============================================================================
 -- EndeavorTracker.lua - Endeavor data via C_NeighborhoodInitiative
 -- ============================================================================
 

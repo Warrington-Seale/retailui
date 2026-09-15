@@ -49,15 +49,14 @@ HDG.Constants = {
         { col = "source",  label = "Source",  width = 64,  firstDir = "asc"  },
         { col = "type",    label = "Type",    width = 70,  firstDir = "asc"  },
         { col = "date",    label = "Date",    width = 100, firstDir = "desc" },
-        -- Note, not Applied: nothing writes account.blueprints.applied yet, so an
-        -- Applied column is a column of dashes, while notes are the one thing in
-        -- the strip a player cannot see without selecting each row. The apply
-        -- date still shows in the detail strip's meta line.
+        -- Note earns the fifth column because it is the only field a player
+        -- cannot read without selecting the row one at a time; name, source,
+        -- type and date are all legible at a glance.
         { col = "note",    label = "Note",    width = 250, firstDir = "asc"  },
     },
     -- Catalog row schema version. Bump when the observer row shape changes.
     -- No migration needed -- catalog is fully re-fetched from C_HousingCatalog on every sweep.
-    CATALOG_SCHEMA_VERSION = 3,
+    CATALOG_SCHEMA_VERSION = 4,   -- 4 (2026-09-13): dropped the never-read categoryIDs / subcategoryIDs / customizations / dyeIDs / variants / dataTags / dataTagsLabel row fields
     -- Atlas for snapshot ("All Placed Decor") cards -- the decorate-mode house glyph.
     SNAPSHOT_ICON_ATLAS = "decor-controls-decoratemode-active",
     -- Atlas for empty shopping-list cards -- the shopping-cart glyph (matches the
@@ -1149,6 +1148,7 @@ HDG.Constants = {
         BLUEPRINT_SET_NOTE            = "HDGR_BLUEPRINT_SET_NOTE",            -- payload: { shareCode, text } (persisted; WireNoteBox shape)
         BLUEPRINT_CLEAR_NOTE          = "HDGR_BLUEPRINT_CLEAR_NOTE",          -- payload: { shareCode }
         BLUEPRINT_EXPORT_SUCCESS      = "HDGR_BLUEPRINT_EXPORT_SUCCESS",      -- payload: { shareCode }
+        BLUEPRINT_MANIFESTS_STALE     = "HDGR_BLUEPRINT_MANIFESTS_STALE",     -- payload: none; decor storage changed -> every received manifest's counts are suspect
 
         -- ===== Projects: shipping crates =====
         -- Whole-house manifest snapshot. Controller builds the record; reducer just writes it.
@@ -1448,3 +1448,9 @@ HDG.Constants.PET_DECOR_BY_DECOR_ID = {
     [25121] = true,  -- Cozy Bird Nest
     [25122] = true,  -- Loyal Companion's Plinth
 }
+
+-- A memoized selector's cached value is dropped after this many dispatches
+-- without a hit (Selectors:InvalidateMemos ages them). Every memo used to live
+-- for the session whether its view was ever revisited: 70 live memos, ~5 MB
+-- (2026-09-13 audit). A hit resets the age; a miss recomputes once.
+HDG.Constants.MEMO_IDLE_DISPATCHES = 400

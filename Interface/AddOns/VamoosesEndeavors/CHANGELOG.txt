@@ -1,3 +1,16 @@
+## [1.23.0] - 2026-09-14 (September 2026)
+
+### Added
+- Data broker displays (Titan Panel, ChocolateBar and the like) now show the
+  house selected in VE's dropdown and how far along its endeavor is -- for
+  example "Oakhaven - 42%". Before, VE only put an icon there. The readout
+  fills in once the house list has loaded, which happens the first time you
+  open the VE window or the Housing Dashboard each session. Thanks to NoNe10
+  for the request.
+- The minimap button and addon compartment tooltips show the same thing: the
+  selected house, and its progress as "423 / 1000 (42%)", or "Complete" once
+  the endeavor is done.
+
 ## [1.22.1] - 2026-09-05 (September 2026)
 
 ### Fixed
