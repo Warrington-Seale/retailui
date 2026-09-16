@@ -5,16 +5,16 @@ g_auctionHouseFilters = {
 ["filters"] = {
 false,
 false,
-true,
+false,
 false,
 nil,
-false,
-false,
 true,
 true,
-false,
-false,
-false,
+true,
+true,
+true,
+true,
+true,
 },
 }
 g_activeBidAuctionIDs = {

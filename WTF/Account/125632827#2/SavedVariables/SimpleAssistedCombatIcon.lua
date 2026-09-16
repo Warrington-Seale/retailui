@@ -16,11 +16,7 @@ SCAIDB = {
 ["border"] = {
 ["thickness"] = 1,
 },
-["display"] = {
-["HideInVehicle"] = true,
-["ALWAYS"] = false,
-["HideAsHealer"] = false,
-},
+["alpha"] = 0.9,
 ["DBVERSION"] = 5,
 ["position"] = {
 ["strata"] = 2,
@@ -41,7 +37,11 @@ SCAIDB = {
 ["showCount"] = true,
 },
 },
-["alpha"] = 0.9,
+["display"] = {
+["HideInVehicle"] = true,
+["ALWAYS"] = false,
+["HideAsHealer"] = false,
+},
 },
 ["Default"] = {
 ["DBVERSION"] = 5,
@@ -54,7 +54,11 @@ SCAIDB = {
 ["border"] = {
 ["thickness"] = 1,
 },
-["alpha"] = 0.9,
+["display"] = {
+["HideAsHealer"] = false,
+["HideInVehicle"] = true,
+["ALWAYS"] = false,
+},
 ["DBVERSION"] = 5,
 ["position"] = {
 ["strata"] = 2,
@@ -63,23 +67,19 @@ SCAIDB = {
 ["parent"] = "ElvUF_Player",
 ["parentFrame"] = "__other",
 },
-["display"] = {
-["HideAsHealer"] = false,
-["HideInVehicle"] = true,
-["ALWAYS"] = false,
-},
+["iconSize"] = 47,
 ["locked"] = true,
 ["cooldown"] = {
 ["HideNumbers"] = true,
 ["chargeCooldown"] = {
-["showSwipe"] = true,
 ["text"] = {
 ["font"] = "Merfin Font 1",
 },
+["showSwipe"] = true,
 ["showCount"] = true,
 },
 },
-["iconSize"] = 47,
+["alpha"] = 0.9,
 },
 },
 }

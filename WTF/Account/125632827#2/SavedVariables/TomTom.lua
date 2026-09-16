@@ -41,11 +41,6 @@ nil,
 -350,
 },
 },
-["paste"] = {
-["button"] = {
-["showInCompartment"] = true,
-},
-},
 ["block"] = {
 ["enable"] = false,
 ["width"] = 130,
@@ -58,6 +53,11 @@ nil,
 -70,
 },
 ["height"] = 40,
+},
+["paste"] = {
+["button"] = {
+["showInCompartment"] = true,
+},
 },
 },
 },

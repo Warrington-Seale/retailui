@@ -2,21 +2,21 @@
 BuffRemindersDB = {
 ["namespaces"] = {
 },
-["global"] = {
-["snoozeNoticeShown"] = true,
-["seenVersions"] = {
-["6.5.1"] = true,
-["6.4.0"] = true,
-["6.3.0"] = true,
-},
-["minimap"] = {
-["showInCompartment"] = true,
-},
-},
 ["profileKeys"] = {
 ["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
 ["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
+},
+["global"] = {
+["snoozeNoticeShown"] = true,
+["minimap"] = {
+["showInCompartment"] = true,
+},
+["seenVersions"] = {
+["6.4.0"] = true,
+["6.5.1"] = true,
+["6.3.0"] = true,
+},
 },
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
@@ -39,19 +39,10 @@ BuffRemindersDB = {
 },
 ["customBuffs"] = {
 },
-["hideAllInVehicle"] = true,
-["dbVersion"] = 54,
-["showLoginMessages"] = false,
-["hideWhileResting"] = true,
-["hideInLegacyInstances"] = false,
-["categoryVisibility"] = {
-["custom"] = {
-},
-},
 ["enabledBuffs"] = {
 ["druidWrongForm"] = false,
-["warriorWrongStance"] = false,
 ["burningRush"] = false,
+["warriorWrongStance"] = false,
 },
 ["categorySettings"] = {
 ["self"] = {
@@ -59,9 +50,9 @@ BuffRemindersDB = {
 ["y"] = -60,
 },
 },
-["presence"] = {
+["targeted"] = {
 ["position"] = {
-["y"] = 20,
+["y"] = -20,
 },
 },
 ["pet"] = {
@@ -74,9 +65,9 @@ BuffRemindersDB = {
 ["y"] = -140,
 },
 },
-["targeted"] = {
+["presence"] = {
 ["position"] = {
-["y"] = -20,
+["y"] = 20,
 },
 },
 ["raid"] = {
@@ -92,18 +83,35 @@ BuffRemindersDB = {
 },
 },
 },
+["hideInLegacyInstances"] = false,
+["showLoginMessages"] = false,
+["hideWhileResting"] = true,
+["rememberedConsumables"] = {
+[104] = {
+["weapon"] = 1237006,
 },
-["Default"] = {
-["enabledBuffs"] = {
-["druidWrongForm"] = false,
-["warriorWrongStance"] = false,
-["burningRush"] = false,
+[105] = {
+["weapon"] = 1237006,
 },
+},
+["hideAllInVehicle"] = true,
+["dbVersion"] = 54,
 ["categoryVisibility"] = {
 ["custom"] = {
 },
 },
+},
+["Default"] = {
+["enabledBuffs"] = {
+["druidWrongForm"] = false,
+["burningRush"] = false,
+["warriorWrongStance"] = false,
+},
 ["dbVersion"] = 54,
+["categoryVisibility"] = {
+["custom"] = {
+},
+},
 ["customBuffs"] = {
 },
 },
@@ -129,7 +137,15 @@ BuffRemindersDB = {
 ["hideWhileResting"] = true,
 ["customBuffs"] = {
 },
-["hideAllInVehicle"] = true,
+["rememberedConsumables"] = {
+[268] = {
+["weapon"] = 1237006,
+},
+},
+["categoryVisibility"] = {
+["custom"] = {
+},
+},
 ["categorySettings"] = {
 ["self"] = {
 ["position"] = {
@@ -151,11 +167,9 @@ BuffRemindersDB = {
 ["y"] = 20,
 },
 },
-["raid"] = {
-["buffTextSize"] = 16,
-["showText"] = true,
+["targeted"] = {
 ["position"] = {
-["y"] = 60,
+["y"] = -20,
 },
 },
 ["pet"] = {
@@ -163,23 +177,22 @@ BuffRemindersDB = {
 ["y"] = -100,
 },
 },
-["targeted"] = {
+["raid"] = {
+["buffTextSize"] = 16,
+["showText"] = true,
 ["position"] = {
-["y"] = -20,
+["y"] = 60,
 },
 },
-},
-["categoryVisibility"] = {
-["custom"] = {
-},
-},
-["dbVersion"] = 49,
-["enabledBuffs"] = {
-["druidWrongForm"] = false,
-["burningRush"] = false,
-["warriorWrongStance"] = false,
 },
 ["hideInLegacyInstances"] = false,
+["dbVersion"] = 54,
+["enabledBuffs"] = {
+["druidWrongForm"] = false,
+["warriorWrongStance"] = false,
+["burningRush"] = false,
+},
+["hideAllInVehicle"] = true,
 },
 },
 }

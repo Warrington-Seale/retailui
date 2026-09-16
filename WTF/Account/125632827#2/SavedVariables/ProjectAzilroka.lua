@@ -36,7 +36,7 @@ ProjectAzilrokaDB = {
 ["stAddonManager"] = {
 ["Enable"] = false,
 },
-["FasterLoot"] = {
+["Cooldown"] = {
 ["Enable"] = false,
 },
 ["SquareMinimapButtons"] = {
@@ -44,16 +44,16 @@ ProjectAzilrokaDB = {
 ["ButtonSpacing"] = -1,
 ["ReverseDirection"] = true,
 ["IconSize"] = 23,
-["Shadows"] = false,
+["MoveGarrison"] = false,
 ["MoveQueue"] = false,
 ["Backdrop"] = false,
 ["MoveMail"] = false,
-["MoveGarrison"] = false,
+["Shadows"] = false,
 ["BarMouseOver"] = true,
 ["ButtonsPerRow"] = 10,
 ["MoveTracker"] = false,
 },
-["Cooldown"] = {
+["FasterLoot"] = {
 ["Enable"] = false,
 },
 },

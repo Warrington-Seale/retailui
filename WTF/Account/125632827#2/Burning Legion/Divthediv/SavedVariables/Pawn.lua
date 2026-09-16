@@ -1,6 +1,6 @@
 
 PawnOptions = {
-["LastVersion"] = 2.1315,
+["LastVersion"] = 2.1316,
 ["LastPlayerFullName"] = "Divthediv-Burning Legion",
 ["AutoSelectScales"] = true,
 ["ItemLevels"] = {

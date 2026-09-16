@@ -46,41 +46,31 @@ NarcissusDB = {
 ["UseAddonCompartment"] = true,
 ["DressingRoom"] = true,
 ["UseBustShot"] = true,
-["RealmNames"] = {
-[524] = "Burning Legion",
+["TooltipLanguages"] = {
 },
 ["DressingRoomItemSetListHideDupes"] = true,
 ["TranslateName"] = false,
 ["TalentTreeUseClassBackground"] = false,
-["TooltipLanguages"] = {
-},
-["FontHeightItemName"] = 10,
 ["UseEntranceVisual"] = true,
-["Version"] = 10000,
-["DressingRoomShowSlot"] = true,
-["EnableDoubleTap"] = false,
-["Tutorials"] = {
-["ExitConfirmation"] = true,
-["Movement"] = true,
-["SpellVisualBrowser"] = true,
-["NPCBrowserEntance"] = true,
-["WeaponBrowser"] = true,
-["NPCBrowser"] = true,
+["ConduitTooltip"] = false,
+["RealmNames"] = {
+[524] = "Burning Legion",
 },
+["DressingRoomShowSlot"] = true,
+["installTime"] = 1788947582,
+["EnableDoubleTap"] = false,
+["SpeedyScreenshotAlert"] = true,
 ["AutoPlayAnimation"] = false,
 ["AFKScreen"] = false,
-["Favorites"] = {
-["FavoriteAnimationIDs"] = {
-},
-},
+["IndependentMinimapButton"] = false,
 ["AKFScreenDelay"] = false,
-["GlobalScale"] = 0.8,
-["WardrobeCollectionSetsCheckbox"] = true,
-["UseWoWQualityColor"] = false,
+["TalentTreeAnchor"] = 1,
+["TalentTreeForPaperDoll"] = false,
+["NameTranslationPosition"] = 1,
 ["PaperDollWidget_ClassSet"] = true,
 ["TalentTreeForEquipmentManager"] = true,
-["CameraOrbit"] = true,
-["NamePlateNameOffset"] = 0,
+["HideTextsWithUI"] = false,
+["AnchorToMinimap"] = true,
 ["PerksProgramDB"] = {
 ["MonthNames"] = {
 {
@@ -94,46 +84,50 @@ NarcissusDB = {
 ["CurrentMonthData"] = {
 },
 },
-["AutoDisplayQuestItem"] = false,
+["TooltipTheme"] = "Bright",
 ["OnlyShowOwnedUpgradeItem"] = true,
 ["GemManager"] = true,
 ["ModelPanelScale"] = 1,
-["TooltipTheme"] = "Bright",
-["AnchorToMinimap"] = true,
-["HideTextsWithUI"] = false,
+["AutoDisplayQuestItem"] = false,
+["NamePlateNameOffset"] = 0,
+["CameraOrbit"] = true,
 ["TalentTreeForInspection"] = true,
-["NameTranslationPosition"] = 1,
-["TalentTreeForPaperDoll"] = false,
-["TalentTreeAnchor"] = 1,
-["IndependentMinimapButton"] = false,
-["SpeedyScreenshotAlert"] = true,
+["UseWoWQualityColor"] = false,
+["WardrobeCollectionSetsCheckbox"] = true,
+["GlobalScale"] = 0.8,
+["Favorites"] = {
+["FavoriteAnimationIDs"] = {
+},
+},
+["Tutorials"] = {
+["ExitConfirmation"] = true,
+["Movement"] = true,
+["SpellVisualBrowser"] = true,
+["NPCBrowserEntance"] = true,
+["NPCBrowser"] = true,
+["WeaponBrowser"] = true,
+},
 ["TradingPostChangePost"] = true,
-["installTime"] = 1788947582,
+["Version"] = 10000,
 ["SearchSuggestEnable"] = false,
-["ConduitTooltip"] = false,
+["FontHeightItemName"] = 10,
 ["DressingRoomUseTargetModel"] = true,
 }
 NarciAchievementOptions = {
 ["UseAsDefault"] = false,
-["IncompleteFirst"] = true,
+["ShowRedMark"] = false,
 ["Scale"] = 1,
 ["ReplaceToast"] = true,
 ["Theme"] = 1,
-["ShowRedMark"] = false,
+["IncompleteFirst"] = true,
 }
 NarciStatisticsDB = {
 ["InstalledDate"] = 1788948167,
 ["QuestItems"] = {
 },
 ["AddOnActionForbidden"] = {
-["timeLastError"] = 1789050121,
 ["addons"] = {
 ["SenseiClassResourceBar"] = {
-["errorTime"] = {
-1788958994,
-1788958994,
-1788958994,
-},
 ["count"] = 3,
 ["timeLastError"] = 1788958994,
 },
@@ -153,6 +147,7 @@ NarciStatisticsDB = {
 ["timeLastError"] = 1789050121,
 },
 },
+["timeLastError"] = 1789050121,
 },
 }
 NarciTurntableOptions = nil
@@ -176,7 +171,7 @@ NarciCharacterProfiles = {
 ["name"] = "Warrington",
 ["birth"] = 1788948167,
 ["serverID"] = 3713,
-["lastVisit"] = 1789494903,
+["lastVisit"] = 1789577818,
 ["outfits"] = {
 },
 ["class"] = 11,
@@ -186,7 +181,7 @@ NarciCharacterProfiles = {
 ["name"] = "Divthediv",
 ["birth"] = 1788950655,
 ["serverID"] = 3713,
-["lastVisit"] = 1788950845,
+["lastVisit"] = 1789519433,
 ["outfits"] = {
 {
 ["s"] = "69765,73428,54620,46881,0,0,20785,45063,69812,69779,67234,66553,66553:0:5867",
