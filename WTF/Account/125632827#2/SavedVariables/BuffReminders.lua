@@ -2,21 +2,21 @@
 BuffRemindersDB = {
 ["namespaces"] = {
 },
+["global"] = {
+["snoozeNoticeShown"] = true,
+["seenVersions"] = {
+["6.5.1"] = true,
+["6.4.0"] = true,
+["6.3.0"] = true,
+},
+["minimap"] = {
+["showInCompartment"] = true,
+},
+},
 ["profileKeys"] = {
 ["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
 ["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
-},
-["global"] = {
-["snoozeNoticeShown"] = true,
-["minimap"] = {
-["showInCompartment"] = true,
-},
-["seenVersions"] = {
-["6.4.0"] = true,
-["6.5.1"] = true,
-["6.3.0"] = true,
-},
 },
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
@@ -39,10 +39,19 @@ BuffRemindersDB = {
 },
 ["customBuffs"] = {
 },
+["hideAllInVehicle"] = true,
+["dbVersion"] = 54,
+["categoryVisibility"] = {
+["custom"] = {
+},
+},
+["showLoginMessages"] = false,
+["hideWhileResting"] = true,
+["hideInLegacyInstances"] = false,
 ["enabledBuffs"] = {
 ["druidWrongForm"] = false,
-["burningRush"] = false,
 ["warriorWrongStance"] = false,
+["burningRush"] = false,
 },
 ["categorySettings"] = {
 ["self"] = {
@@ -50,9 +59,9 @@ BuffRemindersDB = {
 ["y"] = -60,
 },
 },
-["targeted"] = {
+["presence"] = {
 ["position"] = {
-["y"] = -20,
+["y"] = 20,
 },
 },
 ["pet"] = {
@@ -65,9 +74,9 @@ BuffRemindersDB = {
 ["y"] = -140,
 },
 },
-["presence"] = {
+["targeted"] = {
 ["position"] = {
-["y"] = 20,
+["y"] = -20,
 },
 },
 ["raid"] = {
@@ -83,29 +92,24 @@ BuffRemindersDB = {
 },
 },
 },
-["hideInLegacyInstances"] = false,
-["showLoginMessages"] = false,
-["hideWhileResting"] = true,
 ["rememberedConsumables"] = {
+[103] = {
+["weapon"] = 1237008,
+},
 [104] = {
-["weapon"] = 1237006,
+["food"] = 1259658,
+["weapon"] = 1237008,
 },
 [105] = {
-["weapon"] = 1237006,
-},
-},
-["hideAllInVehicle"] = true,
-["dbVersion"] = 54,
-["categoryVisibility"] = {
-["custom"] = {
+["weapon"] = 1237008,
 },
 },
 },
 ["Default"] = {
 ["enabledBuffs"] = {
 ["druidWrongForm"] = false,
-["burningRush"] = false,
 ["warriorWrongStance"] = false,
+["burningRush"] = false,
 },
 ["dbVersion"] = 54,
 ["categoryVisibility"] = {
@@ -122,7 +126,7 @@ BuffRemindersDB = {
 ["glowXOffset"] = 0,
 ["iconWidth"] = 58,
 ["expirationThreshold"] = 5,
-["glowSize"] = 1,
+["showMissingGlow"] = true,
 ["glowYOffset"] = 0,
 ["glowProcStartAnim"] = false,
 ["borderSize"] = 1,
@@ -131,7 +135,7 @@ BuffRemindersDB = {
 ["iconSize"] = 50,
 ["glowProcDuration"] = 1,
 ["textSize"] = 16,
-["showMissingGlow"] = true,
+["glowSize"] = 1,
 },
 ["showLoginMessages"] = false,
 ["hideWhileResting"] = true,
@@ -146,6 +150,14 @@ BuffRemindersDB = {
 ["custom"] = {
 },
 },
+["hideAllInVehicle"] = true,
+["enabledBuffs"] = {
+["druidWrongForm"] = false,
+["burningRush"] = false,
+["warriorWrongStance"] = false,
+},
+["dbVersion"] = 54,
+["hideInLegacyInstances"] = false,
 ["categorySettings"] = {
 ["self"] = {
 ["position"] = {
@@ -185,14 +197,6 @@ BuffRemindersDB = {
 },
 },
 },
-["hideInLegacyInstances"] = false,
-["dbVersion"] = 54,
-["enabledBuffs"] = {
-["druidWrongForm"] = false,
-["warriorWrongStance"] = false,
-["burningRush"] = false,
-},
-["hideAllInVehicle"] = true,
 },
 },
 }

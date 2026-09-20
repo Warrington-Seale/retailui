@@ -1,22 +1,8 @@
 # BigWigs
 
-## [v424.8](https://github.com/BigWigsMods/BigWigs/tree/v424.8) (2026-09-09)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v424.7...v424.8) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
+## [v425.2](https://github.com/BigWigsMods/BigWigs/tree/v425.2) (2026-09-20)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v425.1...v425.2) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
 
-- Update locale prints  
-- Update esES  
-- Update esES (#2790)  
-- Update zhCN (#2789)  
-- Update zhTW (#2786)  
-- Update koKR (#2787)  
-- Update frFR (#2785)  
-- Update deDE (#2784)  
-- TheVenomousAbyss: Update aura data (#2782)  
-- Update zhCN (#2781)  
-- Options: Display more aura info (#2773)  
-- TheVenomousAbyss/Sszorak: Remove the separated Raging Crosswinds auras  
-- Parser: Update valid\_aura\_keys  
-- Update aura data  
-- Show difficulty icon for Auras  
-- TheVenomousAbyss/Sszorak: Mythic Venomous Surge special case  
-- Update koKR (#2778)  
+- Plugins/BossBlock: Add support for blocking talking heads that require special conditions, and support blocking talking heads in delves and lairs  
+- Fix hardcoded classic translations showing up in missing translations  
+    (and switch apt to apt-get)  

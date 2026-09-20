@@ -1,3 +1,5 @@
 @cont1nuity:
-- Fixing an issue with absorb shield not sizing correctly.
+- Baseline compatibility with WoW Forever.
+- Fixing an issue with class indicators.
+- Fixing some issues with auras not showing correctly.
 

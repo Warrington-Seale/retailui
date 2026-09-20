@@ -1,7 +1,6 @@
 # Baganator
 
-## [823](https://github.com/TheMouseNest/Baganator/tree/823) (2026-09-06)
-[Full Changelog](https://github.com/TheMouseNest/Baganator/compare/822...823) 
+## [828](https://github.com/TheMouseNest/Baganator/tree/828) (2026-09-19)
+[Full Changelog](https://github.com/TheMouseNest/Baganator/compare/827...828) 
 
-- ElvUI skin improvements  
-- Update upgrade track detection  
+- Forever: Fix equipment set scanning  

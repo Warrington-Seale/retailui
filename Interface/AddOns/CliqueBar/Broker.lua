@@ -17,18 +17,18 @@ function CliqueBar:SetupBroker()
 			if button == "RightButton" then
 				self.db.profile.locked = not self.db.profile.locked
 				self:ApplyLock()
-				self:Print(self.db.profile.locked and L["Bar locked."] or L["Bar unlocked - drag to move."])
 			else
 				self:OpenOptions()
 			end
 		end,
 		OnTooltipShow = function(tooltip)
-			tooltip:AddLine("CliqueBar")
-			local count = self.entries and #self.entries or 0
-			tooltip:AddLine(string.format(L["%d bindings shown"], count), 1, 1, 1)
-			tooltip:AddLine(" ")
-			tooltip:AddLine(L["Left-click: open options"], 0.6, 0.6, 0.6)
-			tooltip:AddLine(L["Right-click: lock/unlock the bar"], 0.6, 0.6, 0.6)
+			tooltip:AddLine("CliqueBar", 1, 1, 1)
+			tooltip:AddLine(L["Left-click to open options"], 1, 0.82, 0)
+			tooltip:AddLine(self.db.profile.locked and L["Right-click to unlock the bar"]
+				or L["Right-click to lock the bar"], 1, 0.82, 0)
+			if not _G.Clique then
+				tooltip:AddLine(L["Clique needs to be loaded for CliqueBar to work properly"], 0.59, 0.67, 0.9)
+			end
 		end,
 	})
 	self.dataObject = dataObject
@@ -39,27 +39,22 @@ function CliqueBar:SetupBroker()
 	end
 
 	-- Show up in the addon compartment (the drawer at the top of the minimap).
+	-- Compartment entries are single-action: every click opens the options, and the
+	-- tooltip only lists that.
 	if AddonCompartmentFrame and AddonCompartmentFrame.RegisterAddon and not self.compartmentAdded then
 		self.compartmentAdded = true
 		AddonCompartmentFrame:RegisterAddon({
 			text = "CliqueBar",
 			icon = ICON,
 			notCheckable = true,
-			func = function(_, arg1, arg2)
-				local mouseButton = (arg1 == "LeftButton" or arg1 == "RightButton") and arg1
-					or (type(arg2) == "table" and arg2.buttonName) or nil
-				if mouseButton == "RightButton" then
-					self.db.profile.locked = not self.db.profile.locked
-					self:ApplyLock()
-				else
-					self:OpenOptions()
-				end
-			end,
+			func = function() self:OpenOptions() end,
 			funcOnEnter = function(button)
 				GameTooltip:SetOwner(button, "ANCHOR_LEFT")
-				GameTooltip:AddLine("CliqueBar")
-				GameTooltip:AddLine(L["Left-click: open options"], 0.6, 0.6, 0.6)
-				GameTooltip:AddLine(L["Right-click: lock/unlock the bar"], 0.6, 0.6, 0.6)
+				GameTooltip:AddLine("CliqueBar", 1, 1, 1)
+				GameTooltip:AddLine(L["Left-click to open options"], 1, 0.82, 0)
+				if not _G.Clique then
+					GameTooltip:AddLine(L["Clique needs to be loaded for CliqueBar to work properly"], 0.59, 0.67, 0.9)
+				end
 				GameTooltip:Show()
 			end,
 			funcOnLeave = function() GameTooltip:Hide() end,

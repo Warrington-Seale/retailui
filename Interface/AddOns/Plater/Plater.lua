@@ -3543,7 +3543,7 @@ Plater.AnchorNamesByPhraseId = {
 			
 
 				if PixelUtil.SetRoundLayoutToNearestPixelRecursively then
-					PixelUtil.SetRoundLayoutToNearestPixelRecursively(unitFrame)
+					PixelUtil.SetRoundLayoutToNearestPixelRecursively(unitFrame, true)
 				end
 
 			--> name plate created hook
@@ -6378,13 +6378,15 @@ function Plater.OnInit() --private --~oninit ~init
 	if IS_WOW_PROJECT_MAINLINE then
 		for classID = 1, MAX_CLASSES do
 			local _, classFile = GetClassInfo(classID)
-			CLASS_INFO_CACHE[classFile] = {}
-			local GetNumSpecializationsForClassID = GetNumSpecializationsForClassID or C_SpecializationInfo.GetNumSpecializationsForClassID --10.0.5
-			for i = 1, GetNumSpecializationsForClassID(classID) do
-				local specID, maleName, _, iconID, role = GetSpecializationInfoForClassID(classID, i, 2) -- male
-				local _, femaleName, _, iconID, role = GetSpecializationInfoForClassID(classID, i, 3) -- female
-				CLASS_INFO_CACHE[classFile][maleName] = {role = role, specID = specID, iconID = iconID}
-				CLASS_INFO_CACHE[classFile][femaleName] = CLASS_INFO_CACHE[classFile][maleName]
+			if classFile then
+				CLASS_INFO_CACHE[classFile] = {}
+				local GetNumSpecializationsForClassID = GetNumSpecializationsForClassID or C_SpecializationInfo.GetNumSpecializationsForClassID --10.0.5
+				for i = 1, GetNumSpecializationsForClassID(classID) do
+					local specID, maleName, _, iconID, role = GetSpecializationInfoForClassID(classID, i, 2) -- male
+					local _, femaleName, _, iconID, role = GetSpecializationInfoForClassID(classID, i, 3) -- female
+					CLASS_INFO_CACHE[classFile][maleName] = {role = role, specID = specID, iconID = iconID}
+					CLASS_INFO_CACHE[classFile][femaleName] = CLASS_INFO_CACHE[classFile][maleName]
+				end
 			end
 		end
 	end
@@ -9746,8 +9748,12 @@ end
 		elseif (indicator == "classicon") then
 			local _, class = UnitClass (plateFrame.unitFrame [MEMBER_UNITID])
 			if (class) then
-				thisIndicator:SetTexture ([[Interface\GLUES\CHARACTERCREATE\UI-CharacterCreate-Classes]])
-				thisIndicator:SetTexCoord (unpack (CLASS_ICON_TCOORDS [class]))
+				if IS_WOW_PROJECT_MIDNIGHT_API then
+					thisIndicator:SetAtlas("classicon-" .. class)
+				else
+					thisIndicator:SetTexture ([[Interface\GLUES\CHARACTERCREATE\UI-CharacterCreate-Classes]])
+					thisIndicator:SetTexCoord (unpack (CLASS_ICON_TCOORDS [class]))
+				end
 			end
 		
 		elseif (indicator == "specicon") then
@@ -11241,6 +11247,8 @@ end
 			if tooltipData then
 				local line = tooltipData.lines and tooltipData.lines[2 + cbMode]
 				subTitle = line and line.leftText or ""
+				--the tooltip hands back a secret string when the unit is restricted, and comparing one throws
+				if IS_WOW_PROJECT_MIDNIGHT and issecretvalue(subTitle) then return end --MIDNIGHT!!
 			end
 		else
 			local GameTooltipFrame = PlaterScanTooltip or CreateFrame ("GameTooltip", "PlaterScanTooltip", nil, "GameTooltipTemplate")

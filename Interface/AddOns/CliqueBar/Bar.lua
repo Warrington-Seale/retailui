@@ -268,6 +268,8 @@ function CliqueBar:ApplyLock()
 	-- Re-lay out so icon drag registration and the drop placeholders track the lock
 	-- state even when it changes from the minimap or the right-click menu (no Refresh).
 	self:LayoutBar()
+	-- Lock toggling also flips the unlocked-always-visible rule in UpdateVisibility.
+	self:UpdateVisibility()
 end
 
 function CliqueBar:GetMasqueGroup()
@@ -444,13 +446,19 @@ function CliqueBar:UpdateDropHighlight()
 end
 
 function CliqueBar:OnButtonDragStart(btn)
-	if not self:ManualDragEnabled() then return end
-	self.draggingButton = btn
-	btn.icon:SetAlpha(0.4)
-	GameTooltip:Hide()
-	self:SetPlaceholdersShown(true)
-	if self.dragUpdater then
-		self.dragUpdater:SetScript("OnUpdate", function() self:UpdateDropHighlight() end)
+	if self:ManualDragEnabled() then
+		self.draggingButton = btn
+		btn.icon:SetAlpha(0.4)
+		GameTooltip:Hide()
+		self:SetPlaceholdersShown(true)
+		if self.dragUpdater then
+			self.dragUpdater:SetScript("OnUpdate", function() self:UpdateDropHighlight() end)
+		end
+	elseif not self.db.profile.locked then
+		-- Unlocked outside Manual arrange: icons sit on top of the drag overlay, so
+		-- left-dragging an icon moves the whole bar instead of being swallowed.
+		GameTooltip:Hide()
+		self.bar:StartMoving()
 	end
 end
 
@@ -461,6 +469,9 @@ function CliqueBar:OnButtonDragStop(btn)
 	local target
 	if self.draggingButton == btn then
 		target = self:DropTargetUnderCursor()
+	elseif self.bar then
+		self.bar:StopMovingOrSizing()
+		self:SavePosition()
 	end
 	self:SetPlaceholdersShown(false)
 	if self.dragUpdater then self.dragUpdater:SetScript("OnUpdate", nil) end
@@ -507,7 +518,7 @@ function CliqueBar:LayoutBar()
 		local slot = e.slot or (i - 1)
 		btn.slot = slot
 		if slot > maxSlot then maxSlot = slot end
-		if manualDrag then
+		if manualDrag or not p.locked then
 			btn:RegisterForDrag("LeftButton")
 		else
 			btn:RegisterForDrag()
@@ -551,6 +562,10 @@ function CliqueBar:LayoutBar()
 	if fixedRows > 0 then
 		rows = math.max(fixedRows, math.ceil(totalCells / perRow))
 		cols = perRow
+	elseif n == 0 then
+		-- No bindings: a compact two-cell strip is enough to grab and move the bar —
+		-- a full empty row would be oversized for something that only exists to drag.
+		rows, cols = 1, 2
 	else
 		rows = math.max(1, math.ceil(totalCells / perRow))
 		cols = rows > 1 and perRow or totalCells
@@ -656,12 +671,16 @@ function CliqueBar:UpdateGlows(event, spellID)
 		elseif spellID == nil or spellID == btn.spellID then
 			-- HIDE may fire without a spellID; treat that as a full re-query pass,
 			-- which also covers entries rebuilt mid-proc (Refresh calls with none).
+			-- Normalise nil/false: a button that has never glowed carries glowActive = nil
+			-- and would otherwise read as a state change into the stop branch, before
+			-- AcquireGlow has ever built btn.glow (every button, every pass, on clients
+			-- with no spell overlays at all).
 			local active = util.IsSpellOverlayedByID(btn.spellID)
-			if active ~= btn.glowActive then
+			if active ~= (btn.glowActive or false) then
 				if active then
 					AcquireGlow(btn):StartGlow()
 				else
-					btn.glow:StopGlow()
+					StopGlow(btn) -- nil-safe; btn.glow exists only after the first start
 				end
 				btn.glowActive = active
 			end
@@ -684,6 +703,9 @@ function CliqueBar:UpdateVisibility()
 			show = false
 		end
 	end
+	-- Unlocked always shows: the empty drag bar has to be grabbable to position the
+	-- bar, even with no bindings yet (or while Clique is missing).
+	if not self.db.profile.locked then show = true end
 	f:SetShown(show)
 
 	-- Mouse-over mode: keep the bar present but fade it in only while hovered

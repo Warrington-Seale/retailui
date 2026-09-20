@@ -230,7 +230,10 @@ platerInternal.Auras = {
 }
 Plater.SpellCaches = platerInternal.Auras.spellCaches
 
-local spellBlacklist = {} -- some spells just crash PTR clients... add them here
+local spellBlacklist = { -- some spells just crash PTR clients... add them here
+	[1251678] = true,
+	[1251535] = true,
+}
 
 -- Spell Caches
 local expandAuraCaches
@@ -1078,11 +1081,16 @@ local function getAuraFilters(frameName, actorType, force)
 				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
 				candidate.includeDispelTypes["Enrage"] = true
 				table.insert(filters, {
-					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					filterString = "HELPFUL" .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
 					candidateFilters = candidate,
 				})
 
-				-- remaining exclude magic
+				-- remaining exclude enrage
+				allCandidates.mainFilter.excludeDispelTypes["Enrage"] = true
+				allCandidates.additionalInclude.excludeDispelTypes["Enrage"] = true
+			elseif DB_SHOW_ENRAGE_IN_EXTRA_ICONS and not canAssist then
+				allCandidates.mainFilter.excludeDispelTypes = allCandidates.mainFilter.excludeDispelTypes or {}
+				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
 				allCandidates.mainFilter.excludeDispelTypes["Enrage"] = true
 				allCandidates.additionalInclude.excludeDispelTypes["Enrage"] = true
 			end
@@ -1095,11 +1103,16 @@ local function getAuraFilters(frameName, actorType, force)
 				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
 				candidate.includeDispelTypes["Magic"] = true
 				table.insert(filters, {
-					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					filterString = "HELPFUL" .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
 					candidateFilters = candidate,
 				})
 
 				-- remaining exclude magic
+				allCandidates.mainFilter.excludeDispelTypes["Magic"] = true
+				allCandidates.additionalInclude.excludeDispelTypes["Magic"] = true
+			elseif DB_SHOW_MAGIC_IN_EXTRA_ICONS and not canAssist then
+				allCandidates.mainFilter.excludeDispelTypes = allCandidates.mainFilter.excludeDispelTypes or {}
+				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
 				allCandidates.mainFilter.excludeDispelTypes["Magic"] = true
 				allCandidates.additionalInclude.excludeDispelTypes["Magic"] = true
 			end
@@ -1208,11 +1221,11 @@ local function getAuraFilters(frameName, actorType, force)
 				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
 				candidate.includeDispelTypes["Enrage"] = true
 				table.insert(filters, {
-					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					filterString = "HELPFUL" .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
 					candidateFilters = candidate,
 				})
 
-				-- remaining exclude magic
+				-- remaining exclude enrage
 				allCandidates.mainFilter.excludeDispelTypes["Enrage"] = true
 				allCandidates.additionalInclude.excludeDispelTypes["Enrage"] = true
 			end
@@ -1225,7 +1238,7 @@ local function getAuraFilters(frameName, actorType, force)
 				allCandidates.additionalInclude.excludeDispelTypes = allCandidates.additionalInclude.excludeDispelTypes or {}
 				candidate.includeDispelTypes["Magic"] = true
 				table.insert(filters, {
-					filterString = "HELPFUL" .. (DB_SHOW_PURGE_IN_EXTRA_ICONS and "|!RAID_PLAYER_DISPELLABLE" or "") .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
+					filterString = "HELPFUL" .. (Plater.db.profile.extra_icon_show_defensive and "|!BIG_DEFENSIVE|!EXTERNAL_DEFENSIVE" or ""),
 					candidateFilters = candidate,
 				})
 
@@ -1588,7 +1601,11 @@ local function initAuraFrame(auraButton, frameName, frameKey, auraContainer)
 			}
 		}
 		--C_AuraContainerUtil.ProcessCustomAuraButtonDispelTypeTextureOptions(borderOptions)
-		auraButton:SetAuraBorder(auraButton.Border, borderOptions)
+		if auraButton.SetAuraBorder then
+			auraButton:SetAuraBorder(auraButton.Border, borderOptions)
+		else
+			auraButton:AddDispelTypeTexture(auraButton.Border, borderOptions)
+		end
 	end
 
 
@@ -1756,9 +1773,16 @@ function reSkinAuraButtons(auraButtons, options)
     	auraButton.Border:SetVertexColor(defaultColor[1], defaultColor[2], defaultColor[3], defaultColor[4])
 
 		if frameName ~= "ExtraIconFrame" and Plater.db.profile.aura_border_colors_by_type or frameName == "ExtraIconFrame" and Plater.db.profile.extra_icon_aura_border_colors_by_type then
-			auraButton:SetAuraBorder(auraButton.Border, options.borderOptions)
+			if auraButton.SetAuraBorder then
+				auraButton:SetAuraBorder(auraButton.Border, options.borderOptions)
+			else
+				auraButton:AddDispelTypeTexture(auraButton.Border, options.borderOptions)
+			end
 		else
-			auraButton:ClearAuraBorder()
+			if auraButton.ClearAuraBorder then
+				auraButton:ClearDispelTypeTextures()
+			else
+			end
 		end
 
 		auraButton.Cooldown:SetEdgeTexture (profile.aura_cooldown_edge_texture)

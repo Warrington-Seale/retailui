@@ -1,6 +1,6 @@
 # Syndicator
 
-## [279](https://github.com/TheMouseNest/Syndicator/tree/279) (2026-09-12)
-[Full Changelog](https://github.com/TheMouseNest/Syndicator/compare/278...279) 
+## [282](https://github.com/TheMouseNest/Syndicator/tree/282) (2026-09-19)
+[Full Changelog](https://github.com/TheMouseNest/Syndicator/compare/281...282) 
 
-- Fix active season check (didn't get it quite right)  
+- Fix typo  

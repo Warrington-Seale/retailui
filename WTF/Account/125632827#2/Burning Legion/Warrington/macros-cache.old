@@ -1,3 +1,7 @@
+VER 3 0100000000000018 "#showtooltip/use" "134400"
+#showtooltip
+/use [@mouseover, noharm, nodead, exists] [] lifebloom
+END
 VER 3 0100000000000015 "/amoreg" "134400"
 #showtooltip
 /use [@mouseover, noharm, nodead, exists] [] regrowth
@@ -6,6 +10,26 @@ VER 3 0100000000000013 "bear" "134400"
 #showtooltip
 /use [nostance:1] Bear Form
 /use mangle
+END
+VER 3 010000000000001A "modef" "134400"
+#showtooltip
+/use [@mouseover, noharm, nodead, exists] [] ironbark
+END
+VER 3 010000000000001B "modispel" "134400"
+#showtooltip
+/use [@mouseover, noharm, nodead, exists] [] Nature's Cure
+END
+VER 3 0100000000000017 "morej" "134400"
+#showtooltip
+/use [@mouseover, noharm, nodead, exists] [] rejuvenation
+END
+VER 3 010000000000001C "mosom" "134400"
+#showtooltip
+/use [@mouseover, noharm, nodead, exists] [] swiftmend
+END
+VER 3 0100000000000019 "mowg" "134400"
+#showtooltip
+/use [@mouseover, noharm, nodead, exists] [] wild growth
 END
 VER 3 0100000000000016 "rez" "134400"
 #showtooltip

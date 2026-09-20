@@ -3,7 +3,7 @@
 ## Notes: Shows your Clique click-cast bindings as an icon bar with keys and cooldowns.
 ## IconTexture: Interface\AddOns\CliqueBar\Media\Icon.tga
 ## Author: Sogu
-## Version: v0.2.0
+## Version: v0.3.0
 ## SavedVariables: CliqueBarDB
 ## OptionalDeps: Clique, Masque
 ## Category: Unit Frames

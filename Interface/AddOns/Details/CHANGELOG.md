@@ -1,9 +1,8 @@
 # Details! Damage Meter
 
-## [Details.20260811.15275.172-3-g17e716e](https://github.com/Tercioo/Details-Damage-Meter/tree/17e716eb2709a68fd0b89096f873941362732b5b) (2026-09-08)
-[Full Changelog](https://github.com/Tercioo/Details-Damage-Meter/compare/Details.20260811.15275.172...17e716eb2709a68fd0b89096f873941362732b5b) 
+## [Details.20260918.15280.172-3-gf7de4ed](https://github.com/Tercioo/Details-Damage-Meter/tree/f7de4ed3a8df97ca4559aac8e8854d9c381c6d6f) (2026-09-18)
+[Full Changelog](https://github.com/Tercioo/Details-Damage-Meter/compare/Details.20260918.15280.172...f7de4ed3a8df97ca4559aac8e8854d9c381c6d6f) 
 
-- Merge pull request #1128 from Hollicsh/master  
-    Update the .toc files  
-- Update the .toc files  
-- Show note for the user when it is not in group  
+- Taint fix.  
+- Secret values when inspecting fix.  
+- framework and .toc updates  

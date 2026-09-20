@@ -1,6 +1,7 @@
 # Auctionator
 
-## [336](https://github.com/TheMouseNest/Auctionator/tree/336) (2026-08-26)
-[Full Changelog](https://github.com/TheMouseNest/Auctionator/compare/335...336) 
+## [338](https://github.com/TheMouseNest/Auctionator/tree/338) (2026-09-19)
+[Full Changelog](https://github.com/TheMouseNest/Auctionator/compare/337...338) 
 
-- Prevent showing auction prices on WuE gear  
+- Forever: Fix pricing  
+- Fixes for Forever  

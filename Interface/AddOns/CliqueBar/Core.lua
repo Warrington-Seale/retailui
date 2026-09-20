@@ -1,5 +1,4 @@
 local ADDON, ns = ...
-local L = ns.L
 
 local CliqueBar = LibStub("AceAddon-3.0"):NewAddon(ADDON, "AceEvent-3.0", "AceConsole-3.0")
 ns.addon = CliqueBar
@@ -14,6 +13,58 @@ local function GetSpellTextureByID(spellID)
 		return C_Spell.GetSpellTexture(spellID)
 	end
 	return (select(3, GetSpellInfo(spellID)))
+end
+
+-- Classic clients keep every rank of a spell as its own spellbook entry, and Clique
+-- stores the bound rank in bind.spellSubName. A bare-name lookup returns whichever rank
+-- the client hands back first (in practice the lowest), so the bar would show Rank 1 for
+-- a binding that actually casts Rank 6. Walking the spellbook maps an explicit rank
+-- exactly, and a rank-less binding to the highest known rank -- what /cast casts. These
+-- globals are Classic-only (retail moved them to C_SpellBook), so on clients without
+-- ranks this resolves to nil and the plain name lookup below stays in charge.
+local RANKED_SPELLBOOK = GetNumSpellTabs and GetSpellTabInfo
+	and GetSpellBookItemName and GetSpellBookItemInfo
+
+local spellBook -- built lazily, dropped on every BuildEntries so new ranks are picked up
+
+local function BuildSpellBook()
+	local ranks, highest = {}, {}
+	local bookType = BOOKTYPE_SPELL or "spell"
+	for tab = 1, GetNumSpellTabs() do
+		local _, _, offset, numSpells = GetSpellTabInfo(tab)
+		offset = offset or 0
+		for slot = offset + 1, offset + (numSpells or 0) do
+			local kind, spellID = GetSpellBookItemInfo(slot, bookType)
+			if kind == "SPELL" and spellID then
+				local name, subName = GetSpellBookItemName(slot, bookType)
+				if name then
+					if subName and subName ~= "" then
+						ranks[name .. "\0" .. subName] = spellID
+					end
+					highest[name] = spellID -- ranks are listed ascending: the last one wins
+				end
+			end
+		end
+	end
+	return { ranks = ranks, highest = highest }
+end
+
+local function InvalidateSpellBook()
+	spellBook = nil
+end
+
+local function GetRankedSpellID(name, subName)
+	if not (RANKED_SPELLBOOK and name) then return nil end
+	if not subName then
+		-- "Healing Wave(Rank 3)": the form macros (and older Clique data) carry the rank in.
+		local base, rank = string.match(name, "^(.-)%s*%((.+)%)%s*$")
+		if base and base ~= "" then name, subName = base, rank end
+	end
+	spellBook = spellBook or BuildSpellBook()
+	if subName and subName ~= "" then
+		return spellBook.ranks[name .. "\0" .. subName]
+	end
+	return spellBook.highest[name]
 end
 
 local function GetSpellIDByName(name)
@@ -96,6 +147,7 @@ end
 ns.util = {
 	GetSpellTextureByID = GetSpellTextureByID,
 	GetSpellIDByName = GetSpellIDByName,
+	GetRankedSpellID = GetRankedSpellID,
 	GetSpellCooldownByID = GetSpellCooldownByID,
 	GetSpellCooldownDurationByID = GetSpellCooldownDurationByID,
 	GetSpellChargesByID = GetSpellChargesByID,
@@ -206,13 +258,15 @@ function CliqueBar:BuildEntries()
 	local entries = {}
 	local binds = self:GetCliqueBindings()
 	if not binds then return entries end
+	InvalidateSpellBook()
 
 	local mode = self.db.profile.whichBinds -- "spells" | "macros" | "all"
 	for _, bind in ipairs(binds) do
 		if type(bind) == "table" then
 			local key = bind.key or ""
 			if bind.type == "spell" then
-				local spellID = bind.spellID or GetSpellIDByName(bind.spell)
+				local spellID = GetRankedSpellID(bind.spell, bind.spellSubName)
+					or bind.spellID or GetSpellIDByName(bind.spell)
 				local texture = GetSpellTextureByID(spellID) or bind.icon
 				entries[#entries + 1] = {
 					label = self:FormatKey(bind.key),
@@ -225,7 +279,9 @@ function CliqueBar:BuildEntries()
 				}
 			elseif bind.type == "macro" and mode ~= "spells" then
 				local spellName = ParseMacroSpell(bind.macrotext or bind.macro or bind.arg1)
-				local spellID = spellName and GetSpellIDByName(spellName) or nil
+				local spellID = spellName
+					and (GetRankedSpellID(spellName) or GetSpellIDByName(spellName))
+					or nil
 				local texture = bind.icon or GetSpellTextureByID(spellID)
 				entries[#entries + 1] = {
 					label = self:FormatKey(bind.key),
@@ -400,6 +456,7 @@ function CliqueBar:OnEnable()
 	self:TryRegisterEvent("PLAYER_SPECIALIZATION_CHANGED", "Refresh")
 	self:TryRegisterEvent("PLAYER_TALENT_UPDATE", "Refresh")
 	self:TryRegisterEvent("TRAIT_CONFIG_UPDATED", "Refresh")
+	self:TryRegisterEvent("LEARNED_SPELL_IN_TAB", "Refresh") -- new rank trained (Classic)
 	self:TryRegisterEvent("SPELL_UPDATE_COOLDOWN", "UpdateCooldowns")
 	self:TryRegisterEvent("SPELL_UPDATE_CHARGES", "UpdateCharges")
 	self:TryRegisterEvent("PLAYER_REGEN_ENABLED", "UpdateVisibility")
@@ -438,7 +495,6 @@ function CliqueBar:SlashHandler(input)
 	if input == "lock" then
 		self.db.profile.locked = not self.db.profile.locked
 		self:ApplyLock()
-		self:Print(self.db.profile.locked and L["Bar locked."] or L["Bar unlocked - drag to move."])
 	elseif input == "about" then
 		ns.ShowAbout()
 	else

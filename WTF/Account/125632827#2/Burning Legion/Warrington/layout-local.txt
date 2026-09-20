@@ -16,10 +16,10 @@ H: 1
 Frame: DST_MainFrame
 FrameLevel: 500
 Anchor: TOPLEFT
-X: 25
+X: 108
 Y: -118
-W: 182
-H: 362
+W: 184
+H: 257
 Frame: GroupLootHistoryFrame
 FrameLevel: 1
 Anchor: TOPLEFT

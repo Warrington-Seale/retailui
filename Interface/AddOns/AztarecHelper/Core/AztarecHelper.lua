@@ -5,7 +5,7 @@
 
 local ADDON, AZT = ...
 
-AZT.VERSION = "2.4.7"
+AZT.VERSION = "2.4.8"
 
 -- Venomfall Deeps boss room, measured on PTR 12.1.0.
 -- UnitPosition returns (a, b, z, inst). The addon prints them as world=b,a.
@@ -274,6 +274,9 @@ SlashCmdList["AZT"] = function(msg)
     elseif cmd == "cross" then
         AZT.SetCross(not AztarecHelperDB.cross)
         chat("compass cross: " .. (AztarecHelperDB.cross and "ON - it draws in the delve" or "OFF"))
+        if AztarecHelperDB.cross and AZT.crossRefused then
+            chat(AZT.CROSS_REFUSED)
+        end
     elseif cmd == "crossy" then
         local n = tonumber(rest)
         if n then

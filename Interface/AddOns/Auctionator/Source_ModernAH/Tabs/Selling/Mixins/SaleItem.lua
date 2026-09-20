@@ -8,7 +8,9 @@ local SALE_ITEM_EVENTS = {
 local function NormalizePrice(price)
   local normalizedPrice = price
 
-  if Auctionator.Constants.IsRetail then
+  if Auctionator.Constants.IsForever then
+    return normalizedPrice
+  elseif Auctionator.Constants.IsRetail then
     -- Round up
     if normalizedPrice % 100 ~= 0 then
       normalizedPrice = normalizedPrice + (100 - normalizedPrice % 100)

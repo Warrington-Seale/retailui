@@ -11,6 +11,11 @@ VER 3 0100000000000013 "bear" "134400"
 /use [nostance:1] Bear Form
 /use mangle
 END
+VER 3 010000000000001D "cheesebear" "134400"
+#showtooltip Single-Button assistant
+/use ironfur
+/use single-button assistant
+END
 VER 3 010000000000001A "modef" "134400"
 #showtooltip
 /use [@mouseover, noharm, nodead, exists] [] ironbark

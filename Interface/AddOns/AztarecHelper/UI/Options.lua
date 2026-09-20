@@ -548,7 +548,7 @@ end, function(v)
     AZT.WaveSync()
 end)
 
-addCheck(
+local crossCheck = addCheck(
     "Compass cross",
     "Four lines out of your character, one per quarter, each pointing where its quarter"
         .. " really is however you turn and wearing that quarter's marker color. Needs a"
@@ -621,8 +621,11 @@ end
 
 local crossBars = { gapBar, liftBar }
 refreshers[#refreshers + 1] = function()
-    local on = AztarecHelperDB.cross
-    local why = "Locked while the compass cross is off. Tick it to use this."
+    -- a refused ring read locks the whole block for the session, tickbox too
+    local refused = AZT.crossRefused
+    local on = AztarecHelperDB.cross and not refused
+    local why = refused and AZT.CROSS_REFUSED or "Locked while the compass cross is off. Tick it to use this."
+    enableLook(crossCheck, not refused, AZT.CROSS_REFUSED)
     enableLook(crossWhen, on, why)
     enableLook(crossArms, on, why)
     for _, bar in ipairs(crossBars) do

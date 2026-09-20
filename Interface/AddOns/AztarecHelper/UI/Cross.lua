@@ -90,6 +90,23 @@ end
 
 --#endregion
 
+-- Blizzard's 12.1 hotfix, announced 2026-09-14, turns the ring read into a
+-- Lua error inside instances while the minimap rotates. With that there is
+-- nothing left to turn the arms by, so the cross stands down for the
+-- session, hands the minimap back and says why. Four lines going missing
+-- without a word is what fills the comment section
+AZT.CROSS_REFUSED = "The game no longer lets addons read the minimap compass in the delve, so the"
+    .. " compass cross has nothing to turn by. It stays off until Blizzard opens that up again."
+
+local function refuse()
+    AZT.crossRefused = true
+    AZT.CrossSync()
+    AZT.chat(AZT.CROSS_REFUSED)
+    if AZT.RefreshOptions then
+        AZT.RefreshOptions()
+    end
+end
+
 -- sized to the screen diagonal so the arms cross the whole screen at every
 -- angle, the crossing lifted onto the character and the center gap cut by
 -- the mask, both from their saved numbers
@@ -162,7 +179,11 @@ local function build()
         local rot
         if MinimapCompassTexture then
             local ok, r = pcall(MinimapCompassTexture.GetRotation, MinimapCompassTexture)
-            rot = ok and r or nil
+            if not ok then
+                refuse()
+                return
+            end
+            rot = r
         end
         -- when the switch says so the echoes trim the cross to the route,
         -- safe arm full, next one faint, the other two gone. A wave that was
@@ -197,7 +218,7 @@ end
 -- flapping on and off around every pull, only the drawing follows the
 -- Sermon setting. Wave edges land here too, through setWave's fan out
 function AZT.CrossSync()
-    local lend = AztarecHelperDB.cross and AZT.InDelve()
+    local lend = AztarecHelperDB.cross and AZT.InDelve() and not AZT.crossRefused
     local show = lend and (not AztarecHelperDB.crossSermon or (AZT.Wave and AZT.Wave.phase ~= nil))
     if lend and not frame then
         build()
