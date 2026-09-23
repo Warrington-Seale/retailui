@@ -1,7 +1,7 @@
 
 BugGrabberDB = {
+["session"] = 80,
 ["lastSanitation"] = 3,
-["session"] = 79,
 ["errors"] = {
 {
 ["message"] = "...erface/AddOns/Details/Libs/DF/unitframe_midnight.lua:2525: attempt to call a nil value",
@@ -45,8 +45,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: Interface/AddOns/!BugGrabber/BugGrabber.lua:-1: insecure scripts exceeded execution limit for addon !BugGrabber",
-["time"] = 1788957522,
 ["session"] = 17,
+["time"] = 1788957522,
 ["counter"] = 10,
 },
 {
@@ -67,8 +67,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'SenseiClassResourceBar')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:108: in function 'HideSystemSelections'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:115: in function 'ExitEditMode'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:137: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:135>\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: in function 'Hide'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:440: in function 'SetUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:471: in function 'MoveUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:525: in function 'HideUIPanelImplementation'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:484: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:132: in function <...UIParentPanelManager/Shared/UIParentPanelManager.lua:123>\n[C]: in function 'SetAttribute'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:867: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:53: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_SharedXML/Mainline/SharedUIPanelTemplates.lua]:149: in function <...izzard_SharedXML/Mainline/SharedUIPanelTemplates.lua:144>\n",
-["time"] = 1788958996,
 ["session"] = 17,
+["time"] = 1788958996,
 ["counter"] = 1,
 },
 {
@@ -81,20 +81,20 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'PixelPerfectEditMode')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1400: in function 'UpdateSystems'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:953: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:190: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n[C]: in function 'SetActiveLayout'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1460: in function 'SelectLayout'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1270: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:1265>\n[tail call]: ?\n[C]: in function 'securecallfunction'\n[Interface/AddOns/Blizzard_Menu/Menu.lua]:934: in function 'Pick'\n[Interface/AddOns/Blizzard_Menu/MenuTemplates.lua]:137: in function <Interface/AddOns/Blizzard_Menu/MenuTemplates.lua:131>\n",
-["session"] = 20,
 ["time"] = 1789039127,
+["session"] = 20,
 ["counter"] = 1,
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'PixelPerfectEditMode')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:108: in function 'HideSystemSelections'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:115: in function 'ExitEditMode'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:137: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:135>\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: in function 'Hide'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:440: in function 'SetUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:471: in function 'MoveUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:525: in function 'HideUIPanelImplementation'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:484: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:132: in function <...UIParentPanelManager/Shared/UIParentPanelManager.lua:123>\n[C]: in function 'SetAttribute'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:867: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:53: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_SharedXML/Mainline/SharedUIPanelTemplates.lua]:149: in function <...izzard_SharedXML/Mainline/SharedUIPanelTemplates.lua:144>\n",
-["session"] = 20,
 ["time"] = 1789039130,
+["session"] = 20,
 ["counter"] = 2,
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:1692: attempted to index a table that cannot be accessed while tainted (execution tainted by 'PixelPerfectEditMode')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:108: in function 'HideSystemSelections'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:115: in function 'ExitEditMode'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:137: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:135>\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: in function 'Hide'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:440: in function 'SetUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:471: in function 'MoveUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:525: in function 'HideUIPanelImplementation'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:484: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:132: in function <...UIParentPanelManager/Shared/UIParentPanelManager.lua:123>\n[C]: in function 'SetAttribute'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:867: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:53: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_SharedXML/Mainline/SharedUIPanelTemplates.lua]:149: in function <...izzard_SharedXML/Mainline/SharedUIPanelTemplates.lua:144>\n",
-["session"] = 20,
 ["time"] = 1789039130,
+["session"] = 20,
 ["counter"] = 1,
 },
 {
@@ -107,8 +107,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'PixelPerfectEditMode')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:108: in function 'HideSystemSelections'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:115: in function 'ExitEditMode'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:137: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:135>\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n[C]: ?\n...[C]: in function 'SetAttribute'\n[Interface/AddOns/Blizzard_UIParentPanelManager/Shared/UIParentPanelManager.lua]:867: in function 'HideUIPanel'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:53: in function 'onCloseCallback'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:14: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:12>\n[C]: in function 'securecallfunction'\n[Interface/AddOns/Blizzard_GameMenuEsc/Blizzard_GameMenuEsc.lua]:101: in function <...AddOns/Blizzard_GameMenuEsc/Blizzard_GameMenuEsc.lua:99>\n[Interface/AddOns/Blizzard_GameMenuEsc/Blizzard_GameMenuEsc.lua]:110: in function <...AddOns/Blizzard_GameMenuEsc/Blizzard_GameMenuEsc.lua:109>\n[C]: ?\n[C]: in function 'ToggleGameMenu'\n[TOGGLEGAMEMENU]:1: in function <[string \"TOGGLEGAMEMENU\"]:1>\n",
-["session"] = 20,
 ["time"] = 1789040064,
+["session"] = 20,
 ["counter"] = 2,
 },
 {
@@ -201,14 +201,14 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: GetAuraDataByIndex(): Auras cannot be accessed when secret while tainted by 'ExwindTools'\nLua Taint: ExwindTools\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:979: in function 'InvokeOnAnyEditModeSystemAnchorChanged'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:964: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:196: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n",
-["time"] = 1789076540,
 ["session"] = 24,
+["time"] = 1789076540,
 ["counter"] = 3,
 },
 {
 ["message"] = "LUA_WARNING: ...face/AddOns/Blizzard_TextStatusBar/TextStatusBar.lua:110: attempt to compare a secret number value (execution tainted by 'Cell')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1400: in function 'UpdateSystems'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:953: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:190: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n[C]: ?\n[C]: ?\n[C]: in function 'OnLayoutDeleted'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1502: in function 'DeleteLayout'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1186: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:1185>\n[tail call]: ?\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeDialogs.lua]:132: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeDialogs.lua:130>\n[tail call]: ?\n[Interface/AddOns/Blizzard_SharedXML/Shared/Button/UIButtonTemplate.lua]:16: in function <...lizzard_SharedXML/Shared/Button/UIButtonTemplate.lua:12>\n",
-["session"] = 28,
 ["time"] = 1789138928,
+["session"] = 28,
 ["counter"] = 1,
 },
 {
@@ -269,8 +269,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'CooldownManagerCentered')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1400: in function 'UpdateSystems'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:953: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:190: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n",
-["time"] = 1789153526,
 ["session"] = 31,
+["time"] = 1789153526,
 ["counter"] = 2,
 },
 {
@@ -355,14 +355,14 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: AddOn [ExwindCore] failure to load: missing",
-["session"] = 34,
 ["time"] = 1789213889,
+["session"] = 34,
 ["counter"] = 1,
 },
 {
 ["message"] = "LUA_WARNING: AddOn [ExwindTools] Failed to load missing dependency [ExwindCore]",
-["session"] = 34,
 ["time"] = 1789213889,
+["session"] = 34,
 ["counter"] = 1,
 },
 {
@@ -663,8 +663,8 @@ BugGrabberDB = {
 },
 {
 ["message"] = "LUA_WARNING: ...ce/AddOns/Blizzard_CooldownViewer/CooldownViewer.lua:946: attempted to index a table that cannot be accessed while tainted (execution tainted by 'CooldownManagerCentered')\n|cffffd200Stack:|r\n[C]: in function 'secureexecuterange'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:1400: in function 'UpdateSystems'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:953: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:938>\n[C]: in function 'UpdateLayoutInfo'\n[Interface/AddOns/Blizzard_EditMode/Shared/EditModeManager.lua]:196: in function <.../AddOns/Blizzard_EditMode/Shared/EditModeManager.lua:187>\n",
-["time"] = 1789654004,
 ["session"] = 72,
+["time"] = 1789654004,
 ["counter"] = 4,
 },
 {

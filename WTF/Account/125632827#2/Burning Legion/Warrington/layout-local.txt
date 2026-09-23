@@ -2,8 +2,8 @@ Version: 1
 Frame: ZygorGuidesViewerFrameMaster
 FrameLevel: 1
 Anchor: LEFT
-X: 0
-Y: -78
+X: 20
+Y: 24
 W: 40
 H: 40
 Frame: ZygorGuidesViewerPointer_ArrowCtrl
@@ -18,8 +18,8 @@ FrameLevel: 500
 Anchor: TOPLEFT
 X: 108
 Y: -118
-W: 184
-H: 257
+W: 178
+H: 320
 Frame: GroupLootHistoryFrame
 FrameLevel: 1
 Anchor: TOPLEFT
@@ -27,6 +27,13 @@ X: 509
 Y: -81
 W: 261
 H: 590
+Frame: MerchantFrame
+FrameLevel: 1
+Anchor: TOPLEFT
+X: 16
+Y: -116
+W: 678
+H: 444
 Frame: ColorPickerFrame
 FrameLevel: 134
 Anchor: CENTER
@@ -41,10 +48,3 @@ X: -10
 Y: -125
 W: 450
 H: 600
-Frame: MerchantFrame
-FrameLevel: 1
-Anchor: TOPLEFT
-X: 16
-Y: -116
-W: 678
-H: 444
