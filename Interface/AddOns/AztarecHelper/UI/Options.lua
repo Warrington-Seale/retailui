@@ -548,98 +548,6 @@ end, function(v)
     AZT.WaveSync()
 end)
 
-local crossCheck = addCheck(
-    "Compass cross",
-    "Four lines out of your character, one per quarter, each pointing where its quarter"
-        .. " really is however you turn and wearing that quarter's marker color. Needs a"
-        .. " rotating minimap, so it rotates yours in the delve and puts it back when you leave.",
-    function()
-        return AztarecHelperDB.cross
-    end,
-    function(v)
-        AZT.SetCross(v)
-    end
-)
-
-local crossWhen = addSwitch(
-    "Cross shows",
-    "Always",
-    "Sermon",
-    "Always keeps the cross up for the whole delve. Sermon only draws it while the waves and their echoes run.",
-    function()
-        return AztarecHelperDB.crossSermon
-    end,
-    function(v)
-        AztarecHelperDB.crossSermon = v and true or false
-        AZT.CrossSync()
-    end
-)
-
--- the cross reads this every tick, so there is nothing to sync on flip
-local crossArms = addSwitch(
-    "Cross arms",
-    "All",
-    "Route",
-    "Route keeps only the safe quarter's arm through the echoes and the next one faint. All keeps the four lines up the whole way.",
-    function()
-        return AztarecHelperDB.crossRoute
-    end,
-    function(v)
-        AztarecHelperDB.crossRoute = v and true or false
-    end
-)
-
--- the two cross numbers, wired like the window size bars: the value lands
--- live so the gap and the lift can be judged with the cross on screen
-local gapBar = addBar("Cross gap", 0, AZT.CROSS_GAP_MAX, 10)
-local function paintGap(v)
-    gapBar.fill:SetWidth(VOL_W * v / AZT.CROSS_GAP_MAX)
-    gapBar.text:SetText(("%d px"):format(v))
-end
-gapBar:SetScript("OnValueChanged", function(_, v)
-    paintGap(AZT.SetCrossGap(v))
-end)
-addTip(gapBar, "The empty circle over your character. 0 closes it.")
-refreshers[#refreshers + 1] = function()
-    gapBar:SetValue(AztarecHelperDB.crossHole)
-    paintGap(AztarecHelperDB.crossHole)
-end
-
-local liftBar = addBar("Cross lift", -AZT.CROSS_LIFT_MAX, AZT.CROSS_LIFT_MAX, 10)
-local function paintLift(v)
-    liftBar.fill:SetWidth(VOL_W * (v + AZT.CROSS_LIFT_MAX) / (2 * AZT.CROSS_LIFT_MAX))
-    liftBar.text:SetText(("%d px"):format(v))
-end
-liftBar:SetScript("OnValueChanged", function(_, v)
-    paintLift(AZT.SetCrossLift(v))
-end)
-addTip(liftBar, "Moves the crossing point up or down, onto your character.")
-refreshers[#refreshers + 1] = function()
-    liftBar:SetValue(AztarecHelperDB.crossY)
-    paintLift(AztarecHelperDB.crossY)
-end
-
-local crossBars = { gapBar, liftBar }
-refreshers[#refreshers + 1] = function()
-    -- a refused ring read locks the whole block for the session, tickbox too
-    local refused = AZT.crossRefused
-    local on = AztarecHelperDB.cross and not refused
-    local why = refused and AZT.CROSS_REFUSED or "Locked while the compass cross is off. Tick it to use this."
-    enableLook(crossCheck, not refused, AZT.CROSS_REFUSED)
-    enableLook(crossWhen, on, why)
-    enableLook(crossArms, on, why)
-    for _, bar in ipairs(crossBars) do
-        enableLook(bar, on, why)
-        bar:GetThumbTexture():SetDesaturated(not on)
-        tintLabel(bar.text, on)
-        if on then
-            bar.fill:SetColorTexture(1, 0.82, 0, 1)
-        else
-            bar.fill:SetColorTexture(0.5, 0.5, 0.5, 0.7)
-        end
-    end
-end
-
 followGated[#followGated + 1] = addCheck(
     "Safe-spot arrow",
     "An arrow that shows the move for each echo. It reads as if you were facing the boss,"
@@ -659,7 +567,8 @@ followGated[#followGated + 1] = addCheck(
 local colorBtn
 colorBtn = addLabelledButton(
     "Arrow color",
-    "The color the arrow draws in during the echoes. Gold leaves the artwork as it was painted.",
+    "The color the arrow draws in during the echoes. Gold leaves the artwork as it was painted."
+        .. " The compass arrow wears the safe quarter's marker color instead.",
     100,
     function()
         MenuUtil.CreateContextMenu(colorBtn, function(_, root)
@@ -697,10 +606,11 @@ followGated[#followGated + 1] = addSwitch(
     "Relative",
     "Compass",
     "Relative is the move to make, read as if you were facing the boss, and the voice calls"
-        .. " the same move. Compass points"
-        .. " the way the room view points and carries that quarter's marker inside it. The spoken"
-        .. " cues keep talking as if you face the boss either way, so turn them off below if the"
-        .. " two readings mix badly for you.",
+        .. " the same move. Compass borrows the minimap's compass ring and turns with you, so"
+        .. " it points at the safe quarter out in the room wherever you look, in the color of"
+        .. " that quarter's marker. Your minimap turns while it points and goes back after."
+        .. " The spoken cues keep talking as if you face the boss either way, so turn them off"
+        .. " below if the two readings mix badly for you.",
     function()
         return AztarecHelperDB.arrowCompass and not AztarecHelperDB.follow
     end,
@@ -712,6 +622,22 @@ followGated[#followGated + 1] = addSwitch(
         if v and AztarecHelperDB.cues and not AztarecHelperDB.compassCueAsked then
             AZT.ShowCompassCueAsk()
         end
+    end
+)
+
+followGated[#followGated + 1] = addSwitch(
+    "Compass look",
+    "Silver",
+    "Chevron",
+    "What the Compass arrow draws. Silver is the minimap's party arrow. Chevron is the gold"
+        .. " north mark off the minimap's compass ring, drawn long and thin. Both turn with"
+        .. " the world and take the safe quarter's marker color.",
+    function()
+        return AztarecHelperDB.compassLook == "chevron"
+    end,
+    function(v)
+        AztarecHelperDB.compassLook = v and "chevron" or "silver"
+        AZT.ArrowSync()
     end
 )
 

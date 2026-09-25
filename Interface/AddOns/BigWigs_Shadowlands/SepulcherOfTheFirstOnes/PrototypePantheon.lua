@@ -117,10 +117,6 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "HandOfDestruction", 361789)
 	self:Log("SPELL_AURA_APPLIED", "NightHunterApplied", 361745)
 	self:Log("SPELL_AURA_REMOVED", "NightHunterRemoved", 361745)
-
-	if IsEncounterInProgress() and self:Mythic() then -- Only if logging in late
-		self:UpdateRolePositions() -- For Marking based on Melee > Ranged priority
-	end
 end
 
 function mod:OnEngage()
@@ -144,9 +140,6 @@ function mod:OnEngage()
 
 	if self:GetOption(witheringSeedMarker) then
 		self:RegisterTargetEvents("MarkAdds")
-	end
-	if self:Mythic() then
-		self:UpdateRolePositions() -- For Marking based on Melee > Ranged priority
 	end
 end
 

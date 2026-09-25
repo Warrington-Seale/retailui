@@ -1,8 +1,13 @@
 # BigWigs
 
-## [v425.2](https://github.com/BigWigsMods/BigWigs/tree/v425.2) (2026-09-20)
-[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v425.1...v425.2) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
+## [v425.7](https://github.com/BigWigsMods/BigWigs/tree/v425.7) (2026-09-24)
+[Full Changelog](https://github.com/BigWigsMods/BigWigs/compare/v425.6...v425.7) [Previous Releases](https://github.com/BigWigsMods/BigWigs/releases)
 
-- Plugins/BossBlock: Add support for blocking talking heads that require special conditions, and support blocking talking heads in delves and lairs  
-- Fix hardcoded classic translations showing up in missing translations  
-    (and switch apt to apt-get)  
+- Bump version  
+- Cleanups  
+- Plugins/Bars: Cleanups  
+- API: Improve `IsValidFrame`  
+- Plugins/BossBlock: Add more talking heads  
+- Tools/Keystones: Rename the shortened version of Kings' Rest from "Rest" to "Kings"  
+- Plugins/Bars: Swap to using `IsValidFrame` for anchor validation  
+- API: Add `IsValidFrame`  

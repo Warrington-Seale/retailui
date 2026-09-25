@@ -79,10 +79,6 @@ function mod:OnBossEnable()
 	self:Log("SPELL_CAST_START", "Overwhelm", 329774)
 	self:Log("SPELL_AURA_APPLIED", "GrowingHungerApplied", 332295)
 	self:Log("SPELL_AURA_APPLIED_DOSE", "GrowingHungerApplied", 332295)
-
-	if IsEncounterInProgress() then -- Only if logging in late
-		self:UpdateRolePositions() -- For Marking based on Melee > Ranged priority
-	end
 end
 
 function mod:OnEngage()
@@ -123,8 +119,6 @@ function mod:OnEngage()
 	else
 		self:Berserk(600)
 	end
-
-	self:UpdateRolePositions()
 end
 
 function mod:OnBossDisable()

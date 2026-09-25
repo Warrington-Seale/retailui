@@ -1,7 +1,7 @@
 ## Interface: 120007, 120100
 ## Title: Azta'rec Helper
 ## Notes: Sermon of Ula'tek memory game helper for the Azta'rec delve nemesis.
-## Version: 2.4.8
+## Version: 2.6.0
 ## Author: Rothirr
 ## X-License: All Rights Reserved
 ## X-Curse-Project-ID: 1613242
@@ -15,8 +15,8 @@ Core\Cues.lua
 UI\Windows.lua
 UI\RoomView.lua
 UI\WaveText.lua
+UI\RingArrow.lua
 UI\Arrow.lua
-UI\Cross.lua
 UI\Notice.lua
 Core\SafeSpots.lua
 Core\MarkKeys.lua

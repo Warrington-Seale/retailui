@@ -5,7 +5,7 @@
 
 local ADDON, AZT = ...
 
-AZT.VERSION = "2.4.8"
+AZT.VERSION = "2.6.0"
 
 -- Venomfall Deeps boss room, measured on PTR 12.1.0.
 -- UnitPosition returns (a, b, z, inst). The addon prints them as world=b,a.
@@ -36,14 +36,10 @@ local DEFAULTS = {
     mapArt = false, -- draw Blizzard's map art tiles behind the room view
     waveText = true, -- floating wave countdown window
     soloBoard = false, -- the route board drawn from the own recording, not just the leader's calls
-    cross = true, -- the compass cross over the screen, arms tinted by the quarter markers
-    crossSermon = false, -- cross only draws while a sermon or its echoes run
-    crossRoute = true, -- through the echoes the cross keeps the safe arm and fades the rest
-    crossY = 0, -- the character stands under screen center, this lifts the crossing onto them
-    crossHole = 500, -- the gap over the character, px, so they stay visible
     arrow = true, -- quest-style arrow showing the move for each echo
     arrowColor = "gold", -- key into AZT.ARROW_COLORS
     arrowCompass = false, -- arrow points the way the room view does, no spoken cues
+    compassLook = "silver", -- what the compass arrow draws, "silver" or "chevron"
     relativeTurns = false, -- quarter keys answer turns instead, after the first wave
     cues = true, -- the recorded solo cues during your own echoes
     cueVoice = "relative", -- what the cues say: "relative", "markers", "colors" or "custom"
@@ -95,16 +91,14 @@ f:SetScript("OnEvent", function(_, event, ...)
             AztarecHelperDB.cueMarks = nil
             AztarecHelperDB.cueColors = nil
         end
-        -- 2.4.0 also starts the cross on for everyone, once. Turning it off
-        -- after that sticks like any setting. The gap default grew to 500
-        -- with it, so anyone still sitting on the old 150 comes along
-        if not AztarecHelperDB.crossOnOnce then
-            AztarecHelperDB.crossOnOnce = true
-            AztarecHelperDB.cross = true
-            if AztarecHelperDB.crossHole == 150 then
-                AztarecHelperDB.crossHole = 500
-            end
-        end
+        -- 2.5.0 took the compass cross out once the game sealed the minimap
+        -- rotation for good. rotateLent stays until login hands the minimap back
+        AztarecHelperDB.cross = nil
+        AztarecHelperDB.crossSermon = nil
+        AztarecHelperDB.crossRoute = nil
+        AztarecHelperDB.crossY = nil
+        AztarecHelperDB.crossHole = nil
+        AztarecHelperDB.crossOnOnce = nil
         -- the grid rotation toggle is gone so clear its leftovers from old SVs
         AztarecHelperDB.quadRot = nil
         AztarecHelperDB.quadRotMigrated = nil
@@ -150,6 +144,12 @@ f:SetScript("OnEvent", function(_, event, ...)
             AztarecHelperDB.compassCueAsked = true
         end
     elseif event == "PLAYER_LOGIN" then
+        -- the compass arrow turns the minimap on while it points and puts it
+        -- back after. A crash or an update in between left it lent
+        if AztarecHelperDB.rotateLent then
+            AztarecHelperDB.rotateLent = nil
+            C_CVar.SetCVar("rotateMinimap", "0")
+        end
         AZT.Safe.RestorePull()
         if AZT.Recorder then
             AZT.Recorder.Init()
@@ -208,6 +208,17 @@ AZT.MARK_TEX = "Interface\\TargetingFrame\\UI-RaidTargetingIcon_%d"
 -- the icons a fresh install wears: star north, square east, triangle south,
 -- circle west. The seeding and the mark keys' letter fallback both read this
 AZT.MARK_SEED = { N = 1, E = 6, S = 4, W = 2 }
+-- each marker's colour, indexed the raid target way, for the compass arrow
+AZT.MARK_RGB = {
+    { 1, 0.9, 0.2 },
+    { 1, 0.5, 0.1 },
+    { 0.72, 0.35, 0.9 },
+    { 0.1, 0.9, 0.25 },
+    { 0.82, 0.86, 0.95 },
+    { 0.2, 0.6, 1 },
+    { 0.95, 0.22, 0.15 },
+    { 0.95, 0.95, 0.95 },
+}
 
 -- the room is read north up everywhere, so a quarter is also a direction.
 -- These name the tutorial pointer arrows, which is what lets a quarter be
@@ -241,10 +252,6 @@ end
 local HELP = {
     "/azt room          - toggle the room view (auto-shows in the delve)",
     "/azt map           - toggle the map art backdrop behind the room view",
-    "/azt cross         - toggle the compass cross, marker colored direction lines over the screen",
-    "/azt crossy <px>   - lift the cross center onto your character",
-    "/azt crosshole <px> - the empty circle over your character, 0 closes it",
-    "/azt crossroute    - toggle the cross keeping only the safe arm through the echoes",
     "/azt n|e|s|w       - answer a wave with that quarter (bindable keys too)",
     "/azt replay        - replay the last recorded route with real timings",
     "/azt practice      - a pretend sermon to record and get echoed, no boss needed",
@@ -271,43 +278,6 @@ SlashCmdList["AZT"] = function(msg)
         AZT.ToggleRoomView()
     elseif cmd == "map" then
         AZT.ToggleMapArt()
-    elseif cmd == "cross" then
-        AZT.SetCross(not AztarecHelperDB.cross)
-        chat("compass cross: " .. (AztarecHelperDB.cross and "ON - it draws in the delve" or "OFF"))
-        if AztarecHelperDB.cross and AZT.crossRefused then
-            chat(AZT.CROSS_REFUSED)
-        end
-    elseif cmd == "crossy" then
-        local n = tonumber(rest)
-        if n then
-            -- the setters hold the number to the settings bar's span, so
-            -- the echo says where it actually landed
-            chat(("cross center lifted %d px"):format(AZT.SetCrossLift(n)))
-            AZT.RefreshOptions()
-        else
-            chat(
-                ("usage: /azt crossy <pixels>, -%d to %d, negative sinks it"):format(
-                    AZT.CROSS_LIFT_MAX,
-                    AZT.CROSS_LIFT_MAX
-                )
-            )
-        end
-    elseif cmd == "crosshole" then
-        local n = tonumber(rest)
-        if n then
-            chat(("cross gap set to %d px"):format(AZT.SetCrossGap(n)))
-            AZT.RefreshOptions()
-        else
-            chat(("usage: /azt crosshole <pixels>, 0 to %d, 0 closes the gap"):format(AZT.CROSS_GAP_MAX))
-        end
-    elseif cmd == "crossroute" then
-        AztarecHelperDB.crossRoute = not AztarecHelperDB.crossRoute
-        if AztarecHelperDB.crossRoute then
-            chat("cross arms: ROUTE - only the safe arm stays through the echoes")
-        else
-            chat("cross arms: ALL - all four stay up")
-        end
-        AZT.RefreshOptions()
     elseif cmd == "n" or cmd == "e" or cmd == "s" or cmd == "w" then
         AZT.Safe.AnswerKey(cmd:upper())
     elseif cmd == "replay" then
@@ -327,9 +297,6 @@ SlashCmdList["AZT"] = function(msg)
         end
         if AZT.RoomZoneSync then
             AZT.RoomZoneSync()
-        end
-        if AZT.CrossSync then
-            AZT.CrossSync()
         end
         if AztarecHelperDB.anywhere then
             chat("treating every zone as the delve - costs idle work, /azt anywhere again to turn off")

@@ -10,10 +10,10 @@ MDT.mapInfo[dungeonIndex] = {
   mapID = 399
 };
 
-local zones = { 2094, 2095 }
-for _, zone in ipairs(zones) do
-  MDT.zoneIdToDungeonIdx[zone] = dungeonIndex
-end
+MDT:RegisterDungeonLocation(dungeonIndex, {
+  zoneIds = { 2022, 2094, 2095 },
+  subzoneAreaIDs = { 13728 }, -- Ruby Life Pools
+})
 
 MDT.dungeonMaps[dungeonIndex] = {
   [0] = "",
@@ -71,8 +71,8 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["scale"] = 2.2,
       },
       [2] = {
-        ["x"] = 138.12731769362,
-        ["y"] = -186.350008352,
+        ["x"] = 107.15691558028,
+        ["y"] = -223.98488847449,
         ["sublevel"] = 1,
         ["scale"] = 2.2,
       },

@@ -47,11 +47,11 @@ MythicDungeonToolsDB = {
 ["enabled"] = false,
 ["content"] = {
 ["normal"] = false,
-["heroic"] = false,
 ["mythic"] = false,
-["mythic_dungeon"] = false,
-["mythic_plus"] = false,
+["heroic"] = false,
 ["lfr"] = false,
+["mythic_plus"] = false,
+["mythic_dungeon"] = false,
 },
 },
 ["colorPaletteInfo"] = {

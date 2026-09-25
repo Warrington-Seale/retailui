@@ -91,6 +91,10 @@ function app:CreateOrdersQueueFrame()
 				app.OrdersQueueFrame:SetHeight(math.abs(app.OrdersQueueFrame.Status:GetBottom() - app.OrdersQueueFrame:GetTop()) + 12)
 				app:UpdateOrdersQueue()
 			end)
+			UIErrorsFrame:Hide()
+		end)
+		app.OrdersQueueFrame:SetScript("OnHide", function()
+			UIErrorsFrame:Show()
 		end)
 
 		app.QueueOrdersButton = app:MakeButton(app.TrackOrdersButton, L.ORDERSQUEUE_QUEUE)
@@ -150,7 +154,7 @@ function app:UpdateOrdersQueue()
 				trackedType = Enum.CraftingOrderType.Personal
 			end
 
-			for key, recipe in pairs(ProfessionShoppingList_Data.Recipes) do
+			for key, recipe in pairs(app.Data.Recipes) do
 				if recipe and recipe.professionID == professionID and recipe.orderID and app.OrderInfo[key] and app.OrderInfo[key].view.orderType == trackedType and C_CurrencyInfo.GetCurrencyInfo(concID).quantity > app.OrderInfo[key].concentrationCost then
 					table.insert(app.QueuedOrders, app.OrderInfo[key])
 				end
@@ -198,11 +202,12 @@ function app:UpdateOrdersQueue()
 					else
 						errorReason = GUILD_RENAME_ERROR_UNKNOWN
 					end
-					app.OrdersQueueFrame.Status:SetText(errorReason)
-					app.OrdersQueueFrame.Status:SetTextColor(RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b)
+					app.OrdersQueueFrame.Status:SetText("|cffFF0000" .. errorReason .. "|R")
 				else
 					app.OrdersQueueFrame.Status:SetText(oldText)
-					app.OrdersQueueFrame.Status:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b)
+				end
+				if GetShapeshiftForm() ~= 0 then
+					UIErrorsFrame:Show()
 				end
 				ProfessionsFrame.OrdersPage.OrderView.CreateButton:Click()
 			end)
@@ -279,7 +284,7 @@ app.Event:Register("CRAFTINGORDERS_CLAIM_ORDER_RESPONSE", function(result, order
 	if app.OrdersQueueFrame and app.OrdersQueueFrame:IsVisible() and result == Enum.CraftingOrderResult.MissingOrder then
 		local key = "order:" .. orderID .. ":" .. app.QueuedOrders[1].spellID
 		app.OrderInfo[key] = nil
-		ProfessionShoppingList_Data.Recipes[key] = nil
+		app.Data.Recipes[key] = nil
 		table.remove(app.OrdersQueueFrame, 1)
 		app:UpdateRecipes()
 		app:UpdateOrdersQueue()

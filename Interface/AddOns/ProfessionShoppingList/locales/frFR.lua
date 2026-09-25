@@ -170,6 +170,13 @@ L.ORDERSQUEUE_COMPLETE =                 PROFESSIONS_COMPLETE_ORDER -- "Complete
 -- L.ORDERSQUEUE_WARNING_QUEST =            "You have not picked up %s." -- %s becomes a quest name
 -- L.ORDERSQUEUE_WARNING_REAGENTS =         "You do not have enough reagents for all tracked recipes."
 
+-- L.PROFTOOL_AUTOEQUIP =                   "Automatically equip this tool" -- Followed by one of the two following phrases
+-- L.PROFTOOL_DEFAULT =                     "for |cffFFFFFFregular crafting|R."
+-- L.PROFTOOL_ORDERS =                      "while |cffFFFFFFdoing orders|R."
+-- L.PROFTOOL_DRAG =                        "Drag a tool here."
+-- L.PROFTOOL_MOUSE =                       app.IconLMB .. ": Equip this tool.\n" ..
+--                                          app.IconRMB .. ": Remove this tool."
+
 -- Chat feedback
 L.INVALID_PARAMETERS =                   "Paramètres non valides"
 L.INVALID_RECIPEQUANTITY =               L.INVALID_PARAMETERS .. " : veuillez saisir une quantité valide pour la recette."

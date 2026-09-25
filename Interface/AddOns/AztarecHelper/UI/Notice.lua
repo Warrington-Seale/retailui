@@ -78,14 +78,6 @@ local function build()
         if link == "azt:options" then
             box:Hide()
             AZT.OpenOptions()
-        elseif link == "azt:cross" then
-            -- the news notes about the cross switch it in place, no trip
-            -- through the settings needed
-            AZT.SetCross(true)
-            AZT.chat("compass cross: ON")
-        elseif link == "azt:crossoff" then
-            AZT.SetCross(false)
-            AZT.chat("compass cross: OFF")
         end
     end)
 
@@ -185,6 +177,18 @@ end
 -- an All notes button reads it back as the archive
 local NEWS = {
     {
+        v = "2.6.0",
+        text = "The Compass arrow turns with the world now. It points at the safe quarter out"
+            .. " in the room wherever you look, in that quarter's marker color. Set Arrow mode"
+            .. " to Compass in the |Hazt:options|h|cff71d5ffsettings|r|h to try it.",
+    },
+    {
+        v = "2.5.0",
+        text = "The compass cross is gone. The game now keeps the minimap's turn hidden from"
+            .. " addons, so the four lines had nothing left to point by. The room view, the"
+            .. " arrow and the cues work as before.",
+    },
+    {
         v = "2.4.7",
         text = "The cross trimming down to the safe arm through the echoes has a switch now,"
             .. " Cross arms in the |Hazt:options|h|cff71d5ffsettings|r|h. Set it to All and"
@@ -219,16 +223,14 @@ local NEWS = {
         text = "The cues can say your own words now: a Custom cue voice in the"
             .. " |Hazt:options|h|cff71d5ffoptions|r|h with a box per quarter, numbers, another"
             .. " language, whatever your group calls them. A blank quarter falls back to its"
-            .. " marker name. The compass cross also starts on for everyone,"
-            .. " |Hazt:crossoff|h|cff71d5ffturn it off right here|r|h if it is not your thing.",
+            .. " marker name. The compass cross also starts on for everyone.",
     },
     {
         v = "2.3.1",
         text = "The compass cross: four lines out of your character across the screen, each"
             .. " pointing into its quarter and wearing its marker color, turning with you off"
             .. " the minimap compass. A tickbox in the |Hazt:options|h|cff71d5ffoptions|r|h,"
-            .. " with a switch to only draw it during the Sermon and its echoes, or"
-            .. " |Hazt:cross|h|cff71d5ffturn it on right here|r|h.",
+            .. " with a switch to only draw it during the Sermon and its echoes.",
     },
     {
         v = "2.2.0",

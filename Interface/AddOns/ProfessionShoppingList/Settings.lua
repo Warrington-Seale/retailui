@@ -12,21 +12,19 @@ local L = app.locales
 
 app.Event:Register("ADDON_LOADED", function(addOnName, containsBindings)
 	if addOnName == appName then
-		ProfessionShoppingList_Settings = ProfessionShoppingList_Settings or {}
-		app.Settings = ProfessionShoppingList_Settings
-
-		app.Settings["hide"] = app.Settings["hide"] or false
-		app.Settings["windowPosition"] = app.Settings["windowPosition"] or { ["left"] = 1295, ["bottom"] = 836, ["width"] = 200, ["height"] = 200, }
-		app.Settings["pcWindowPosition"] = app.Settings["pcWindowPosition"] or app.Settings["windowPosition"]
-		app.Settings["windowLocked"] = app.Settings["windowLocked"] or false
-		app.Settings["debug"] = app.Settings["debug"] or false
-		app.Settings["useLocalReagents"] = app.Settings["useLocalReagents"] or false
+		app.Settings.hide = app.Settings.hide or false
+		app.Settings.windowPosition = app.Settings.windowPosition or { left = 1295, bottom = 836, width = 200, height = 200, }
+		app.Settings.pcWindowPosition = app.Settings.pcWindowPosition or app.Settings.windowPosition
+		app.Settings.windowLocked = app.Settings.windowLocked or false
+		app.Settings.debug = app.Settings.debug or false
+		app.Settings.useLocalReagents = app.Settings.useLocalReagents or false
+		app.Settings.seen = app.Settings.seen or {}
 
 		app:CreateMinimapButton()
 		app:CreateSettings()
 
 		-- Midnight cleanup
-		app.Settings["midClean1"] = nil
+		app.Settings.midClean1 = nil
 	end
 end)
 
@@ -36,7 +34,7 @@ end)
 
 function app:OpenSettings()
 	if InCombatLockdown() then
-		app:Print(ERR_AFFECTING_COMBAT..".")
+		app:Print(ERR_AFFECTING_COMBAT .. ".")
 	else
 		Settings.OpenToCategory(app.SettingsCategory:GetID())
 	end
@@ -60,11 +58,11 @@ function app:CreateMinimapButton()
 	app.MinimapIcon:Register(appName, miniButton, app.Settings)
 
 	function app:ToggleMinimapIcon()
-		if app.Settings["minimapIcon"] then
-			app.Settings["hide"] = false
+		if app.Settings.minimapIcon then
+			app.Settings.hide = false
 			app.MinimapIcon:Show(appName)
 		else
-			app.Settings["hide"] = true
+			app.Settings.hide = true
 			app.MinimapIcon:Hide(appName)
 		end
 	end
@@ -181,11 +179,41 @@ function app:CreateSettings()
 
 	local category, layout
 
+	local function addNewTag(initializer)
+		initializer.data.newTagID = appName
+		app.HasNewFeatures = true
+	end
+
+	local function showNewTag(self) -- Thank you, R41Z0R!
+		if self.data and self.data.newTagID and self.data.newTagID == appName then
+			self.NewFeature:SetShown(true)
+		end
+	end
+	hooksecurefunc(SettingsCheckboxControlMixin, "Init", showNewTag)
+	hooksecurefunc(SettingsDropdownControlMixin, "Init", showNewTag)
+	hooksecurefunc(SettingsCheckboxDropdownControlMixin, "Init", showNewTag)
+
+	hooksecurefunc(SettingsPanel, "DisplayCategory", function(self, category)
+		if category == app.SettingsCategory then
+			app.Settings.seen[app.Version] = true
+		end
+	end)
+
+	local function showNewCategoryTag(self)
+		if app.HasNewFeatures and not app.Settings.seen[app.Version] then
+			local data = self:GetData()
+			if data and data.data and data.data.category and data.data.category.ID == app.SettingsCategory:GetID() then
+				self.NewFeature:SetShown(true)
+			end
+		end
+	end
+	hooksecurefunc(SettingsCategoryListButtonMixin, "Init", showNewCategoryTag)
+
 	local function button(name, buttonName, description, func)
 		layout:AddInitializer(CreateSettingsButtonInitializer(name, buttonName, func, description, true))
 	end
 
-	local function checkbox(variable, name, description, default, callback, parentSetting, parentCheckbox)
+	local function checkbox(variable, name, description, default, callback, parentSetting, parentCheckbox, isNew)
 		local setting = Settings.RegisterAddOnSetting(category, appName .. "_" .. variable, variable, app.Settings, type(default), name, default)
 		local checkbox = Settings.CreateCheckbox(category, setting, description)
 
@@ -198,12 +226,14 @@ function app:CreateSettings()
 			setting:SetValueChangedCallback(callback)
 		end
 
+		if isNew then addNewTag(checkbox) end
+
 		return setting, checkbox
 	end
 
-	local function checkboxDropdown(cbVariable, cbName, description, cbDefaultValue, ddVariable, ddDefaultValue, options, callback)
-		local cbSetting = Settings.RegisterAddOnSetting(category, appName.."_"..cbVariable, cbVariable, app.Settings, type(cbDefaultValue), cbName, cbDefaultValue)
-		local ddSetting = Settings.RegisterAddOnSetting(category, appName.."_"..ddVariable, ddVariable, app.Settings, type(ddDefaultValue), "", ddDefaultValue)
+	local function checkboxDropdown(cbVariable, cbName, description, cbDefaultValue, ddVariable, ddDefaultValue, options, callback, isNew)
+		local cbSetting = Settings.RegisterAddOnSetting(category, appName .. "_" .. cbVariable, cbVariable, app.Settings, type(cbDefaultValue), cbName, cbDefaultValue)
+		local ddSetting = Settings.RegisterAddOnSetting(category, appName .. "_" .. ddVariable, ddVariable, app.Settings, type(ddDefaultValue), "", ddDefaultValue)
 		local function GetOptions()
 			local container = Settings.CreateControlTextContainer()
 			for _, option in ipairs(options) do
@@ -219,10 +249,12 @@ function app:CreateSettings()
 			cbSetting:SetValueChangedCallback(callback)
 			ddSetting:SetValueChangedCallback(callback)
 		end
+
+		if isNew then addNewTag(initializer) end
 	end
 
-	local function dropdown(variable, name, description, default, options, callback)
-		local setting = Settings.RegisterAddOnSetting(category, appName.."_"..variable, variable, app.Settings, type(default), name, default)
+	local function dropdown(variable, name, description, default, options, callback, isNew)
+		local setting = Settings.RegisterAddOnSetting(category, appName .. "_" .. variable, variable, app.Settings, type(default), name, default)
 		local function GetOptions()
 			local container = Settings.CreateControlTextContainer()
 			for _, option in ipairs(options) do
@@ -230,10 +262,14 @@ function app:CreateSettings()
 			end
 			return container:GetData()
 		end
-		Settings.CreateDropdown(category, setting, GetOptions, description)
+
+		local initializer = Settings.CreateDropdown(category, setting, GetOptions, description)
+
 		if callback then
 			setting:SetValueChangedCallback(callback)
 		end
+
+		if isNew then addNewTag(initializer) end
 	end
 
 	local function expandableHeader(name)
@@ -277,7 +313,7 @@ function app:CreateSettings()
 	Settings.RegisterAddOnCategory(category)
 	app.SettingsCategory = category
 
-	text(L.SETTINGS_VERSION .. " |cffFFFFFF" .. C_AddOns.GetAddOnMetadata(appName, "Version"), nil, nil, 14)
+	text(L.SETTINGS_VERSION .. " |cffFFFFFF" .. app.Version, nil, nil, 14)
 	text(L.SETTINGS_SUPPORT_TEXTLONG)
 	button(L.SETTINGS_SUPPORT_TEXT, L.SETTINGS_SUPPORT_BUTTON, L.SETTINGS_SUPPORT_DESC, function() StaticPopup_Show("PROFESSIONSHOPPINGLIST_URL", nil, nil, "https://buymeacoffee.com/Slackluster") end)
 	button(L.SETTINGS_HELP_TEXT, L.SETTINGS_HELP_BUTTON, L.SETTINGS_HELP_DESC, function() StaticPopup_Show("PROFESSIONSHOPPINGLIST_URL", nil, nil, "https://discord.gg/hGvF59hstx") end)
@@ -323,7 +359,9 @@ function app:CreateSettings()
 
 	checkbox("showCraftTooltip", L.SETTINGS_CRAFTTOOLTIP_TITLE, L.SETTINGS_CRAFTTOOLTIP_DESC, true, nil, parentSetting, parentCheckbox)
 
-	checkbox("showCraftCostTooltip", L.SETTINGS_CRAFTCOSTTOOLTIP_TITLE .. app.IconNew, L.SETTINGS_CRAFTCOSTTOOLTIP_DESC, true, nil, parentSetting, parentCheckbox)
+	checkbox("showCraftCostTooltip", L.SETTINGS_CRAFTCOSTTOOLTIP_TITLE, L.SETTINGS_CRAFTCOSTTOOLTIP_DESC, true, nil, parentSetting, parentCheckbox, true)
+
+	if app.Retail then
 
 	dropdown("reagentQuality", L.SETTINGS_REAGENTQUALITY_TITLE, L.SETTINGS_REAGENTQUALITY_DESC, 1, {
 		{ value = 1, name = "|A:Professions-ChatIcon-Quality-12-Tier1:24:24::1|a|A:Professions-ChatIcon-Quality-Tier1:20:18::1|a  " .. L.LOW, description = nil },
@@ -342,7 +380,7 @@ function app:CreateSettings()
 
 	header(L.PROFESSION_WINDOW)
 
-	checkbox("filterOptionalReagents", L.SETTINGS_FILTER_OPTREAGENTS .. app.IconNew, string.format(L.SETTINGS_FILTER_OPTREAGENTS_DESC, "\"" .. PROFESSIONS_HIDE_UNOWNED_REAGENTS .. "\""), true)
+	checkbox("filterOptionalReagents", L.SETTINGS_FILTER_OPTREAGENTS, string.format(L.SETTINGS_FILTER_OPTREAGENTS_DESC, "\"" .. PROFESSIONS_HIDE_UNOWNED_REAGENTS .. "\""), true, nil, nil, nil, true)
 
 	checkbox("spendToNextPerk", L.SETTINGS_SPENDTOPERK_TITLE, L.SETTINGS_SPENDTOPERK_DESC, true)
 
@@ -353,6 +391,8 @@ function app:CreateSettings()
 		{ value = 1, name = L.SETTINGS_DURATION_MEDIUM, description = nil },
 		{ value = 2, name = L.SETTINGS_DURATION_LONG, description = nil },
 	})
+
+	end
 
 	header(L.SETTINGS_HEADER_TRACK)
 

@@ -10,6 +10,7 @@ MerfinPlusSaved = {
 ["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "MerfinUI (7.8)",
 ["Divthediv - Burning Legion"] = "MerfinUI (7.8)",
+["Foxsake - Burning Legion"] = "MerfinUI (7.8)",
 },
 ["profiles"] = {
 ["Default"] = {

@@ -1,0 +1,24 @@
+VER 3 0100000000000002 "mo ch" "134400"
+#showtooltip
+/use [@mouseover, exists, noharm, nodead] [] chain heal
+END
+VER 3 0100000000000006 "mo dis" "134400"
+#showtooltip
+/use [@mouseover, exists, noharm, nodead] [] purify spirit
+END
+VER 3 0100000000000003 "mo es" "134400"
+#showtooltip
+/use [@mouseover, exists, noharm, nodead] [] earth shield
+END
+VER 3 0100000000000005 "mo hw" "134400"
+#showtooltip
+/use [@mouseover, exists, noharm, nodead] [] healing wave
+END
+VER 3 0100000000000001 "mo rip" "134400"
+#showtooltip
+/use [@mouseover, exists, noharm, nodead] [] riptide
+END
+VER 3 0100000000000004 "mo ul" "134400"
+#showtooltip
+/use [@mouseover, exists, noharm, nodead] [] unleash life
+END

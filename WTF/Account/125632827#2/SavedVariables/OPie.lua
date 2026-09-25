@@ -2,13 +2,14 @@
 OPie_SavedData = {
 ["CharProfiles"] = {
 },
-["_OPieVersion"] = "8.8.1 (4.144)",
+["_OPieVersion"] = "8.8.3 (4.144)",
 ["_StoreVersion"] = 122,
 ["_GameLocale"] = "enUS",
 ["_StoreVersion2"] = 122,
 ["ProfileStorage"] = {
 ["default"] = {
 ["Bindings"] = {
+["shaman"] = "T",
 ["druidforms"] = "T",
 ["Druidmisc"] = "SHIFT-T",
 ["WorldMarkers"] = "ALT-SHIFT-R",
@@ -19,49 +20,87 @@ OPie_SavedData = {
 ["RingKeeper"] = {
 ["druidforms"] = {
 {
-["sliceToken"] = "ABueYYMO=Zw",
 ["id"] = 5487,
+["sliceToken"] = "ABueYYMO=Zw",
 },
 {
-["sliceToken"] = "ABueYYMO=Ze",
 ["id"] = 768,
+["sliceToken"] = "ABueYYMO=Ze",
 },
 {
-["sliceToken"] = "ABueYYMO=Zr",
 ["id"] = 114282,
+["sliceToken"] = "ABueYYMO=Zr",
 },
 {
-["sliceToken"] = "ABueYYMO=Z1",
 ["id"] = 783,
+["sliceToken"] = "ABueYYMO=Z1",
 },
-["limit"] = "DRUID",
 ["save"] = true,
+["limit"] = "DRUID",
 ["name"] = "druidforms",
 },
 ["Druidmisc"] = {
 {
-["sliceToken"] = "ABueYYMO=Zt",
 ["id"] = 1126,
+["sliceToken"] = "ABueYYMO=Zt",
 },
 {
-["sliceToken"] = "ABueYYMO=Zy",
 ["id"] = 2908,
+["sliceToken"] = "ABueYYMO=Zy",
 },
 {
-["sliceToken"] = "ABueYYMO=Zu",
 ["id"] = 5215,
+["sliceToken"] = "ABueYYMO=Zu",
 },
 {
-["sliceToken"] = "ABueYYMO=Zi",
 ["id"] = 339,
+["sliceToken"] = "ABueYYMO=Zi",
 },
 {
-["sliceToken"] = "ABueYYMO=Z2",
 ["id"] = 193753,
+["sliceToken"] = "ABueYYMO=Z2",
 },
-["name"] = "Druidmisc",
 ["save"] = true,
+["name"] = "Druidmisc",
 ["limit"] = "DRUID",
+},
+["shamanST"] = {
+{
+["sliceToken"] = "ABueYS==1=1",
+["id"] = 462854,
+},
+{
+["sliceToken"] = "ABueYS==1=t",
+["id"] = 546,
+},
+["limit"] = "Foxsake-BurningLegion",
+["save"] = true,
+["name"] = "shaman ST",
+},
+["shaman"] = {
+{
+["sliceToken"] = "ABueYS==1=w",
+["id"] = 192106,
+},
+{
+["sliceToken"] = "ABueYS==1=e",
+["id"] = 974,
+},
+{
+["sliceToken"] = "ABueYS==1=r",
+["id"] = 52127,
+},
+{
+["sliceToken"] = "ABueYS==1=y",
+["id"] = 382021,
+},
+{
+["sliceToken"] = "ABueYS==1=u",
+["id"] = 457481,
+},
+["limit"] = "Foxsake-BurningLegion",
+["save"] = true,
+["name"] = "shaman",
 },
 ["OPieFlagStore"] = {
 ["StoreVersion"] = 3,

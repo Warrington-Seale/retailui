@@ -12,20 +12,17 @@ RaiderIO_Config = {
 ["point"] = "TOPLEFT",
 },
 }
-RaiderIO_LastCharacter = "eu-Warrington-burning-legion"
+RaiderIO_LastCharacter = "eu-Foxsake-burning-legion"
 RaiderIO_MissingCharacters = {
-["eu-Alarina-thrall"] = true,
-["eu-Ryna-ambossar"] = true,
-["eu-Cokundan-drakthul"] = true,
-["eu-Almygda-burning-legion"] = true,
-["eu-Louistully-khaz-modan"] = true,
-["eu-Mikaratsu-drakthul"] = true,
-["eu-Wieselmafia-thrall"] = true,
-["eu-Warrington-burning-legion"] = true,
-["eu-Venceska-burning-legion"] = true,
-["eu-Mediman-twisting-nether"] = true,
-["eu-Zelvak-drakthul"] = true,
-["eu-Lossoss-drakthul"] = true,
+["eu-Foxsake-burning-legion"] = true,
+["eu-Softasice-bloodfeather"] = true,
+["eu-Miuszuk-xavius"] = true,
+["eu-Bogir-burning-legion"] = true,
+["eu-Szamaniszcz-burning-legion"] = true,
+["eu-Zaldur-burning-legion"] = true,
+["eu-Lexar-burning-legion"] = true,
+["eu-Slashgear-tarren-mill"] = true,
+["eu-Chrislee-burning-legion"] = true,
 }
 RaiderIO_MissingServers = {
 }

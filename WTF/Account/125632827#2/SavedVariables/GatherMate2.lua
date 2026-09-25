@@ -4,6 +4,7 @@ GatherMate2DB = {
 ["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "Default",
 ["Divthediv - Burning Legion"] = "Default",
+["Foxsake - Burning Legion"] = "Default",
 },
 ["global"] = {
 ["data_version"] = 8,

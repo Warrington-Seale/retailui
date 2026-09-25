@@ -4,6 +4,7 @@ ProjectAzilrokaDB = {
 ["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "Default",
 ["Divthediv - Burning Legion"] = "Default",
+["Foxsake - Burning Legion"] = "Default",
 },
 ["profiles"] = {
 ["Default"] = {

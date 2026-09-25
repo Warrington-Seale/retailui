@@ -46,18 +46,18 @@ NarcissusDB = {
 ["UseAddonCompartment"] = true,
 ["DressingRoom"] = true,
 ["UseBustShot"] = true,
-["RealmNames"] = {
-[524] = "Burning Legion",
-},
+["UseEntranceVisual"] = true,
 ["DressingRoomItemSetListHideDupes"] = true,
 ["TranslateName"] = false,
 ["TalentTreeUseClassBackground"] = false,
-["TooltipLanguages"] = {
+["RealmNames"] = {
+[524] = "Burning Legion",
 },
 ["ConduitTooltip"] = false,
-["UseEntranceVisual"] = true,
-["installTime"] = 1788947582,
+["TooltipLanguages"] = {
+},
 ["DressingRoomShowSlot"] = true,
+["installTime"] = 1788947582,
 ["EnableDoubleTap"] = false,
 ["SpeedyScreenshotAlert"] = true,
 ["AutoPlayAnimation"] = false,
@@ -71,12 +71,6 @@ NarcissusDB = {
 ["TalentTreeForEquipmentManager"] = true,
 ["HideTextsWithUI"] = false,
 ["AnchorToMinimap"] = true,
-["NamePlateNameOffset"] = 0,
-["TooltipTheme"] = "Bright",
-["OnlyShowOwnedUpgradeItem"] = true,
-["GemManager"] = true,
-["ModelPanelScale"] = 1,
-["AutoDisplayQuestItem"] = false,
 ["PerksProgramDB"] = {
 ["MonthNames"] = {
 {
@@ -90,6 +84,12 @@ NarcissusDB = {
 ["CurrentMonthData"] = {
 },
 },
+["TooltipTheme"] = "Bright",
+["OnlyShowOwnedUpgradeItem"] = true,
+["GemManager"] = true,
+["ModelPanelScale"] = 1,
+["AutoDisplayQuestItem"] = false,
+["NamePlateNameOffset"] = 0,
 ["CameraOrbit"] = true,
 ["TalentTreeForInspection"] = true,
 ["UseWoWQualityColor"] = false,
@@ -141,30 +141,6 @@ NarciStatisticsDB = {
 }
 NarciTurntableOptions = nil
 NarciCharacterProfiles = {
-["0B216CB1"] = {
-["race"] = 35,
-["name"] = "Zerofoxgiven",
-["birth"] = 1789421852,
-["serverID"] = 3713,
-["lastVisit"] = 1789421852,
-["outfits"] = {
-{
-["s"] = "100408,77343:-1,77345,104602,0,0,104604,94331,84223,198608,104603,33123:-1:1898,33123:0:1898",
-["n"] = "Custom Set",
-},
-},
-["class"] = 1,
-},
-["09224DF3"] = {
-["race"] = 28,
-["name"] = "Warrington",
-["birth"] = 1788948167,
-["serverID"] = 3713,
-["lastVisit"] = 1790136631,
-["outfits"] = {
-},
-["class"] = 11,
-},
 ["072FFC94"] = {
 ["race"] = 5,
 ["name"] = "Divthediv",
@@ -198,6 +174,40 @@ NarciCharacterProfiles = {
 },
 },
 ["class"] = 10,
+},
+["0B216CB1"] = {
+["race"] = 35,
+["name"] = "Zerofoxgiven",
+["birth"] = 1789421852,
+["serverID"] = 3713,
+["lastVisit"] = 1789421852,
+["outfits"] = {
+{
+["s"] = "100408,77343:-1,77345,104602,0,0,104604,94331,84223,198608,104603,33123:-1:1898,33123:0:1898",
+["n"] = "Custom Set",
+},
+},
+["class"] = 1,
+},
+["09224DF3"] = {
+["race"] = 28,
+["name"] = "Warrington",
+["birth"] = 1788948167,
+["serverID"] = 3713,
+["lastVisit"] = 1790136631,
+["outfits"] = {
+},
+["class"] = 11,
+},
+["0B4FC081"] = {
+["race"] = 35,
+["name"] = "Foxsake",
+["birth"] = 1790274186,
+["serverID"] = 3713,
+["lastVisit"] = 1790353355,
+["outfits"] = {
+},
+["class"] = 7,
 },
 }
 NarciPhotoModeDB = {

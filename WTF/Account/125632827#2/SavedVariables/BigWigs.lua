@@ -4,6 +4,7 @@ BigWigs3DB = {
 ["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
 ["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
+["Foxsake - Burning Legion"] = "MerfinUI (1440) v7.8",
 },
 ["namespaces"] = {
 ["BigWigs_Bosses_Azta'rec"] = {
@@ -70,14 +71,13 @@ nil,
 ["MerfinUI (1440) v7.8"] = {
 ["outline"] = "OUTLINE",
 ["fontSize"] = 47,
+["fontName"] = "Merfin Font 1",
 ["position"] = {
 "CENTER",
 "CENTER",
 nil,
 0,
 },
-["voice"] = "English: Amy",
-["fontName"] = "Merfin Font 1",
 },
 },
 },
@@ -165,6 +165,15 @@ nil,
 },
 },
 },
+["barColor"] = {
+["BigWigs_Plugins_Colors"] = {
+["default"] = {
+0.1294117718935013,
+0.5882353186607361,
+0.9529412388801575,
+},
+},
+},
 ["barBackground"] = {
 ["BigWigs_Plugins_Colors"] = {
 ["default"] = {
@@ -172,15 +181,6 @@ nil,
 0.2000000178813934,
 0.2000000178813934,
 0.7019608020782471,
-},
-},
-},
-["barColor"] = {
-["BigWigs_Plugins_Colors"] = {
-["default"] = {
-0.1294117718935013,
-0.5882353186607361,
-0.9529412388801575,
 },
 },
 },
@@ -216,6 +216,69 @@ nil,
 ["iconFontName"] = "Merfin Font 1",
 ["iconWidth"] = 20,
 ["iconOffsetX"] = -3,
+},
+},
+},
+["BigWigs_Plugins_BossBlock"] = {
+["global"] = {
+["tableNeedsCopied"] = false,
+["watchedMovies"] = {
+[-575] = true,
+[1049] = true,
+[1050] = true,
+[-2516] = true,
+[1065] = true,
+},
+},
+},
+["BigWigs_Plugins_Auras"] = {
+["global"] = {
+["showHelpTip"] = false,
+},
+},
+["BigWigs_Plugins_Messages"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["outline"] = "OUTLINE",
+["fontSize"] = 15,
+["emphFontName"] = "Merfin Font 1",
+["emphFontSize"] = 37,
+["growUpwards"] = true,
+["emphOutline"] = "OUTLINE",
+["emphPosition"] = {
+"TOP",
+"TOP",
+nil,
+-208,
+},
+["fontName"] = "Merfin Font 1",
+["normalPosition"] = {
+"TOP",
+nil,
+nil,
+-190,
+},
+},
+["MerfinUI (1440) v7.8"] = {
+["outline"] = "OUTLINE",
+["fontSize"] = 15,
+["emphFontName"] = "Merfin Font 1",
+["emphFontSize"] = 37,
+["growUpwards"] = true,
+["emphOutline"] = "OUTLINE",
+["emphPosition"] = {
+"TOP",
+"TOP",
+nil,
+-208,
+},
+["fontName"] = "Merfin Font 1",
+["normalPosition"] = {
+"TOP",
+nil,
+nil,
+-190,
+},
 },
 },
 },
@@ -266,7 +329,12 @@ nil,
 ["barStyle"] = "ElvUI",
 ["growup"] = true,
 ["fontSizeEmph"] = 14,
+["normalHeight"] = 23,
+["emphasizeTime"] = 10,
+["visibleBarLimitEmph"] = 4,
 ["fontName"] = "Merfin Font 1",
+["texture"] = "Merfin Main Texture",
+["normalWidth"] = 200,
 ["expPosition"] = {
 "BOTTOMLEFT",
 "TOPLEFT",
@@ -274,11 +342,6 @@ nil,
 75,
 "ElvUF_Target",
 },
-["visibleBarLimitEmph"] = 4,
-["emphasizeTime"] = 10,
-["normalHeight"] = 23,
-["normalWidth"] = 200,
-["texture"] = "Merfin Main Texture",
 ["normalPosition"] = {
 "BOTTOMLEFT",
 "TOPLEFT",
@@ -286,84 +349,6 @@ nil,
 75,
 "ElvUF_TargetTarget",
 },
-},
-},
-},
-["BigWigs_Plugins_InfoBox"] = {
-["profiles"] = {
-["MerfinUI (1440) v7.8"] = {
-["posx"] = 197,
-["posy"] = 512,
-},
-},
-},
-["BigWigs_Plugins_BossBlock"] = {
-["global"] = {
-["tableNeedsCopied"] = false,
-["watchedMovies"] = {
-[-575] = true,
-[1049] = true,
-[1050] = true,
-[-2516] = true,
-[1065] = true,
-},
-},
-},
-["BigWigs_Plugins_Auras"] = {
-["global"] = {
-["showHelpTip"] = false,
-},
-},
-["BigWigs_Plugins_Messages"] = {
-["profiles"] = {
-["MerfinUI (1386) v7.8"] = {
-["outline"] = "OUTLINE",
-["fontSize"] = 15,
-["emphFontName"] = "Merfin Font 1",
-["emphFontSize"] = 37,
-["growUpwards"] = true,
-["emphOutline"] = "OUTLINE",
-["emphPosition"] = {
-"TOP",
-"TOP",
-nil,
--208,
-},
-["fontName"] = "Merfin Font 1",
-["normalPosition"] = {
-"TOP",
-nil,
-nil,
--190,
-},
-},
-["MerfinUI (1440) v7.8"] = {
-["outline"] = "OUTLINE",
-["fontSize"] = 15,
-["emphFontName"] = "Merfin Font 1",
-["fontName"] = "Merfin Font 1",
-["growUpwards"] = true,
-["emphOutline"] = "OUTLINE",
-["emphFontSize"] = 37,
-["emphPosition"] = {
-"TOP",
-"TOP",
-nil,
--208,
-},
-["normalPosition"] = {
-"TOP",
-nil,
-nil,
--190,
-},
-},
-},
-},
-["BigWigs_Plugins_Pull"] = {
-["profiles"] = {
-["MerfinUI (1440) v7.8"] = {
-["voice"] = "English: Amy",
 },
 },
 },
@@ -396,6 +381,14 @@ nil,
 ["specId"] = 104,
 ["keyMap"] = 0,
 ["name"] = "Warrington",
+["keyLevel"] = 0,
+["realm"] = "Burning Legion",
+},
+["Player-3713-0B4FC081"] = {
+["playerRating"] = 0,
+["specId"] = 264,
+["keyMap"] = 0,
+["name"] = "Foxsake",
 ["keyLevel"] = 0,
 ["realm"] = "Burning Legion",
 },
@@ -510,24 +503,6 @@ BigWigsStatsDB = {
 ["fkDuration"] = 360.2620000000006,
 },
 },
-[2888] = {
-["LFR"] = {
-["kills"] = 1,
-["fkDuration"] = 271.8889999999992,
-["best"] = 271.8889999999992,
-["bestDate"] = "2026/09/15",
-["fkDate"] = "2026/09/15",
-},
-},
-[2887] = {
-["LFR"] = {
-["kills"] = 1,
-["fkDuration"] = 360.8080000000009,
-["best"] = 360.8080000000009,
-["bestDate"] = "2026/09/15",
-["fkDate"] = "2026/09/15",
-},
-},
 [2895] = {
 ["LFR"] = {
 ["kills"] = 1,
@@ -546,6 +521,24 @@ BigWigsStatsDB = {
 ["bestDate"] = "2026/09/15",
 ["best"] = 224.8330000000005,
 ["fkDuration"] = 224.8330000000005,
+},
+},
+[2888] = {
+["LFR"] = {
+["kills"] = 1,
+["fkDuration"] = 271.8889999999992,
+["best"] = 271.8889999999992,
+["bestDate"] = "2026/09/15",
+["fkDate"] = "2026/09/15",
+},
+},
+[2887] = {
+["LFR"] = {
+["kills"] = 1,
+["fkDuration"] = 360.8080000000009,
+["best"] = 360.8080000000009,
+["bestDate"] = "2026/09/15",
+["fkDate"] = "2026/09/15",
 },
 },
 },

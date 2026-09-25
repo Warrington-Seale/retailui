@@ -10,10 +10,10 @@ MDT.mapInfo[dungeonIndex] = {
   mapID = 586
 };
 
-local zones = { 2513, 2514, 2564 }
-for _, zone in ipairs(zones) do
-  MDT.zoneIdToDungeonIdx[zone] = dungeonIndex
-end
+MDT:RegisterDungeonLocation(dungeonIndex, {
+  zoneIds = { 2437, 2513, 2514, 2564 },
+  subzoneAreaIDs = { 16189 }, -- Nalorakk's Prowl
+})
 
 MDT.dungeonMaps[dungeonIndex] = {
   [0] = "",
@@ -33,6 +33,36 @@ MDT.mapPOIs[dungeonIndex] = {
       ["x"] = 40.9,
       ["y"] = -313.6,
       ["sizeMult"] = 1.5,
+    },
+    [2] = {
+      ["type"] = "genericItem",
+      ["x"] = 82.873761510963,
+      ["y"] = -326.03647700266,
+      ["info"] = {
+        ["texture"] = 135265,
+        ["spellId"] = 1271545,
+        ["size"] = 15,
+      },
+    },
+    [3] = {
+      ["type"] = "genericItem",
+      ["x"] = 199.9,
+      ["y"] = -431,
+      ["info"] = {
+        ["texture"] = 135265,
+        ["spellId"] = 1271545,
+        ["size"] = 15,
+      },
+    },
+    [4] = {
+      ["type"] = "genericItem",
+      ["x"] = 497.97968554859,
+      ["y"] = -231.42173301341,
+      ["info"] = {
+        ["texture"] = 237528,
+        ["spellId"] = 1271737,
+        ["size"] = 15,
+      },
     },
   },
 };
@@ -233,14 +263,14 @@ MDT.dungeonEnemies[dungeonIndex] = {
         ["sublevel"] = 1,
       },
       [3] = {
-        ["x"] = 84.192099207938,
-        ["y"] = -320.76054747535,
+        ["x"] = 86.261986788422,
+        ["y"] = -314.20582450934,
         ["g"] = 1,
         ["sublevel"] = 1,
       },
       [4] = {
-        ["x"] = 93.020425011525,
-        ["y"] = -318.90194994362,
+        ["x"] = 95.090312592009,
+        ["y"] = -315.79707909232,
         ["g"] = 1,
         ["sublevel"] = 1,
       },

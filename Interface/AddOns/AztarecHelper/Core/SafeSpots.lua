@@ -24,6 +24,7 @@ local seq = {} -- the route as quarters, which is what everything else reads
 local steps = {} -- what the player actually answered, quarters or turns
 local top = 0 -- highest wave the route knows of, answered or closed
 local armed = false
+local sermonNo = 0 -- which sermon of the pull is running or last ran
 
 -- capture state
 local ticker
@@ -69,11 +70,6 @@ local function setWave(phase, idx, total, at, startedAt, gap)
     end
     if AZT.FollowSync then
         AZT.FollowSync()
-    end
-    -- the compass cross can be set to show only while a sermon runs, so
-    -- it watches the wave edges too
-    if AZT.CrossSync then
-        AZT.CrossSync()
     end
 end
 
@@ -211,6 +207,9 @@ end
 local function beginCapture(unit)
     stopTicker()
     clearRoute()
+    if unit then
+        sermonNo = sermonNo + 1
+    end
     chanUnit = unit
     chanStartT = GetTime()
     capturing = true
@@ -248,6 +247,10 @@ local function finishCapture()
         -- real wave channels run 10.5s or longer. Something shorter slipped
         -- through the filters (or the boss died) - discard, don't replay
         AZT.Log(("CHANNEL discarded after %.1fs - not the wave mechanic"):format(elapsed))
+        -- it was no sermon, so it doesn't count toward the next one's length
+        if chanUnit then
+            sermonNo = math.max(sermonNo - 1, 0)
+        end
         Safe.Reset()
         return
     end
@@ -577,6 +580,22 @@ end
 -- guards behave exactly as they do in the fight.
 
 local PRACTICE_WAVES = 7 -- the longest phase "??" reaches
+-- the sermons at 90, 60 and 30 percent run 5, 6 and 7 waves
+local SERMON_WAVES = { 5, 6, 7 }
+
+-- how many waves the sermon running now has, nil when it can't be told
+function Safe.SermonWaves()
+    if practiceTicker then
+        return PRACTICE_WAVES
+    end
+    return SERMON_WAVES[sermonNo]
+end
+
+-- the quarter answered for the first wave, which is where the first echo
+-- sends you. "?" when it went unanswered
+function Safe.FirstAnswer()
+    return seq[1]
+end
 
 local function randomRoute(n)
     local route = {}
@@ -702,6 +721,7 @@ ef:SetScript("OnEvent", function(_, event, ...)
                 armed = true
                 grid = GRIDS[id] or GRIDS[3508]
                 Safe.Reset()
+                sermonNo = 0
                 ef:RegisterEvent("PLAYER_DEAD")
                 AZT.chat(
                     ("Azta'rec pulled - encounter %s = %s"):format(

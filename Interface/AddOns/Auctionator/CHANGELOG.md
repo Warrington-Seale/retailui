@@ -1,7 +1,8 @@
 # Auctionator
 
-## [338](https://github.com/TheMouseNest/Auctionator/tree/338) (2026-09-19)
-[Full Changelog](https://github.com/TheMouseNest/Auctionator/compare/337...338) 
+## [339](https://github.com/TheMouseNest/Auctionator/tree/339) (2026-09-21)
+[Full Changelog](https://github.com/TheMouseNest/Auctionator/compare/338...339) 
 
-- Forever: Fix pricing  
-- Fixes for Forever  
+- Forever: Cleanup and show the right auction durations  
+- Forever: Selling tab: Fix reagent bag contents not being shown  
+- Forever: Fix unit price display  

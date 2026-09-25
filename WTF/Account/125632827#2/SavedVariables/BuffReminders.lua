@@ -6,6 +6,7 @@ BuffRemindersDB = {
 ["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
 ["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
+["Foxsake - Burning Legion"] = "MerfinUI (1440) v7.8",
 },
 ["global"] = {
 ["snoozeNoticeShown"] = true,
@@ -21,22 +22,24 @@ BuffRemindersDB = {
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
 ["defaults"] = {
-["fontFace"] = "Merfin Font 1",
-["expirationThreshold"] = 5,
-["textSize"] = 16,
 ["iconAlpha"] = 0.9,
+["fontFace"] = "Merfin Font 1",
 ["glowXOffset"] = 0,
 ["iconWidth"] = 58,
+["expirationThreshold"] = 5,
+["showMissingGlow"] = true,
+["glowYOffset"] = 0,
 ["glowProcStartAnim"] = false,
-["glowProcDuration"] = 1,
 ["borderSize"] = 1,
+["showExpirationGlow"] = true,
 ["spacing"] = 0,
 ["iconSize"] = 50,
-["showMissingGlow"] = true,
-["showExpirationGlow"] = true,
-["glowYOffset"] = 0,
+["glowProcDuration"] = 1,
+["textSize"] = 16,
 ["glowSize"] = 1,
 },
+["showLoginMessages"] = false,
+["hideWhileResting"] = true,
 ["customBuffs"] = {
 },
 ["enabledBuffs"] = {
@@ -60,8 +63,6 @@ BuffRemindersDB = {
 ["weapon"] = 1237008,
 },
 },
-["showLoginMessages"] = false,
-["hideWhileResting"] = true,
 ["hideInLegacyInstances"] = false,
 ["hideAllInVehicle"] = true,
 ["dbVersion"] = 54,
@@ -69,6 +70,23 @@ BuffRemindersDB = {
 ["self"] = {
 ["position"] = {
 ["y"] = -60,
+},
+},
+["consumable"] = {
+["position"] = {
+["y"] = -140,
+},
+},
+["custom"] = {
+["position"] = {
+["y"] = -180,
+},
+},
+["raid"] = {
+["buffTextSize"] = 16,
+["showText"] = true,
+["position"] = {
+["y"] = 60,
 },
 },
 ["targeted"] = {
@@ -81,26 +99,9 @@ BuffRemindersDB = {
 ["y"] = -100,
 },
 },
-["consumable"] = {
-["position"] = {
-["y"] = -140,
-},
-},
 ["presence"] = {
 ["position"] = {
 ["y"] = 20,
-},
-},
-["raid"] = {
-["buffTextSize"] = 16,
-["showText"] = true,
-["position"] = {
-["y"] = 60,
-},
-},
-["custom"] = {
-["position"] = {
-["y"] = -180,
 },
 },
 },
@@ -111,43 +112,65 @@ BuffRemindersDB = {
 ["burningRush"] = false,
 ["warriorWrongStance"] = false,
 },
-["dbVersion"] = 54,
 ["categoryVisibility"] = {
 ["custom"] = {
 },
 },
+["dbVersion"] = 54,
 ["customBuffs"] = {
 },
 },
 ["MerfinUI (1440) v7.8"] = {
 ["defaults"] = {
-["iconAlpha"] = 0.9,
 ["fontFace"] = "Merfin Font 1",
+["expirationThreshold"] = 5,
+["iconAlpha"] = 0.9,
 ["glowXOffset"] = 0,
 ["iconWidth"] = 58,
-["expirationThreshold"] = 5,
-["glowSize"] = 1,
-["glowYOffset"] = 0,
 ["glowProcStartAnim"] = false,
+["glowProcDuration"] = 1,
+["showConsumablesWithoutItems"] = false,
 ["borderSize"] = 1,
-["showExpirationGlow"] = true,
 ["spacing"] = 0,
 ["iconSize"] = 50,
-["glowProcDuration"] = 1,
-["textSize"] = 16,
-["showMissingGlow"] = true,
+["showExpirationGlow"] = true,
+["glowYOffset"] = 0,
+["glowType"] = 1,
+["glowSize"] = 1,
 },
-["showLoginMessages"] = false,
+["buffTrackingMode"] = "my_buffs",
+["hideAllInVehicle"] = true,
+["categoryVisibility"] = {
+["custom"] = {
+},
+},
+["locked"] = true,
 ["hideWhileResting"] = true,
-["customBuffs"] = {
+["hideInLegacyInstances"] = false,
+["enabledBuffs"] = {
+["burningRush"] = false,
 },
+["dbVersion"] = 54,
+["showLoginMessages"] = false,
 ["rememberedConsumables"] = {
 [268] = {
 ["weapon"] = 1237006,
 },
 },
-["categoryVisibility"] = {
-["custom"] = {
+["customBuffs"] = {
+["burningRush"] = {
+["overlayText"] = "",
+["showWhenPresent"] = true,
+["key"] = "burningRush",
+["loadConditions"] = {
+["housing"] = false,
+},
+["_iconsCache"] = {
+538043,
+},
+["class"] = "WARLOCK",
+["name"] = "Burning Rush",
+["spellID"] = 111400,
 },
 },
 ["categorySettings"] = {
@@ -156,14 +179,25 @@ BuffRemindersDB = {
 ["y"] = -60,
 },
 },
+["targeted"] = {
+["clickable"] = false,
+["position"] = {
+["y"] = -20,
+},
+},
+["pet"] = {
+["position"] = {
+["y"] = -100,
+},
+},
 ["consumable"] = {
 ["position"] = {
 ["y"] = -140,
 },
 },
-["custom"] = {
+["presence"] = {
 ["position"] = {
-["y"] = -180,
+["y"] = 20,
 },
 },
 ["raid"] = {
@@ -173,30 +207,13 @@ BuffRemindersDB = {
 ["y"] = 60,
 },
 },
-["presence"] = {
+["custom"] = {
 ["position"] = {
-["y"] = 20,
-},
-},
-["pet"] = {
-["position"] = {
-["y"] = -100,
-},
-},
-["targeted"] = {
-["position"] = {
-["y"] = -20,
+["y"] = -180,
 },
 },
 },
-["hideInLegacyInstances"] = false,
-["dbVersion"] = 54,
-["enabledBuffs"] = {
-["druidWrongForm"] = false,
-["warriorWrongStance"] = false,
-["burningRush"] = false,
-},
-["hideAllInVehicle"] = true,
+["hidePetWhileMounted"] = true,
 },
 },
 }

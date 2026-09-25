@@ -464,7 +464,7 @@ function mod:MythicTimeline(_, eventInfo)
 			barInfo = self:CausticWaves()
 			barInfo.timer = self:ScheduleTimer(function() self:StopTimelineBar(barInfo, true) end, duration)
 		elseif rounded == 51 or rounded == 61 then
-			barInfo = self:CirclingPrey(duration)
+			barInfo = self:CirclingPrey()
 			barInfo.timer = self:ScheduleTimer(function() self:StopTimelineBar(barInfo, true) end, duration)
 		elseif rounded == 67 or rounded == 53 then
 			barInfo = self:SubmergeP3()
@@ -472,7 +472,7 @@ function mod:MythicTimeline(_, eventInfo)
 
 		elseif rounded == 60 then
 			if count == 2 then
-				barInfo = self:CirclingPrey(duration)
+				barInfo = self:CirclingPrey()
 				barInfo.timer = self:ScheduleTimer(function() self:StopTimelineBar(barInfo, true) end, duration)
 			elseif count == 3 then
 				barInfo = self:SubmergeP3()
@@ -572,7 +572,7 @@ function mod:HeroicTimeline(_, eventInfo)
 			barInfo = self:CausticWaves()
 			barInfo.timer = self:ScheduleTimer(function() self:StopTimelineBar(barInfo, true) end, duration)
 		elseif rounded == 51 or rounded == 61 or rounded == 52 then
-			barInfo = self:CirclingPrey(duration)
+			barInfo = self:CirclingPrey()
 			barInfo.timer = self:ScheduleTimer(function() self:StopTimelineBar(barInfo, true) end, duration)
 		elseif rounded == 67 or rounded == 53 then
 			barInfo = self:SubmergeP3()
@@ -580,7 +580,7 @@ function mod:HeroicTimeline(_, eventInfo)
 
 		elseif rounded == 60 then
 			if count == 2 then
-				barInfo = self:CirclingPrey(duration)
+				barInfo = self:CirclingPrey()
 				barInfo.timer = self:ScheduleTimer(function() self:StopTimelineBar(barInfo, true) end, duration)
 			elseif count == 3 then
 				barInfo = self:CallOfTheSerpent()
@@ -679,10 +679,12 @@ function mod:EasyTimeline(_, eventInfo)
 			barInfo.timer = self:ScheduleTimer(function() self:StopTimelineBar(barInfo, true) end, duration)
 		elseif rounded == 5 or rounded == 63 then
 			barInfo = self:CallOfTheSerpent()
+		elseif rounded == 47 then
+			barInfo = self:CirclingPrey()
 
 		elseif rounded == 50 then
 			if count == 2 then
-				barInfo = self:CirclingPrey(duration)
+				barInfo = self:CirclingPrey()
 			elseif count == 3 then
 				barInfo = self:CausticWaves()
 			end
@@ -697,7 +699,7 @@ function mod:EasyTimeline(_, eventInfo)
 			end
 		elseif rounded == 56 then
 			if count == 1 then
-				barInfo = self:CirclingPrey(duration)
+				barInfo = self:CirclingPrey()
 			elseif count == 2 then
 				barInfo = self:SubmergeP3()
 			end
@@ -713,7 +715,7 @@ function mod:EasyTimeline(_, eventInfo)
 			end
 		elseif rounded == 66 then
 			if count == 1 then
-				barInfo = self:CirclingPrey(duration)
+				barInfo = self:CirclingPrey()
 				barInfo.timer = self:ScheduleTimer(function() self:StopTimelineBar(barInfo, true) end, duration)
 			elseif count == 2 then
 				barInfo = self:SubmergeP3()
@@ -1110,6 +1112,16 @@ function mod:UNIT_TARGETABLE_CHANGED(_, unit)
 end
 
 function mod:PhaseTwoStart(isTimelineEvent)
+	do -- Rage of the Shackled
+		self:UnregisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", "boss1")
+		self:StopBar(self:GetRename(1286860, 2))
+		for _, barInfo in next, activeBars do
+			if barInfo.key == 1286860 then
+				self:StopTimelineBar(barInfo)
+			end
+		end
+	end
+
 	self:UnregisterUnitEvent("UNIT_TARGETABLE_CHANGED", "boss1")
 	checkStage = false
 
@@ -1317,11 +1329,7 @@ do
 			msg = barText,
 			key = 1286860,
 			offset = 6.5, -- 6.5s cast
-			onFinished = function()
-				self:Message(1286860, "green", barText)
-				self:PlaySound(1286860, "long")
-				self:CastBar(1286860, 20, 2)
-
+			onOffset = function()
 				-- catch early stop if hp threshold is hit
 				self:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", nil, "boss1")
 
@@ -1329,6 +1337,11 @@ do
 					-- next UNIT_TARGETABLE_CHANGED/ENCOUNTER_TIMELINE_EVENT_ADDED starts p2
 					checkStage = true
 				end
+			end,
+			onFinished = function()
+				self:Message(1286860, "green", barText)
+				self:PlaySound(1286860, "long")
+				self:CastBar(1286860, 20, 2)
 			end,
 		}
 	end
@@ -1484,7 +1497,7 @@ end
 
 -- Stage Three: Ula'tek's Ascension
 
-function mod:CirclingPrey(duration)
+function mod:CirclingPrey()
 	local barText = CL.count:format(self:GetRename(1301510), circlingPreyCount)
 	circlingPreyCount = circlingPreyCount + 1
 	return {
