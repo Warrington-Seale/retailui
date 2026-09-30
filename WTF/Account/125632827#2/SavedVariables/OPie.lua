@@ -98,9 +98,13 @@ OPie_SavedData = {
 ["sliceToken"] = "ABueYS==1=u",
 ["id"] = 457481,
 },
-["limit"] = "Foxsake-BurningLegion",
-["save"] = true,
+{
+["sliceToken"] = "ABueYD5j0pw",
+["id"] = 462854,
+},
 ["name"] = "shaman",
+["save"] = true,
+["limit"] = "Foxsake-BurningLegion",
 },
 ["OPieFlagStore"] = {
 ["StoreVersion"] = 3,

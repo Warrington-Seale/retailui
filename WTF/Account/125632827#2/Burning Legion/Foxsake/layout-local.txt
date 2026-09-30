@@ -6,6 +6,13 @@ X: 17
 Y: -225
 W: 40
 H: 40
+Frame: MerchantFrame
+FrameLevel: 1
+Anchor: TOPLEFT
+X: 16
+Y: -116
+W: 360
+H: 444
 Frame: ColorPickerFrame
 FrameLevel: 1
 Anchor: CENTER
@@ -20,3 +27,10 @@ X: -10
 Y: -125
 W: 450
 H: 600
+Frame: CharacterFrame
+FrameLevel: 1
+Anchor: TOPLEFT
+X: 16
+Y: -116
+W: 338
+H: 424

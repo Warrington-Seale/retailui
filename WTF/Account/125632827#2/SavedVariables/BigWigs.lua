@@ -26,6 +26,138 @@ BigWigs3DB = {
 },
 },
 },
+["BigWigs_Plugins_BossBlock"] = {
+["global"] = {
+["tableNeedsCopied"] = false,
+["watchedMovies"] = {
+[-575] = true,
+[-1004] = true,
+[1049] = true,
+[1050] = true,
+[-2516] = true,
+[1065] = true,
+},
+},
+},
+["BigWigs_Plugins_AltPower"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["fontSize"] = 14,
+["fontName"] = "Merfin Font 1",
+["position"] = {
+"BOTTOMRIGHT",
+"BOTTOMRIGHT",
+-315,
+327,
+},
+},
+["MerfinUI (1440) v7.8"] = {
+["fontSize"] = 14,
+["fontName"] = "Merfin Font 1",
+["position"] = {
+"BOTTOMRIGHT",
+"BOTTOMRIGHT",
+-315,
+327,
+},
+},
+},
+},
+["BigWigs_Plugins_Nameplates"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["iconFontSize"] = 8,
+["iconExpireGlowType"] = "proc",
+["iconZoom"] = 0.3,
+["iconHeight"] = 20,
+["iconFontName"] = "Merfin Font 1",
+["iconOffsetX"] = -3,
+["iconWidth"] = 20,
+},
+["MerfinUI (1440) v7.8"] = {
+["iconFontSize"] = 8,
+["iconExpireGlowType"] = "proc",
+["iconZoom"] = 0.3,
+["iconHeight"] = 20,
+["iconFontName"] = "Merfin Font 1",
+["iconWidth"] = 20,
+["iconOffsetX"] = -3,
+},
+},
+},
+["BigWigs_Plugins_Auras"] = {
+["global"] = {
+["showHelpTip"] = false,
+},
+},
+["BigWigs_Plugins_Proximity"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["posx"] = 716,
+["fontSize"] = 16,
+["lock"] = false,
+["height"] = 101,
+["posy"] = 443,
+["fontName"] = "Merfin Font 1",
+["width"] = 120,
+},
+["MerfinUI (1440) v7.8"] = {
+["posx"] = 716,
+["fontSize"] = 16,
+["lock"] = false,
+["height"] = 101,
+["posy"] = 443,
+["fontName"] = "Merfin Font 1",
+["width"] = 120,
+},
+},
+},
+["BigWigs_Plugins_Messages"] = {
+["profiles"] = {
+["MerfinUI (1386) v7.8"] = {
+["outline"] = "OUTLINE",
+["fontSize"] = 15,
+["emphFontName"] = "Merfin Font 1",
+["emphFontSize"] = 37,
+["growUpwards"] = true,
+["emphOutline"] = "OUTLINE",
+["emphPosition"] = {
+"TOP",
+"TOP",
+nil,
+-208,
+},
+["fontName"] = "Merfin Font 1",
+["normalPosition"] = {
+"TOP",
+nil,
+nil,
+-190,
+},
+},
+["MerfinUI (1440) v7.8"] = {
+["outline"] = "OUTLINE",
+["fontSize"] = 15,
+["emphFontName"] = "Merfin Font 1",
+["emphFontSize"] = 37,
+["emphPosition"] = {
+"TOP",
+"TOP",
+nil,
+-208,
+},
+["fontName"] = "Merfin Font 1",
+["growUpwards"] = true,
+["emphOutline"] = "OUTLINE",
+["normalPosition"] = {
+"TOP",
+nil,
+nil,
+-190,
+},
+},
+},
+},
 ["BigWigs_Plugins_PrivateAuras"] = {
 ["global"] = {
 ["showHelpTip"] = false,
@@ -77,30 +209,6 @@ nil,
 "CENTER",
 nil,
 0,
-},
-},
-},
-},
-["BigWigs_Plugins_AltPower"] = {
-["profiles"] = {
-["MerfinUI (1386) v7.8"] = {
-["fontSize"] = 14,
-["fontName"] = "Merfin Font 1",
-["position"] = {
-"BOTTOMRIGHT",
-"BOTTOMRIGHT",
--315,
-327,
-},
-},
-["MerfinUI (1440) v7.8"] = {
-["fontSize"] = 14,
-["fontName"] = "Merfin Font 1",
-["position"] = {
-"BOTTOMRIGHT",
-"BOTTOMRIGHT",
--315,
-327,
 },
 },
 },
@@ -157,11 +265,13 @@ nil,
 },
 },
 ["MerfinUI (1440) v7.8"] = {
-["barEmphasized"] = {
+["barBackground"] = {
 ["BigWigs_Plugins_Colors"] = {
 ["default"] = {
-nil,
-0.5960784554481506,
+0.2000000178813934,
+0.2000000178813934,
+0.2000000178813934,
+0.7019608020782471,
 },
 },
 },
@@ -171,16 +281,6 @@ nil,
 0.1294117718935013,
 0.5882353186607361,
 0.9529412388801575,
-},
-},
-},
-["barBackground"] = {
-["BigWigs_Plugins_Colors"] = {
-["default"] = {
-0.2000000178813934,
-0.2000000178813934,
-0.2000000178813934,
-0.7019608020782471,
 },
 },
 },
@@ -194,90 +294,13 @@ nil,
 },
 },
 },
-},
-},
-},
-["BigWigs_Plugins_Nameplates"] = {
-["profiles"] = {
-["MerfinUI (1386) v7.8"] = {
-["iconFontSize"] = 8,
-["iconExpireGlowType"] = "proc",
-["iconZoom"] = 0.3,
-["iconHeight"] = 20,
-["iconFontName"] = "Merfin Font 1",
-["iconOffsetX"] = -3,
-["iconWidth"] = 20,
-},
-["MerfinUI (1440) v7.8"] = {
-["iconFontSize"] = 8,
-["iconExpireGlowType"] = "proc",
-["iconZoom"] = 0.3,
-["iconHeight"] = 20,
-["iconFontName"] = "Merfin Font 1",
-["iconWidth"] = 20,
-["iconOffsetX"] = -3,
-},
-},
-},
-["BigWigs_Plugins_BossBlock"] = {
-["global"] = {
-["tableNeedsCopied"] = false,
-["watchedMovies"] = {
-[-575] = true,
-[1049] = true,
-[1050] = true,
-[-2516] = true,
-[1065] = true,
-},
-},
-},
-["BigWigs_Plugins_Auras"] = {
-["global"] = {
-["showHelpTip"] = false,
-},
-},
-["BigWigs_Plugins_Messages"] = {
-["profiles"] = {
-["MerfinUI (1386) v7.8"] = {
-["outline"] = "OUTLINE",
-["fontSize"] = 15,
-["emphFontName"] = "Merfin Font 1",
-["emphFontSize"] = 37,
-["growUpwards"] = true,
-["emphOutline"] = "OUTLINE",
-["emphPosition"] = {
-"TOP",
-"TOP",
+["barEmphasized"] = {
+["BigWigs_Plugins_Colors"] = {
+["default"] = {
 nil,
--208,
-},
-["fontName"] = "Merfin Font 1",
-["normalPosition"] = {
-"TOP",
-nil,
-nil,
--190,
+0.5960784554481506,
 },
 },
-["MerfinUI (1440) v7.8"] = {
-["outline"] = "OUTLINE",
-["fontSize"] = 15,
-["emphFontName"] = "Merfin Font 1",
-["emphFontSize"] = 37,
-["growUpwards"] = true,
-["emphOutline"] = "OUTLINE",
-["emphPosition"] = {
-"TOP",
-"TOP",
-nil,
--208,
-},
-["fontName"] = "Merfin Font 1",
-["normalPosition"] = {
-"TOP",
-nil,
-nil,
--190,
 },
 },
 },
@@ -319,22 +342,22 @@ nil,
 },
 ["MerfinUI (1440) v7.8"] = {
 ["outline"] = "OUTLINE",
+["expWidth"] = 229,
+["fill"] = true,
+["growup"] = true,
+["normalHeight"] = 23,
+["visibleBarLimitEmph"] = 4,
 ["fontSize"] = 13,
 ["visibleBarLimit"] = 5,
 ["expHeight"] = 25,
-["emphasizeRestart"] = false,
 ["emphasizeGrowup"] = true,
-["expWidth"] = 229,
-["fill"] = true,
-["barStyle"] = "ElvUI",
-["growup"] = true,
-["fontSizeEmph"] = 14,
-["normalHeight"] = 23,
 ["emphasizeTime"] = 10,
-["visibleBarLimitEmph"] = 4,
+["barStyle"] = "ElvUI",
 ["fontName"] = "Merfin Font 1",
-["texture"] = "Merfin Main Texture",
+["fontSizeEmph"] = 14,
 ["normalWidth"] = 200,
+["emphasizeRestart"] = false,
+["texture"] = "Merfin Main Texture",
 ["expPosition"] = {
 "BOTTOMLEFT",
 "TOPLEFT",
@@ -349,28 +372,6 @@ nil,
 75,
 "ElvUF_TargetTarget",
 },
-},
-},
-},
-["BigWigs_Plugins_Proximity"] = {
-["profiles"] = {
-["MerfinUI (1386) v7.8"] = {
-["posx"] = 716,
-["fontSize"] = 16,
-["lock"] = false,
-["height"] = 101,
-["posy"] = 443,
-["fontName"] = "Merfin Font 1",
-["width"] = 120,
-},
-["MerfinUI (1440) v7.8"] = {
-["posx"] = 716,
-["fontSize"] = 16,
-["lock"] = false,
-["height"] = 101,
-["posy"] = 443,
-["fontName"] = "Merfin Font 1",
-["width"] = 120,
 },
 },
 },
@@ -485,6 +486,17 @@ BigWigsStatsDB = {
 },
 },
 [3004] = {
+[2882] = {
+["LFR"] = {
+["kills"] = 1,
+["bestDate"] = "2026/09/29",
+["best"] = 250.9259999999995,
+["fkWipes"] = 1,
+["fkDate"] = "2026/09/29",
+["wipes"] = 1,
+["fkDuration"] = 250.9259999999995,
+},
+},
 [2883] = {
 ["LFR"] = {
 ["kills"] = 1,
@@ -492,6 +504,15 @@ BigWigsStatsDB = {
 ["best"] = 285.6139999999978,
 ["bestDate"] = "2026/09/15",
 ["fkDate"] = "2026/09/15",
+},
+},
+[2874] = {
+["LFR"] = {
+["kills"] = 1,
+["bestDate"] = "2026/09/29",
+["fkDate"] = "2026/09/29",
+["best"] = 295.9330000000009,
+["fkDuration"] = 295.9330000000009,
 },
 },
 [2871] = {
@@ -534,10 +555,11 @@ BigWigsStatsDB = {
 },
 [2887] = {
 ["LFR"] = {
-["kills"] = 1,
+["kills"] = 2,
+["wipes"] = 1,
 ["fkDuration"] = 360.8080000000009,
-["best"] = 360.8080000000009,
-["bestDate"] = "2026/09/15",
+["best"] = 245.9910000000018,
+["bestDate"] = "2026/09/29",
 ["fkDate"] = "2026/09/15",
 },
 },

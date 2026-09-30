@@ -61369,29 +61369,21 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[28219] = {
-["tradeskillID"] = 165,
-["abilityID"] = 13919,
-["itemID"] = 22661,
+[20029] = {
+["tradeskillID"] = 333,
+["abilityID"] = 11382,
+["itemID"] = 0,
 ["reagents"] = {
 {
-["quantityRequired"] = 7,
+["quantityRequired"] = 4,
 ["reagents"] = {
 {
-["itemID"] = 22682,
+["itemID"] = 14344,
 },
 },
 },
 {
-["quantityRequired"] = 16,
-["reagents"] = {
-{
-["itemID"] = 12810,
-},
-},
-},
-{
-["quantityRequired"] = 2,
+["quantityRequired"] = 1,
 ["reagents"] = {
 {
 ["itemID"] = 7080,
@@ -61399,18 +61391,18 @@ ProfessionShoppingList_Library = {
 },
 },
 {
-["quantityRequired"] = 4,
+["quantityRequired"] = 1,
 ["reagents"] = {
 {
-["itemID"] = 15407,
+["itemID"] = 7082,
 },
 },
 },
 {
-["quantityRequired"] = 4,
+["quantityRequired"] = 1,
 ["reagents"] = {
 {
-["itemID"] = 14227,
+["itemID"] = 13467,
 },
 },
 },
@@ -61470,34 +61462,34 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[24124] = {
-["tradeskillID"] = 165,
-["abilityID"] = 12819,
-["itemID"] = 19688,
+[287448] = {
+["tradeskillID"] = 171,
+["abilityID"] = 40220,
+["itemID"] = 166270,
 ["reagents"] = {
 {
-["quantityRequired"] = 25,
 ["reagents"] = {
 {
-["itemID"] = 19768,
+["itemID"] = 152506,
 },
 },
-},
-{
 ["quantityRequired"] = 3,
+},
+{
 ["reagents"] = {
 {
-["itemID"] = 15407,
+["itemID"] = 152511,
 },
 },
-},
-{
 ["quantityRequired"] = 3,
+},
+{
 ["reagents"] = {
 {
-["itemID"] = 14341,
+["itemID"] = 3371,
 },
 },
+["quantityRequired"] = 1,
 },
 },
 },
@@ -63535,32 +63527,36 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[3761] = {
+[444105] = {
 ["tradeskillID"] = 165,
-["abilityID"] = 2170,
-["itemID"] = 4243,
+["abilityID"] = 50258,
+["itemID"] = 219866,
 ["reagents"] = {
 {
-["quantityRequired"] = 3,
+["quantityRequired"] = 1,
 ["reagents"] = {
 {
-["itemID"] = 4231,
+["itemID"] = 212674,
+},
+{
+["itemID"] = 212675,
+},
+{
+["itemID"] = 212676,
 },
 },
 },
 {
-["quantityRequired"] = 6,
+["quantityRequired"] = 20,
 ["reagents"] = {
 {
-["itemID"] = 2318,
-},
-},
+["itemID"] = 212664,
 },
 {
-["quantityRequired"] = 4,
-["reagents"] = {
+["itemID"] = 212665,
+},
 {
-["itemID"] = 2320,
+["itemID"] = 212666,
 },
 },
 },
@@ -63849,18 +63845,26 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[188300] = {
+[298731] = {
 ["tradeskillID"] = 171,
-["abilityID"] = 34429,
-["itemID"] = 127834,
+["abilityID"] = 40653,
+["itemID"] = 168489,
 ["reagents"] = {
 {
 ["reagents"] = {
 {
-["itemID"] = 128304,
+["itemID"] = 168487,
 },
 },
-["quantityRequired"] = 4,
+["quantityRequired"] = 8,
+},
+{
+["reagents"] = {
+{
+["itemID"] = 152505,
+},
+},
+["quantityRequired"] = 3,
 },
 {
 ["reagents"] = {
@@ -63934,18 +63938,34 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[7457] = {
-["tradeskillID"] = 333,
-["abilityID"] = 4301,
-["itemID"] = 0,
+[156564] = {
+["tradeskillID"] = 171,
+["abilityID"] = 32319,
+["itemID"] = 109148,
 ["reagents"] = {
 {
-["quantityRequired"] = 3,
 ["reagents"] = {
 {
-["itemID"] = 10940,
+["itemID"] = 3371,
 },
 },
+["quantityRequired"] = 1,
+},
+{
+["reagents"] = {
+{
+["itemID"] = 109128,
+},
+},
+["quantityRequired"] = 4,
+},
+{
+["reagents"] = {
+{
+["itemID"] = 109126,
+},
+},
+["quantityRequired"] = 4,
 },
 },
 },
@@ -64348,26 +64368,18 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[298731] = {
+[188300] = {
 ["tradeskillID"] = 171,
-["abilityID"] = 40653,
-["itemID"] = 168489,
+["abilityID"] = 34429,
+["itemID"] = 127834,
 ["reagents"] = {
 {
 ["reagents"] = {
 {
-["itemID"] = 168487,
+["itemID"] = 128304,
 },
 },
-["quantityRequired"] = 8,
-},
-{
-["reagents"] = {
-{
-["itemID"] = 152505,
-},
-},
-["quantityRequired"] = 3,
+["quantityRequired"] = 4,
 },
 {
 ["reagents"] = {
@@ -64402,34 +64414,18 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[156564] = {
-["tradeskillID"] = 171,
-["abilityID"] = 32319,
-["itemID"] = 109148,
+[7457] = {
+["tradeskillID"] = 333,
+["abilityID"] = 4301,
+["itemID"] = 0,
 ["reagents"] = {
 {
+["quantityRequired"] = 3,
 ["reagents"] = {
 {
-["itemID"] = 3371,
+["itemID"] = 10940,
 },
 },
-["quantityRequired"] = 1,
-},
-{
-["reagents"] = {
-{
-["itemID"] = 109128,
-},
-},
-["quantityRequired"] = 4,
-},
-{
-["reagents"] = {
-{
-["itemID"] = 109126,
-},
-},
-["quantityRequired"] = 4,
 },
 },
 },
@@ -64456,26 +64452,52 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[156567] = {
-["tradeskillID"] = 171,
-["abilityID"] = 32322,
-["itemID"] = 109151,
+[444110] = {
+["tradeskillID"] = 165,
+["abilityID"] = 50262,
+["itemID"] = 219864,
 ["reagents"] = {
 {
+["quantityRequired"] = 50,
 ["reagents"] = {
 {
-["itemID"] = 3371,
-},
-},
-["quantityRequired"] = 1,
+["itemID"] = 212664,
 },
 {
+["itemID"] = 212665,
+},
+{
+["itemID"] = 212666,
+},
+},
+},
+{
+["quantityRequired"] = 50,
 ["reagents"] = {
 {
-["itemID"] = 109118,
+["itemID"] = 212667,
+},
+{
+["itemID"] = 212668,
+},
+{
+["itemID"] = 212669,
 },
 },
-["quantityRequired"] = 4,
+},
+{
+["quantityRequired"] = 5,
+["reagents"] = {
+{
+["itemID"] = 221856,
+},
+{
+["itemID"] = 221857,
+},
+{
+["itemID"] = 221858,
+},
+},
 },
 },
 },
@@ -64502,36 +64524,32 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[444105] = {
+[3761] = {
 ["tradeskillID"] = 165,
-["abilityID"] = 50258,
-["itemID"] = 219866,
+["abilityID"] = 2170,
+["itemID"] = 4243,
 ["reagents"] = {
 {
-["quantityRequired"] = 1,
+["quantityRequired"] = 3,
 ["reagents"] = {
 {
-["itemID"] = 212674,
-},
-{
-["itemID"] = 212675,
-},
-{
-["itemID"] = 212676,
+["itemID"] = 4231,
 },
 },
 },
 {
-["quantityRequired"] = 20,
+["quantityRequired"] = 6,
 ["reagents"] = {
 {
-["itemID"] = 212664,
+["itemID"] = 2318,
+},
+},
 },
 {
-["itemID"] = 212665,
-},
+["quantityRequired"] = 4,
+["reagents"] = {
 {
-["itemID"] = 212666,
+["itemID"] = 2320,
 },
 },
 },
@@ -78383,52 +78401,26 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[444110] = {
-["tradeskillID"] = 165,
-["abilityID"] = 50262,
-["itemID"] = 219864,
+[156567] = {
+["tradeskillID"] = 171,
+["abilityID"] = 32322,
+["itemID"] = 109151,
 ["reagents"] = {
 {
-["quantityRequired"] = 50,
 ["reagents"] = {
 {
-["itemID"] = 212664,
+["itemID"] = 3371,
+},
+},
+["quantityRequired"] = 1,
 },
 {
-["itemID"] = 212665,
-},
-{
-["itemID"] = 212666,
-},
-},
-},
-{
-["quantityRequired"] = 50,
 ["reagents"] = {
 {
-["itemID"] = 212667,
-},
-{
-["itemID"] = 212668,
-},
-{
-["itemID"] = 212669,
+["itemID"] = 109118,
 },
 },
-},
-{
-["quantityRequired"] = 5,
-["reagents"] = {
-{
-["itemID"] = 221856,
-},
-{
-["itemID"] = 221857,
-},
-{
-["itemID"] = 221858,
-},
-},
+["quantityRequired"] = 4,
 },
 },
 },
@@ -79556,52 +79548,60 @@ ProfessionShoppingList_Library = {
 },
 },
 },
-[287448] = {
-["tradeskillID"] = 171,
-["abilityID"] = 40220,
-["itemID"] = 166270,
+[24124] = {
+["tradeskillID"] = 165,
+["abilityID"] = 12819,
+["itemID"] = 19688,
 ["reagents"] = {
 {
+["quantityRequired"] = 25,
 ["reagents"] = {
 {
-["itemID"] = 152506,
+["itemID"] = 19768,
 },
 },
+},
+{
 ["quantityRequired"] = 3,
-},
-{
 ["reagents"] = {
 {
-["itemID"] = 152511,
+["itemID"] = 15407,
 },
 },
+},
+{
 ["quantityRequired"] = 3,
-},
-{
 ["reagents"] = {
 {
-["itemID"] = 3371,
-},
-},
-["quantityRequired"] = 1,
+["itemID"] = 14341,
 },
 },
 },
-[20029] = {
-["tradeskillID"] = 333,
-["abilityID"] = 11382,
-["itemID"] = 0,
+},
+},
+[28219] = {
+["tradeskillID"] = 165,
+["abilityID"] = 13919,
+["itemID"] = 22661,
 ["reagents"] = {
 {
-["quantityRequired"] = 4,
+["quantityRequired"] = 7,
 ["reagents"] = {
 {
-["itemID"] = 14344,
+["itemID"] = 22682,
 },
 },
 },
 {
-["quantityRequired"] = 1,
+["quantityRequired"] = 16,
+["reagents"] = {
+{
+["itemID"] = 12810,
+},
+},
+},
+{
+["quantityRequired"] = 2,
 ["reagents"] = {
 {
 ["itemID"] = 7080,
@@ -79609,18 +79609,18 @@ ProfessionShoppingList_Library = {
 },
 },
 {
-["quantityRequired"] = 1,
+["quantityRequired"] = 4,
 ["reagents"] = {
 {
-["itemID"] = 7082,
+["itemID"] = 15407,
 },
 },
 },
 {
-["quantityRequired"] = 1,
+["quantityRequired"] = 4,
 ["reagents"] = {
 {
-["itemID"] = 13467,
+["itemID"] = 14227,
 },
 },
 },

@@ -237,7 +237,7 @@ BAGANATOR_CONFIG = {
 ["sort_ignore_slots_at_end"] = false,
 ["add_to_category_buttons_2"] = "drag",
 ["view_type"] = "unset",
-["bank_current_tab"] = 2,
+["bank_current_tab"] = 1,
 ["currencies_tracked"] = {
 },
 ["character_bank_view_width"] = 14,

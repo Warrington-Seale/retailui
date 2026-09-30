@@ -1,3 +1,9 @@
+VER 3 0000000000000003 "aaaadundund" "134400"
+/cleartarget
+/tar Dundun
+/stopmacro [noexists]
+/ping [@target]
+END
 VER 3 0000000000000001 "Extrabutton" "134400"
 #showtooltip
 /click ExtraActionButton1

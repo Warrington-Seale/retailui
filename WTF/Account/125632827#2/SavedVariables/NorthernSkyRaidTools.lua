@@ -2415,13 +2415,13 @@ NSRT = {
 },
 ["Anchor"] = "CENTER",
 ["NumberAnchor"] = "CENTER",
-["NameFontSize"] = 30,
+["NumberFont"] = "Expressway",
 ["ShowBar"] = false,
-["NumberFontFlags"] = "OUTLINE",
+["NameFontFlags"] = "OUTLINE",
 ["relativeTo"] = "CENTER",
 ["NameAnchor"] = "BOTTOM",
 ["NumberyOffset"] = 0,
-["NameFontFlags"] = "OUTLINE",
+["NameFontSize"] = 30,
 ["NamexOffset"] = 0,
 ["InterruptNowTextColor"] = {
 1,
@@ -2430,14 +2430,14 @@ NSRT = {
 1,
 },
 ["Width"] = 100,
-["NumberFont"] = "Expressway",
+["NumberxOffset"] = 0,
 ["InterruptNextTextColor"] = {
 1,
 0,
 0,
 1,
 },
-["NumberxOffset"] = 0,
+["NumberFontFlags"] = "OUTLINE",
 ["InterruptSound"] = "|cFF4BAAC8Interrupt|r",
 ["Height"] = 100,
 ["NameFont"] = "Expressway",
@@ -4948,11 +4948,11 @@ NSRT = {
 0,
 1,
 },
-["NameFontFlags"] = "OUTLINE",
+["NameFontSize"] = 30,
 ["relativeTo"] = "CENTER",
 ["InterruptSound"] = "|cFF4BAAC8Interrupt|r",
+["NumberFontFlags"] = "OUTLINE",
 ["NumberxOffset"] = 0,
-["NumberFont"] = "Expressway",
 ["NumberyOffset"] = 0,
 ["InterruptNowTextColor"] = {
 1,
@@ -4961,7 +4961,7 @@ NSRT = {
 1,
 },
 ["Width"] = 100,
-["NumberFontFlags"] = "OUTLINE",
+["NameFontFlags"] = "OUTLINE",
 ["InterruptNextTextColor"] = {
 1,
 0,
@@ -4971,7 +4971,7 @@ NSRT = {
 ["NamexOffset"] = 0,
 ["NameAnchor"] = "BOTTOM",
 ["Height"] = 100,
-["NameFontSize"] = 30,
+["NumberFont"] = "Expressway",
 ["ShowBar"] = false,
 ["NameRelativeTo"] = "TOP",
 },
@@ -5268,6 +5268,8 @@ NSRT = {
 ["LastUsedConsumables"] = {
 ["Warrington-BurningLegion"] = {
 },
+["Foxsake-BurningLegion"] = {
+},
 },
 ["AssignmentSettings"] = {
 },
@@ -5349,6 +5351,8 @@ NSRT = {
 },
 ["LastUsedConsumables"] = {
 ["Warrington-BurningLegion"] = {
+},
+["Foxsake-BurningLegion"] = {
 },
 },
 ["QoL"] = {
@@ -12939,7 +12943,7 @@ NSRT = {
 },
 ["Scale"] = 1,
 ["isSpecialDisplay"] = true,
-["dur"] = 5,
+["BlockCopy"] = true,
 ["yOffset"] = 400,
 ["xOffset"] = -500,
 ["timers"] = {
@@ -12951,8 +12955,8 @@ NSRT = {
 ["internalID"] = "WindsHelper",
 ["TTS"] = false,
 ["enabled"] = true,
-["TTSTimer"] = 5,
-["BlockCopy"] = true,
+["relativeTo"] = "CENTER",
+["dur"] = 5,
 ["encID"] = 3420,
 ["id"] = 0,
 ["difficulties"] = {
@@ -12968,7 +12972,7 @@ NSRT = {
 },
 ["DefaultEnabled"] = true,
 ["ReloeReminder"] = true,
-["relativeTo"] = "CENTER",
+["TTSTimer"] = 5,
 ["name"] = "Winds Helper",
 ["IsAlert"] = true,
 ["ShowSenderNames"] = false,
@@ -13133,7 +13137,7 @@ NSRT = {
 },
 ["Scale"] = 1,
 ["isSpecialDisplay"] = true,
-["dur"] = 5,
+["BlockCopy"] = true,
 ["yOffset"] = 400,
 ["xOffset"] = -500,
 ["timers"] = {
@@ -13145,8 +13149,8 @@ NSRT = {
 ["internalID"] = "WindsHelper",
 ["TTS"] = false,
 ["enabled"] = true,
-["TTSTimer"] = 5,
-["BlockCopy"] = true,
+["relativeTo"] = "CENTER",
+["dur"] = 5,
 ["encID"] = 3420,
 ["id"] = 0,
 ["difficulties"] = {
@@ -13162,7 +13166,7 @@ NSRT = {
 },
 ["DefaultEnabled"] = true,
 ["ReloeReminder"] = true,
-["relativeTo"] = "CENTER",
+["TTSTimer"] = 5,
 ["name"] = "Winds Helper",
 ["IsAlert"] = true,
 ["ShowSenderNames"] = false,
@@ -13497,7 +13501,7 @@ NSRT = {
 },
 ["Scale"] = 1,
 ["isSpecialDisplay"] = true,
-["dur"] = 5,
+["BlockCopy"] = true,
 ["yOffset"] = 400,
 ["xOffset"] = -500,
 ["timers"] = {
@@ -13509,8 +13513,8 @@ NSRT = {
 ["internalID"] = "WindsHelper",
 ["TTS"] = false,
 ["enabled"] = true,
-["TTSTimer"] = 5,
-["BlockCopy"] = true,
+["relativeTo"] = "CENTER",
+["dur"] = 5,
 ["encID"] = 3420,
 ["id"] = 0,
 ["difficulties"] = {
@@ -13526,7 +13530,7 @@ NSRT = {
 },
 ["DefaultEnabled"] = true,
 ["ReloeReminder"] = true,
-["relativeTo"] = "CENTER",
+["TTSTimer"] = 5,
 ["name"] = "Winds Helper",
 ["IsAlert"] = true,
 ["ShowSenderNames"] = false,

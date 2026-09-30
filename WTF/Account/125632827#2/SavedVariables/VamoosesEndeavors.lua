@@ -32,11 +32,11 @@ VE_DB = {
 ["Foxsake-BurningLegion"] = {
 ["xpForNextLevel"] = 10,
 ["maxLevel"] = 12,
-["coupons"] = 44,
+["coupons"] = 114,
 ["couponsIcon"] = 134495,
 ["level"] = 1,
-["xp"] = 1983,
-["savedAt"] = 1790354386,
+["xp"] = 2391,
+["savedAt"] = 1790708349,
 },
 },
 ["characters"] = {
@@ -191,12 +191,12 @@ VE_DB = {
 },
 [64] = {
 ["completed"] = false,
-["current"] = 0,
+["current"] = 3,
 ["max"] = 5,
 },
 [66] = {
 ["completed"] = false,
-["current"] = 5,
+["current"] = 0,
 ["max"] = 20,
 },
 [68] = {
@@ -226,7 +226,7 @@ VE_DB = {
 },
 [65] = {
 ["completed"] = false,
-["current"] = 162,
+["current"] = 192,
 ["max"] = 5000,
 },
 [69] = {
@@ -236,12 +236,12 @@ VE_DB = {
 },
 [71] = {
 ["completed"] = false,
-["current"] = 3,
+["current"] = 2,
 ["max"] = 5,
 },
 [73] = {
 ["completed"] = false,
-["current"] = 2,
+["current"] = 4,
 ["max"] = 100,
 },
 [75] = {
@@ -256,12 +256,12 @@ VE_DB = {
 },
 [106] = {
 ["completed"] = false,
-["current"] = 2,
+["current"] = 0,
 ["max"] = 5,
 },
 [81] = {
 ["completed"] = false,
-["current"] = 0,
+["current"] = 1,
 ["max"] = 5,
 },
 [134] = {
@@ -271,7 +271,7 @@ VE_DB = {
 },
 },
 ["class"] = "SHAMAN",
-["lastUpdated"] = 1790354373,
+["lastUpdated"] = 1790708321,
 ["realm"] = "BurningLegion",
 },
 },
@@ -323,6 +323,62 @@ VE_DB = {
 ["timestamp"] = 1790289918,
 ["taskID"] = 71,
 },
+{
+["character"] = "Foxsake",
+["source"] = 67,
+["amount"] = 12,
+["taskName"] = "Midnight Dungeons",
+["timestamp"] = 1790372475,
+["taskID"] = 71,
+},
+{
+["character"] = "Foxsake",
+["source"] = 67,
+["amount"] = 10,
+["taskName"] = "Complete Delves",
+["timestamp"] = 1790377862,
+["taskID"] = 106,
+},
+{
+["character"] = "Foxsake",
+["source"] = 67,
+["amount"] = 9,
+["taskName"] = "Complete Delves",
+["timestamp"] = 1790434460,
+["taskID"] = 106,
+},
+{
+["character"] = "Foxsake",
+["source"] = 67,
+["amount"] = 11,
+["taskName"] = "Midnight Dungeons",
+["timestamp"] = 1790441938,
+["taskID"] = 71,
+},
+{
+["character"] = "Foxsake",
+["source"] = 67,
+["amount"] = 10,
+["taskName"] = "World Quests: Eversong Woods",
+["timestamp"] = 1790588731,
+["taskID"] = 81,
+},
+{
+["character"] = "Foxsake",
+["source"] = 67,
+["amount"] = 10,
+["taskName"] = "Complete World Quests",
+["timestamp"] = 1790589027,
+["taskID"] = 66,
+},
+{
+["character"] = "Foxsake",
+["source"] = 67,
+["amount"] = 8,
+["taskName"] = "Complete Delves",
+["timestamp"] = 1790692204,
+["taskID"] = 106,
+},
 },
 ["battleTagMains"] = {
 ["egj8mjaa"] = {
@@ -373,9 +429,9 @@ VE_DB = {
 ["Foxsake-BurningLegion"] = {
 ["name"] = "Foxsake",
 ["faction"] = "Horde",
-["lastSeen"] = 1790354373,
+["lastSeen"] = 1790708234,
 ["class"] = "SHAMAN",
-["coupons"] = 44,
+["coupons"] = 114,
 ["realm"] = "BurningLegion",
 },
 },
@@ -402,7 +458,7 @@ VE_DB = {
 ["firstSeen"] = 1789596332,
 ["description"] = "A blood elf art commune is sheltering in the neighborhood while their home is under attack, and wants to share their artistic prowess with the neighborhood.",
 ["title"] = "Artistic Aid",
-["lastSeen"] = 1790354372,
+["lastSeen"] = 1790708321,
 },
 },
 ["battleTagLookup"] = {

@@ -204,7 +204,7 @@ NarciCharacterProfiles = {
 ["name"] = "Foxsake",
 ["birth"] = 1790274186,
 ["serverID"] = 3713,
-["lastVisit"] = 1790353355,
+["lastVisit"] = 1790704010,
 ["outfits"] = {
 },
 ["class"] = 7,
