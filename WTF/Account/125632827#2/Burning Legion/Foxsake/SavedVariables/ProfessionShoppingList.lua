@@ -1,42 +1,18 @@
 
 ProfessionShoppingList_CharacterData = {
-["Orders"] = {
+["profTools"] = {
 },
 ["Recipes"] = {
-[1237535] = {
+[1230485] = {
 ["quantity"] = 1,
-["link"] = "|cnIQ3:|Hitem:244589::::::::82:264:::::::::|h[Scout's Scaled Bracers]|h|r",
-["recraft"] = false,
-["professionID"] = 2,
-["recipeID"] = 1237535,
+["link"] = "|cnIQ4:|Hitem:240949::::::::90:264:::::::::|h[Masterwork Sin'dorei Band]|h|r",
 ["simRecipe"] = false,
-},
-[1229868] = {
-["quantity"] = 1,
-["link"] = "|cnIQ3:|Hitem:245343::::::::82:264:::::::::|h[Evercore Chainguards]|h|r",
+["professionID"] = 12,
+["recipeID"] = 1230485,
 ["recraft"] = false,
-["professionID"] = 8,
-["recipeID"] = 1229868,
-["simRecipe"] = false,
-},
-[1237528] = {
-["quantity"] = 1,
-["link"] = "|cnIQ3:|Hitem:244590::::::::82:264:::::::::|h[Scout's Scaled Vest]|h|r",
-["recraft"] = false,
-["professionID"] = 2,
-["recipeID"] = 1237528,
-["simRecipe"] = false,
-},
-[1237529] = {
-["quantity"] = 1,
-["link"] = "|cnIQ3:|Hitem:244588::::::::82:264:::::::::|h[Scout's Scaled Boots]|h|r",
-["recraft"] = false,
-["professionID"] = 2,
-["recipeID"] = 1237529,
-["simRecipe"] = false,
 },
 },
-["profTools"] = {
+["Orders"] = {
 },
 ["Queue"] = {
 ["TrackConcentration"] = true,

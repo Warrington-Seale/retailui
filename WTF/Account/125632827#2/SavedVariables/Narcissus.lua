@@ -46,31 +46,40 @@ NarcissusDB = {
 ["UseAddonCompartment"] = true,
 ["DressingRoom"] = true,
 ["UseBustShot"] = true,
-["UseEntranceVisual"] = true,
+["TooltipLanguages"] = {
+},
 ["DressingRoomItemSetListHideDupes"] = true,
 ["TranslateName"] = false,
 ["TalentTreeUseClassBackground"] = false,
+["UseEntranceVisual"] = true,
+["FontHeightItemName"] = 10,
 ["RealmNames"] = {
 [524] = "Burning Legion",
 },
-["ConduitTooltip"] = false,
-["TooltipLanguages"] = {
-},
-["DressingRoomShowSlot"] = true,
+["Version"] = 10000,
 ["installTime"] = 1788947582,
 ["EnableDoubleTap"] = false,
-["SpeedyScreenshotAlert"] = true,
+["Tutorials"] = {
+["ExitConfirmation"] = true,
+["Movement"] = true,
+["SpellVisualBrowser"] = true,
+["NPCBrowserEntance"] = true,
+["WeaponBrowser"] = true,
+["NPCBrowser"] = true,
+},
 ["AutoPlayAnimation"] = false,
 ["AFKScreen"] = false,
-["IndependentMinimapButton"] = false,
+["Favorites"] = {
+["FavoriteAnimationIDs"] = {
+},
+},
 ["AKFScreenDelay"] = false,
-["TalentTreeAnchor"] = 1,
-["TalentTreeForPaperDoll"] = false,
-["NameTranslationPosition"] = 1,
+["GlobalScale"] = 0.8,
+["WardrobeCollectionSetsCheckbox"] = true,
+["UseWoWQualityColor"] = false,
 ["PaperDollWidget_ClassSet"] = true,
 ["TalentTreeForEquipmentManager"] = true,
-["HideTextsWithUI"] = false,
-["AnchorToMinimap"] = true,
+["CameraOrbit"] = true,
 ["PerksProgramDB"] = {
 ["MonthNames"] = {
 {
@@ -84,48 +93,40 @@ NarcissusDB = {
 ["CurrentMonthData"] = {
 },
 },
-["TooltipTheme"] = "Bright",
+["NamePlateNameOffset"] = 0,
+["AutoDisplayQuestItem"] = false,
 ["OnlyShowOwnedUpgradeItem"] = true,
 ["GemManager"] = true,
 ["ModelPanelScale"] = 1,
-["AutoDisplayQuestItem"] = false,
-["NamePlateNameOffset"] = 0,
-["CameraOrbit"] = true,
+["TooltipTheme"] = "Bright",
+["AnchorToMinimap"] = true,
+["HideTextsWithUI"] = false,
 ["TalentTreeForInspection"] = true,
-["UseWoWQualityColor"] = false,
-["WardrobeCollectionSetsCheckbox"] = true,
-["GlobalScale"] = 0.8,
-["Favorites"] = {
-["FavoriteAnimationIDs"] = {
-},
-},
-["Tutorials"] = {
-["ExitConfirmation"] = true,
-["Movement"] = true,
-["SpellVisualBrowser"] = true,
-["NPCBrowserEntance"] = true,
-["NPCBrowser"] = true,
-["WeaponBrowser"] = true,
-},
+["NameTranslationPosition"] = 1,
+["TalentTreeForPaperDoll"] = false,
+["TalentTreeAnchor"] = 1,
+["IndependentMinimapButton"] = false,
+["SpeedyScreenshotAlert"] = true,
 ["TradingPostChangePost"] = true,
-["Version"] = 10000,
+["DressingRoomShowSlot"] = true,
 ["SearchSuggestEnable"] = false,
-["FontHeightItemName"] = 10,
+["ConduitTooltip"] = false,
 ["DressingRoomUseTargetModel"] = true,
 }
 NarciAchievementOptions = {
 ["UseAsDefault"] = false,
-["ShowRedMark"] = false,
+["IncompleteFirst"] = true,
 ["Scale"] = 1,
 ["ReplaceToast"] = true,
 ["Theme"] = 1,
-["IncompleteFirst"] = true,
+["ShowRedMark"] = false,
 }
 NarciStatisticsDB = {
 ["InstalledDate"] = 1788948167,
 ["QuestItems"] = {
 },
 ["AddOnActionForbidden"] = {
+["timeLastError"] = 1789050121,
 ["addons"] = {
 ["SenseiClassResourceBar"] = {
 ["count"] = 3,
@@ -136,11 +137,44 @@ NarciStatisticsDB = {
 ["timeLastError"] = 1789050121,
 },
 },
-["timeLastError"] = 1789050121,
 },
 }
 NarciTurntableOptions = nil
 NarciCharacterProfiles = {
+["0B4FC081"] = {
+["race"] = 35,
+["name"] = "Foxsake",
+["birth"] = 1790274186,
+["serverID"] = 3713,
+["lastVisit"] = 1790882841,
+["outfits"] = {
+},
+["class"] = 7,
+},
+["0B216CB1"] = {
+["race"] = 35,
+["name"] = "Zerofoxgiven",
+["birth"] = 1789421852,
+["serverID"] = 3713,
+["lastVisit"] = 1789421852,
+["outfits"] = {
+{
+["s"] = "100408,77343:-1,77345,104602,0,0,104604,94331,84223,198608,104603,33123:-1:1898,33123:0:1898",
+["n"] = "Custom Set",
+},
+},
+["class"] = 1,
+},
+["09224DF3"] = {
+["race"] = 28,
+["name"] = "Warrington",
+["birth"] = 1788948167,
+["serverID"] = 3713,
+["lastVisit"] = 1790136631,
+["outfits"] = {
+},
+["class"] = 11,
+},
 ["072FFC94"] = {
 ["race"] = 5,
 ["name"] = "Divthediv",
@@ -174,40 +208,6 @@ NarciCharacterProfiles = {
 },
 },
 ["class"] = 10,
-},
-["0B216CB1"] = {
-["race"] = 35,
-["name"] = "Zerofoxgiven",
-["birth"] = 1789421852,
-["serverID"] = 3713,
-["lastVisit"] = 1789421852,
-["outfits"] = {
-{
-["s"] = "100408,77343:-1,77345,104602,0,0,104604,94331,84223,198608,104603,33123:-1:1898,33123:0:1898",
-["n"] = "Custom Set",
-},
-},
-["class"] = 1,
-},
-["09224DF3"] = {
-["race"] = 28,
-["name"] = "Warrington",
-["birth"] = 1788948167,
-["serverID"] = 3713,
-["lastVisit"] = 1790136631,
-["outfits"] = {
-},
-["class"] = 11,
-},
-["0B4FC081"] = {
-["race"] = 35,
-["name"] = "Foxsake",
-["birth"] = 1790274186,
-["serverID"] = 3713,
-["lastVisit"] = 1790704010,
-["outfits"] = {
-},
-["class"] = 7,
 },
 }
 NarciPhotoModeDB = {

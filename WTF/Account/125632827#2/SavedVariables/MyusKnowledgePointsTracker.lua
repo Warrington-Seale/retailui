@@ -1,6 +1,15 @@
 
 MKPT_Config = {
+["profileKeys"] = {
+["Zerofoxgiven - Burning Legion"] = "Zerofoxgiven - Burning Legion",
+["Warrington - Burning Legion"] = "Warrington - Burning Legion",
+["Divthediv - Burning Legion"] = "Divthediv - Burning Legion",
+["Foxsake - Burning Legion"] = "Foxsake - Burning Legion",
+},
 ["global"] = {
+["state"] = {
+["firstTimeLoaded"] = false,
+},
 ["position"] = {
 ["y"] = 0,
 ["x"] = 4,
@@ -16,14 +25,5 @@ MKPT_Config = {
 ["a"] = 0,
 },
 },
-["state"] = {
-["firstTimeLoaded"] = false,
-},
-},
-["profileKeys"] = {
-["Zerofoxgiven - Burning Legion"] = "Zerofoxgiven - Burning Legion",
-["Warrington - Burning Legion"] = "Warrington - Burning Legion",
-["Divthediv - Burning Legion"] = "Divthediv - Burning Legion",
-["Foxsake - Burning Legion"] = "Foxsake - Burning Legion",
 },
 }

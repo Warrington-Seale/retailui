@@ -2,22 +2,22 @@
 BuffRemindersDB = {
 ["namespaces"] = {
 },
+["global"] = {
+["snoozeNoticeShown"] = true,
+["seenVersions"] = {
+["6.5.1"] = true,
+["6.4.0"] = true,
+["6.3.0"] = true,
+},
+["minimap"] = {
+["showInCompartment"] = true,
+},
+},
 ["profileKeys"] = {
 ["Zerofoxgiven - Burning Legion"] = "Default",
 ["Warrington - Burning Legion"] = "MerfinUI (1386) v7.8",
 ["Divthediv - Burning Legion"] = "MerfinUI (1440) v7.8",
 ["Foxsake - Burning Legion"] = "MerfinUI (1440) v7.8",
-},
-["global"] = {
-["snoozeNoticeShown"] = true,
-["minimap"] = {
-["showInCompartment"] = true,
-},
-["seenVersions"] = {
-["6.4.0"] = true,
-["6.5.1"] = true,
-["6.3.0"] = true,
-},
 },
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
@@ -27,7 +27,7 @@ BuffRemindersDB = {
 ["glowXOffset"] = 0,
 ["iconWidth"] = 58,
 ["expirationThreshold"] = 5,
-["showMissingGlow"] = true,
+["glowSize"] = 1,
 ["glowYOffset"] = 0,
 ["glowProcStartAnim"] = false,
 ["borderSize"] = 1,
@@ -36,7 +36,7 @@ BuffRemindersDB = {
 ["iconSize"] = 50,
 ["glowProcDuration"] = 1,
 ["textSize"] = 16,
-["glowSize"] = 1,
+["showMissingGlow"] = true,
 },
 ["showLoginMessages"] = false,
 ["hideWhileResting"] = true,
@@ -44,28 +44,13 @@ BuffRemindersDB = {
 },
 ["enabledBuffs"] = {
 ["druidWrongForm"] = false,
-["burningRush"] = false,
 ["warriorWrongStance"] = false,
+["burningRush"] = false,
 },
 ["categoryVisibility"] = {
 ["custom"] = {
 },
 },
-["rememberedConsumables"] = {
-[103] = {
-["weapon"] = 1237008,
-},
-[104] = {
-["weapon"] = 1237008,
-["food"] = 1259658,
-},
-[105] = {
-["weapon"] = 1237008,
-},
-},
-["hideInLegacyInstances"] = false,
-["hideAllInVehicle"] = true,
-["dbVersion"] = 54,
 ["categorySettings"] = {
 ["self"] = {
 ["position"] = {
@@ -82,6 +67,11 @@ BuffRemindersDB = {
 ["y"] = -180,
 },
 },
+["presence"] = {
+["position"] = {
+["y"] = 20,
+},
+},
 ["raid"] = {
 ["buffTextSize"] = 16,
 ["showText"] = true,
@@ -89,28 +79,38 @@ BuffRemindersDB = {
 ["y"] = 60,
 },
 },
-["targeted"] = {
-["position"] = {
-["y"] = -20,
-},
-},
 ["pet"] = {
 ["position"] = {
 ["y"] = -100,
 },
 },
-["presence"] = {
+["targeted"] = {
 ["position"] = {
-["y"] = 20,
+["y"] = -20,
 },
+},
+},
+["dbVersion"] = 54,
+["hideAllInVehicle"] = true,
+["hideInLegacyInstances"] = false,
+["rememberedConsumables"] = {
+[103] = {
+["weapon"] = 1237008,
+},
+[104] = {
+["food"] = 1259658,
+["weapon"] = 1237008,
+},
+[105] = {
+["weapon"] = 1237008,
 },
 },
 },
 ["Default"] = {
 ["enabledBuffs"] = {
 ["druidWrongForm"] = false,
-["burningRush"] = false,
 ["warriorWrongStance"] = false,
+["burningRush"] = false,
 },
 ["categoryVisibility"] = {
 ["custom"] = {
@@ -129,60 +129,26 @@ BuffRemindersDB = {
 ["iconWidth"] = 58,
 ["glowProcStartAnim"] = false,
 ["glowProcDuration"] = 1,
-["showConsumablesWithoutItems"] = false,
+["glowType"] = 1,
 ["borderSize"] = 1,
 ["spacing"] = 0,
 ["iconSize"] = 50,
 ["showExpirationGlow"] = true,
 ["glowYOffset"] = 0,
-["glowType"] = 1,
+["showConsumablesWithoutItems"] = false,
 ["glowSize"] = 1,
 },
 ["buffTrackingMode"] = "my_buffs",
 ["hideAllInVehicle"] = true,
-["categoryVisibility"] = {
-["custom"] = {
-},
-},
-["locked"] = true,
-["hideWhileResting"] = true,
-["hideInLegacyInstances"] = false,
-["enabledBuffs"] = {
-["burningRush"] = false,
-},
-["dbVersion"] = 54,
-["showLoginMessages"] = false,
-["rememberedConsumables"] = {
-[268] = {
-["weapon"] = 1237006,
-},
-},
-["customBuffs"] = {
-["burningRush"] = {
-["overlayText"] = "",
-["showWhenPresent"] = true,
-["key"] = "burningRush",
-["loadConditions"] = {
-["housing"] = false,
-},
-["_iconsCache"] = {
-538043,
-},
-["class"] = "WARLOCK",
-["name"] = "Burning Rush",
-["spellID"] = 111400,
-},
-},
 ["categorySettings"] = {
 ["self"] = {
 ["position"] = {
 ["y"] = -60,
 },
 },
-["targeted"] = {
-["clickable"] = false,
+["presence"] = {
 ["position"] = {
-["y"] = -20,
+["y"] = 20,
 },
 },
 ["pet"] = {
@@ -195,9 +161,10 @@ BuffRemindersDB = {
 ["y"] = -140,
 },
 },
-["presence"] = {
+["targeted"] = {
+["clickable"] = false,
 ["position"] = {
-["y"] = 20,
+["y"] = -20,
 },
 },
 ["raid"] = {
@@ -213,7 +180,40 @@ BuffRemindersDB = {
 },
 },
 },
+["locked"] = true,
+["hideWhileResting"] = true,
+["hideInLegacyInstances"] = false,
 ["hidePetWhileMounted"] = true,
+["enabledBuffs"] = {
+["burningRush"] = false,
+},
+["showLoginMessages"] = false,
+["rememberedConsumables"] = {
+[268] = {
+["weapon"] = 1237006,
+},
+},
+["customBuffs"] = {
+["burningRush"] = {
+["overlayText"] = "",
+["showWhenPresent"] = true,
+["key"] = "burningRush",
+["loadConditions"] = {
+["housing"] = false,
+},
+["class"] = "WARLOCK",
+["_iconsCache"] = {
+538043,
+},
+["name"] = "Burning Rush",
+["spellID"] = 111400,
+},
+},
+["dbVersion"] = 54,
+["categoryVisibility"] = {
+["custom"] = {
+},
+},
 },
 },
 }

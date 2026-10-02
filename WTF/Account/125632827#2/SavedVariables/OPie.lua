@@ -4,7 +4,7 @@ OPie_SavedData = {
 },
 ["_OPieVersion"] = "8.8.3 (4.144)",
 ["_StoreVersion"] = 122,
-["_GameLocale"] = "enUS",
+["_GameVersion"] = "12.1.0",
 ["_StoreVersion2"] = 122,
 ["ProfileStorage"] = {
 ["default"] = {
@@ -36,8 +36,8 @@ OPie_SavedData = {
 ["sliceToken"] = "ABueYYMO=Z1",
 },
 ["save"] = true,
-["limit"] = "DRUID",
 ["name"] = "druidforms",
+["limit"] = "DRUID",
 },
 ["Druidmisc"] = {
 {
@@ -61,8 +61,8 @@ OPie_SavedData = {
 ["sliceToken"] = "ABueYYMO=Z2",
 },
 ["save"] = true,
-["name"] = "Druidmisc",
 ["limit"] = "DRUID",
+["name"] = "Druidmisc",
 },
 ["shamanST"] = {
 {
@@ -73,9 +73,9 @@ OPie_SavedData = {
 ["sliceToken"] = "ABueYS==1=t",
 ["id"] = 546,
 },
-["limit"] = "Foxsake-BurningLegion",
-["save"] = true,
 ["name"] = "shaman ST",
+["save"] = true,
+["limit"] = "Foxsake-BurningLegion",
 },
 ["shaman"] = {
 {
@@ -102,14 +102,14 @@ OPie_SavedData = {
 ["sliceToken"] = "ABueYD5j0pw",
 ["id"] = 462854,
 },
-["name"] = "shaman",
-["save"] = true,
 ["limit"] = "Foxsake-BurningLegion",
+["save"] = true,
+["name"] = "shaman",
 },
 ["OPieFlagStore"] = {
 ["StoreVersion"] = 3,
 },
 },
 },
-["_GameVersion"] = "12.1.0",
+["_GameLocale"] = "enUS",
 }

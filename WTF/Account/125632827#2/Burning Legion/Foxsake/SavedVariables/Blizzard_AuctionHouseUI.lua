@@ -1,12 +1,12 @@
 
 g_auctionHouseFilters = {
-["minLevel"] = 0,
 ["maxLevel"] = 0,
+["minLevel"] = 0,
 ["filters"] = {
 false,
-true,
-true,
-true,
+false,
+false,
+false,
 nil,
 true,
 true,

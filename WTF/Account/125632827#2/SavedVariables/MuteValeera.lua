@@ -4,9 +4,9 @@ MuteValeeraSettings = {
 ["isMuted"] = true,
 ["muteBubbles"] = true,
 ["bubbleFallbackMode"] = "auto",
-["customList"] = {
-},
+["version"] = "1.1.0",
 ["muteCritical"] = false,
 ["muteNanea"] = true,
-["version"] = "1.1.0",
+["customList"] = {
+},
 }

@@ -3,40 +3,40 @@ VE_DB = {
 ["selectedHouseGUID"] = "Opaque-1",
 ["housingByChar"] = {
 ["Warrington-BurningLegion"] = {
-["coupons"] = 40,
-["maxLevel"] = 12,
 ["xp"] = 1755,
+["maxLevel"] = 12,
+["xpForNextLevel"] = 10,
 ["couponsIcon"] = 134495,
 ["level"] = 1,
-["xpForNextLevel"] = 10,
+["coupons"] = 40,
 ["savedAt"] = 1790136997,
 },
 ["Divthediv-BurningLegion"] = {
-["xp"] = 0,
-["maxLevel"] = 9,
 ["xpForNextLevel"] = 0,
+["maxLevel"] = 9,
+["coupons"] = 0,
 ["couponsIcon"] = 134495,
 ["level"] = 0,
-["coupons"] = 0,
+["xp"] = 0,
 ["savedAt"] = 1789519738,
 },
 ["Zerofoxgiven-BurningLegion"] = {
-["coupons"] = 0,
-["maxLevel"] = 9,
 ["xp"] = 0,
+["maxLevel"] = 9,
+["xpForNextLevel"] = 0,
 ["couponsIcon"] = 134495,
 ["level"] = 0,
-["xpForNextLevel"] = 0,
+["coupons"] = 0,
 ["savedAt"] = 1789421892,
 },
 ["Foxsake-BurningLegion"] = {
 ["xpForNextLevel"] = 10,
 ["maxLevel"] = 12,
-["coupons"] = 114,
+["coupons"] = 144,
 ["couponsIcon"] = 134495,
 ["level"] = 1,
-["xp"] = 2391,
-["savedAt"] = 1790708349,
+["xp"] = 2491,
+["savedAt"] = 1790885227,
 },
 },
 ["characters"] = {
@@ -133,20 +133,20 @@ VE_DB = {
 ["current"] = 0,
 ["max"] = 1,
 },
-[106] = {
+[134] = {
 ["completed"] = false,
-["current"] = 2,
-["max"] = 5,
+["current"] = 0,
+["max"] = 100,
 },
 [81] = {
 ["completed"] = false,
 ["current"] = 0,
 ["max"] = 5,
 },
-[134] = {
+[106] = {
 ["completed"] = false,
-["current"] = 0,
-["max"] = 100,
+["current"] = 2,
+["max"] = 5,
 },
 },
 ["class"] = "DRUID",
@@ -186,17 +186,17 @@ VE_DB = {
 },
 [63] = {
 ["completed"] = false,
-["current"] = 2,
+["current"] = 4,
 ["max"] = 5,
 },
 [64] = {
 ["completed"] = false,
-["current"] = 3,
+["current"] = 4,
 ["max"] = 5,
 },
 [66] = {
 ["completed"] = false,
-["current"] = 0,
+["current"] = 5,
 ["max"] = 20,
 },
 [68] = {
@@ -226,7 +226,7 @@ VE_DB = {
 },
 [65] = {
 ["completed"] = false,
-["current"] = 192,
+["current"] = 382,
 ["max"] = 5000,
 },
 [69] = {
@@ -236,7 +236,7 @@ VE_DB = {
 },
 [71] = {
 ["completed"] = false,
-["current"] = 2,
+["current"] = 4,
 ["max"] = 5,
 },
 [73] = {
@@ -271,17 +271,104 @@ VE_DB = {
 },
 },
 ["class"] = "SHAMAN",
-["lastUpdated"] = 1790708321,
+["lastUpdated"] = 1790885219,
 ["realm"] = "BurningLegion",
 },
 },
+["battleTagLookup"] = {
+["Warrington"] = "egj8mjaa",
+["Divthediv"] = "egj8mjaa",
+["Foxsake"] = "egj8mjaa",
+["Zerofoxgiven"] = "egj8mjaa",
+},
+["schemaVersion"] = 6,
 ["myCharacters"] = {
 ["Warrington"] = true,
 ["Divthediv"] = true,
-["Zerofoxgiven"] = true,
 ["Foxsake"] = true,
+["Zerofoxgiven"] = true,
 },
-["schemaVersion"] = 6,
+["knownInitiatives"] = {
+[15] = {
+["firstSeen"] = 1789596332,
+["description"] = "A blood elf art commune is sheltering in the neighborhood while their home is under attack, and wants to share their artistic prowess with the neighborhood.",
+["title"] = "Artistic Aid",
+["lastSeen"] = 1790885219,
+},
+},
+["config"] = {
+["debug"] = false,
+["uiScale"] = 1,
+["showLoginActiveEndeavor"] = true,
+["pinWindow"] = false,
+["showInCombat"] = false,
+["autoActivateOnSelect"] = false,
+["quotesChat"] = false,
+["fontScale"] = 0,
+["showMinimapButton"] = true,
+["bgOpacity"] = 0.9,
+["quotesEnabled"] = true,
+["quotesPopup"] = true,
+["theme"] = "housingtheme",
+["fontFamily"] = "ARIALN",
+},
+["altSharing"] = {
+["enabled"] = false,
+["lastBroadcast"] = 0,
+["groupingMode"] = "individual",
+["receivedMappings"] = {
+},
+},
+["ui"] = {
+["favouriteTasks"] = {
+[15] = {
+},
+},
+},
+["minimap"] = {
+["minimapPos"] = 200,
+["lock"] = false,
+["hide"] = false,
+},
+["characterCoupons"] = {
+["Warrington-BurningLegion"] = {
+["name"] = "Warrington",
+["faction"] = "Horde",
+["lastSeen"] = 1790136980,
+["class"] = "DRUID",
+["coupons"] = 40,
+["realm"] = "BurningLegion",
+},
+["Divthediv-BurningLegion"] = {
+["name"] = "Divthediv",
+["faction"] = "Horde",
+["lastSeen"] = 1789519468,
+["class"] = "MONK",
+["coupons"] = 0,
+["realm"] = "BurningLegion",
+},
+["Zerofoxgiven-BurningLegion"] = {
+["name"] = "Zerofoxgiven",
+["faction"] = "Horde",
+["lastSeen"] = 1789421854,
+["class"] = "WARRIOR",
+["coupons"] = 0,
+["realm"] = "BurningLegion",
+},
+["Foxsake-BurningLegion"] = {
+["name"] = "Foxsake",
+["faction"] = "Horde",
+["lastSeen"] = 1790885108,
+["class"] = "SHAMAN",
+["coupons"] = 144,
+["realm"] = "BurningLegion",
+},
+},
+["battleTagMains"] = {
+["egj8mjaa"] = {
+"Foxsake",
+},
+},
 ["couponGains"] = {
 {
 ["character"] = "Warrington",
@@ -379,92 +466,13 @@ VE_DB = {
 ["timestamp"] = 1790692204,
 ["taskID"] = 106,
 },
+{
+["character"] = "Foxsake",
+["source"] = 67,
+["amount"] = 10,
+["taskName"] = "Complete Delves",
+["timestamp"] = 1790855988,
+["taskID"] = 106,
 },
-["battleTagMains"] = {
-["egj8mjaa"] = {
-"Foxsake",
-},
-},
-["config"] = {
-["debug"] = false,
-["uiScale"] = 1,
-["showLoginActiveEndeavor"] = true,
-["pinWindow"] = false,
-["showInCombat"] = false,
-["autoActivateOnSelect"] = false,
-["quotesChat"] = false,
-["fontScale"] = 0,
-["showMinimapButton"] = true,
-["bgOpacity"] = 0.9,
-["quotesEnabled"] = true,
-["quotesPopup"] = true,
-["theme"] = "housingtheme",
-["fontFamily"] = "ARIALN",
-},
-["characterCoupons"] = {
-["Warrington-BurningLegion"] = {
-["name"] = "Warrington",
-["faction"] = "Horde",
-["lastSeen"] = 1790136980,
-["class"] = "DRUID",
-["coupons"] = 40,
-["realm"] = "BurningLegion",
-},
-["Divthediv-BurningLegion"] = {
-["name"] = "Divthediv",
-["faction"] = "Horde",
-["lastSeen"] = 1789519468,
-["class"] = "MONK",
-["coupons"] = 0,
-["realm"] = "BurningLegion",
-},
-["Zerofoxgiven-BurningLegion"] = {
-["name"] = "Zerofoxgiven",
-["faction"] = "Horde",
-["lastSeen"] = 1789421854,
-["class"] = "WARRIOR",
-["coupons"] = 0,
-["realm"] = "BurningLegion",
-},
-["Foxsake-BurningLegion"] = {
-["name"] = "Foxsake",
-["faction"] = "Horde",
-["lastSeen"] = 1790708234,
-["class"] = "SHAMAN",
-["coupons"] = 114,
-["realm"] = "BurningLegion",
-},
-},
-["minimap"] = {
-["minimapPos"] = 200,
-["hide"] = false,
-["lock"] = false,
-},
-["ui"] = {
-["favouriteTasks"] = {
-[15] = {
-},
-},
-},
-["altSharing"] = {
-["enabled"] = false,
-["lastBroadcast"] = 0,
-["groupingMode"] = "individual",
-["receivedMappings"] = {
-},
-},
-["knownInitiatives"] = {
-[15] = {
-["firstSeen"] = 1789596332,
-["description"] = "A blood elf art commune is sheltering in the neighborhood while their home is under attack, and wants to share their artistic prowess with the neighborhood.",
-["title"] = "Artistic Aid",
-["lastSeen"] = 1790708321,
-},
-},
-["battleTagLookup"] = {
-["Warrington"] = "egj8mjaa",
-["Divthediv"] = "egj8mjaa",
-["Foxsake"] = "egj8mjaa",
-["Zerofoxgiven"] = "egj8mjaa",
 },
 }

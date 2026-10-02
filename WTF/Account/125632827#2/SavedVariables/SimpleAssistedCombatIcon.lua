@@ -11,13 +11,13 @@ SCAIDB = {
 ["profiles"] = {
 ["MerfinUI (1386) v7.8"] = {
 ["Keybind"] = {
-["fontSize"] = 17,
 ["font"] = "Merfin Font 1",
+["fontSize"] = 17,
 },
 ["border"] = {
 ["thickness"] = 1,
 },
-["alpha"] = 0.9,
+["iconSize"] = 47,
 ["DBVERSION"] = 5,
 ["position"] = {
 ["strata"] = 2,
@@ -26,7 +26,11 @@ SCAIDB = {
 ["parent"] = "ElvUF_Player",
 ["parentFrame"] = "__other",
 },
-["iconSize"] = 47,
+["display"] = {
+["HideAsHealer"] = false,
+["HideInVehicle"] = true,
+["ALWAYS"] = false,
+},
 ["locked"] = true,
 ["cooldown"] = {
 ["HideNumbers"] = true,
@@ -38,11 +42,7 @@ SCAIDB = {
 ["showCount"] = true,
 },
 },
-["display"] = {
-["HideAsHealer"] = false,
-["HideInVehicle"] = true,
-["ALWAYS"] = false,
-},
+["alpha"] = 0.9,
 },
 ["Default"] = {
 ["DBVERSION"] = 5,
@@ -55,7 +55,7 @@ SCAIDB = {
 ["border"] = {
 ["thickness"] = 1,
 },
-["iconSize"] = 47,
+["alpha"] = 0.9,
 ["DBVERSION"] = 5,
 ["position"] = {
 ["strata"] = 2,
@@ -73,14 +73,14 @@ SCAIDB = {
 ["cooldown"] = {
 ["HideNumbers"] = true,
 ["chargeCooldown"] = {
-["showSwipe"] = true,
 ["text"] = {
 ["font"] = "Merfin Font 1",
 },
+["showSwipe"] = true,
 ["showCount"] = true,
 },
 },
-["alpha"] = 0.9,
+["iconSize"] = 47,
 },
 },
 }
